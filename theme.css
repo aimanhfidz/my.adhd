@@ -1,0 +1,87 @@
+/* ============ my.adhd — shared theme ============
+   Loaded by every page before its own stylesheet.
+   Palette: Vivid Blue #4737FF on Paper White, Deep Blue #202030 and
+   #101018 for night, Stone Gray for secondary text. Branding gradient
+   carries the CTAs. Vivid Orange belongs to the logo mark (and the
+   mascot's blush) — it is not a UI signal.
+   Type: Baloo 2 (variable, 400-800), self-hosted. */
+
+@font-face{
+  font-family:"Baloo 2";
+  src:url("fonts/Baloo2-Variable.ttf") format("truetype-variations"),
+      url("fonts/Baloo2-Variable.ttf") format("truetype");
+  font-weight:400 800;
+  font-style:normal;
+  font-display:swap;
+}
+
+:root{
+  /* brand */
+  --blue:#4737FF;        /* Vivid Blue   */
+  --blue-deep:#3529BF;
+  --blue-pale:#ACA5FF;
+  --pale:#D1CDFF;        /* Pale Blue    */
+  --navy:#202030;        /* Deep Blue    */
+  --black:#101018;
+  --stone:#5E5E6A;       /* Stone Gray   */
+  --orange:#F75C03;      /* Vivid Orange */
+  --violet:#7B3FE4;      /* logo capsule  */
+  --wordmark-accent:var(--violet);
+  --grad:linear-gradient(103deg,#101018 0%,#3529BF 38%,#4737FF 68%,#ACA5FF 100%);
+
+  /* surfaces + text */
+  --backdrop:#E9E7FB;
+  --backdrop-2:#D9D5F6;
+  --surface:#FFFFFF;
+  --wash:#F4F3FE;
+  --wash-2:#E9E7FD;
+  --ink:var(--black);
+  --ink-soft:var(--navy);
+  --muted:var(--stone);
+  --faint:#9797A6;
+  --line:#E4E2F5;
+  --line-strong:#CFCBE9;
+  --accent:var(--blue);
+  --focus:rgba(71,55,255,.18);
+
+  --radius:14px;
+  --radius-lg:22px;
+  --radius-card:34px;
+  --ease:cubic-bezier(.22,.9,.28,1);
+  --display:"Baloo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+/* mascot palette.
+   The character's own hues are fixed; only the panel behind it moves
+   with the theme. That panel is load-bearing — the hair is the same
+   value as the dark ground, so removing it erases the silhouette.
+   It is muted rather than deleted, so the mascot recedes. */
+:root{
+  --mx-ink:var(--black);
+  --mx-skin:#F2B477;
+  --mx-hair:var(--black);
+  --mx-tee:var(--navy);
+  --mx-blush:var(--orange);
+  --mx-bg:#E4E1F7;      /* pale on light */
+  --mx-mark:#BDB7E8;
+}
+
+@media (prefers-color-scheme:dark){
+:root{
+    --backdrop:#101018;
+    --backdrop-2:#191924;
+    --surface:#202030;
+    --wash:#282838;
+    --wash-2:#313142;
+    --ink:#FFFFFF;
+    --ink-soft:var(--pale);
+    --muted:#9E9EB2;
+    --faint:#71718A;
+    --line:#2C2C3E;
+    --line-strong:#3C3C52;
+    --accent:#6E62FF;
+    --focus:rgba(110,98,255,.26);
+    --wordmark-accent:#A47BFF;
+    --mx-bg:#34305C;      /* muted indigo on dark */
+    --mx-mark:#524D80;
+  }}

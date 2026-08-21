@@ -1,0 +1,13 @@
+# dependencies
+node_modules/
+
+# secrets — ANTHROPIC_API_KEY lives in Vercel env vars, never in the repo
+.env
+.env.*
+!.env.example
+
+# vercel
+.vercel/
+
+# macOS
+.DS_Store

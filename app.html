@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>my.adhd — clear your head</title>
+<meta name="description" content="Dump everything on your mind. Get back one thing to do." />
+<meta name="theme-color" content="#E9E7FB" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="preload" href="fonts/Baloo2-Variable.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="stylesheet" href="theme.css" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- rough brush edge, so shapes read hand-drawn rather than vector-clean -->
+    <filter id="mx-rough" x="-12%" y="-12%" width="124%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="mx-grain" x="-6%" y="-6%" width="112%" height="112%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3" result="g"/>
+      <feColorMatrix in="g" type="saturate" values="0"/>
+      <feComponentTransfer result="gg"><feFuncA type="linear" slope=".16"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" in2="gg" mode="multiply"/>
+    </filter>
+
+    <!-- ============ the head: shared by every appearance ============ -->
+    <!-- ============ the head ============
+         Built on a 240x262 grid: face centred at x=120, eyes on y=112,
+         fringe stops at y~80 so the brows still read. -->
+    <g id="mx-head">
+      <!-- ears: small, level with the eyes, tucked against the skull -->
+      <ellipse cx="74" cy="114" rx="11" ry="14" class="mx-ink mx-skin"/>
+      <ellipse cx="166" cy="114" rx="11" ry="14" class="mx-ink mx-skin"/>
+      <path d="M76 108c-4 3-5 9-3 13" class="mx-ink mx-cap" stroke-width="2.2"/>
+      <path d="M164 108c4 3 5 9 3 13" class="mx-ink mx-cap" stroke-width="2.2"/>
+
+      <!-- face: rounded, jaw a little wider than before -->
+      <path d="M120 48c27 0 48 19 48 47 0 33-21 57-48 57s-48-24-48-57c0-28 21-47 48-47z" class="mx-ink mx-skin"/>
+
+      <!-- hair: scalloped mass, fringe held above the brow line -->
+      <path class="mx-hair" d="M70 112c-10-12-12-26-4-36-10-12-4-30 10-34-2-14 14-22 28-16 10-12 26-10 34 2 16-2 28 12 26 26 12 8 14 26 6 34 4 10 0 20-6 24-2-12-6-20-14-26-10 6-22 6-30 0-10-8-22-6-30 2-10-4-18 2-22 12-2 6-4 10-4 12z"/>
+      <g class="mx-hair mx-curls">
+        <circle cx="80" cy="52" r="11.5"/><circle cx="71" cy="74" r="10"/>
+        <circle cx="99" cy="32" r="12.5"/><circle cx="124" cy="24" r="13"/>
+        <circle cx="148" cy="30" r="12.5"/><circle cx="166" cy="48" r="11.5"/>
+        <circle cx="176" cy="70" r="10"/>
+      </g>
+      <path class="mx-strand" d="M116 36c-14 8-24 21-27 37M126 36c9 9 14 21 15 34"/>
+
+      <!-- glasses -->
+      <circle cx="99" cy="112" r="20" class="mx-ink mx-lens"/>
+      <circle cx="141" cy="112" r="20" class="mx-ink mx-lens"/>
+      <path d="M119 110c1-2 4-2 5 0" class="mx-ink mx-cap"/>
+      <path d="M79 111c-5-1-9 0-11 2M161 111c5-1 9 0 11 2" class="mx-ink mx-cap"/>
+      <circle cx="99" cy="112" r="7.5" class="mx-eye"/>
+      <circle cx="141" cy="112" r="7.5" class="mx-eye"/>
+
+      <!-- nose + a small closed smile -->
+      <path d="M120 118c-3 7-5 11-1 13" class="mx-ink mx-cap"/>
+      <path d="M110 138c6 6 14 6 20 0" class="mx-ink mx-cap"/>
+
+      <!-- blush: two short marks per cheek, clear of the mouth -->
+      <g class="mx-blush">
+        <path d="M85 140l10-3M87 147l10-3"/>
+        <path d="M155 140l-10-3M153 147l-10-3"/>
+      </g>
+    </g>
+
+    <!-- ============ bust: head + neck + tee ============ -->
+    <g id="mx-bust">
+      <path d="M107 144h26v30c0 7-26 7-26 0z" class="mx-ink mx-skin"/>
+      <path d="M133 170c25 6 42 17 48 33 4 11 6 25 6 41H53c0-16 2-30 6-41 6-16 23-27 48-33 3 9 23 9 26 0z" class="mx-ink mx-tee"/>
+      <path d="M107 170c3 8 23 8 26 0" class="mx-tee-line"/>
+      <path d="M67 211c-4 10-6 21-6 33M173 211c4 10 6 21 6 33" class="mx-tee-line"/>
+      <use href="#mx-head"/>
+    </g>
+
+    <!-- ============ logo mark ============
+         Seven orange arms: the eighth (lower-right) is detached and
+         carried by the violet capsule sitting just off the centre. -->
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+</svg>
+
+<div id="app">
+
+  <!-- ============ SCREEN 1: BRAIN DUMP ============ -->
+  <section class="screen" id="screen-dump">
+    <header class="brand">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="wordmark">my<span class="accent">.adhd</span></span>
+    </header>
+
+    <div class="dump-wrap">
+
+      <figure class="art art--dump" aria-hidden="true">
+        <svg viewBox="0 0 240 262" xmlns="http://www.w3.org/2000/svg">
+          <path class="mx-blob" filter="url(#mx-rough)"
+                d="M62 18C104 10 150 8 190 20c14 5 16 22 17 42 3 44 4 118-2 160-2 16-10 26-26 28-44 6-98 6-142-1-14-2-22-12-23-28-4-42-3-114 0-158 1-22 5-40 18-45z"/>
+          <g class="mx-marks">
+            <path d="M46 62l3.6 8 8 3.6-8 3.6-3.6 8-3.6-8-8-3.6 8-3.6z"/>
+            <path d="M206 96l2.8 6.2 6.2 2.8-6.2 2.8-2.8 6.2-2.8-6.2-6.2-2.8 6.2-2.8z"/>
+            <circle cx="212" cy="52" r="4.5"/>
+            <circle cx="34" cy="128" r="3.5"/>
+          </g>
+          <use href="#mx-bust"/>
+        </svg>
+      </figure>
+
+      <h1 class="headline">What's in<br/>your head?</h1>
+      <textarea
+        id="dump-input"
+        class="dump-input"
+        rows="4"
+        spellcheck="false"
+        placeholder="just tell me, i&#39;ll sort it out."></textarea>
+
+      <button class="btn-primary" id="btn-triage">
+        <span class="btn-text">Clear my head</span>
+        <kbd class="kbd">⌘ ⏎</kbd>
+      </button>
+      <p class="hint" id="dump-hint">You'll get back <strong>one</strong> thing to do. The rest gets parked.</p>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 2: THINKING ============ -->
+  <section class="screen is-hidden" id="screen-loading">
+    <div class="loading">
+      <figure class="art art--think" aria-hidden="true">
+        <svg viewBox="6 4 228 186" xmlns="http://www.w3.org/2000/svg">
+          <g class="orbit"><ellipse cx="120" cy="102" rx="106" ry="46" transform="rotate(-24 120 102)" class="s-soft"/></g>
+          <g class="orbit orbit--rev"><ellipse cx="120" cy="102" rx="106" ry="46" transform="rotate(34 120 102)" class="s-soft"/></g>
+          <use href="#mx-head"/>
+        </svg>
+      </figure>
+      <div class="pulse"><span></span><span></span><span></span></div>
+      <p class="loading-text" id="loading-text">Untangling that…</p>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 3: THE NOW SCREEN ============ -->
+  <section class="screen is-hidden" id="screen-now">
+    <header class="brand brand--sm">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="wordmark">my<span class="accent">.adhd</span></span>
+      <button class="ghost-btn" id="btn-new-dump">New dump</button>
+    </header>
+
+    <div class="now-wrap">
+      <p class="eyebrow" id="eyebrow">Do this now. Nothing else.</p>
+
+      <article class="now-card" id="now-card">
+        <figure class="now-art" aria-hidden="true">
+          <svg viewBox="46 8 148 148" xmlns="http://www.w3.org/2000/svg">
+            <use href="#mx-head"/>
+          </svg>
+        </figure>
+
+        <div class="now-meta">
+          <span class="chip chip--time" id="now-time">15 min</span>
+          <span class="chip" id="now-energy">low energy</span>
+          <span class="chip chip--why" id="now-reason">picked for you</span>
+        </div>
+
+        <h2 class="now-title" id="now-title">—</h2>
+
+        <div class="first-step">
+          <span class="first-step-label">Start here — 2 minutes</span>
+          <p class="first-step-text" id="now-first-step">—</p>
+        </div>
+
+        <div class="steps-block is-hidden" id="steps-block">
+          <span class="first-step-label">Broken down</span>
+          <ol class="steps" id="steps-list"></ol>
+        </div>
+
+        <div class="now-actions">
+          <button class="btn-done" id="btn-done">
+            <span>Done</span>
+            <span class="btn-arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l5 5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+          <button class="btn-soft" id="btn-breakdown">Too big — break it down</button>
+          <button class="btn-soft" id="btn-skip">Not this one</button>
+        </div>
+      </article>
+
+      <div class="parked" id="parked-block">
+        <button class="parked-toggle" id="parked-toggle" aria-expanded="false">
+          <span id="parked-count">0 parked</span>
+          <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </button>
+        <ul class="parked-list is-hidden" id="parked-list"></ul>
+      </div>
+
+      <p class="cleared-note is-hidden" id="cleared-note">
+        <strong>Head's clear.</strong> Nothing left in the queue.
+        <button class="link-btn" id="btn-dump-again">Dump again</button>
+      </p>
+
+    </div>
+  </section>
+
+</div>
+
+<div class="toast is-hidden" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

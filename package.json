@@ -1,0 +1,10 @@
+{
+  "name": "my-adhd",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "my.adhd — brain dump in, one task out.",
+  "dependencies": {
+    "@anthropic-ai/sdk": "latest"
+  }
+}
