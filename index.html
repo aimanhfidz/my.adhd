@@ -7,6 +7,14 @@
 <meta name="description" content="A brain dump that answers back. Empty your head into one box and get it back as real tasks, grouped into lists, with honest times and a first step for each." />
 <meta name="theme-color" content="#101018" />
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="icon" href="icons/favicon-16.png" sizes="16x16" type="image/png" />
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+<link rel="manifest" href="site.webmanifest" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="my.adhd" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <link rel="preload" href="fonts/Baloo2-Variable.ttf" as="font" type="font/ttf" crossorigin />
 <link rel="stylesheet" href="theme.css" />
 <link rel="stylesheet" href="landing.css" />
@@ -26,7 +34,7 @@
       <path d="M64.5 64.5l7 7" stroke="#7B3FE4" stroke-width="7" stroke-linecap="round" fill="none"/>
     </svg>
     <span class="wordmark">my<span class="accent">.adhd</span></span>
-    <a class="nav-link" href="app.html">Open the app</a>
+    <a class="nav-link" href="install.html" data-app-link>Open the app</a>
   </nav>
 
   <div class="hero-body">
@@ -41,7 +49,7 @@
         it back as real tasks — grouped, timed, and each with a first step
         small enough to actually start.
       </p>
-      <a class="cta" href="app.html">Clear my head</a>
+      <a class="cta" href="install.html" data-app-link>Clear my head</a>
       <p class="hero-note">No account. Works offline. About ten seconds.</p>
     </div>
   </div>
@@ -51,6 +59,31 @@
     Everything you type stays in your browser.
   </p>
 </header>
+
+<script>
+/* The install guide is a one-time stop. Anyone already running from the
+   home screen — or who has been shown it once — goes straight to the app. */
+(function(){
+  var done = false;
+  try{
+    done = window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true
+        || localStorage.getItem('myadhd.installSeen') === '1';
+  }catch(e){}
+  if (!done) return;
+  document.querySelectorAll('[data-app-link]').forEach(function(a){ a.href = 'app.html'; });
+})();
+</script>
+
+<script>
+/* Registered so the home-screen copy opens without a connection — and so
+   Chrome will offer a real install rather than a bare shortcut. */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+</script>
 
 </body>
 </html>

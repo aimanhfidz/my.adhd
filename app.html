@@ -7,6 +7,14 @@
 <meta name="description" content="Dump everything on your mind. Get back one thing to do." />
 <meta name="theme-color" content="#FFFFFF" />
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="icon" href="icons/favicon-16.png" sizes="16x16" type="image/png" />
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+<link rel="manifest" href="site.webmanifest" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="my.adhd" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <link rel="preload" href="fonts/Baloo2-Variable.ttf" as="font" type="font/ttf" crossorigin />
 <link rel="stylesheet" href="theme.css" />
 <script>
@@ -235,5 +243,15 @@ try{
 <div class="toast is-hidden" id="toast"></div>
 
 <script src="app.js"></script>
+<script>
+/* Registered so the home-screen copy opens without a connection — and so
+   Chrome will offer a real install rather than a bare shortcut. */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+</script>
+
 </body>
 </html>

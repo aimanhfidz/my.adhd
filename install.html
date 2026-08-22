@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Keep my.adhd on your home screen</title>
+<meta name="description" content="Save my.adhd to your home screen and it opens like a normal app — full screen, one tap, no browser bars, works offline." />
+<meta name="theme-color" content="#101018" />
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="icon" href="icons/favicon-16.png" sizes="16x16" type="image/png" />
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+<link rel="manifest" href="site.webmanifest" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="my.adhd" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+<script>
+/* Already pinned? Then this page has nothing to teach — go straight in,
+   before first paint, so the app never flashes the guide at itself. */
+try{
+  if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+    location.replace('app.html');
+  }
+}catch(e){}
+</script>
+
+<link rel="preload" href="fonts/Baloo2-Variable.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="stylesheet" href="theme.css" />
+<link rel="stylesheet" href="landing.css" />
+<link rel="stylesheet" href="install.css" />
+</head>
+<body>
+
+<main class="page">
+
+  <nav class="nav wrap">
+    <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="#F75C03">
+          <rect x="46.5" y="18" width="7" height="64"/>
+          <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+          <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+          <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+        </g>
+        <path d="M64.5 64.5l7 7" stroke="#7B3FE4" stroke-width="7" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span class="wordmark">my<span class="accent">.adhd</span></span>
+    </a>
+    <a class="back" href="app.html" id="skip-top">Skip &amp; open</a>
+  </nav>
+
+  <div class="main wrap">
+    <p class="eyebrow">One-time setup · 20 seconds</p>
+    <h1 class="title">Put it on your home screen first.</h1>
+    <p class="lede">
+      my.adhd lives in the browser, but it&rsquo;s meant to be reached the way you
+      reach any app: one tap, no address bar, no tab to lose. Save it now and
+      it behaves like one.
+    </p>
+
+    <ul class="perks">
+      <li>Opens full screen</li>
+      <li>One tap, no tab hunting</li>
+      <li>Works offline</li>
+      <li>Your own icon</li>
+    </ul>
+
+    <div class="tabs" role="tablist" aria-label="Choose your device">
+      <button class="tab" role="tab" id="tab-ios"     aria-controls="how-ios"     aria-selected="false" type="button">iPhone &amp; iPad</button>
+      <button class="tab" role="tab" id="tab-android" aria-controls="how-android" aria-selected="false" type="button">Android</button>
+      <button class="tab" role="tab" id="tab-desktop" aria-controls="how-desktop" aria-selected="false" type="button">Desktop</button>
+    </div>
+
+    <ol class="steps" id="how-ios" role="tabpanel" aria-labelledby="tab-ios" hidden>
+      <li><span>Open this page in <b>Safari</b> (Chrome on iPhone can&rsquo;t do it).</span></li>
+      <li><span>Tap the <b>Share</b> button
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l3.5 3.5-1.4 1.4L13 6.8V15h-2V6.8L9.9 7.9 8.5 6.5 12 3zm-7 8h4v2H7v7h10v-7h-2v-2h4v11H5V11z"/></svg>
+        at the bottom of the screen.</span></li>
+      <li><span>Scroll down and tap <b>Add to Home Screen</b>.</span></li>
+      <li><span>Tap <b>Add</b>. The my.adhd icon is now on your home screen.</span></li>
+    </ol>
+
+    <ol class="steps" id="how-android" role="tabpanel" aria-labelledby="tab-android" hidden>
+      <li><span>Tap the <b>⋮</b> menu at the top right of Chrome.</span></li>
+      <li><span>Choose <b>Add to Home screen</b> (some phones call it <b>Install app</b>).</span></li>
+      <li><span>Confirm with <b>Install</b> or <b>Add</b>.</span></li>
+      <li><span>Find the my.adhd icon with the rest of your apps.</span></li>
+    </ol>
+
+    <ol class="steps" id="how-desktop" role="tabpanel" aria-labelledby="tab-desktop" hidden>
+      <li><span>In <b>Chrome</b> or <b>Edge</b>, look for the <b>install</b> icon at the right end of the address bar.</span></li>
+      <li><span>Click it, then <b>Install</b>. In Safari, use <b>File &rarr; Add to Dock</b>.</span></li>
+      <li><span>my.adhd opens in its own window, no tabs around it.</span></li>
+    </ol>
+
+    <button class="cta install-now" id="install-now" type="button">Install my.adhd</button>
+  </div>
+
+  <div class="foot wrap">
+    <a class="cta" href="app.html" id="go-app">Done &mdash; open my.adhd</a>
+    <p class="fineprint">
+      Nothing is installed from a store and nothing is uploaded &mdash; the
+      home-screen icon is a shortcut to this page, and everything you type
+      stays in your browser.
+    </p>
+  </div>
+
+</main>
+
+<script>
+(function(){
+  /* ---- platform tabs ------------------------------------------------ */
+  var ua = navigator.userAgent;
+  var isAndroid = /Android/.test(ua);
+  /* iPadOS reports itself as a Mac, so a touch-capable "MacIntel" is an
+     iPad — but only after Android has had its say, or an emulated
+     Android tablet lands on the wrong tab. */
+  var isIOS = !isAndroid && (/iPad|iPhone|iPod/.test(ua) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+  var which = isIOS ? 'ios' : isAndroid ? 'android' : 'desktop';
+
+  var tabs = [].slice.call(document.querySelectorAll('.tab'));
+  function select(name){
+    tabs.forEach(function(t){
+      var on = t.id === 'tab-' + name;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){ select(t.id.slice(4)); });
+  });
+  select(which);
+
+  /* ---- Chrome/Edge can install for real, so offer the one-tap path --- */
+  var deferred = null;
+  var btn = document.getElementById('install-now');
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferred = e;
+    btn.classList.add('is-live');
+  });
+  btn.addEventListener('click', function(){
+    if (!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.then(function(){ deferred = null; btn.classList.remove('is-live'); });
+  });
+  window.addEventListener('appinstalled', function(){ btn.classList.remove('is-live'); });
+
+  /* ---- seen once is enough: the landing CTA skips this page after ---- */
+  function remember(){ try{ localStorage.setItem('myadhd.installSeen','1'); }catch(e){} }
+  document.getElementById('go-app').addEventListener('click', remember);
+  document.getElementById('skip-top').addEventListener('click', remember);
+})();
+</script>
+
+<script>
+/* Registered so the home-screen copy opens without a connection — and so
+   Chrome will offer a real install rather than a bare shortcut. */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+</script>
+
+</body>
+</html>
