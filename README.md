@@ -65,6 +65,28 @@ For the real thing you need the serverless function, which needs Vercel:
 npx vercel dev
 ```
 
+### Requirements
+
+**To run or deploy the app: nothing beyond Node and Vercel.** `npm install`
+pulls the one dependency (`@anthropic-ai/sdk`), and every generated asset is
+committed, so a fresh clone runs as-is.
+
+**To regenerate the logo animation** you also need Python 3.9+ and:
+
+| | for | without it |
+|---|---|---|
+| **Pillow** | rasterising frames, writing the gif | `render.py` won't run |
+| **ffmpeg** | encoding the mp4s | gif still written, mp4 skipped with a notice |
+
+```bash
+python3 -m pip install --user Pillow imageio-ffmpeg
+```
+
+`imageio-ffmpeg` ships a self-contained ffmpeg binary and needs no Homebrew or
+`sudo`; `render.py` prefers an ffmpeg already on `PATH` and falls back to it.
+Neither is in `package.json` — they are build tooling for `animation/source/`,
+not runtime dependencies, and nothing in the deployed app touches them.
+
 ## Deploying
 
 **One Vercel project — `myadhd`, serving <https://myadhd.vercel.app>** — linked
@@ -211,9 +233,7 @@ the loop, which is what the video files used to be — that capture step is why
 they drifted out of step with the vector every time the timing changed. It is
 not a general SVG renderer; it understands exactly the shapes `gen.py` emits.
 
-It needs Pillow, and ffmpeg for the mp4 — either on `PATH` or the bundled
-binary from `pip install --user imageio-ffmpeg`. With neither, the gif is
-still written and the mp4 is skipped with a notice.
+It needs Pillow, and ffmpeg for the mp4 — see [Requirements](#requirements).
 
 Note it emits the original hexes, because its job is the standalone exports.
 The app's copy is the inline SMIL in `app.html`, tokenised separately —
