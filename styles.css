@@ -77,13 +77,13 @@ body{
 /* ---------- brand ---------- */
 .brand{display:flex; align-items:center; gap:9px}
 .brand--sm{margin-bottom:22px}
-/* The mark doubles as the way home from the lists. It is a button, not a
-   link — home is a screen swap, not a navigation. On the dump screen the
-   logo stays inert, because that screen already is home. */
+/* The mark links out to the landing page, on both screens. A real <a>, not a
+   button: this leaves the app, so it should open in a new tab on middle-click
+   and offer a URL on hover like any other link. Relative, so it also works
+   when index.html is opened straight off disk. */
 .brand-home{
   display:flex; align-items:center; gap:9px;
-  background:none; border:0; padding:0; margin:0;
-  font:inherit; color:inherit; cursor:pointer;
+  text-decoration:none; color:inherit;
   border-radius:8px;
 }
 .brand-home:focus-visible{outline:2px solid var(--accent); outline-offset:4px}
