@@ -157,10 +157,6 @@ export default async function handler(req, res) {
     return res.status(200).json(out);
   } catch (err) {
     console.error('[triage]', err);
-    return res.status(502).json({
-      error: 'triage failed',
-      detail: err?.message ?? String(err),
-      status: err?.status ?? null,
-    });
+    return res.status(502).json({ error: 'triage failed' });
   }
 }
