@@ -58,9 +58,12 @@ reserved for *act now* — one thing at a time, or it stops meaning anything.
 
 ## Running it
 
-**No build step.** Open `index.html` in a browser and it works — offline, using
-the local heuristic parser (`parseLocally`). You lose AI-quality triage and the
-"break it down" button, and nothing else.
+**No build step**, but the pages link to `/app` and `/install` rather than the
+`.html` behind them, so `file://` no longer resolves. `npm run dev` (or
+`python3 serve.py`) applies the same cleanUrls rule Vercel does. Without the
+serverless function it still works — sorting falls to the local heuristic
+parser (`parseLocally`). You lose AI-quality triage and the "break it down"
+button, and nothing else.
 
 For the real thing you need the serverless function, which needs Vercel:
 
