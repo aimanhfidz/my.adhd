@@ -257,6 +257,19 @@ body::after{width:32rem; height:32rem; bottom:-16rem; right:-12rem}
 
 .lists{display:flex; flex-direction:column; gap:26px}
 
+/* offline notice — the fallback should never be able to masquerade
+   as the real analysis */
+.offline-note{
+  background:var(--wash);
+  border:1.5px solid var(--line-strong);
+  border-left:3px solid var(--orange);
+  border-radius:14px;
+  padding:14px 16px; margin-bottom:22px;
+}
+.offline-note p{font-size:13.5px; color:var(--ink-soft); line-height:1.55; margin-bottom:11px}
+.offline-note strong{color:var(--orange); font-weight:700}
+.offline-note .btn-soft{width:100%; min-width:0}
+
 .list-group{animation:rise .34s var(--ease) both}
 @keyframes rise{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
 

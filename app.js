@@ -23,6 +23,10 @@ const el = {
   btnNewDump:   $('btn-new-dump'),
   btnViewLists: $('btn-view-lists'),
   listsBadge:   $('lists-badge'),
+  offlineNote:  $('offline-note'),
+  offlineCount: $('offline-count'),
+  offlineWord:  $('offline-word'),
+  btnResort:    $('btn-resort'),
   btnDumpAgain: $('btn-dump-again'),
   clearedNote:  $('cleared-note'),
   toast:        $('toast'),
@@ -140,24 +144,100 @@ async function parseWithAI(text, energy) {
 }
 
 /** No-backend fallback: split by line, guess size and urgency from wording. */
+/* The offline parser. It runs only when the AI backend is unreachable, and it
+   is a guess — but a guess that reads the words in front of it rather than
+   defaulting everything to 20 minutes and one bucket. Tasks it produces are
+   tagged `local` so the UI can say so and offer to re-sort. */
+
+const WORD_NUM = {
+  a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6,
+  half: 0.5, couple: 2, few: 3,
+};
+
+/** Pull a real duration out of the line when the user wrote one. */
+function parseMinutes(line) {
+  const t = line.toLowerCase();
+
+  if (/\bhalf an hour\b|\bhalf hour\b/.test(t)) return 30;
+  if (/\ball day\b/.test(t)) return 240;
+  if (/\ball morning\b|\ball afternoon\b/.test(t)) return 180;
+
+  // "90 min", "45 minutes", "20m"
+  let m = t.match(/(\d+)\s*(?:min(?:ute)?s?|m)\b/);
+  if (m) return Number(m[1]);
+
+  // "2 hours", "1.5 hr", "an hour", "a couple of hours"
+  m = t.match(/(\d+(?:\.\d+)?|a|an|one|two|three|four|five|six|couple|few|half)\s*(?:of\s+)?(?:hour|hr)s?\b/);
+  if (m) {
+    const n = Number.isNaN(Number(m[1])) ? WORD_NUM[m[1]] : Number(m[1]);
+    if (n) return Math.round(n * 60);
+  }
+
+  // "2h30", "1h"
+  m = t.match(/(\d+)\s*h(?:\s*(\d+))?\b/);
+  if (m) return Number(m[1]) * 60 + Number(m[2] || 0);
+
+  return null;
+}
+
+const CATEGORY_HINTS = [
+  ['money',  /\b(bill|pay|paid|invoice|tax|insurance|bank|rent|mortgage|budget|refund|subscription|salary)\b/i],
+  ['health', /\b(dentist|doctor|gp|gym|workout|exercise|run|physio|therapy|prescription|medicine|appointment)\b/i],
+  ['home',   /\b(laundry|washing|dishes|clean|tidy|bin|hoover|vacuum|kitchen|bathroom|garden|fix|repair|bed)\b/i],
+  ['social', /\b(mum|mom|mother|dad|father|friend|birthday|party|dinner|lunch|visit|text back|catch up|wedding)\b/i],
+  ['errand', /\b(pick up|collect|parcel|post office|posting|shop|groceries|drop off|return|delivery|petrol|fuel)\b/i],
+  ['work',   /\b(client|report|meeting|deck|slide|presentation|standup|deploy|ticket|pr\b|code|email|boss|contract)\b/i],
+  ['admin',  /\b(renew|form|passport|licence|license|register|cancel|book|schedule|paperwork|apply|sign up)\b/i],
+];
+
+function guessCategory(line) {
+  for (const [name, re] of CATEGORY_HINTS) if (re.test(line)) return name;
+  return 'general';
+}
+
+/* Fragments that are qualifiers, not new tasks. A comma-split dump like
+   "file the tax return, deadline is tomorrow" must stay one task, or the
+   urgency ends up attached to a fragment with no action in it. */
+const QUALIFIER = /^(?:deadline|due|by\b|before|after|takes|taking|about|approx|around|roughly|asap|today|tonight|tomorrow|this\s|next\s|maybe|probably|ideally|urgent|i think|apparently|\d)/i;
+
+/** Strip a trailing duration clause once it has been read into `minutes`. */
+function tidyTitle(line) {
+  return line
+    .replace(/[,\s—-]*\b(?:takes?|taking)?\s*(?:about|approx(?:imately)?|around|roughly)?\s*(?:\d+(?:\.\d+)?|a|an|one|two|three|four|five|six|couple|few|half)\s*(?:of\s+)?(?:hours?|hrs?|min(?:ute)?s?|m|h)\b\.?$/i, '')
+    .replace(/[,;\s]+$/, '')
+    .trim();
+}
+
 function parseLocally(text) {
-  const URGENT = /\b(today|tonight|asap|urgent|overdue|deadline|due|tomorrow|friday|monday|late|now)\b/i;
+  const URGENT_HIGH = /\b(today|tonight|asap|urgent|overdue|deadline|due|now|immediately|last chance|expires?)\b/i;
+  const URGENT_SOON = /\b(tomorrow|this week|monday|tuesday|wednesday|thursday|friday|saturday|sunday|weekend|soon)\b/i;
   const QUICK  = /\b(email|reply|text|call|book|order|pay|send|renew|confirm|cancel|rsvp)\b/i;
-  const BIG    = /\b(write|build|plan|report|design|research|clean|organi[sz]e|prepare|refactor|draft)\b/i;
+  const BIG    = /\b(write|build|plan|report|design|research|clean|organi[sz]e|prepare|refactor|draft|deep)\b/i;
 
   return text
     .split(/\n|(?:,\s(?=\w{4,}))|(?:\s+•\s+)|(?:;\s*)/)
     .map(s => s.replace(/^[\s\-–—*•\d.)]+/, '').trim())
     .filter(s => s.length > 2)
+    // fold qualifier fragments back into the task they describe
+    .reduce((acc, frag) => {
+      if (acc.length && QUALIFIER.test(frag)) acc[acc.length - 1] += ', ' + frag;
+      else acc.push(frag);
+      return acc;
+    }, [])
     .slice(0, 25)
-    .map(line => normalizeTask({
-      title: line.charAt(0).toUpperCase() + line.slice(1),
-      minutes: QUICK.test(line) ? 10 : BIG.test(line) ? 45 : 20,
-      energy:  QUICK.test(line) ? 'low' : BIG.test(line) ? 'high' : 'medium',
-      urgency: URGENT.test(line) ? 5 : 3,
-      firstStep: 'Open whatever you need for this and look at it for 2 minutes. Nothing more.',
-      category: 'general',
-    }));
+    .map(line => {
+      const stated = parseMinutes(line);
+      const clean = (stated !== null ? tidyTitle(line) : line) || line;
+      return normalizeTask({
+        title: clean.charAt(0).toUpperCase() + clean.slice(1),
+        minutes: stated !== null ? stated : (QUICK.test(line) ? 10 : BIG.test(line) ? 45 : 20),
+        energy:  BIG.test(line) ? 'high' : QUICK.test(line) ? 'low' : 'medium',
+        urgency: URGENT_HIGH.test(line) ? 5 : URGENT_SOON.test(line) ? 4 : 3,
+        firstStep: 'Open whatever you need for this and look at it for 2 minutes. Nothing more.',
+        category: guessCategory(line),
+        local: true,
+      });
+    });
 }
 
 function normalizeTask(t) {
@@ -174,6 +254,7 @@ function normalizeTask(t) {
     firstStep: String(t.firstStep || t.first_step || 'Open it and look at it for 2 minutes.').slice(0, 240),
     category: String(t.category || 'general').slice(0, 40),
     steps: Array.isArray(t.steps) ? t.steps.slice(0, 7).map(String) : null,
+    local: t.local === true,   // sorted by the offline parser, not the model
     done: false,
     skipped: false,
   };
@@ -248,6 +329,13 @@ function goToNext() {
   el.eyebrow.classList.remove('is-hidden');
   el.summary.classList.remove('is-hidden');
   el.clearedNote.classList.add('is-hidden');
+
+  const localOnes = open.filter(t => t.local);
+  el.offlineNote.classList.toggle('is-hidden', localOnes.length === 0);
+  if (localOnes.length) {
+    el.offlineCount.textContent = localOnes.length;
+    el.offlineWord.textContent = localOnes.length === 1 ? 'was' : 'were';
+  }
 
   const groups = groupByCategory(open);
   const totalMin = open.reduce((n, t) => n + t.minutes, 0);
@@ -414,6 +502,31 @@ function renderDone(done) {
 
 /* ---------------- actions ---------------- */
 
+/** Re-run the AI over the tasks the offline parser guessed at. */
+async function resortLocal() {
+  const stale = state.tasks.filter(t => !t.done && t.local);
+  if (!stale.length) return;
+
+  el.btnResort.disabled = true;
+  el.btnResort.textContent = 'Sorting…';
+
+  try {
+    const fresh = await parseWithAI(stale.map(t => t.title).join('\n'), state.energy);
+    if (!fresh.length) throw new Error('nothing came back');
+
+    const staleIds = new Set(stale.map(t => t.id));
+    state.tasks = state.tasks.filter(t => !staleIds.has(t.id)).concat(fresh);
+    save();
+    goToNext();
+    toast('Sorted properly.');
+  } catch (err) {
+    console.warn('re-sort failed:', err.message);
+    el.btnResort.disabled = false;
+    el.btnResort.textContent = 'Sort these properly';
+    toast('Still cannot reach the backend.');
+  }
+}
+
 function markDone(id) {
   const t = state.tasks.find(x => x.id === id);
   if (!t) return;
@@ -469,6 +582,7 @@ function refreshListsButton() {
 el.triage.addEventListener('click', triage);
 el.btnNewDump.addEventListener('click', newDump);
 el.btnViewLists.addEventListener('click', goToNext);
+el.btnResort.addEventListener('click', resortLocal);
 el.btnDumpAgain.addEventListener('click', newDump);
 
 el.input.addEventListener('keydown', (e) => {
