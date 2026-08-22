@@ -3,7 +3,8 @@
 
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-/* the rubber-band area on iOS falls through to <html> — keep it white */
+/* the rubber-band area on iOS falls through to <html>, so it carries the same
+   --surface as the body — otherwise it flashes the light ground in dark mode */
 html{background:var(--surface)}
 
 body{
@@ -22,9 +23,9 @@ body{
   min-height:100%;
 }
 
-/* the white device surface */
-/* One white page. Content is held to a readable measure and centred —
-   no card, no shadow, no tinted ground for it to float on. */
+/* One flat page in the current theme's --surface. Content is held to a
+   readable measure and centred — no card, no shadow, no tinted ground for
+   it to float on. */
 .screen{
   min-height:100vh; min-height:100dvh;
   display:flex; flex-direction:column; align-items:center;
