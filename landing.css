@@ -73,15 +73,8 @@ body{
   display:flex; align-items:center; gap:10px;
   width:100%; max-width:1080px; margin:0 auto; padding:0 clamp(20px,5vw,40px);
 }
-.nav-link{
-  margin-left:auto; color:var(--muted); text-decoration:none;
-  font-size:14px; font-weight:600;
-  padding:8px 16px; border:1.5px solid var(--line-strong); border-radius:999px;
-  transition:border-color .18s var(--ease), color .18s var(--ease);
-}
-.nav-link:hover{color:var(--ink); border-color:var(--accent)}
-/* the toggle sits between the link and the edge */
-.nav .theme-toggle{margin-left:10px}
+/* the mark on the left, the toggle on the right, nothing between */
+.nav .theme-toggle{margin-left:auto}
 
 .hero-body{
   min-height:0;
