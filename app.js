@@ -21,6 +21,8 @@ const el = {
   doneCount:    $('done-count'),
   doneList:     $('done-list'),
   btnNewDump:   $('btn-new-dump'),
+  btnViewLists: $('btn-view-lists'),
+  listsBadge:   $('lists-badge'),
   btnDumpAgain: $('btn-dump-again'),
   clearedNote:  $('cleared-note'),
   toast:        $('toast'),
@@ -31,8 +33,6 @@ const el = {
 let state = {
   tasks: [],          // {id,title,minutes,energy,urgency,firstStep,category,steps,done,skipped}
   energy: 'medium',   // how the user feels right now
-  currentId: null,
-  pinnedId: null,     // set when the user picks a task by hand; outranks scoring
 };
 
 function load() {
@@ -104,13 +104,26 @@ async function triage() {
     return;
   }
 
-  // A fresh dump replaces the queue — carrying old noise forward defeats the point.
-  state.tasks = tasks;
-  state.currentId = null;
-  state.pinnedId = null;
+  // A dump adds to the lists. Nothing you already captured gets thrown away
+  // just because you thought of something else.
+  const seen = new Set(
+    state.tasks.filter(t => !t.done).map(t => t.title.trim().toLowerCase())
+  );
+  const fresh = tasks.filter(t => !seen.has(t.title.trim().toLowerCase()));
+  const dupes = tasks.length - fresh.length;
+
+  state.tasks = state.tasks.concat(fresh);
   save();
   el.input.value = '';
   goToNext();
+
+  if (dupes) {
+    toast(dupes === 1
+      ? 'Added — one was already on a list.'
+      : `Added — ${dupes} were already on a list.`);
+  } else if (fresh.length) {
+    toast(`Added ${fresh.length} to your lists.`);
+  }
 }
 
 /** Ask Claude (via the serverless function) to turn a raw dump into structured tasks. */
@@ -217,7 +230,6 @@ function groupByCategory(tasks) {
 
 function goToNext() {
   show(el.screenNow);
-  state.currentId = null;
   save();
 
   const open = state.tasks.filter(t => !t.done);
@@ -440,14 +452,23 @@ async function breakDown(task, ui) {
 }
 
 function newDump() {
+  refreshListsButton();
   show(el.screenDump);
   el.input.focus();
+}
+
+/** The shortcut back into the lists — only worth showing when there are some. */
+function refreshListsButton() {
+  const open = state.tasks.filter(t => !t.done).length;
+  el.btnViewLists.classList.toggle('is-hidden', open === 0);
+  el.listsBadge.textContent = open;
 }
 
 /* ---------------- wiring ---------------- */
 
 el.triage.addEventListener('click', triage);
 el.btnNewDump.addEventListener('click', newDump);
+el.btnViewLists.addEventListener('click', goToNext);
 el.btnDumpAgain.addEventListener('click', newDump);
 
 el.input.addEventListener('keydown', (e) => {
@@ -483,9 +504,8 @@ document.querySelectorAll('.energy-opt').forEach(b => {
   b.setAttribute('aria-checked', String(on));
 });
 
-if (state.tasks.some(t => !t.done)) {
-  goToNext();          // pick up exactly where they left off
-} else {
-  show(el.screenDump);
-  el.input.focus();
-}
+// Opening the app always lands on the dump box — that is the thing you came
+// to do. The lists are one tap away when you want them.
+refreshListsButton();
+show(el.screenDump);
+el.input.focus();

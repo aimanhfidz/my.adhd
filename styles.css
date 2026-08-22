@@ -153,6 +153,24 @@ body::after{width:32rem; height:32rem; bottom:-16rem; right:-12rem}
 .hint{margin-top:14px; font-size:13px; color:var(--faint); text-align:center}
 .hint strong{color:var(--ink); font-weight:600}
 
+/* shortcut from the dump box back into the lists */
+.btn-lists{
+  display:flex; align-items:center; justify-content:center; gap:9px;
+  width:100%; margin-top:14px;
+  background:var(--surface); border:1.5px solid var(--line-strong);
+  color:var(--muted); font:inherit; font-family:var(--display);
+  font-size:14.5px; font-weight:600;
+  padding:12px; border-radius:999px; cursor:pointer;
+  transition:all .18s var(--ease);
+}
+.btn-lists:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
+.btn-lists-count{
+  min-width:21px; height:21px; padding:0 7px; border-radius:999px;
+  background:var(--accent); color:#fff;
+  font-size:12px; font-weight:700;
+  display:grid; place-items:center;
+}
+
 /* ---------- screen 2: loading ---------- */
 .loading{margin:auto; text-align:center}
 .pulse{display:flex; gap:8px; justify-content:center; margin-bottom:16px}
@@ -360,14 +378,13 @@ body::after{width:32rem; height:32rem; bottom:-16rem; right:-12rem}
 
 /* ---------- night: the same monochrome, inverted ---------- */
 @media (prefers-color-scheme:dark){
-  
   body{color:var(--ink)}
   .screen{box-shadow:none}
-  .btn-primary,  .btn-primary .btn-arrow{background:#fff; color:var(--blue-deep)}
+  .btn-primary{box-shadow:none}
   .kbd{background:rgba(0,0,0,.28)}
   .toast{background:var(--wash-2)}
   .chip--time{background:var(--accent); border-color:var(--accent)}
-  }
+}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important}

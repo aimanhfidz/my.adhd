@@ -12,10 +12,20 @@ a single task with a 2-minute first step. Everything else is parked out of sight
 2. **Triage** — Claude turns the mess into structured tasks: rewritten title,
    realistic minutes, energy cost, urgency, and a first step small enough that
    refusing feels stupid.
-3. **The Now Screen** — exactly one task on screen. Done / Not this one /
-   Too big — break it down. The rest sit behind a collapsed "N parked" row.
+3. **The lists** — everything comes back grouped by category (work, admin,
+   money, health, home, social, errand). Within a list: most urgent first,
+   then shortest. Between lists: whichever holds the most urgent item leads.
+   Tap a task for its first step and "break it down". Completed items collect
+   in a "N done" row with undo.
 
-### Why it picks what it picks
+### Dumps accumulate
+
+A dump **adds** to the lists — it never replaces them. Identical open titles
+are skipped so repeating yourself doesn't create duplicates. Opening the app
+always lands on the dump box; the lists are one tap away via **View my lists**,
+which shows the open count.
+
+### Why it orders what it orders
 
 `score()` in `app.js` weighs urgency, then **penalizes tasks that need more
 fuel than the user currently has**. A task you have no energy for is worse than
