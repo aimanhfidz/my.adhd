@@ -208,6 +208,18 @@ try{
         <ul class="done-list is-hidden" id="done-list"></ul>
       </div>
 
+      <div class="danger-zone is-hidden" id="danger-zone">
+        <button class="btn-danger-quiet" id="btn-clear-all">Clear everything</button>
+
+        <div class="clear-confirm is-hidden" id="clear-confirm">
+          <p class="clear-confirm-text" id="clear-confirm-text"></p>
+          <div class="clear-confirm-actions">
+            <button class="btn-soft" id="btn-clear-cancel">Cancel</button>
+            <button class="btn-danger" id="btn-clear-go"></button>
+          </div>
+        </div>
+      </div>
+
       <p class="cleared-note is-hidden" id="cleared-note">
         <strong>Head's clear.</strong> Nothing left in the queue.
         <button class="link-btn" id="btn-dump-again">Dump again</button>

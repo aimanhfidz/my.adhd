@@ -27,6 +27,12 @@ const el = {
   offlineCount: $('offline-count'),
   offlineWord:  $('offline-word'),
   btnResort:    $('btn-resort'),
+  dangerZone:   $('danger-zone'),
+  btnClearAll:  $('btn-clear-all'),
+  clearConfirm: $('clear-confirm'),
+  clearText:    $('clear-confirm-text'),
+  btnClearGo:   $('btn-clear-go'),
+  btnClearNo:   $('btn-clear-cancel'),
   btnDumpAgain: $('btn-dump-again'),
   clearedNote:  $('cleared-note'),
   toast:        $('toast'),
@@ -321,6 +327,8 @@ function goToNext() {
     el.eyebrow.classList.add('is-hidden');
     el.summary.classList.add('is-hidden');
     el.doneBlock.classList.add('is-hidden');
+    el.dangerZone.classList.toggle('is-hidden', state.tasks.length === 0);
+    resetClear();
     el.clearedNote.classList.remove('is-hidden');
     return;
   }
@@ -348,6 +356,8 @@ function goToNext() {
   groups.forEach(([cat, items]) => el.lists.appendChild(renderGroup(cat, items)));
 
   renderDone(done);
+  el.dangerZone.classList.toggle('is-hidden', state.tasks.length === 0);
+  resetClear();
 }
 
 function renderGroup(cat, items) {
@@ -500,6 +510,52 @@ function renderDone(done) {
   });
 }
 
+/* ---------------- clear everything ----------------
+   Two confirmations, because there is no undo and no backup: the tasks
+   live only in this browser's localStorage. The armed state also times
+   out, so a half-pressed confirm can't sit waiting for a stray tap. */
+
+let clearStage = 0;
+let clearTimer;
+
+function resetClear() {
+  clearStage = 0;
+  clearTimeout(clearTimer);
+  el.clearConfirm.classList.add('is-hidden');
+  el.btnClearAll.classList.remove('is-hidden');
+}
+
+function stepClear() {
+  const n = state.tasks.length;
+  clearStage += 1;
+
+  if (clearStage === 1) {
+    el.btnClearAll.classList.add('is-hidden');
+    el.clearConfirm.classList.remove('is-hidden');
+    el.clearText.textContent =
+      `Delete ${n === 1 ? 'the 1 task' : `all ${n} tasks`} on your lists? This cannot be undone.`;
+    el.btnClearGo.textContent = 'Yes, clear everything';
+    el.clearConfirm.classList.remove('is-final');
+  } else if (clearStage === 2) {
+    el.clearText.textContent =
+      `Last check — this permanently deletes ${n === 1 ? 'it' : 'all ' + n} and there is no backup.`;
+    el.btnClearGo.textContent = n === 1 ? 'Delete it' : `Delete all ${n}`;
+    el.clearConfirm.classList.add('is-final');
+  } else {
+    const gone = state.tasks.length;
+    state.tasks = [];
+    save();
+    resetClear();
+    goToNext();
+    toast(gone === 1 ? 'Cleared. 1 task gone.' : `Cleared. ${gone} tasks gone.`);
+    return;
+  }
+
+  // don't leave it armed
+  clearTimeout(clearTimer);
+  clearTimer = setTimeout(resetClear, 20000);
+}
+
 /* ---------------- actions ---------------- */
 
 /** Re-run the AI over the tasks the offline parser guessed at. */
@@ -583,6 +639,9 @@ el.triage.addEventListener('click', triage);
 el.btnNewDump.addEventListener('click', newDump);
 el.btnViewLists.addEventListener('click', goToNext);
 el.btnResort.addEventListener('click', resortLocal);
+el.btnClearAll.addEventListener('click', stepClear);
+el.btnClearGo.addEventListener('click', stepClear);
+el.btnClearNo.addEventListener('click', resetClear);
 el.btnDumpAgain.addEventListener('click', newDump);
 
 el.input.addEventListener('keydown', (e) => {

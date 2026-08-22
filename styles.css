@@ -354,6 +354,45 @@ body{
 }
 .done-item .p-title{flex:1; min-width:0; text-decoration:line-through}
 
+/* clear everything — deliberately quiet until armed, then loud */
+.danger-zone{margin-top:34px; padding-top:20px; border-top:1.5px solid var(--line)}
+
+.btn-danger-quiet{
+  background:none; border:none; cursor:pointer;
+  font:inherit; font-size:13.5px; font-weight:600;
+  color:var(--faint); padding:6px 0;
+  transition:color .18s var(--ease);
+}
+.btn-danger-quiet:hover{color:var(--danger-ink)}
+
+.clear-confirm{
+  background:var(--wash); border:1.5px solid var(--line-strong);
+  border-left:3px solid var(--danger-ink);
+  border-radius:14px; padding:15px 17px;
+  animation:rise .22s var(--ease) both;
+}
+.clear-confirm.is-final{
+  background:var(--danger-wash);
+  border-color:var(--danger-edge);
+}
+.clear-confirm-text{
+  font-size:14px; line-height:1.55; color:var(--ink);
+  margin-bottom:13px; font-weight:500;
+}
+.clear-confirm-actions{display:flex; gap:9px; flex-wrap:wrap}
+.clear-confirm-actions .btn-soft{flex:1 1 0; min-width:110px}
+
+.btn-danger{
+  flex:1 1 0; min-width:130px;
+  background:var(--danger); border:1.5px solid var(--danger);
+  color:#fff; font:inherit; font-family:var(--display);
+  font-size:14px; font-weight:700;
+  padding:12px; border-radius:999px; cursor:pointer;
+  transition:filter .18s var(--ease), transform .16s var(--ease);
+}
+.btn-danger:hover{filter:brightness(1.08); transform:translateY(-1px)}
+.btn-danger:active{transform:translateY(0)}
+
 /* leftover shared bits */
 .parked-toggle{
   display:flex; align-items:center; gap:7px;

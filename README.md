@@ -133,6 +133,14 @@ the violet capsule off the lower right. That gap is the mark — closing it
 into a plain eight-point star loses the whole idea. `favicon.svg` repeats
 the geometry standalone, so the two must be edited together.
 
+## Clearing
+
+**Clear everything** sits at the foot of the lists, quiet until armed. It
+takes two confirmations, and the armed state times out after 20s so a
+half-pressed confirm can't wait around for a stray tap. There is no undo and
+no backup — tasks live only in this browser's `localStorage`, and clearing is
+final. `--danger` is reserved for this; it is never decoration.
+
 ## Deliberately not in v1
 
 Timers, streaks, XP, calendars, notifications, sub-projects, tags, accounts.
