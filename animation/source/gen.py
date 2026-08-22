@@ -24,7 +24,7 @@ keyTimes=[0,0.0875,0.25,0.3375,0.5,0.5875,0.75,0.8375,1]
 SPL="0.65 0 0.35 1"
 splines=";".join([SPL]*8)
 kt=";".join(str(round(t,4)) for t in keyTimes)
-DUR="8s"
+DUR="4s"   # match the app's loading screen; the mp4/gif are still 8s captures
 
 def anim(attr, vals):
     v=";".join(str(x) for x in vals)

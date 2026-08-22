@@ -119,12 +119,17 @@ freezes the clock at beat 01, the full mark. The screen loses the motion, not
 the logo.
 
 **`animation/` holds the standalone exports, and they will drift.** All three
-are the original 8s loop with the dark `#21262A` ground and the pre-token brand
-hexes baked in — deliberately, because Threads and Reels need an opaque frame,
-not a themed one, and `my-adhd-morph.svg` has to carry its own colours to work
-through an `<img>` or in a README. But that means none of them follow a palette
-change the way the inline SVG in `app.html` does. They ship to Vercel as static
-files (~1.7MB) and no page requests them.
+carry the dark `#21262A` ground and the pre-token brand hexes — deliberately,
+because Threads and Reels need an opaque frame, not a themed one, and
+`my-adhd-morph.svg` has to carry its own colours to animate through an `<img>`
+or in this README. But it means none of them follow a palette change the way
+the inline SVG in `app.html` does. They ship to Vercel as static files (~1.7MB)
+and no page requests them.
+
+**They no longer agree on duration.** `my-adhd-morph.svg` runs at 4s, matching
+the loading screen, so the README shows the loop at the pace it actually plays
+in the app. The mp4 and gif are still the 8s captures. Recapture them from the
+retimed SVG when the social versions next matter.
 
 `animation/source/gen.py` is that generator. It rewrites the standalone morph
 SVG and the four static beats from one place:
@@ -140,10 +145,10 @@ It regenerates `my-adhd-morph.svg` and the four beats, and nothing else — the
 change lands in the SVGs immediately and leaves the video files behind until
 someone recaptures them.
 
-Note it emits the original hexes and the 8s `DUR`, because its job is the
-standalone exports. The app's copy is the inline SMIL in `app.html` and is
-retimed and tokenised separately — changing `gen.py` does not touch the
-loading screen.
+Note it emits the original hexes, because its job is the standalone exports.
+The app's copy is the inline SMIL in `app.html`, tokenised separately —
+changing `gen.py` does not touch the loading screen. `DUR` is the one value
+now deliberately kept in step across both, at 4s.
 
 ## Pages
 
