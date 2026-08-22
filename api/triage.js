@@ -101,7 +101,7 @@ function extractJSON(message) {
 }
 
 async function ask({ system, prompt, schema }) {
-  const message = await client.messages.create({
+  const message = await client.beta.messages.create({
     model: MODEL,
     max_tokens: 8000,
     system,
@@ -157,6 +157,10 @@ export default async function handler(req, res) {
     return res.status(200).json(out);
   } catch (err) {
     console.error('[triage]', err);
-    return res.status(502).json({ error: 'triage failed' });
+    return res.status(502).json({
+      error: 'triage failed',
+      detail: err?.message ?? String(err),
+      status: err?.status ?? null,
+    });
   }
 }
