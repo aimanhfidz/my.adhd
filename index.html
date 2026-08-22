@@ -34,7 +34,7 @@
       <path d="M64.5 64.5l7 7" stroke="#7B3FE4" stroke-width="7" stroke-linecap="round" fill="none"/>
     </svg>
     <span class="wordmark">my<span class="accent">.adhd</span></span>
-    <a class="nav-link" href="install.html" data-app-link>Open the app</a>
+    <a class="nav-link" href="/install" data-app-link>Open the app</a>
   </nav>
 
   <div class="hero-body">
@@ -49,7 +49,7 @@
         it back as real tasks — grouped, timed, and each with a first step
         small enough to actually start.
       </p>
-      <a class="cta" href="install.html" data-app-link>Clear my head</a>
+      <a class="cta" href="/install" data-app-link>Clear my head</a>
       <p class="hero-note">No account. Works offline. About ten seconds.</p>
     </div>
   </div>
@@ -71,7 +71,7 @@
         || localStorage.getItem('myadhd.installSeen') === '1';
   }catch(e){}
   if (!done) return;
-  document.querySelectorAll('[data-app-link]').forEach(function(a){ a.href = 'app.html'; });
+  document.querySelectorAll('[data-app-link]').forEach(function(a){ a.href = '/app'; });
 })();
 </script>
 

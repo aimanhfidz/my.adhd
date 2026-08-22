@@ -7,25 +7,24 @@
    the cache is the parachute, not the source of truth. The triage API is
    never cached — a stale answer is worse than an honest failure. */
 
-const CACHE = 'myadhd-v1';
+const CACHE = 'myadhd-v2';
 
 const SHELL = [
-  './',
-  'index.html',
-  'install.html',
-  'app.html',
-  'app.js',
-  'styles.css',
-  'theme.css',
-  'landing.css',
-  'install.css',
-  'mascot.svg',
-  'favicon.svg',
-  'fonts/Baloo2-Variable.ttf',
-  'icons/apple-touch-icon.png',
-  'icons/icon-192.png',
-  'icons/icon-512.png',
-  'site.webmanifest',
+  '/',
+  '/install',
+  '/app',
+  '/app.js',
+  '/styles.css',
+  '/theme.css',
+  '/landing.css',
+  '/install.css',
+  '/mascot.svg',
+  '/favicon.svg',
+  '/fonts/Baloo2-Variable.ttf',
+  '/icons/apple-touch-icon.png',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/site.webmanifest',
 ];
 
 self.addEventListener('install', (e) => {
@@ -64,7 +63,7 @@ self.addEventListener('fetch', (e) => {
       })
       .catch(() =>
         caches.match(req).then((hit) =>
-          hit || (req.mode === 'navigate' ? caches.match('app.html') : undefined)
+          hit || (req.mode === 'navigate' ? caches.match('/app') : undefined)
         )
       )
   );

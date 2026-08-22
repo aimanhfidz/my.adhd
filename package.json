@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "my.adhd — brain dump in, one task out.",
+  "scripts": {
+    "dev": "python3 serve.py 8000"
+  },
   "dependencies": {
     "@anthropic-ai/sdk": "0.120.0"
   }
