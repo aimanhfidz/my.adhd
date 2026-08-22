@@ -608,9 +608,56 @@ el.doneToggle.addEventListener('click', () => {
   el.doneList.classList.toggle('is-hidden', open);
 });
 
+/* ---------------- day / night ----------------
+   Three states, not two: "light", "dark", and no stored choice at all,
+   which means the OS decides and keeps deciding. Clicking always flips
+   away from what is on screen right now, and that lands in the third
+   state's place — so a user who matches their system can get back to
+   following it only by clearing the site's storage. That is the usual
+   trade, and it beats a three-way button nobody reads. */
+
+const THEME_KEY = 'myadhd.theme';
+const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+function storedTheme() {
+  try {
+    const t = localStorage.getItem(THEME_KEY);
+    return t === 'dark' || t === 'light' ? t : null;
+  } catch (_) { return null; }
+}
+
+function activeTheme() {
+  return storedTheme() || (darkQuery.matches ? 'dark' : 'light');
+}
+
+function paintTheme() {
+  const dark = activeTheme() === 'dark';
+  // The address bar and the rubber-band area read this, not the stylesheet.
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', dark ? '#101018' : '#FFFFFF');
+  document.querySelectorAll('.theme-toggle').forEach(b => {
+    b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+  });
+}
+
+function toggleTheme() {
+  const next = activeTheme() === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem(THEME_KEY, next); } catch (_) {}
+  paintTheme();
+}
+
+document.querySelectorAll('.theme-toggle').forEach(b => {
+  b.addEventListener('click', toggleTheme);
+});
+
+// While no choice is stored, the OS switching at sunset switches the app too.
+darkQuery.addEventListener('change', () => { if (!storedTheme()) paintTheme(); });
+
 /* ---------------- boot ---------------- */
 
 load();
+paintTheme();
 
 document.querySelectorAll('.energy-opt').forEach(b => {
   const on = b.dataset.energy === state.energy;

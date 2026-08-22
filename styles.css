@@ -56,10 +56,10 @@ body{
 .mx-hair{fill:var(--mx-hair)}
 .mx-tee{fill:var(--mx-tee)}
 .mx-eye{fill:var(--mx-ink)}
-.mx-lens{fill:#fff; fill-opacity:.13}
+.mx-lens{fill:var(--mx-lens); fill-opacity:var(--mx-lens-alpha)}
 .mx-blob{fill:var(--mx-bg)}
 .mx-curls{stroke:none}
-.mx-strand{stroke:#2E2E42; opacity:.85; stroke-width:2; fill:none; stroke-linecap:round}
+.mx-strand{stroke:var(--mx-strand); opacity:.85; stroke-width:2; fill:none; stroke-linecap:round}
 .mx-tee-line{stroke:var(--mx-ink); stroke-width:2.4; fill:none; stroke-linecap:round; opacity:.5}
 .mx-blush path{stroke:var(--mx-blush); stroke-width:3.4; stroke-linecap:round; fill:none; opacity:.85}
 .mx-marks{fill:var(--mx-mark)}
@@ -79,7 +79,30 @@ body{
 .lg-pill{stroke:var(--violet)}
 .wordmark{font-family:var(--display); font-size:15px; font-weight:700; letter-spacing:-.03em; color:var(--ink)}
 .wordmark .accent{color:var(--wordmark-accent)}
-.brand .ghost-btn{margin-left:auto}
+.brand .theme-toggle{margin-left:auto}
+.brand .ghost-btn{margin-left:8px}
+
+/* ---------- day / night ----------
+   A round icon button that shows where a click takes you: a moon while
+   the app is light, a sun while it is dark. Only one of the two glyphs
+   is ever painted, so there is nothing to fade between and nothing to
+   mistake for a state readout. */
+.theme-toggle{
+  flex:none; width:34px; height:34px; display:grid; place-items:center;
+  background:none; border:1.5px solid var(--line-strong); border-radius:999px;
+  color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+.theme-toggle:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
+.theme-toggle:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.theme-toggle svg{width:17px; height:17px; display:block}
+.theme-toggle .t-sun{display:none}
+:root[data-theme="dark"] .theme-toggle .t-sun{display:block}
+:root[data-theme="dark"] .theme-toggle .t-moon{display:none}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .theme-toggle .t-sun{display:block}
+  :root:not([data-theme="light"]) .theme-toggle .t-moon{display:none}
+}
 
 .ghost-btn{
   background:none; border:1.5px solid var(--line-strong); color:var(--muted);
@@ -158,7 +181,7 @@ body{
 .btn-lists:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
 .btn-lists-count{
   min-width:21px; height:21px; padding:0 7px; border-radius:999px;
-  background:var(--accent); color:#fff;
+  background:var(--accent); color:var(--on-accent);
   font-size:12px; font-weight:700;
   display:grid; place-items:center;
 }
@@ -193,7 +216,7 @@ body{
   color:var(--muted); padding:5px 12px; border-radius:999px;
   white-space:nowrap;
 }
-.chip--time{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600}
+.chip--time{background:var(--accent); border-color:var(--accent); color:var(--on-accent); font-weight:600}
 .chip--why{border-style:dashed; color:var(--faint)}
 
 .first-step{
@@ -223,7 +246,7 @@ body{
 .steps li::before{
   content:counter(s);
   flex:none; width:21px; height:21px; border-radius:50%;
-  background:var(--accent); color:#fff;
+  background:var(--accent); color:var(--on-accent);
   font-size:11px; font-weight:700;
   display:grid; place-items:center; margin-top:1px;
 }
@@ -352,7 +375,7 @@ body{
   padding:5px 12px; border-radius:999px; cursor:pointer;
   transition:all .18s var(--ease);
 }
-.parked-item .p-do:hover{background:var(--accent); border-color:var(--accent); color:#fff}
+.parked-item .p-do:hover{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
 
 .cleared-note{
   text-align:center; color:var(--muted); font-size:15px;
@@ -372,8 +395,8 @@ body{
 /* toast */
 .toast{
   position:fixed; left:50%; bottom:26px; transform:translateX(-50%);
-  background:var(--navy); border:none;
-  color:#fff; font-size:14px; font-weight:500;
+  background:var(--toast-bg); border:none;
+  color:var(--toast-ink); font-size:14px; font-weight:500;
   padding:12px 22px; border-radius:999px; z-index:50;
   box-shadow:0 18px 40px -16px rgba(16,16,24,.55);
   animation:toastIn .3s var(--ease) both;

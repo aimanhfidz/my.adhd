@@ -69,3 +69,89 @@
   --mx-mark:#BDB7E8;
 }
 
+
+/* tokens the app paints accent-coloured chrome with. Split out so the
+   dark scheme can flip the text on top of them — white on a light
+   lavender accent is unreadable. */
+:root{
+  --on-accent:#FFFFFF;
+  --toast-bg:var(--navy);
+  --toast-ink:#FFFFFF;
+  --mx-strand:#2E2E42;
+  --mx-lens:#FFFFFF;
+  --mx-lens-alpha:.13;
+}
+
+/* ============ night ============
+   Only the values move; every selector in the app already reads a token.
+   The palette is defined once in a custom property block and applied by
+   both the explicit toggle and the system preference. Brand blue is far
+   too dark to sit on #101018, so the accent lifts to the pale blue and
+   text on top of it goes back to near-black. */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+
+    --grad:linear-gradient(103deg,#2A1FA6 0%,#3F30E8 38%,#6558FF 68%,#ACA5FF 100%);
+
+    --backdrop:#15151F;
+    --backdrop-2:#1D1D2B;
+    --surface:#101018;
+    --wash:#1A1A26;
+    --wash-2:#232333;
+    --ink:#F3F2FB;
+    --ink-soft:#D6D4EA;
+    --muted:#9A98AC;
+    --faint:#77758A;
+    --line:#262636;
+    --line-strong:#3B3A52;
+    --accent:#8B7DFF;
+    --wordmark-accent:#A98CFF;
+    --focus:rgba(139,125,255,.26);
+
+    --on-accent:#101018;
+    --toast-bg:#2A2A3E;
+    --toast-ink:#F3F2FB;
+
+    --mx-bg:#26263A;
+    --mx-mark:#3D3C58;
+    --mx-hair:#0B0B12;
+    --mx-tee:#3A3A5C;
+    --mx-strand:#5A5878;
+    --mx-lens:#0B0B12;
+    --mx-lens-alpha:.28;
+  }
+}
+
+:root[data-theme="dark"]{
+  color-scheme:dark;
+
+  --grad:linear-gradient(103deg,#2A1FA6 0%,#3F30E8 38%,#6558FF 68%,#ACA5FF 100%);
+
+  --backdrop:#15151F;
+  --backdrop-2:#1D1D2B;
+  --surface:#101018;
+  --wash:#1A1A26;
+  --wash-2:#232333;
+  --ink:#F3F2FB;
+  --ink-soft:#D6D4EA;
+  --muted:#9A98AC;
+  --faint:#77758A;
+  --line:#262636;
+  --line-strong:#3B3A52;
+  --accent:#8B7DFF;
+  --wordmark-accent:#A98CFF;
+  --focus:rgba(139,125,255,.26);
+
+  --on-accent:#101018;
+  --toast-bg:#2A2A3E;
+  --toast-ink:#F3F2FB;
+
+  --mx-bg:#26263A;
+  --mx-mark:#3D3C58;
+  --mx-hair:#0B0B12;
+  --mx-tee:#3A3A5C;
+  --mx-strand:#5A5878;
+  --mx-lens:#0B0B12;
+  --mx-lens-alpha:.28;
+}
