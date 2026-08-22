@@ -150,7 +150,7 @@
     </div>
   </section>
 
-  <!-- ============ SCREEN 3: THE NOW SCREEN ============ -->
+  <!-- ============ SCREEN 3: THE LISTS ============ -->
   <section class="screen is-hidden" id="screen-now">
     <header class="brand brand--sm">
       <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
@@ -159,58 +159,23 @@
     </header>
 
     <div class="now-wrap">
-      <p class="eyebrow" id="eyebrow">Do this now. Nothing else.</p>
+      <p class="eyebrow" id="eyebrow">Sorted into lists.</p>
+      <p class="lists-summary" id="lists-summary"></p>
 
-      <article class="now-card" id="now-card">
-        <figure class="now-art" aria-hidden="true">
-          <svg viewBox="46 8 148 148" xmlns="http://www.w3.org/2000/svg">
-            <use href="#mx-head"/>
-          </svg>
-        </figure>
+      <div class="lists" id="lists"></div>
 
-        <div class="now-meta">
-          <span class="chip chip--time" id="now-time">15 min</span>
-          <span class="chip" id="now-energy">low energy</span>
-          <span class="chip chip--why" id="now-reason">picked for you</span>
-        </div>
-
-        <h2 class="now-title" id="now-title">—</h2>
-
-        <div class="first-step">
-          <span class="first-step-label">Start here — 2 minutes</span>
-          <p class="first-step-text" id="now-first-step">—</p>
-        </div>
-
-        <div class="steps-block is-hidden" id="steps-block">
-          <span class="first-step-label">Broken down</span>
-          <ol class="steps" id="steps-list"></ol>
-        </div>
-
-        <div class="now-actions">
-          <button class="btn-done" id="btn-done">
-            <span>Done</span>
-            <span class="btn-arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l5 5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </button>
-          <button class="btn-soft" id="btn-breakdown">Too big — break it down</button>
-          <button class="btn-soft" id="btn-skip">Not this one</button>
-        </div>
-      </article>
-
-      <div class="parked" id="parked-block">
-        <button class="parked-toggle" id="parked-toggle" aria-expanded="false">
-          <span id="parked-count">0 parked</span>
+      <div class="done-block is-hidden" id="done-block">
+        <button class="parked-toggle" id="done-toggle" aria-expanded="false">
+          <span id="done-count">0 done</span>
           <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
-        <ul class="parked-list is-hidden" id="parked-list"></ul>
+        <ul class="done-list is-hidden" id="done-list"></ul>
       </div>
 
       <p class="cleared-note is-hidden" id="cleared-note">
         <strong>Head's clear.</strong> Nothing left in the queue.
         <button class="link-btn" id="btn-dump-again">Dump again</button>
       </p>
-
     </div>
   </section>
 

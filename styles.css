@@ -72,9 +72,6 @@ body::after{width:32rem; height:32rem; bottom:-16rem; right:-12rem}
 .mx-blush path{stroke:var(--mx-blush); stroke-width:3.4; stroke-linecap:round; fill:none; opacity:.85}
 .mx-marks{fill:var(--mx-mark)}
 
-.now-art{overflow:hidden}
-.now-art svg{width:100%; height:100%; transform:scale(1.04)}
-
 .art{display:block; margin:0 auto}
 .art--dump{width:min(264px,72%); margin-bottom:24px}
 .art--think{width:250px; margin-bottom:16px}
@@ -178,24 +175,8 @@ body::after{width:32rem; height:32rem; bottom:-16rem; right:-12rem}
   color:var(--faint); margin-bottom:12px;
 }
 
-.now-card{
-  position:relative;
-  background:var(--surface);
-  border:1.5px solid var(--line);
-  border-radius:var(--radius-card);
-  padding:clamp(22px,5vw,30px);
-  animation:rise .38s var(--ease) both;
-}
 @keyframes rise{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
 
-.now-art{
-  width:58px; height:58px; border-radius:50%;
-  background:var(--wash-2);
-  display:grid; place-items:center;
-  margin-bottom:18px;
-}
-
-.now-meta{display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px}
 .chip{
   font-size:12px; font-weight:500;
   background:var(--surface); border:1.5px solid var(--line-strong);
@@ -204,12 +185,6 @@ body::after{width:32rem; height:32rem; bottom:-16rem; right:-12rem}
 }
 .chip--time{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600}
 .chip--why{border-style:dashed; color:var(--faint)}
-
-.now-title{
-  font-family:var(--display);
-  font-size:clamp(23px,5.2vw,30px); font-weight:700;
-  letter-spacing:-.035em; line-height:1.2; margin-bottom:22px;
-}
 
 .first-step{
   background:var(--wash);
@@ -243,19 +218,6 @@ body::after{width:32rem; height:32rem; bottom:-16rem; right:-12rem}
   display:grid; place-items:center; margin-top:1px;
 }
 
-.now-actions{display:flex; gap:9px; flex-wrap:wrap}
-.btn-done{
-  flex:1 1 100%;
-  display:flex; align-items:center; justify-content:center; gap:10px;
-  background:var(--grad); border:none; border-radius:999px;
-  color:#fff; font-family:var(--display); font-size:16px; font-weight:700;
-  padding:15px; cursor:pointer;
-  transition:transform .16s var(--ease);
-  box-shadow:0 16px 34px -18px rgba(71,55,255,.8);
-}
-.btn-done .btn-arrow{width:22px; height:22px; display:grid; place-items:center}
-.btn-done .btn-arrow svg{width:18px; height:18px}
-.btn-done:hover{transform:translateY(-1px)}
 .btn-soft{
   flex:1 1 0; min-width:140px;
   background:var(--surface); border:1.5px solid var(--line-strong);
@@ -266,8 +228,87 @@ body::after{width:32rem; height:32rem; bottom:-16rem; right:-12rem}
 .btn-soft:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
 .btn-soft:disabled{opacity:.45; cursor:not-allowed}
 
-/* parked */
-.parked{margin-top:24px}
+/* ---------- screen 3: the lists ----------
+   The dump comes back grouped by category. Within a list: most urgent
+   first, then shortest. Between lists: whichever holds the most urgent
+   item leads. Detail stays collapsed so the lists stay scannable. */
+
+.lists-summary{
+  font-size:13.5px; color:var(--faint); margin-bottom:22px;
+}
+
+.lists{display:flex; flex-direction:column; gap:26px}
+
+.list-group{animation:rise .34s var(--ease) both}
+@keyframes rise{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
+
+.list-head{
+  display:flex; align-items:center; gap:9px;
+  padding-bottom:10px; margin-bottom:10px;
+  border-bottom:1.5px solid var(--line);
+}
+.list-name{
+  font-family:var(--display); font-size:17px; font-weight:700;
+  letter-spacing:-.02em; color:var(--ink);
+}
+.list-count{
+  font-size:12px; font-weight:700; color:var(--muted);
+  background:var(--wash); border-radius:999px;
+  min-width:22px; height:22px; padding:0 7px;
+  display:grid; place-items:center;
+}
+
+.list-items{list-style:none; display:flex; flex-direction:column; gap:8px}
+
+.task{
+  display:flex; gap:13px; align-items:flex-start;
+  background:var(--surface); border:1.5px solid var(--line);
+  border-radius:16px; padding:14px 16px;
+  cursor:pointer;
+  transition:border-color .18s var(--ease), background .18s var(--ease);
+}
+.task:hover{border-color:var(--line-strong)}
+.task.is-open{border-color:var(--accent); background:var(--wash)}
+.task--urgent{border-left:3px solid var(--orange)}
+
+.task-check{
+  flex:none; width:24px; height:24px; margin-top:1px;
+  border-radius:50%; border:2px solid var(--line-strong);
+  background:none; color:transparent; cursor:pointer;
+  display:grid; place-items:center;
+  transition:all .16s var(--ease);
+}
+.task-check svg{width:13px; height:13px}
+.task-check:hover{border-color:var(--accent); color:var(--accent)}
+
+.task-body{flex:1; min-width:0}
+.task-title{
+  font-size:15.5px; font-weight:600; color:var(--ink);
+  line-height:1.35; letter-spacing:-.01em; margin-bottom:8px;
+}
+.task-meta{display:flex; gap:6px; flex-wrap:wrap}
+.chip--urgent{
+  background:var(--orange); border-color:var(--orange);
+  color:#fff; font-weight:600;
+}
+
+.task-detail{margin-top:14px}
+.task-detail .first-step{margin-bottom:12px}
+.task-detail .steps-block{margin-bottom:12px}
+.task-break{width:100%}
+
+/* done pile */
+.done-block{margin-top:30px; padding-top:6px}
+.done-list{list-style:none; margin-top:10px; display:flex; flex-direction:column; gap:7px}
+.done-item{
+  display:flex; align-items:center; gap:12px;
+  background:var(--surface); border:1.5px solid var(--line);
+  border-radius:14px; padding:11px 15px;
+  font-size:14.5px; color:var(--faint);
+}
+.done-item .p-title{flex:1; min-width:0; text-decoration:line-through}
+
+/* leftover shared bits */
 .parked-toggle{
   display:flex; align-items:center; gap:7px;
   background:none; border:none; cursor:pointer;
@@ -280,13 +321,6 @@ body::after{width:32rem; height:32rem; bottom:-16rem; right:-12rem}
 .chev svg{width:14px; height:14px}
 .parked-toggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
 
-.parked-list{list-style:none; margin-top:10px; display:flex; flex-direction:column; gap:7px}
-.parked-item{
-  display:flex; align-items:center; gap:12px;
-  background:var(--surface); border:1.5px solid var(--line);
-  border-radius:16px; padding:13px 16px;
-  font-size:14.5px; color:var(--ink-soft);
-}
 .parked-item .p-title{flex:1; min-width:0}
 .parked-item .p-time{font-size:12px; color:var(--faint); flex:none}
 .parked-item .p-do{
@@ -329,13 +363,11 @@ body::after{width:32rem; height:32rem; bottom:-16rem; right:-12rem}
   
   body{color:var(--ink)}
   .screen{box-shadow:none}
-  .btn-primary,.btn-done{box-shadow:none}
-  .btn-primary .btn-arrow{background:#fff; color:var(--blue-deep)}
+  .btn-primary,  .btn-primary .btn-arrow{background:#fff; color:var(--blue-deep)}
   .kbd{background:rgba(0,0,0,.28)}
   .toast{background:var(--wash-2)}
   .chip--time{background:var(--accent); border-color:var(--accent)}
-  .now-art{background:var(--wash-2)}
-}
+  }
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important}

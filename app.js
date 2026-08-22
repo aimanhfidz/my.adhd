@@ -13,24 +13,15 @@ const el = {
   input:        $('dump-input'),
   triage:       $('btn-triage'),
   loadingText:  $('loading-text'),
-  nowTitle:     $('now-title'),
-  nowTime:      $('now-time'),
-  nowEnergy:    $('now-energy'),
-  nowReason:    $('now-reason'),
-  firstStep:    $('now-first-step'),
-  stepsBlock:   $('steps-block'),
-  stepsList:    $('steps-list'),
-  nowCard:      $('now-card'),
-  btnDone:      $('btn-done'),
-  btnSkip:      $('btn-skip'),
-  btnBreak:     $('btn-breakdown'),
+  eyebrow:      $('eyebrow'),
+  summary:      $('lists-summary'),
+  lists:        $('lists'),
+  doneBlock:    $('done-block'),
+  doneToggle:   $('done-toggle'),
+  doneCount:    $('done-count'),
+  doneList:     $('done-list'),
   btnNewDump:   $('btn-new-dump'),
   btnDumpAgain: $('btn-dump-again'),
-  eyebrow:      $('eyebrow'),
-  parkedBlock:  $('parked-block'),
-  parkedToggle: $('parked-toggle'),
-  parkedCount:  $('parked-count'),
-  parkedList:   $('parked-list'),
   clearedNote:  $('cleared-note'),
   toast:        $('toast'),
 };
@@ -175,189 +166,275 @@ function normalizeTask(t) {
   };
 }
 
-/* ---------------- picking the ONE ---------------- */
-
-const ENERGY_RANK = { low: 1, medium: 2, high: 3 };
-
-/**
- * Score a task against how the user actually feels right now.
- * Urgency matters, but a task the user has no fuel for is worse than useless —
- * it's the thing they'll stare at and then close the app.
- */
-function score(task, fuel) {
-  const need = ENERGY_RANK[task.energy];
-  const have = ENERGY_RANK[fuel];
-
-  let s = task.urgency * 10;                       // deadlines still lead
-  s -= Math.max(0, need - have) * 14;              // asking for more fuel than you have: heavy penalty
-  s -= Math.min(task.minutes, 120) * 0.18;         // short things win ties — momentum beats optimality
-  if (task.skipped) s -= 40;                       // already said no once
-  return s;
-}
-
-function pickNext() {
-  const open = state.tasks.filter(t => !t.done);
-  if (!open.length) return null;
-  return open.slice().sort((a, b) => score(b, state.energy) - score(a, state.energy))[0];
-}
-
-function reasonFor(task) {
-  const need = ENERGY_RANK[task.energy], have = ENERGY_RANK[state.energy];
-  if (task.urgency >= 5) return 'most urgent';
-  if (task.minutes <= 10) return 'quickest win';
-  if (need < have) return 'easy on your fuel';
-  if (need === have) return 'matches your fuel';
-  return 'best of what is left';
-}
-
 /* ---------------- render ---------------- */
 
-function goToNext() {
-  // A hand-picked task outranks the score — the user overrode us on purpose.
-  const pinned = state.pinnedId
-    ? state.tasks.find(t => t.id === state.pinnedId && !t.done)
-    : null;
-  const task = pinned || pickNext();
-  show(el.screenNow);
+/* Display names for the categories the model returns. Anything unexpected
+   falls through to a title-cased version of whatever came back. */
+const CATEGORY_LABELS = {
+  work:    'Work',
+  admin:   'Admin',
+  money:   'Money',
+  health:  'Health',
+  home:    'Home',
+  social:  'Social',
+  errand:  'Errands',
+  general: 'Everything else',
+};
 
-  if (!task) {
-    // Nothing left: strip the screen to the one message that matters.
-    el.nowCard.classList.add('is-hidden');
+function categoryLabel(c) {
+  return CATEGORY_LABELS[c] || c.charAt(0).toUpperCase() + c.slice(1);
+}
+
+function minutesLabel(m) {
+  return m < 60 ? `${m} min` : `${Math.round(m / 60 * 10) / 10} hr`;
+}
+
+/**
+ * Group open tasks by category.
+ * Inside a group: most urgent first, then shortest — same instinct as the
+ * old scoring, just applied per list instead of picking one winner.
+ * Between groups: the list holding the most urgent thing goes on top, so
+ * the pressing pile is the one you see first.
+ */
+function groupByCategory(tasks) {
+  const groups = new Map();
+  tasks.forEach(t => {
+    const key = String(t.category || 'general').toLowerCase();
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(t);
+  });
+
+  groups.forEach(list => {
+    list.sort((a, b) => b.urgency - a.urgency || a.minutes - b.minutes);
+  });
+
+  return [...groups.entries()].sort((a, b) => {
+    const ua = Math.max(...a[1].map(t => t.urgency));
+    const ub = Math.max(...b[1].map(t => t.urgency));
+    return ub - ua || b[1].length - a[1].length;
+  });
+}
+
+function goToNext() {
+  show(el.screenNow);
+  state.currentId = null;
+  save();
+
+  const open = state.tasks.filter(t => !t.done);
+  const done = state.tasks.filter(t => t.done);
+
+  if (!open.length) {
+    el.lists.classList.add('is-hidden');
     el.eyebrow.classList.add('is-hidden');
-    el.parkedBlock.classList.add('is-hidden');
+    el.summary.classList.add('is-hidden');
+    el.doneBlock.classList.add('is-hidden');
     el.clearedNote.classList.remove('is-hidden');
     return;
   }
 
-  el.nowCard.classList.remove('is-hidden');
+  el.lists.classList.remove('is-hidden');
   el.eyebrow.classList.remove('is-hidden');
-  el.parkedBlock.classList.remove('is-hidden');
+  el.summary.classList.remove('is-hidden');
   el.clearedNote.classList.add('is-hidden');
 
-  state.currentId = task.id;
-  save();
+  const groups = groupByCategory(open);
+  const totalMin = open.reduce((n, t) => n + t.minutes, 0);
+  el.summary.textContent =
+    `${open.length} ${open.length === 1 ? 'thing' : 'things'} · ` +
+    `${groups.length} ${groups.length === 1 ? 'list' : 'lists'} · ` +
+    `about ${minutesLabel(totalMin)} all in`;
 
-  el.nowTitle.textContent = task.title;
-  el.nowTime.textContent = task.minutes < 60
-    ? `${task.minutes} min`
-    : `${Math.round(task.minutes / 60 * 10) / 10} hr`;
-  el.nowEnergy.textContent = `${task.energy} energy`;
-  el.nowReason.textContent = reasonFor(task);
-  el.firstStep.textContent = task.firstStep;
+  el.lists.innerHTML = '';
+  groups.forEach(([cat, items]) => el.lists.appendChild(renderGroup(cat, items)));
 
-  el.btnBreak.disabled = false;
-  el.btnBreak.textContent = 'Too big — break it down';
-
-  if (task.steps && task.steps.length) {
-    renderSteps(task.steps);
-  } else {
-    el.stepsBlock.classList.add('is-hidden');
-  }
-
-  // Re-run the entrance animation so each new task lands as its own moment.
-  el.nowCard.style.animation = 'none';
-  void el.nowCard.offsetWidth;
-  el.nowCard.style.animation = '';
-
-  renderParked();
+  renderDone(done);
 }
 
-function renderSteps(steps) {
-  el.stepsList.innerHTML = '';
+function renderGroup(cat, items) {
+  const section = document.createElement('section');
+  section.className = 'list-group';
+
+  const head = document.createElement('div');
+  head.className = 'list-head';
+
+  const name = document.createElement('h2');
+  name.className = 'list-name';
+  name.textContent = categoryLabel(cat);
+
+  const count = document.createElement('span');
+  count.className = 'list-count';
+  count.textContent = items.length;
+
+  head.append(name, count);
+
+  const ul = document.createElement('ul');
+  ul.className = 'list-items';
+  items.forEach(t => ul.appendChild(renderTask(t)));
+
+  section.append(head, ul);
+  return section;
+}
+
+function renderTask(task) {
+  const li = document.createElement('li');
+  li.className = 'task';
+  if (task.urgency >= 5) li.classList.add('task--urgent');
+
+  /* tick it off */
+  const check = document.createElement('button');
+  check.className = 'task-check';
+  check.setAttribute('aria-label', `Mark "${task.title}" done`);
+  check.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l5 5L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  check.addEventListener('click', (e) => { e.stopPropagation(); markDone(task.id); });
+
+  const body = document.createElement('div');
+  body.className = 'task-body';
+
+  const title = document.createElement('p');
+  title.className = 'task-title';
+  title.textContent = task.title;
+
+  const meta = document.createElement('div');
+  meta.className = 'task-meta';
+
+  const time = document.createElement('span');
+  time.className = 'chip chip--time';
+  time.textContent = minutesLabel(task.minutes);
+
+  const energy = document.createElement('span');
+  energy.className = 'chip';
+  energy.textContent = `${task.energy} energy`;
+
+  meta.append(time, energy);
+  if (task.urgency >= 5) {
+    const urgent = document.createElement('span');
+    urgent.className = 'chip chip--urgent';
+    urgent.textContent = 'urgent';
+    meta.appendChild(urgent);
+  }
+
+  body.append(title, meta);
+
+  /* the detail only opens when asked — lists stay scannable */
+  const detail = document.createElement('div');
+  detail.className = 'task-detail is-hidden';
+
+  const step = document.createElement('div');
+  step.className = 'first-step';
+  const stepLabel = document.createElement('span');
+  stepLabel.className = 'first-step-label';
+  stepLabel.textContent = 'Start here — 2 minutes';
+  const stepText = document.createElement('p');
+  stepText.className = 'first-step-text';
+  stepText.textContent = task.firstStep;
+  step.append(stepLabel, stepText);
+
+  const stepsBlock = document.createElement('div');
+  stepsBlock.className = 'steps-block is-hidden';
+  const stepsLabel = document.createElement('span');
+  stepsLabel.className = 'first-step-label';
+  stepsLabel.textContent = 'Broken down';
+  const stepsList = document.createElement('ol');
+  stepsList.className = 'steps';
+  stepsBlock.append(stepsLabel, stepsList);
+
+  const breakBtn = document.createElement('button');
+  breakBtn.className = 'btn-soft task-break';
+  breakBtn.textContent = 'Too big — break it down';
+  breakBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    breakDown(task, { stepText, stepsBlock, stepsList, breakBtn });
+  });
+
+  detail.append(step, stepsBlock, breakBtn);
+  if (task.steps && task.steps.length) paintSteps(task.steps, stepsBlock, stepsList);
+
+  body.appendChild(detail);
+
+  li.append(check, body);
+  li.addEventListener('click', () => {
+    const open = detail.classList.toggle('is-hidden');
+    li.classList.toggle('is-open', !open);
+  });
+
+  return li;
+}
+
+function paintSteps(steps, stepsBlock, stepsList) {
+  stepsList.innerHTML = '';
   steps.forEach(s => {
     const li = document.createElement('li');
     li.textContent = s;
-    el.stepsList.appendChild(li);
+    stepsList.appendChild(li);
   });
-  el.stepsBlock.classList.remove('is-hidden');
+  stepsBlock.classList.remove('is-hidden');
 }
 
-function renderParked() {
-  const parked = state.tasks.filter(t => !t.done && t.id !== state.currentId);
-  el.parkedCount.textContent = parked.length === 1 ? '1 parked' : `${parked.length} parked`;
-  el.parkedList.innerHTML = '';
-
-  parked.forEach(t => {
+function renderDone(done) {
+  if (!done.length) {
+    el.doneBlock.classList.add('is-hidden');
+    return;
+  }
+  el.doneBlock.classList.remove('is-hidden');
+  el.doneCount.textContent = done.length === 1 ? '1 done' : `${done.length} done`;
+  el.doneList.innerHTML = '';
+  done.forEach(t => {
     const li = document.createElement('li');
-    li.className = 'parked-item';
+    li.className = 'done-item';
 
     const title = document.createElement('span');
     title.className = 'p-title';
     title.textContent = t.title;
 
-    const time = document.createElement('span');
-    time.className = 'p-time';
-    time.textContent = `${t.minutes}m`;
+    const undo = document.createElement('button');
+    undo.className = 'p-do';
+    undo.textContent = 'Undo';
+    undo.addEventListener('click', () => {
+      t.done = false;
+      save();
+      goToNext();
+    });
 
-    const doBtn = document.createElement('button');
-    doBtn.className = 'p-do';
-    doBtn.textContent = 'Do this';
-    doBtn.addEventListener('click', () => renderCurrent(t));
-
-    li.append(title, time, doBtn);
-    el.parkedList.appendChild(li);
+    li.append(title, undo);
+    el.doneList.appendChild(li);
   });
-}
-
-/** Force a specific task onto the Now screen (used by "Do this" in the parked list). */
-function renderCurrent(task) {
-  state.pinnedId = task.id;
-  task.skipped = false;
-  save();
-  goToNext();
 }
 
 /* ---------------- actions ---------------- */
 
-function markDone() {
-  const t = state.tasks.find(x => x.id === state.currentId);
-  if (t) t.done = true;
-  if (state.pinnedId === state.currentId) state.pinnedId = null;
+function markDone(id) {
+  const t = state.tasks.find(x => x.id === id);
+  if (!t) return;
+  t.done = true;
   save();
   toast('Done. That one is gone.');
   goToNext();
 }
 
-function skip() {
-  const t = state.tasks.find(x => x.id === state.currentId);
-  if (!t) return;
-  if (state.tasks.filter(x => !x.done).length === 1) {
-    toast('It is the only one left.');
-    return;
-  }
-  t.skipped = true;
-  if (state.pinnedId === t.id) state.pinnedId = null;
-  save();
-  goToNext();
-}
-
-async function breakDown() {
-  const t = state.tasks.find(x => x.id === state.currentId);
-  if (!t) return;
-
-  el.btnBreak.disabled = true;
-  el.btnBreak.textContent = 'Breaking it down…';
+async function breakDown(task, ui) {
+  ui.breakBtn.disabled = true;
+  ui.breakBtn.textContent = 'Breaking it down…';
 
   try {
     const res = await fetch('/api/triage', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: 'breakdown', task: t.title, energy: state.energy }),
+      body: JSON.stringify({ mode: 'breakdown', task: task.title, energy: state.energy }),
     });
     if (!res.ok) throw new Error('status ' + res.status);
     const data = await res.json();
     if (!Array.isArray(data.steps) || !data.steps.length) throw new Error('no steps');
 
-    t.steps = data.steps.slice(0, 7).map(String);
-    if (data.firstStep) t.firstStep = String(data.firstStep);
+    task.steps = data.steps.slice(0, 7).map(String);
+    if (data.firstStep) task.firstStep = String(data.firstStep);
     save();
-    el.firstStep.textContent = t.firstStep;
-    renderSteps(t.steps);
-    el.btnBreak.textContent = 'Broken down ✓';
+    ui.stepText.textContent = task.firstStep;
+    paintSteps(task.steps, ui.stepsBlock, ui.stepsList);
+    ui.breakBtn.textContent = 'Broken down ✓';
   } catch (err) {
     console.warn('breakdown failed:', err.message);
-    el.btnBreak.disabled = false;
-    el.btnBreak.textContent = 'Too big — break it down';
+    ui.breakBtn.disabled = false;
+    ui.breakBtn.textContent = 'Too big — break it down';
     toast('Needs the AI backend for this one.');
   }
 }
@@ -370,9 +447,6 @@ function newDump() {
 /* ---------------- wiring ---------------- */
 
 el.triage.addEventListener('click', triage);
-el.btnDone.addEventListener('click', markDone);
-el.btnSkip.addEventListener('click', skip);
-el.btnBreak.addEventListener('click', breakDown);
 el.btnNewDump.addEventListener('click', newDump);
 el.btnDumpAgain.addEventListener('click', newDump);
 
@@ -393,10 +467,10 @@ document.querySelectorAll('.energy-opt').forEach(btn => {
   });
 });
 
-el.parkedToggle.addEventListener('click', () => {
-  const open = el.parkedToggle.getAttribute('aria-expanded') === 'true';
-  el.parkedToggle.setAttribute('aria-expanded', String(!open));
-  el.parkedList.classList.toggle('is-hidden', open);
+el.doneToggle.addEventListener('click', () => {
+  const open = el.doneToggle.getAttribute('aria-expanded') === 'true';
+  el.doneToggle.setAttribute('aria-expanded', String(!open));
+  el.doneList.classList.toggle('is-hidden', open);
 });
 
 /* ---------------- boot ---------------- */
