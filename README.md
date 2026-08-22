@@ -80,7 +80,7 @@ swapping in Supabase later means replacing `load()` / `save()` only.
 | `mascot.svg` | Standalone mascot for the landing hero (`<img>` can't read the page's CSS, so its colours are baked in) |
 | `favicon.svg` | The logo mark, standalone |
 | `fonts/` | Baloo 2 (variable, wght 400-800), self-hosted |
-| `styles.css` | Design system: brand palette, Baloo 2 face, one card surface, gradient pill actions; inverts for dark mode |
+| `styles.css` | App layout: one white page, content held to `--measure` (720px), gradient pill actions |
 | `app.js` | State, triage call, scoring, rendering |
 | `api/triage.js` | Claude call — triage + breakdown modes |
 
@@ -99,6 +99,16 @@ like and what the app does about it — nothing about causes, diagnosis, or
 treatment. The footer says so outright. Keep it that way.
 
 ## Design system
+
+The app is **light only**. `color-scheme:light` is set and there is no
+`prefers-color-scheme` block, so a phone in dark mode still gets the white
+app — and `html`, `body` and the `theme-color` meta are all white so the iOS
+overscroll band and browser chrome don't flash a tint.
+
+The app is a page, not a phone mock: no card, no shadow, no tinted backdrop.
+Content is centred and capped at `--measure`. The landing page is the
+exception — it is deliberately dark, and hardcodes its own colours rather
+than relying on theme tokens.
 
 Palette lives in `theme.css` `:root` as brand tokens (`--blue`, `--navy`, `--stone`,
 `--orange`, `--pale`, `--grad`); the semantic tokens (`--ink`, `--accent`,

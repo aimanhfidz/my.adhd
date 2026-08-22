@@ -16,6 +16,8 @@
 }
 
 :root{
+  color-scheme:light;   /* keep form controls and scrollbars light */
+
   /* brand */
   --blue:#4737FF;        /* Vivid Blue   */
   --blue-deep:#3529BF;
@@ -47,6 +49,7 @@
   --radius:14px;
   --radius-lg:22px;
   --radius-card:34px;
+  --measure:720px;      /* readable column width for the app */
   --ease:cubic-bezier(.22,.9,.28,1);
   --display:"Baloo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
@@ -66,22 +69,3 @@
   --mx-mark:#BDB7E8;
 }
 
-@media (prefers-color-scheme:dark){
-:root{
-    --backdrop:#101018;
-    --backdrop-2:#191924;
-    --surface:#202030;
-    --wash:#282838;
-    --wash-2:#313142;
-    --ink:#FFFFFF;
-    --ink-soft:var(--pale);
-    --muted:#9E9EB2;
-    --faint:#71718A;
-    --line:#2C2C3E;
-    --line-strong:#3C3C52;
-    --accent:#6E62FF;
-    --focus:rgba(110,98,255,.26);
-    --wordmark-accent:#A47BFF;
-    --mx-bg:#34305C;      /* muted indigo on dark */
-    --mx-mark:#524D80;
-  }}
