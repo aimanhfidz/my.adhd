@@ -88,11 +88,11 @@ swapping in Supabase later means replacing `load()` / `save()` only.
 
 `index.html` is the landing page; every CTA on it points at `app.html`.
 
-Its **hero** is pinned to exactly one viewport (`100dvh`, sized in `vh`/`dvh`
-clamps) so the first screen is always whole — nothing clipped, no half-read
-sentence at the fold. The copy sections below it scroll normally. If you add
-to the hero, re-check it at 320x568 and in landscape: the hero has no
-scrollbar of its own to absorb overflow.
+It is **one viewport and nothing more** — `100dvh`, sized in `vh`/`dvh`
+clamps, with `overflow:hidden` on the body so it never scrolls. Hero, CTA,
+and a one-line disclaimer; no sections below. If you add anything, re-check
+it at 320x568 and in landscape, because there is no scrollbar to absorb
+overflow — content will simply be cut off.
 
 The copy makes no clinical claims. It describes what starting a task feels
 like and what the app does about it — nothing about causes, diagnosis, or

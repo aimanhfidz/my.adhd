@@ -7,18 +7,14 @@
 
 *{box-sizing:border-box; margin:0; padding:0}
 
-html{scroll-behavior:smooth}
 body{
   background:var(--black);
   color:#fff;
   font-family:var(--display);
   -webkit-font-smoothing:antialiased;
   line-height:1.5;
-  overflow-x:hidden;
+  overflow:hidden;   /* one viewport, nothing to scroll to */
 }
-
-.wrap{width:100%; max-width:1080px; margin:0 auto; padding:0 clamp(20px,5vw,40px)}
-.wrap--narrow{max-width:760px}
 
 /* ---------- shared bits ---------- */
 .logo{width:26px; height:26px; flex:none; display:block}
@@ -37,11 +33,6 @@ body{
 .cta:hover{transform:translateY(-2px); box-shadow:0 22px 46px -14px rgba(71,55,255,1)}
 .cta:active{transform:translateY(0)}
 .cta:focus-visible{outline:3px solid #A47BFF; outline-offset:3px}
-
-.eyebrow{
-  font-size:11.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
-  color:#8E86C8; margin-bottom:14px;
-}
 
 /* ============ HERO — one viewport ============ */
 .hero{
@@ -101,93 +92,23 @@ body{
 }
 .hero-note{margin-top:clamp(8px,1.4vh,13px); font-size:clamp(12px,1.4vh,13.5px); color:#7C7C96}
 
-.scroll-cue{
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  color:#7C7C96; text-decoration:none;
-  font-size:12.5px; font-weight:600; letter-spacing:.02em;
-  transition:color .18s var(--ease);
+.hero-foot{
+  text-align:center; padding:0 clamp(20px,5vw,40px);
+  font-size:clamp(11px,1.3vh,12.5px); line-height:1.55;
+  color:#63637A; max-width:60ch; margin:0 auto;
 }
-.scroll-cue svg{width:15px; height:15px; animation:nudge 2.2s var(--ease) infinite}
-.scroll-cue:hover{color:var(--pale)}
-@keyframes nudge{0%,70%,100%{transform:translateY(0)} 35%{transform:translateY(4px)}}
-
-/* ============ SECTIONS ============ */
-.sec{padding:clamp(64px,11vh,120px) 0; border-top:1px solid #21212E}
-.sec--raise{background:#15151F}
-
-.sec-title{
-  font-size:clamp(26px,4.6vw,40px); font-weight:800;
-  letter-spacing:-.035em; line-height:1.1;
-  margin-bottom:clamp(16px,2.4vh,24px); max-width:20ch;
-}
-.lede{
-  font-size:clamp(15px,2.1vw,18px); color:#B9B6D4;
-  max-width:62ch; margin-bottom:18px;
-}
-.lede em{color:#fff; font-style:normal; font-weight:700}
-.lede strong{color:#fff; font-weight:700}
-
-/* problem cards */
-.cards{
-  list-style:none; display:grid; gap:16px; margin-top:clamp(28px,4vh,44px);
-  grid-template-columns:repeat(auto-fit,minmax(255px,1fr));
-}
-.card{
-  background:#1B1B27; border:1px solid #272738;
-  border-radius:20px; padding:24px 22px;
-}
-.card-n{
-  display:block; font-size:12px; font-weight:700; letter-spacing:.12em;
-  color:var(--orange); margin-bottom:12px;
-}
-.card h3{font-size:18px; font-weight:700; letter-spacing:-.02em; margin-bottom:8px}
-.card p{font-size:14.5px; color:#9E9BBB; line-height:1.6}
 
 /* steps */
-.steps{list-style:none; margin-top:clamp(28px,4vh,44px); display:grid; gap:clamp(20px,3vh,32px)}
-.steps li{display:flex; gap:18px; align-items:flex-start}
-.step-n{
-  flex:none; width:38px; height:38px; border-radius:50%;
-  background:var(--grad); color:#fff;
-  display:grid; place-items:center;
-  font-size:16px; font-weight:800;
-}
-.steps h3{font-size:19px; font-weight:700; letter-spacing:-.02em; margin-bottom:6px}
-.steps p{font-size:15px; color:#A5A2C2; line-height:1.62; max-width:58ch}
 
 /* pull quote */
-.quote{
-  margin-top:clamp(24px,4vh,38px);
-  border-left:3px solid var(--accent);
-  padding:6px 0 6px 22px;
-  font-size:clamp(17px,2.6vw,22px); font-weight:700;
-  letter-spacing:-.02em; line-height:1.35; color:#fff; max-width:34ch;
-}
 
 /* the not-list */
-.nots{
-  list-style:none; display:flex; flex-wrap:wrap; gap:9px;
-  margin-top:clamp(20px,3vh,30px);
-}
-.nots li{
-  font-size:13.5px; font-weight:600; color:var(--pale);
-  border:1.5px solid #33334A; border-radius:999px; padding:8px 15px;
-}
 
 /* closing */
-.sec--close{text-align:center; padding-bottom:clamp(72px,12vh,130px)}
-.sec--close .lede{margin:0 auto 26px}
-.close-title{
-  font-size:clamp(28px,5.4vw,46px); font-weight:800;
-  letter-spacing:-.04em; line-height:1.08; margin-bottom:14px;
-}
 
 /* footer */
-.foot{border-top:1px solid #21212E; padding:34px 0 44px}
-.foot .wrap{display:flex; flex-direction:column; gap:10px}
-.foot p{font-size:12.5px; color:#6E6E88; max-width:62ch; line-height:1.6}
 
-/* ---------- desktop hero: copy left, mascot right ---------- */
+/* ---------- desktop: copy left, mascot right ---------- */
 @media (min-width:820px){
   .hero-body{
     flex-direction:row-reverse; justify-content:center;
@@ -206,6 +127,5 @@ body{
 }
 
 @media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important}
 }
