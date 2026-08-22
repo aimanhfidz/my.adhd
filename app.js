@@ -79,6 +79,15 @@ const LOADING_LINES = [
   'Sizing everything up…',
 ];
 let loadingTimer;
+
+/* The morph is SMIL, which CSS can't pause — prefers-reduced-motion has to be
+   honoured through the SVG's own animation clock. Frozen at t=0 it still shows
+   the mark, so the screen loses the motion, not the logo. */
+const morphSvg = document.querySelector('#screen-loading .logo-morph');
+if (morphSvg && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  morphSvg.pauseAnimations();
+}
+
 function startLoadingCopy() {
   let i = 0;
   el.loadingText.textContent = LOADING_LINES[0];

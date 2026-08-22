@@ -61,7 +61,7 @@ body{
 
 /* The character's outer contour, lit only when the ground is too dark to
    draw it. Applied to the top-level <use> so the whole figure resolves to
-   one silhouette; the panel and the orbit lines are left alone. */
+   one silhouette; the panel behind it is left alone. */
 .art svg > use{filter:var(--mx-rim)}
 .mx-curls{stroke:none}
 .mx-strand{stroke:var(--mx-strand); opacity:.85; stroke-width:2; fill:none; stroke-linecap:round}
@@ -71,10 +71,7 @@ body{
 
 .art{display:block; margin:0 auto}
 .art--dump{width:min(264px,72%); margin-bottom:24px}
-.art--think{width:250px; margin-bottom:16px}
-.orbit{transform-origin:120px 102px; animation:orbit 9s linear infinite}
-.orbit--rev{animation-direction:reverse; animation-duration:13s}
-@keyframes orbit{to{transform:rotate(360deg)}}
+.art--think{width:200px; margin-bottom:20px}
 
 /* ---------- brand ---------- */
 .brand{display:flex; align-items:center; gap:9px}
@@ -192,18 +189,15 @@ body{
 }
 
 /* ---------- screen 2: loading ---------- */
+/* The wait is the logo mark morphing through its own states — eight arms
+   changing length and radius, never added or removed, so it reads as one
+   shape thinking rather than a spinner. 4s loop; the copy rotates at 1.9s
+   underneath it, so the two never land together and the wait stays alive. */
 .loading{margin:auto; text-align:center}
-.pulse{display:flex; gap:8px; justify-content:center; margin-bottom:16px}
-.pulse span{
-  width:9px; height:9px; border-radius:50%; background:var(--accent);
-  animation:bob 1.15s var(--ease) infinite;
-}
-.pulse span:nth-child(2){animation-delay:.14s}
-.pulse span:nth-child(3){animation-delay:.28s}
-@keyframes bob{
-  0%,60%,100%{transform:translateY(0); opacity:.22}
-  30%{transform:translateY(-9px); opacity:1}
-}
+.logo-morph{display:block; width:100%; height:auto; overflow:visible}
+.lm-arm{fill:var(--orange)}
+.lm-pill{fill:var(--violet)}
+.lm-ring{stroke:var(--orange)}
 .loading-text{color:var(--muted); font-size:15px}
 
 /* ---------- screen 3: now ---------- */
