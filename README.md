@@ -152,10 +152,17 @@ treatment. The footer says so outright. Keep it that way.
 
 ## Design system
 
-The app is **light only**. `color-scheme:light` is set and there is no
-`prefers-color-scheme` block, so a phone in dark mode still gets the white
-app — and `html`, `body` and the `theme-color` meta are all white so the iOS
-overscroll band and browser chrome don't flash a tint.
+The app is **light by default and has a dark mode** — the Theme section below
+covers how the choice is made. `:root` sets `color-scheme:light`, and the dark
+values live in two places: a `prefers-color-scheme:dark` block and a
+`:root[data-theme="dark"]` block, so both the system preference and the toggle
+are served.
+
+`html`, `body` and the `theme-color` meta **follow the active theme** rather
+than being pinned white. `html{background:var(--surface)}` keeps the iOS
+overscroll band in step with the page, and `paintTheme()` in `app.js` rewrites
+`theme-color` on every toggle so the browser chrome doesn't sit on the other
+scheme.
 
 The app is a page, not a phone mock: no card, no shadow, no tinted backdrop.
 Content is centred and capped at `--measure`. The landing page is the
@@ -196,6 +203,13 @@ The default is stamped on `<html>` by an inline script in `<head>`, before
 first paint. That placement is load-bearing: `data-theme="light"` is what
 beats the `prefers-color-scheme:dark` block in the stylesheet, and doing it
 later would show a flash of dark first.
+
+Because that script always stamps *something*, the `prefers-color-scheme:dark`
+block is guarded by `:root:not([data-theme="light"])` and in practice only
+wins when the script never ran — i.e. with JavaScript disabled. It is the
+no-JS fallback, not dead code. Deleting it means a no-JS visitor on a dark
+phone gets the light app; deleting the guard instead means a dark phone
+overrides a saved light choice.
 
 ## Clearing
 
