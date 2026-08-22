@@ -123,13 +123,20 @@ carry the dark `#21262A` ground and the pre-token brand hexes — deliberately,
 because Threads and Reels need an opaque frame, not a themed one, and the gif
 embedded above has to carry its own colours too. But it means none of them
 follow a palette change the way the inline SVG in `app.html` does. They ship to
-Vercel as static files (~750KB) and no page requests them.
+Vercel as static files (~380KB) and no page requests them.
 
 **This README embeds the gif, not the svg.** Both animate on GitHub and the
-svg is a fortieth of the size, but the gif renders the same everywhere the
-README travels — mirrors, npm-style viewers, editors and clients that show
-markdown but freeze or refuse SMIL. The svg stays the master the gif is
-rendered from.
+svg is far smaller, but the gif renders the same everywhere the README travels
+— mirrors, npm-style viewers, editors and clients that show markdown but
+freeze or refuse SMIL. The svg stays the master the gif is rendered from.
+
+The gif is tuned for that job rather than for archival quality: 400px (twice
+the ~200px it displays at) and a **fixed 16-colour palette** named from the
+three brand hexes and the blends between them. Median-cut allocates palette
+entries by area, so at low colour counts it starves the small purple capsule
+and drifts it toward brown — the one hue in the mark that cannot move. Naming
+the ramps keeps all three source colours exact and lands smaller than the
+median-cut palette it replaced.
 
 All three run at **4s**, matching the loading screen, so the README shows the
 loop at the pace it actually plays in the app.

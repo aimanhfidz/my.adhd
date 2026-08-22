@@ -29,9 +29,10 @@ OUT = HERE.parent
 SVG = OUT / "my-adhd-morph.svg"
 NS = "{http://www.w3.org/2000/svg}"
 
-GIF_SIZE, GIF_FPS = 480, 25
+GIF_SIZE, GIF_FPS = 400, 25   # 2x the ~200px the README shows it at
 MP4_SIZE, MP4_FPS = 800, 30
 SS = 3  # supersample factor; the arms are thin and alias badly without it
+GIF_COLOURS = 16
 
 
 def _ffmpeg():
@@ -138,9 +139,13 @@ def parse(path):
 
 # ---------- raster ----------
 
-def _rgba(hex_colour, alpha=1.0):
+def _hex(hex_colour):
     h = hex_colour.lstrip("#")
-    return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), int(round(255 * alpha)))
+    return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16))
+
+
+def _rgba(hex_colour, alpha=1.0):
+    return _hex(hex_colour) + (int(round(255 * alpha)),)
 
 
 def frame(scene, p, size):
@@ -207,13 +212,49 @@ def render(scene, size, fps):
     return [frame(scene, i / n, size) for i in range(n)]
 
 
+def _ramp(a, b, n):
+    return [tuple(round(a[i] + (b[i] - a[i]) * j / (n - 1)) for i in range(3)) for j in range(n)]
+
+
+def gif_palette(scene):
+    """A fixed palette built from the three source colours and the blends
+    between them.
+
+    Median-cut allocates entries by area, and the purple capsule is a few
+    hundred pixels against a field of orange — at 16 colours it starves and
+    the capsule drifts to brown, which is the one thing in the mark that has
+    to stay on-brand. Naming the ramps ourselves keeps every hue exact, and
+    comes out smaller than the median-cut palette it replaces.
+
+    One palette for the whole loop, not one per frame: a shared palette lets
+    the encoder store inter-frame diffs, worth about a quarter of the file.
+    """
+    ground = _hex(scene["ground"])
+    orange = _hex(scene["core"]["fill"])
+    purple = _hex(next(a["fill"] for a in scene["arms"] if a["fill"] != scene["core"]["fill"]))
+
+    cols = (
+        [ground]
+        + _ramp(ground, orange, 8)[1:]   # orange antialiased against the ground
+        + _ramp(ground, purple, 6)[1:]   # purple against the ground
+        + _ramp(orange, purple, 4)[1:-1] # where the capsule crosses an arm
+    )
+    cols = list(dict.fromkeys(cols))[:GIF_COLOURS]
+
+    flat = [c for rgb in cols for c in rgb]
+    pal = Image.new("P", (1, 1))
+    pal.putpalette(flat + [0] * (768 - len(flat)))
+    return pal
+
+
 def main():
     scene = parse(SVG)
     print(f"{SVG.name}: {scene['dur']}s loop")
 
     frames = render(scene, GIF_SIZE, GIF_FPS)
     gif = OUT / "my-adhd-morph.gif"
-    pal = [f.quantize(colors=64, method=Image.MEDIANCUT) for f in frames]
+    master = gif_palette(scene)
+    pal = [f.quantize(palette=master, dither=Image.NONE) for f in frames]
     pal[0].save(
         gif,
         save_all=True,
@@ -221,9 +262,10 @@ def main():
         duration=round(1000 / GIF_FPS),
         loop=0,
         optimize=True,
-        disposal=2,
+        disposal=2,   # measurably smaller here than 1, on this art
     )
-    print(f"{gif.name}: {len(frames)} frames @ {GIF_FPS}fps, {gif.stat().st_size // 1024}KB")
+    print(f"{gif.name}: {len(frames)} frames @ {GIF_FPS}fps, {GIF_SIZE}px, "
+          f"{GIF_COLOURS} colours, {gif.stat().st_size // 1024}KB")
 
     mp4 = OUT / "my-adhd-morph.mp4"
     ffmpeg = _ffmpeg()
