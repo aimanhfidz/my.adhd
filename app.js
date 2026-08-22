@@ -676,7 +676,6 @@ el.doneToggle.addEventListener('click', () => {
    trade, and it beats a three-way button nobody reads. */
 
 const THEME_KEY = 'myadhd.theme';
-const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
 function storedTheme() {
   try {
@@ -686,7 +685,9 @@ function storedTheme() {
 }
 
 function activeTheme() {
-  return storedTheme() || (darkQuery.matches ? 'dark' : 'light');
+  // Light is the default. The system preference no longer decides — the
+  // toggle does, and until it is used the app stays light.
+  return storedTheme() || 'light';
 }
 
 function paintTheme() {
@@ -710,12 +711,12 @@ document.querySelectorAll('.theme-toggle').forEach(b => {
   b.addEventListener('click', toggleTheme);
 });
 
-// While no choice is stored, the OS switching at sunset switches the app too.
-darkQuery.addEventListener('change', () => { if (!storedTheme()) paintTheme(); });
 
 /* ---------------- boot ---------------- */
 
 load();
+// keep <html> and the stored value in step, even on a first-ever visit
+document.documentElement.dataset.theme = activeTheme();
 paintTheme();
 
 document.querySelectorAll('.energy-opt').forEach(b => {

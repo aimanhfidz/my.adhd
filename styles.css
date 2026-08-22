@@ -58,6 +58,11 @@ body{
 .mx-eye{fill:var(--mx-ink)}
 .mx-lens{fill:var(--mx-lens); fill-opacity:var(--mx-lens-alpha)}
 .mx-blob{fill:var(--mx-bg)}
+
+/* The character's outer contour, lit only when the ground is too dark to
+   draw it. Applied to the top-level <use> so the whole figure resolves to
+   one silhouette; the panel and the orbit lines are left alone. */
+.art svg > use{filter:var(--mx-rim)}
 .mx-curls{stroke:none}
 .mx-strand{stroke:var(--mx-strand); opacity:.85; stroke-width:2; fill:none; stroke-linecap:round}
 .mx-tee-line{stroke:var(--mx-ink); stroke-width:2.4; fill:none; stroke-linecap:round; opacity:.5}

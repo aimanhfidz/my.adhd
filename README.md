@@ -133,6 +133,18 @@ the violet capsule off the lower right. That gap is the mark — closing it
 into a plain eight-point star loses the whole idea. `favicon.svg` repeats
 the geometry standalone, so the two must be edited together.
 
+## Theme
+
+The app **defaults to light**. The system preference does not decide — the
+header toggle does, and until someone uses it the app stays white even on a
+phone in dark mode. The choice is stored under `myadhd.theme` and a saved
+choice always wins.
+
+The default is stamped on `<html>` by an inline script in `<head>`, before
+first paint. That placement is load-bearing: `data-theme="light"` is what
+beats the `prefers-color-scheme:dark` block in the stylesheet, and doing it
+later would show a flash of dark first.
+
 ## Clearing
 
 **Clear everything** sits at the foot of the lists, quiet until armed. It

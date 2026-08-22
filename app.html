@@ -11,12 +11,14 @@
 <link rel="stylesheet" href="theme.css" />
 <script>
 /* Applied before first paint: a saved choice must not arrive as a flash of
-   the other scheme. No saved choice means the system decides, so nothing
-   is stamped on <html> at all. */
+   the other scheme. With no saved choice the app defaults to light — a
+   phone in dark mode still opens the app white until the user says
+   otherwise. Stamping 'light' is what beats the prefers-color-scheme
+   block in the stylesheet. */
 try{
   var t = localStorage.getItem('myadhd.theme');
-  if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
-}catch(e){}
+  document.documentElement.dataset.theme = (t === 'dark' || t === 'light') ? t : 'light';
+}catch(e){ document.documentElement.dataset.theme = 'light'; }
 </script>
 <link rel="stylesheet" href="styles.css" />
 </head>

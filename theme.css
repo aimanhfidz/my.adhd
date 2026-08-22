@@ -68,6 +68,8 @@
   --mx-blush:var(--orange);
   --mx-bg:#E4E1F7;      /* pale on light */
   --mx-mark:#BDB7E8;
+  /* On white the ground draws the silhouette for free. */
+  --mx-rim:none;
 }
 
 
@@ -130,6 +132,15 @@
     --mx-strand:#5A5878;
     --mx-lens:#0B0B12;
     --mx-lens-alpha:.28;
+    /* The hair is a near-black mass with no outline of its own — on the
+       thinking screen, which has no panel behind it, it sits on a ground
+       of the same value and disappears. No single fill clears both the
+       page and the panel, so the edge is drawn instead: two stacked
+       shadows trace the union of the hair and its seven curls as one
+       contour, where stroking them individually would draw the
+       overlapping circles straight through the middle of the hair. */
+    --mx-rim:drop-shadow(0 0 1.2px rgba(174,167,232,.48))
+             drop-shadow(0 0 3.5px rgba(174,167,232,.20));
   }
 }
 
@@ -167,4 +178,6 @@
   --mx-strand:#5A5878;
   --mx-lens:#0B0B12;
   --mx-lens-alpha:.28;
+  --mx-rim:drop-shadow(0 0 1.2px rgba(174,167,232,.48))
+           drop-shadow(0 0 3.5px rgba(174,167,232,.20));
 }
