@@ -20,6 +20,10 @@ body{
   min-height:100dvh;
   display:grid; grid-template-rows:auto 1fr auto;
   padding:clamp(16px,3.2vh,28px) 0 clamp(18px,3vh,30px);
+  padding-top:calc(clamp(16px,3.2vh,28px) + env(safe-area-inset-top, 0px));
+  padding-bottom:calc(clamp(18px,3vh,30px) + env(safe-area-inset-bottom, 0px));
+  padding-left:env(safe-area-inset-left, 0px);
+  padding-right:env(safe-area-inset-right, 0px);
   /* the glow may bleed sideways, but the steps must never be clipped —
      on a short phone this page grows past the viewport and scrolls */
   overflow-x:clip;
