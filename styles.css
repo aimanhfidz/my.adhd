@@ -77,6 +77,19 @@ body{
 /* ---------- brand ---------- */
 .brand{display:flex; align-items:center; gap:9px}
 .brand--sm{margin-bottom:22px}
+/* The mark doubles as the way home from the lists. It is a button, not a
+   link — home is a screen swap, not a navigation. On the dump screen the
+   logo stays inert, because that screen already is home. */
+.brand-home{
+  display:flex; align-items:center; gap:9px;
+  background:none; border:0; padding:0; margin:0;
+  font:inherit; color:inherit; cursor:pointer;
+  border-radius:8px;
+}
+.brand-home:focus-visible{outline:2px solid var(--accent); outline-offset:4px}
+@media (hover:hover){
+  .brand-home:hover .wordmark{color:var(--accent)}
+}
 .logo{width:26px; height:26px; flex:none; display:block}
 .lg-star{fill:var(--orange)}
 .lg-pill{stroke:var(--violet)}

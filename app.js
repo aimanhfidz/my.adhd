@@ -21,6 +21,7 @@ const el = {
   doneCount:    $('done-count'),
   doneList:     $('done-list'),
   btnNewDump:   $('btn-new-dump'),
+  btnHome:      $('btn-home'),
   btnViewLists: $('btn-view-lists'),
   listsBadge:   $('lists-badge'),
   offlineNote:  $('offline-note'),
@@ -648,6 +649,7 @@ function refreshListsButton() {
 
 el.triage.addEventListener('click', triage);
 el.btnNewDump.addEventListener('click', newDump);
+el.btnHome.addEventListener('click', newDump);   // the mark is the way back
 el.btnViewLists.addEventListener('click', goToNext);
 el.btnResort.addEventListener('click', resortLocal);
 el.btnClearAll.addEventListener('click', stepClear);
