@@ -1,6 +1,6 @@
 # my.adhd — MVP #1
 
-<img src="animation/my-adhd-morph.svg" alt="The my.adhd logo mark morphing through four states" width="200" align="right" />
+<img src="animation/my-adhd-morph.gif" alt="The my.adhd logo mark morphing through four states" width="200" align="right" />
 
 **Brain dump → auto-triage → one task.**
 
@@ -90,7 +90,7 @@ swapping in Supabase later means replacing `load()` / `save()` only.
 
 ## The loading animation
 
-<img src="animation/my-adhd-morph.svg" alt="The four beats: mark, burst, clock, collapse" width="160" align="right" />
+<img src="animation/my-adhd-morph.gif" alt="The four beats: mark, burst, clock, collapse" width="160" align="right" />
 
 The wait on screen 2 is the logo mark morphing through four beats — the full
 mark, a burst, a clock, a collapse — and back. It is the **same eight
@@ -120,11 +120,16 @@ the logo.
 
 **`animation/` holds the standalone exports, and they will drift.** All three
 carry the dark `#21262A` ground and the pre-token brand hexes — deliberately,
-because Threads and Reels need an opaque frame, not a themed one, and
-`my-adhd-morph.svg` has to carry its own colours to animate through an `<img>`
-or in this README. But it means none of them follow a palette change the way
-the inline SVG in `app.html` does. They ship to Vercel as static files (~1.7MB)
-and no page requests them.
+because Threads and Reels need an opaque frame, not a themed one, and the gif
+embedded above has to carry its own colours too. But it means none of them
+follow a palette change the way the inline SVG in `app.html` does. They ship to
+Vercel as static files (~750KB) and no page requests them.
+
+**This README embeds the gif, not the svg.** Both animate on GitHub and the
+svg is a fortieth of the size, but the gif renders the same everywhere the
+README travels — mirrors, npm-style viewers, editors and clients that show
+markdown but freeze or refuse SMIL. The svg stays the master the gif is
+rendered from.
 
 All three run at **4s**, matching the loading screen, so the README shows the
 loop at the pace it actually plays in the app.
