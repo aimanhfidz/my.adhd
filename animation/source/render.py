@@ -34,6 +34,10 @@ MP4_SIZE, MP4_FPS = 800, 30
 SS = 3  # supersample factor; the arms are thin and alias badly without it
 GIF_COLOURS = 16
 
+# the loading-screen copies: --surface in each theme, from theme.css
+APP_SIZE, APP_FPS = 400, 30
+APP_GROUNDS = {"light": "#FFFFFF", "dark": "#101018"}
+
 
 def _ffmpeg():
     """PATH first, then the pip-installed bundle."""
@@ -207,9 +211,43 @@ def frame(scene, p, size):
     return img.resize((size, size), Image.LANCZOS).convert("RGB")
 
 
-def render(scene, size, fps):
+def render(scene, size, fps, ground=None):
+    if ground:
+        scene = dict(scene, ground=ground)
     n = int(round(scene["dur"] * fps))
     return [frame(scene, i / n, size) for i in range(n)]
+
+
+def write_mp4(ffmpeg, frames, fps, path, full_range=False):
+    """full_range: tag and encode as pc/full range.
+
+    Limited range (the broadcast default) squeezes 0-255 into 16-235, and the
+    round trip does not land back on the value you started from — the app's
+    #101018 ground came back as #10111A, which is invisible as a number and
+    very visible as a square sitting on a flat dark page. Full range makes the
+    ground decode to exactly the CSS colour. Kept off for the social export,
+    where players expect limited range.
+    """
+    rng = (["-vf", "scale=in_range=full:out_range=full",
+            "-color_range", "pc",
+            "-colorspace", "bt709", "-color_primaries", "bt709",
+            "-color_trc", "bt709"] if full_range else [])
+    with tempfile.TemporaryDirectory() as d:
+        for i, f in enumerate(frames):
+            f.save(pathlib.Path(d) / f"frame-{i:04d}.png")
+        subprocess.run(
+            [ffmpeg, "-y", "-framerate", str(fps),
+             "-i", f"{d}/frame-%04d.png",
+             *rng,
+             "-c:v", "libx264", "-preset", "veryslow", "-crf", "18",
+             # yuv420p and even dimensions, or it won't decode on iOS/Android
+             "-pix_fmt", "yuv420p",
+             "-movflags", "+faststart",
+             str(path)],
+            check=True, capture_output=True,
+        )
+    print(f"{path.name}: {len(frames)} frames @ {fps}fps, {path.stat().st_size // 1024}KB"
+          f"{' (full range)' if full_range else ''}")
 
 
 def _ramp(a, b, n):
@@ -273,21 +311,17 @@ def main():
         print(f"{mp4.name}: SKIPPED — no ffmpeg. pip install --user imageio-ffmpeg")
         return
 
-    frames = render(scene, MP4_SIZE, MP4_FPS)
-    with tempfile.TemporaryDirectory() as d:
-        for i, f in enumerate(frames):
-            f.save(pathlib.Path(d) / f"frame-{i:04d}.png")
-        subprocess.run(
-            [ffmpeg, "-y", "-framerate", str(MP4_FPS),
-             "-i", f"{d}/frame-%04d.png",
-             "-c:v", "libx264", "-preset", "veryslow", "-crf", "18",
-             # yuv420p and even dimensions, or it won't decode on iOS/Android
-             "-pix_fmt", "yuv420p",
-             "-movflags", "+faststart",
-             str(mp4)],
-            check=True, capture_output=True,
-        )
-    print(f"{mp4.name}: {len(frames)} frames @ {MP4_FPS}fps, {mp4.stat().st_size // 1024}KB")
+    write_mp4(ffmpeg, render(scene, MP4_SIZE, MP4_FPS), MP4_FPS, mp4)
+
+    # The app's loading screen plays these. H.264 has no alpha, so the ground
+    # cannot be transparent — it is baked to match each theme's --surface
+    # instead, and app.js picks the file for the active theme.
+    app = OUT / "app"
+    app.mkdir(exist_ok=True)
+    for name, ground in APP_GROUNDS.items():
+        write_mp4(ffmpeg,
+                  render(scene, APP_SIZE, APP_FPS, ground=ground),
+                  APP_FPS, app / f"morph-{name}.mp4", full_range=True)
 
 
 if __name__ == "__main__":

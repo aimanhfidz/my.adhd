@@ -195,10 +195,17 @@ body{
    shape thinking rather than a spinner. 4s loop; the copy rotates at 1.9s
    underneath it, so the two never land together and the wait stays alive. */
 .loading{margin:auto; text-align:center}
-.logo-morph{display:block; width:100%; height:auto; overflow:visible}
-.lm-arm{fill:var(--orange)}
-.lm-pill{fill:var(--violet)}
-.lm-ring{stroke:var(--orange)}
+/* The mp4 carries its own ground, one render per theme, because H.264 has no
+   alpha channel. It still cannot match --surface exactly: 8-bit yuv420 does
+   not round-trip RGB, so #101018 comes back as #11111A and the frame reads as
+   a faint square on the dark theme. One or two values out of 255 is invisible
+   on its own — what gives it away is the hard edge — so the edge is feathered
+   off. The mark itself reaches ~67% of the half-width, well inside the mask. */
+.logo-morph{
+  display:block; width:100%; height:auto;
+  -webkit-mask-image:radial-gradient(closest-side,#000 74%,transparent 99%);
+          mask-image:radial-gradient(closest-side,#000 74%,transparent 99%);
+}
 .loading-text{color:var(--muted); font-size:15px}
 
 /* ---------- screen 3: now ---------- */

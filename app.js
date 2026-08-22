@@ -80,15 +80,14 @@ const LOADING_LINES = [
 ];
 let loadingTimer;
 
-/* The morph is SMIL, which CSS can't pause — prefers-reduced-motion has to be
-   honoured through the SVG's own animation clock. Frozen at t=0 it still shows
-   the mark, so the screen loses the motion, not the logo. */
-const morphSvg = document.querySelector('#screen-loading .logo-morph');
-if (morphSvg && matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  morphSvg.pauseAnimations();
-}
-
 function startLoadingCopy() {
+  /* The browser pauses a video inside a display:none screen and does not
+     resume it when the screen is shown again, so the wait has to start the
+     morph itself. Rewound each time, so every wait opens on beat 01. */
+  if (morph && !stillMode) {
+    morph.currentTime = 0;
+    morph.play().catch(() => {});   // autoplay policy: never fatal, just still
+  }
   let i = 0;
   el.loadingText.textContent = LOADING_LINES[0];
   loadingTimer = setInterval(() => {
@@ -96,7 +95,10 @@ function startLoadingCopy() {
     el.loadingText.textContent = LOADING_LINES[i];
   }, 1900);
 }
-function stopLoadingCopy() { clearInterval(loadingTimer); }
+function stopLoadingCopy() {
+  clearInterval(loadingTimer);
+  if (morph) morph.pause();   // nothing decodes behind the lists
+}
 
 /* ---------------- triage ---------------- */
 
@@ -699,6 +701,26 @@ function activeTheme() {
   return storedTheme() || 'light';
 }
 
+/* The loading morph is an mp4, and H.264 carries no alpha — so the ground is
+   baked into the file and there is one render per theme, each on that theme's
+   --surface. Anything else puts a coloured square in the middle of the page. */
+const morph = document.getElementById('loading-morph');
+const stillMode = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function paintMorph() {
+  if (!morph) return;
+  const src = `animation/app/morph-${activeTheme()}.mp4`;
+  if (morph.getAttribute('src') === src) return;   // reloads the video, so guard it
+  morph.setAttribute('src', src);
+  if (stillMode) {
+    // Held on the first frame — the full mark. The screen loses the motion,
+    // not the logo, same as the SVG did when its clock was paused.
+    morph.autoplay = false;
+    morph.addEventListener('loadeddata', () => { morph.currentTime = 0; morph.pause(); },
+                           { once: true });
+  }
+}
+
 function paintTheme() {
   const dark = activeTheme() === 'dark';
   // The address bar and the rubber-band area read this, not the stylesheet.
@@ -707,6 +729,7 @@ function paintTheme() {
   document.querySelectorAll('.theme-toggle').forEach(b => {
     b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
   });
+  paintMorph();
 }
 
 function toggleTheme() {

@@ -85,7 +85,8 @@ swapping in Supabase later means replacing `load()` / `save()` only.
 | `styles.css` | App layout: one white page, content held to `--measure` (720px), gradient pill actions |
 | `app.js` | State, triage call, scoring, rendering |
 | `api/triage.js` | Claude call — triage + breakdown modes |
-| `animation/` | Logo morph exports — self-animating svg, mp4, gif. Not loaded by the app |
+| `animation/` | Logo morph exports — self-animating svg, mp4, gif. For social and this README |
+| `animation/app/` | The loading screen's mp4, one per theme. **Loaded by the app** |
 | `animation/source/` | `gen.py` (svg), `render.py` (gif + mp4), the four beats, the motion sheet |
 
 ## The loading animation
@@ -98,25 +99,40 @@ rectangles** throughout, changing length, thickness and corner radius; nothing
 is added, removed or crossfaded, which is what makes it read as one shape
 thinking rather than a spinner.
 
-It is inline SMIL in `app.html`, not a file, for one reason: an `<img>` can't
-read the page's CSS, and the mark has to follow the theme. The arms bind to
-`--orange` and the capsule to `--violet` through `.lm-arm` / `.lm-pill` /
-`.lm-ring` — the same two tokens `.lg-star` / `.lg-pill` use — so the loader
-and the header logo are always the same mark.
+It plays as an **mp4**, from `animation/app/`. H.264 carries no alpha channel,
+so the ground is part of the picture — which means one render per theme, each
+on that theme's `--surface`, and `paintMorph()` in `app.js` swaps the file
+whenever the theme changes. The colours are baked, so unlike the rest of the
+app the mark here does not follow a token change; edit `theme.css` and these
+two files have to be re-rendered.
 
-**Retiming is one find-and-replace.** Every `<animate>` carries `dur="4s"`;
-change them together and the four beats stay proportional, landing at 0/1/2/3s.
+Two things that are not obvious and will look like bugs if you undo them:
 
-    sed -i '' 's/dur="4s"/dur="6s"/g' app.html
+- **The screen has to start the video itself.** A browser pauses video inside
+  a `display:none` screen and does not resume it when the screen is shown, so
+  `autoplay` alone leaves the mark frozen on the first frame. `startLoadingCopy()`
+  calls `play()` and rewinds, so every wait opens on beat 01.
+- **The edge is feathered by a radial mask.** 8-bit yuv420 does not round-trip
+  RGB, so the dark ground encodes as `#101018` and decodes as `#11111A`. One or
+  two values out of 255 is invisible on its own; the hard edge of the frame is
+  what gives it away as a square sitting on the page. Full-range encoding gets
+  closer but Chrome still lands a value out, so the fix is to remove the edge
+  rather than chase the colour. The mark reaches ~67% of the half-width, so a
+  mask solid to 74% clips nothing.
+
+**Retiming happens in `gen.py`, not here.** `DUR` there drives the svg, and
+`render.py` re-renders every video from it — the loading screen included.
+
+    sed -i '' 's/DUR="4s"/DUR="6s"/' animation/source/gen.py
+    python3 animation/source/gen.py && python3 animation/source/render.py
 
 Don't slow it past the wait itself — a triage that returns in 2s should not
 cut the mark off mid-beat. Don't speed it up either; below ~3s the morph reads
 as a twitch.
 
-CSS cannot pause SMIL — `animation-play-state` has no effect on `<animate>`.
-Reduced motion is honoured in `app.js` via `svg.pauseAnimations()`, which
-freezes the clock at beat 01, the full mark. The screen loses the motion, not
-the logo.
+Reduced motion is honoured in `app.js`: the video is left unplayed and held on
+its first frame, beat 01, the full mark. The screen loses the motion, not the
+logo.
 
 **`animation/` holds the standalone exports, and they will drift.** All three
 carry the dark `#21262A` ground and the pre-token brand hexes — deliberately,
