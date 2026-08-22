@@ -686,20 +686,11 @@ el.doneToggle.addEventListener('click', () => {
    following it only by clearing the site's storage. That is the usual
    trade, and it beats a three-way button nobody reads. */
 
-const THEME_KEY = 'myadhd.theme';
+/* theme.js owns the stored choice, the <html> stamp, the meta colour and
+   the toggle buttons — on every page. The app only adds what is its own:
+   the loading morph has to be re-pointed when the theme moves. */
 
-function storedTheme() {
-  try {
-    const t = localStorage.getItem(THEME_KEY);
-    return t === 'dark' || t === 'light' ? t : null;
-  } catch (_) { return null; }
-}
-
-function activeTheme() {
-  // Light is the default. The system preference no longer decides — the
-  // toggle does, and until it is used the app stays light.
-  return storedTheme() || 'light';
-}
+function activeTheme() { return window.myadhdTheme.active(); }
 
 /* The loading morph is an mp4, and H.264 carries no alpha — so the ground is
    baked into the file and there is one render per theme, each on that theme's
@@ -721,35 +712,13 @@ function paintMorph() {
   }
 }
 
-function paintTheme() {
-  const dark = activeTheme() === 'dark';
-  // The address bar and the rubber-band area read this, not the stylesheet.
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', dark ? '#101018' : '#FFFFFF');
-  document.querySelectorAll('.theme-toggle').forEach(b => {
-    b.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
-  });
-  paintMorph();
-}
-
-function toggleTheme() {
-  const next = activeTheme() === 'dark' ? 'light' : 'dark';
-  document.documentElement.dataset.theme = next;
-  try { localStorage.setItem(THEME_KEY, next); } catch (_) {}
-  paintTheme();
-}
-
-document.querySelectorAll('.theme-toggle').forEach(b => {
-  b.addEventListener('click', toggleTheme);
-});
+window.myadhdTheme.onChange(paintMorph);
 
 
 /* ---------------- boot ---------------- */
 
 load();
-// keep <html> and the stored value in step, even on a first-ever visit
-document.documentElement.dataset.theme = activeTheme();
-paintTheme();
+paintMorph();
 
 document.querySelectorAll('.energy-opt').forEach(b => {
   const on = b.dataset.energy === state.energy;

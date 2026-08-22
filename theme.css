@@ -181,3 +181,31 @@
   --mx-rim:drop-shadow(0 0 1.2px rgba(174,167,232,.48))
            drop-shadow(0 0 3.5px rgba(174,167,232,.20));
 }
+
+/* ============ the brand lockup ============
+   Defined once. It used to live in both landing.css and styles.css, which
+   is how the app ended up a pixel tighter than the landing page. */
+.logo{width:26px; height:26px; flex:none; display:block}
+.lg-star{fill:var(--orange)}
+.lg-pill{stroke:var(--violet)}
+.wordmark{font-family:var(--display); font-size:16px; font-weight:700; letter-spacing:-.03em; color:var(--ink)}
+.wordmark .accent{color:var(--wordmark-accent)}
+.brand-lockup{display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; border-radius:8px}
+.brand-lockup:focus-visible{outline:2px solid var(--accent); outline-offset:4px}
+@media (hover:hover){ .brand-lockup:hover .wordmark{color:var(--accent)} }
+
+/* ---------- day / night ----------
+   A round icon button that shows where a click takes you: a moon while
+   the page is light, a sun while it is dark. */
+.theme-toggle{
+  flex:none; width:34px; height:34px; display:grid; place-items:center;
+  background:none; border:1.5px solid var(--line-strong); border-radius:999px;
+  color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+.theme-toggle:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
+.theme-toggle:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.theme-toggle svg{width:17px; height:17px; display:block}
+.theme-toggle .t-sun{display:none}
+:root[data-theme="dark"] .theme-toggle .t-sun{display:block}
+:root[data-theme="dark"] .theme-toggle .t-moon{display:none}

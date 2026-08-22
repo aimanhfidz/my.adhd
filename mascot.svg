@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 262" role="img" aria-label="my.adhd mascot">
   <style>
-    .mx-ink{stroke:#101018;stroke-width:3.2;fill:none;stroke-linejoin:round}
+    .mx-ink{stroke:var(--mx-ink,#101018);stroke-width:3.2;fill:none;stroke-linejoin:round}
     .mx-cap{stroke-linecap:round;stroke-linejoin:round}
-    .mx-skin{fill:#F2B477}.mx-hair{fill:#101018}.mx-tee{fill:#202030}
-    .mx-eye{fill:#101018}.mx-lens{fill:#fff;fill-opacity:.13}
+    .mx-skin{fill:var(--mx-skin,#F2B477)}.mx-hair{fill:var(--mx-hair,#101018)}.mx-tee{fill:var(--mx-tee,#202030)}
+    .mx-eye{fill:var(--mx-eye,#101018)}.mx-lens{fill:var(--mx-lens,#fff);fill-opacity:var(--mx-lens-alpha,.13)}
     .mx-curls{stroke:none}
-    .mx-strand{stroke:#2E2E42;opacity:.85;stroke-width:2;fill:none;stroke-linecap:round}
-    .mx-tee-line{stroke:#101018;stroke-width:2.4;fill:none;stroke-linecap:round;opacity:.5}
-    .mx-blush path{stroke:#F75C03;stroke-width:3.4;stroke-linecap:round;fill:none;opacity:.85}
+    .mx-strand{stroke:var(--mx-strand,#2E2E42);opacity:.85;stroke-width:2;fill:none;stroke-linecap:round}
+    .mx-tee-line{stroke:var(--mx-tee-line,#101018);stroke-width:2.4;fill:none;stroke-linecap:round;opacity:.5}
+    .mx-blush path{stroke:var(--mx-blush,#F75C03);stroke-width:3.4;stroke-linecap:round;fill:none;opacity:.85}
   </style>
   <defs>
   <filter id="mx-rough" x="-12%" y="-12%" width="124%" height="124%">
@@ -59,9 +59,9 @@
       </g>
     </g>
   </defs>
-  <path fill="#3A3568" filter="url(#mx-rough)"
+  <path fill="var(--mx-bg,#3A3568)" filter="url(#mx-rough)"
       d="M62 18C104 10 150 8 190 20c14 5 16 22 17 42 3 44 4 118-2 160-2 16-10 26-26 28-44 6-98 6-142-1-14-2-22-12-23-28-4-42-3-114 0-158 1-22 5-40 18-45z"/>
-  <g fill="#524D80">
+  <g fill="var(--mx-mark,#524D80)">
     <path d="M46 62l3.6 8 8 3.6-8 3.6-3.6 8-3.6-8-8-3.6 8-3.6z"/>
     <path d="M206 96l2.8 6.2 6.2 2.8-6.2 2.8-2.8 6.2-2.8-6.2-6.2-2.8 6.2-2.8z"/>
     <circle cx="212" cy="52" r="4.5"/><circle cx="34" cy="128" r="3.5"/>

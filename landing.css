@@ -2,14 +2,25 @@
    Full-bleed: no card, no gutter, the page IS the surface.
    The HERO is exactly one viewport (100dvh), so the first screen is
    always whole and nothing is cut off on a phone. The copy below it
-   scrolls. Tokens come from theme.css.
-   Committed to dark in both schemes — it's a hero, it doesn't invert. */
+   scrolls. Tokens come from theme.css, so the hero follows the same
+   toggle as the app — light by default, dark when asked. */
 
 *{box-sizing:border-box; margin:0; padding:0}
 
+/* The glows are the one thing that cannot be a shared token: on paper they
+   have to be a whisper, on ink they carry the whole backdrop. */
+:root{
+  --hero-glow-a:rgba(71,55,255,.13);
+  --hero-glow-b:rgba(53,41,191,.11);
+}
+:root[data-theme="dark"]{
+  --hero-glow-a:rgba(71,55,255,.32);
+  --hero-glow-b:rgba(53,41,191,.34);
+}
+
 body{
-  background:var(--black);
-  color:#fff;
+  background:var(--surface);
+  color:var(--ink);
   font-family:var(--display);
   -webkit-font-smoothing:antialiased;
   line-height:1.5;
@@ -17,9 +28,6 @@ body{
 }
 
 /* ---------- shared bits ---------- */
-.logo{width:26px; height:26px; flex:none; display:block}
-.wordmark{font-size:16px; font-weight:700; letter-spacing:-.03em; color:#fff}
-.wordmark .accent{color:#A47BFF}
 
 .cta{
   display:inline-flex; align-items:center; justify-content:center;
@@ -32,7 +40,7 @@ body{
 }
 .cta:hover{transform:translateY(-2px); box-shadow:0 22px 46px -14px rgba(71,55,255,1)}
 .cta:active{transform:translateY(0)}
-.cta:focus-visible{outline:3px solid #A47BFF; outline-offset:3px}
+.cta:focus-visible{outline:3px solid var(--accent); outline-offset:3px}
 
 /* ============ HERO — one viewport ============ */
 .hero{
@@ -53,11 +61,11 @@ body{
 }
 .hero::before{
   width:min(78vw,760px); aspect-ratio:1; top:-14%; right:-16%;
-  background:radial-gradient(closest-side,rgba(71,55,255,.32),transparent 72%);
+  background:radial-gradient(closest-side,var(--hero-glow-a),transparent 72%);
 }
 .hero::after{
   width:min(60vw,520px); aspect-ratio:1; bottom:-20%; left:-18%;
-  background:radial-gradient(closest-side,rgba(53,41,191,.34),transparent 72%);
+  background:radial-gradient(closest-side,var(--hero-glow-b),transparent 72%);
 }
 .hero > *{position:relative; z-index:1}
 
@@ -66,12 +74,14 @@ body{
   width:100%; max-width:1080px; margin:0 auto; padding:0 clamp(20px,5vw,40px);
 }
 .nav-link{
-  margin-left:auto; color:var(--pale); text-decoration:none;
+  margin-left:auto; color:var(--muted); text-decoration:none;
   font-size:14px; font-weight:600;
-  padding:8px 16px; border:1.5px solid rgba(209,205,255,.28); border-radius:999px;
+  padding:8px 16px; border:1.5px solid var(--line-strong); border-radius:999px;
   transition:border-color .18s var(--ease), color .18s var(--ease);
 }
-.nav-link:hover{color:#fff; border-color:#A47BFF}
+.nav-link:hover{color:var(--ink); border-color:var(--accent)}
+/* the toggle sits between the link and the edge */
+.nav .theme-toggle{margin-left:10px}
 
 .hero-body{
   min-height:0;
@@ -81,7 +91,7 @@ body{
   padding:0 clamp(20px,5vw,40px);
 }
 .hero-art{min-height:0; display:flex; justify-content:center}
-.hero-art img{
+.hero-art img, .hero-art .hero-mascot{
   display:block; height:min(38vh,340px); width:auto; max-width:100%;
   /* the mascot sits back — the headline and CTA carry the screen */
   opacity:.92;
@@ -93,15 +103,15 @@ body{
   margin-bottom:clamp(8px,1.5vh,15px);
 }
 .hero-sub{
-  font-size:clamp(13.5px,min(1.85vh,3.9vw),18px); color:var(--pale);
+  font-size:clamp(13.5px,min(1.85vh,3.9vw),18px); color:var(--muted);
   max-width:44ch; margin-bottom:clamp(14px,2.6vh,26px);
 }
-.hero-note{margin-top:clamp(8px,1.4vh,13px); font-size:clamp(12px,1.4vh,13.5px); color:#7C7C96}
+.hero-note{margin-top:clamp(8px,1.4vh,13px); font-size:clamp(12px,1.4vh,13.5px); color:var(--faint)}
 
 .hero-foot{
   text-align:center; padding:0 clamp(20px,5vw,40px);
   font-size:clamp(11px,1.3vh,12.5px); line-height:1.55;
-  color:#63637A; max-width:60ch; margin:0 auto;
+  color:var(--faint); max-width:60ch; margin:0 auto;
 }
 
 /* steps */
@@ -121,17 +131,23 @@ body{
     gap:clamp(40px,6vw,88px); text-align:left;
   }
   .hero-copy{align-items:flex-start; max-width:36rem}
-  .hero-art img{height:min(64vh,520px)}
+  .hero-art img, .hero-art .hero-mascot{height:min(64vh,520px)}
 }
 
 /* ---------- landscape phones ---------- */
 @media (max-height:520px){
   .hero-body{flex-direction:row-reverse; gap:26px; text-align:left}
   .hero-copy{align-items:flex-start}
-  .hero-art img{height:min(46vh,210px)}
+  .hero-art img, .hero-art .hero-mascot{height:min(46vh,210px)}
   .hero-sub{display:none}
 }
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important}
+}
+
+/* Launched from the home screen there is no browser chrome to hold the
+   status bar off, and iOS does not always report an inset — so floor it. */
+@media (display-mode:standalone){
+  .hero{padding-top:calc(clamp(16px,3.2vh,28px) + max(env(safe-area-inset-top, 0px), 34px))}
 }

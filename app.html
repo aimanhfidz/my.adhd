@@ -17,17 +17,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <link rel="preload" href="fonts/Baloo2-Variable.ttf" as="font" type="font/ttf" crossorigin />
 <link rel="stylesheet" href="theme.css" />
-<script>
-/* Applied before first paint: a saved choice must not arrive as a flash of
-   the other scheme. With no saved choice the app defaults to light — a
-   phone in dark mode still opens the app white until the user says
-   otherwise. Stamping 'light' is what beats the prefers-color-scheme
-   block in the stylesheet. */
-try{
-  var t = localStorage.getItem('myadhd.theme');
-  document.documentElement.dataset.theme = (t === 'dark' || t === 'light') ? t : 'light';
-}catch(e){ document.documentElement.dataset.theme = 'light'; }
-</script>
+<script src="theme.js"></script>
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -127,11 +117,11 @@ try{
   <!-- ============ SCREEN 1: BRAIN DUMP ============ -->
   <section class="screen" id="screen-dump">
     <header class="brand">
-      <a class="brand-home" href="/" aria-label="my.adhd home">
+      <a class="brand-lockup" href="/" aria-label="my.adhd home">
         <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
         <span class="wordmark">my<span class="accent">.adhd</span></span>
       </a>
-      <button class="theme-toggle" id="btn-theme" type="button" aria-label="Switch to dark mode">
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
         <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
         <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
       </button>
@@ -189,7 +179,7 @@ try{
   <!-- ============ SCREEN 3: THE LISTS ============ -->
   <section class="screen is-hidden" id="screen-now">
     <header class="brand brand--sm">
-      <a class="brand-home" href="/" aria-label="my.adhd home">
+      <a class="brand-lockup" href="/" aria-label="my.adhd home">
         <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
         <span class="wordmark">my<span class="accent">.adhd</span></span>
       </a>
