@@ -29,7 +29,7 @@ OUT = HERE.parent
 SVG = OUT / "my-adhd-morph.svg"
 NS = "{http://www.w3.org/2000/svg}"
 
-GIF_SIZE, GIF_FPS = 400, 25   # 2x the ~200px the README shows it at
+GIF_SIZE, GIF_FPS = 360, 25   # ~1.8x the ~200px the README shows it at
 MP4_SIZE, MP4_FPS = 800, 30
 SS = 3  # supersample factor; the arms are thin and alias badly without it
 GIF_COLOURS = 16
