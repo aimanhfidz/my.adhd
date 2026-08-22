@@ -1,5 +1,7 @@
 # my.adhd — MVP #1
 
+<img src="animation/my-adhd-morph.svg" alt="The my.adhd logo mark morphing through four states" width="200" align="right" />
+
 **Brain dump → auto-triage → one task.**
 
 The whole app does one thing: you empty your head into a box, and it hands back
@@ -87,6 +89,8 @@ swapping in Supabase later means replacing `load()` / `save()` only.
 | `animation/source/` | The generator, the four beats as static SVGs, and the motion sheet |
 
 ## The loading animation
+
+<img src="animation/my-adhd-morph.svg" alt="The four beats: mark, burst, clock, collapse" width="160" align="right" />
 
 The wait on screen 2 is the logo mark morphing through four beats — the full
 mark, a burst, a clock, a collapse — and back. It is the **same eight
