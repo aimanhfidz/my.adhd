@@ -86,7 +86,7 @@ swapping in Supabase later means replacing `load()` / `save()` only.
 | `app.js` | State, triage call, scoring, rendering |
 | `api/triage.js` | Claude call — triage + breakdown modes |
 | `animation/` | Logo morph exports — self-animating svg, mp4, gif. Not loaded by the app |
-| `animation/source/` | The generator, the four beats as static SVGs, and the motion sheet |
+| `animation/source/` | `gen.py` (svg), `render.py` (gif + mp4), the four beats, the motion sheet |
 
 ## The loading animation
 
@@ -126,10 +126,8 @@ or in this README. But it means none of them follow a palette change the way
 the inline SVG in `app.html` does. They ship to Vercel as static files (~1.7MB)
 and no page requests them.
 
-**They no longer agree on duration.** `my-adhd-morph.svg` runs at 4s, matching
-the loading screen, so the README shows the loop at the pace it actually plays
-in the app. The mp4 and gif are still the 8s captures. Recapture them from the
-retimed SVG when the social versions next matter.
+All three run at **4s**, matching the loading screen, so the README shows the
+loop at the pace it actually plays in the app.
 
 `animation/source/gen.py` is that generator. It rewrites the standalone morph
 SVG and the four static beats from one place:
@@ -140,10 +138,20 @@ The choreography lives in the state tables at the top as `(inner, outer, width,
 radius, opacity)` per arm — `LOGO[3]` is the purple capsule. Edit those, not the
 generated SVGs, which are overwritten on every run.
 
-It regenerates `my-adhd-morph.svg` and the four beats, and nothing else — the
-**mp4 and gif still come out of a screen capture** of the loop, so a colour
-change lands in the SVGs immediately and leaves the video files behind until
-someone recaptures them.
+It regenerates `my-adhd-morph.svg` and the four beats. The mp4 and gif come
+from `render.py`, so a retime is two commands and nothing is left behind:
+
+    python3 animation/source/gen.py       # svg + the four beats
+    python3 animation/source/render.py    # gif + mp4, from that svg
+
+`render.py` reads the SVG and evaluates its SMIL rather than screen-recording
+the loop, which is what the video files used to be — that capture step is why
+they drifted out of step with the vector every time the timing changed. It is
+not a general SVG renderer; it understands exactly the shapes `gen.py` emits.
+
+It needs Pillow, and ffmpeg for the mp4 — either on `PATH` or the bundled
+binary from `pip install --user imageio-ffmpeg`. With neither, the gif is
+still written and the mp4 is skipped with a notice.
 
 Note it emits the original hexes, because its job is the standalone exports.
 The app's copy is the inline SMIL in `app.html`, tokenised separately —
