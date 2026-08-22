@@ -28,6 +28,7 @@
   --stone:#5E5E6A;       /* Stone Gray   */
   --orange:#F75C03;      /* Vivid Orange */
   --violet:#7B3FE4;      /* logo capsule  */
+  --danger:#D92D20;      /* destructive only — never decoration */
   --wordmark-accent:var(--violet);
   --grad:linear-gradient(103deg,#101018 0%,#3529BF 38%,#4737FF 68%,#ACA5FF 100%);
 
@@ -75,6 +76,12 @@
    lavender accent is unreadable. */
 :root{
   --on-accent:#FFFFFF;
+  /* --danger is the button fill and carries white text at 4.8:1 on both
+     grounds, so it does not move. Red as *text* is the part that fails on
+     a dark page, hence a separate ink. */
+  --danger-ink:var(--danger);
+  --danger-wash:rgba(217,45,32,.06);
+  --danger-edge:rgba(217,45,32,.32);
   --toast-bg:var(--navy);
   --toast-ink:#FFFFFF;
   --mx-strand:#2E2E42;
@@ -110,6 +117,9 @@
     --focus:rgba(139,125,255,.26);
 
     --on-accent:#101018;
+    --danger-ink:#FF8A7E;
+    --danger-wash:rgba(255,138,126,.10);
+    --danger-edge:rgba(255,138,126,.38);
     --toast-bg:#2A2A3E;
     --toast-ink:#F3F2FB;
 
@@ -144,6 +154,9 @@
   --focus:rgba(139,125,255,.26);
 
   --on-accent:#101018;
+  --danger-ink:#FF8A7E;
+  --danger-wash:rgba(255,138,126,.10);
+  --danger-edge:rgba(255,138,126,.38);
   --toast-bg:#2A2A3E;
   --toast-ink:#F3F2FB;
 
