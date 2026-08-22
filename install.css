@@ -99,8 +99,10 @@ body{
   margin-inline:.12em; fill:currentColor;
 }
 
-/* the direct-install button, only shown when the browser offers a prompt */
-.install-now{margin-top:16px; display:none}
+/* the direct-install button, only shown when the browser offers a prompt.
+   .main is a flex column, so without align-self the button would stretch
+   the full measure and read as a banner rather than a button. */
+.install-now{margin-top:16px; display:none; align-self:flex-start}
 .install-now.is-live{display:inline-flex}
 
 /* ---------- footer ---------- */
@@ -114,6 +116,9 @@ body{
 
 @media (min-width:720px){
   .foot{flex-direction:row; align-items:center; justify-content:space-between; gap:20px}
+  /* the fine print gives way — the button keeps its own width */
+  .foot .cta{flex:none; white-space:nowrap}
+  .foot .fineprint{flex:1 1 auto}
 }
 
 @media (prefers-reduced-motion:reduce){
