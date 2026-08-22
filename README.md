@@ -44,8 +44,14 @@ Then set `ANTHROPIC_API_KEY` in the Vercel project's Environment Variables. The
 key is only ever read server-side in `api/triage.js` — it never reaches the
 browser.
 
-`@anthropic-ai/sdk` is pinned to `latest`; pin it to a real version once you've
-installed it locally (`npm i @anthropic-ai/sdk` then copy the resolved version).
+`@anthropic-ai/sdk` is pinned to an exact version (`0.120.0`), not a range —
+`api/triage.js` depends on beta request parameters (`betas`, `fallbacks`,
+`output_config`), so a floating dependency can change behaviour under you with
+no code change. Bump it deliberately and re-test both modes of `/api/triage`.
+
+There is no lockfile, so transitive dependencies still resolve fresh on each
+build. Run `npm install` locally and commit `package-lock.json` if you want
+fully reproducible builds.
 
 ## Data
 

@@ -5,6 +5,6 @@
   "type": "module",
   "description": "my.adhd — brain dump in, one task out.",
   "dependencies": {
-    "@anthropic-ai/sdk": "latest"
+    "@anthropic-ai/sdk": "0.120.0"
   }
 }
