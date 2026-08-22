@@ -37,6 +37,22 @@ fuel than the user currently has**. A task you have no energy for is worse than
 useless — it's the one you stare at before closing the app. Short tasks win
 ties, because momentum beats optimality.
 
+## Screens
+
+Real output — the lists below are what the model returned for one dump of seven
+things, not mock-ups.
+
+| Dump | Lists |
+|---|---|
+| <img src="docs/screen-dump.png" alt="The dump screen: one textarea and a Clear my head button" /> | <img src="docs/screen-lists.png" alt="The lists screen: tasks grouped into Money, Admin, Work, Health" /> |
+
+Same screen on the dark theme, via the header toggle:
+
+<img src="docs/screen-lists-dark.png" alt="The lists screen in dark mode" width="520" />
+
+Note the single orange **urgent** pill on the rent task. Vivid Orange is
+reserved for *act now* — one thing at a time, or it stops meaning anything.
+
 ## Running it
 
 **No build step.** Open `index.html` in a browser and it works — offline, using
@@ -99,6 +115,7 @@ swapping in Supabase later means replacing `load()` / `save()` only.
 | `mascot.svg` | Standalone mascot for the landing hero (`<img>` can't read the page's CSS, so its colours are baked in) |
 | `favicon.svg` | The logo mark, standalone |
 | `fonts/` | Baloo 2 (variable, wght 400-800), self-hosted |
+| `docs/` | README screenshots. Not served by the app |
 | `styles.css` | App layout: one white page, content held to `--measure` (720px), gradient pill actions |
 | `app.js` | State, triage call, scoring, rendering |
 | `api/triage.js` | Claude call — triage + breakdown modes |
