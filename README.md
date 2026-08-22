@@ -1,6 +1,9 @@
 # my.adhd — MVP #1
 
-<img src="animation/my-adhd-morph.gif" alt="The my.adhd logo mark morphing through four states" width="200" align="right" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/morph-dark.gif" />
+  <img src="docs/morph-light.gif" alt="The my.adhd logo mark morphing through four states" width="200" align="right" />
+</picture>
 
 **Brain dump → auto-triage → one task.**
 
@@ -137,7 +140,7 @@ swapping in Supabase later means replacing `load()` / `save()` only.
 | `mascot.svg` | Standalone mascot for the landing hero (`<img>` can't read the page's CSS, so its colours are baked in) |
 | `favicon.svg` | The logo mark, standalone |
 | `fonts/` | Baloo 2 (variable, wght 400-800), self-hosted |
-| `docs/` | README screenshots. Not served by the app |
+| `docs/` | README screenshots and the two theme gifs. Not served by the app |
 | `styles.css` | App layout: one white page, content held to `--measure` (720px), gradient pill actions |
 | `app.js` | State, triage call, scoring, rendering |
 | `api/triage.js` | Claude call — triage + breakdown modes |
@@ -147,7 +150,10 @@ swapping in Supabase later means replacing `load()` / `save()` only.
 
 ## The loading animation
 
-<img src="animation/my-adhd-morph.gif" alt="The four beats: mark, burst, clock, collapse" width="160" align="right" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/morph-dark.gif" />
+  <img src="docs/morph-light.gif" alt="The four beats: mark, burst, clock, collapse" width="160" align="right" />
+</picture>
 
 The wait on screen 2 is the logo mark morphing through four beats — the full
 mark, a burst, a clock, a collapse — and back. It is the **same eight
@@ -201,6 +207,13 @@ Vercel as static files (~360KB) and no page requests them.
 svg is far smaller, but the gif renders the same everywhere the README travels
 — mirrors, npm-style viewers, editors and clients that show markdown but
 freeze or refuse SMIL. The svg stays the master the gif is rendered from.
+
+It embeds **two** gifs, in a `<picture>` that swaps on `prefers-color-scheme`.
+The ground is baked into the frame, so a single file shows as a coloured tile
+on whichever theme it was not made for — `docs/morph-light.gif` sits on
+`#FFFFFF` and `docs/morph-dark.gif` on `#0D1117`, GitHub's two canvas colours,
+so the frame edge disappears either way. Readers download one, not both.
+`animation/my-adhd-morph.gif` stays as the social export on the brand ground.
 
 The gif is tuned for that job rather than for archival quality: 360px (a
 little under 2x the ~200px it displays at) and a **fixed 16-colour palette** named from the

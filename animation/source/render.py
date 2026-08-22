@@ -38,6 +38,10 @@ GIF_COLOURS = 16
 APP_SIZE, APP_FPS = 400, 30
 APP_GROUNDS = {"light": "#FFFFFF", "dark": "#101018"}
 
+# the README copies, on GitHub's two canvas colours, swapped by <picture>
+DOCS = HERE.parent.parent / "docs"
+README_GROUNDS = {"light": "#FFFFFF", "dark": "#0D1117"}
+
 
 def _ffmpeg():
     """PATH first, then the pip-installed bundle."""
@@ -254,7 +258,7 @@ def _ramp(a, b, n):
     return [tuple(round(a[i] + (b[i] - a[i]) * j / (n - 1)) for i in range(3)) for j in range(n)]
 
 
-def gif_palette(scene):
+def gif_palette(scene, ground=None):
     """A fixed palette built from the three source colours and the blends
     between them.
 
@@ -267,7 +271,7 @@ def gif_palette(scene):
     One palette for the whole loop, not one per frame: a shared palette lets
     the encoder store inter-frame diffs, worth about a quarter of the file.
     """
-    ground = _hex(scene["ground"])
+    ground = _hex(ground or scene["ground"])
     orange = _hex(scene["core"]["fill"])
     purple = _hex(next(a["fill"] for a in scene["arms"] if a["fill"] != scene["core"]["fill"]))
 
@@ -304,6 +308,18 @@ def main():
     )
     print(f"{gif.name}: {len(frames)} frames @ {GIF_FPS}fps, {GIF_SIZE}px, "
           f"{GIF_COLOURS} colours, {gif.stat().st_size // 1024}KB")
+
+    # README copies: same loop, grounded on GitHub's light and dark canvases so
+    # the frame edge disappears on whichever theme the reader is using.
+    DOCS.mkdir(exist_ok=True)
+    for name, ground in README_GROUNDS.items():
+        g = DOCS / f"morph-{name}.gif"
+        fr = render(scene, GIF_SIZE, GIF_FPS, ground=ground)
+        pl = gif_palette(scene, ground=ground)
+        q = [f.quantize(palette=pl, dither=Image.NONE) for f in fr]
+        q[0].save(g, save_all=True, append_images=q[1:],
+                  duration=round(1000 / GIF_FPS), loop=0, optimize=True, disposal=2)
+        print(f"{g.name}: {GIF_SIZE}px on {ground}, {g.stat().st_size // 1024}KB")
 
     mp4 = OUT / "my-adhd-morph.mp4"
     ffmpeg = _ffmpeg()
