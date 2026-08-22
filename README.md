@@ -4,6 +4,9 @@
 
 **Brain dump → auto-triage → one task.**
 
+Live at **[myadhd.vercel.app](https://myadhd.vercel.app)** — the app itself is
+at [/app](https://myadhd.vercel.app/app).
+
 The whole app does one thing: you empty your head into a box, and it hands back
 a single task with a 2-minute first step. Everything else is parked out of sight.
 
@@ -48,13 +51,27 @@ npx vercel dev
 
 ## Deploying
 
+**One Vercel project — `myadhd`, serving <https://myadhd.vercel.app>** — linked
+to this repo, so a push to `main` deploys. There were briefly four projects on
+the same repo, each rebuilding on every push; the other three are deleted. If
+you find yourself with a spare, delete it rather than leaving it to serve a
+stale copy on a near-identical URL.
+
+Manual deploys, if you need one:
+
 ```bash
 npx vercel --prod
 ```
 
-Then set `ANTHROPIC_API_KEY` in the Vercel project's Environment Variables. The
-key is only ever read server-side in `api/triage.js` — it never reaches the
-browser.
+`ANTHROPIC_API_KEY` lives in that project's Environment Variables. It is only
+ever read server-side in `api/triage.js` — it never reaches the browser.
+
+**Env vars are per-project and do not survive being moved to a new one, and
+their absence is silent**: `api/triage.js` returns 500, the client swallows it,
+and the app falls back to the local heuristic parser. You get worse titles and
+guessed times with no error — only the small "sorted offline" banner says so.
+After any project change, dump something real and check that banner is absent
+before trusting the deployment.
 
 `@anthropic-ai/sdk` is pinned to an exact version (`0.120.0`), not a range —
 `api/triage.js` depends on beta request parameters (`betas`, `fallbacks`,
