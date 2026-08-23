@@ -97,6 +97,25 @@
       <path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/>
     </g>
 
+
+    <!-- ============ tab bar glyphs ============
+         Same 24-grid and round joins as the day/night pair above, so the
+         bar reads as one set rather than five borrowed icons. -->
+    <g id="icon-lists" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3.2" y="4.2" width="17.6" height="15.6" rx="5"/>
+      <path d="M7.8 9.7h8.4M7.8 14.3h5.4"/>
+    </g>
+    <g id="icon-calendar" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3.2" y="5.4" width="17.6" height="14.4" rx="4.6"/>
+      <path d="M3.4 10.4h17.2M8.4 3.4v3.8M15.6 3.4v3.8"/>
+    </g>
+    <g id="icon-plus" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+      <path d="M12 5.2v13.6M5.2 12h13.6"/>
+    </g>
+    <g id="icon-heart" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20.1c-1.1-.8-7.6-5.1-7.6-10A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.6 2.8c0 4.9-6.5 9.2-7.6 10z"/>
+    </g>
+
     <!-- ============ logo mark ============
          Seven orange arms: the eighth (lower-right) is detached and
          carried by the violet capsule sitting just off the centre. -->
@@ -228,7 +247,119 @@
     </div>
   </section>
 
+  <!-- ============ SCREEN 4: CALENDAR (placeholder) ============ -->
+  <section class="screen is-hidden" id="screen-calendar">
+    <header class="brand brand--sm">
+      <a class="brand-lockup" href="/" aria-label="my.adhd home">
+        <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+        <span class="wordmark">my<span class="accent">.adhd</span></span>
+      </a>
+      <button class="theme-toggle" id="btn-theme-3" type="button" aria-label="Switch to dark mode">
+        <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
+        <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
+      </button>
+    </header>
+
+    <div class="soon-wrap">
+      <span class="soon-glyph" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><use href="#icon-calendar"/></svg>
+      </span>
+      <h2 class="soon-title">Calendar</h2>
+      <p class="soon-text">Not built yet. The plan: anything with a time on it
+        lands here, so a day reads as a day instead of another list.</p>
+      <span class="soon-badge">Coming later</span>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 5: LOVED (placeholder) ============ -->
+  <section class="screen is-hidden" id="screen-loved">
+    <header class="brand brand--sm">
+      <a class="brand-lockup" href="/" aria-label="my.adhd home">
+        <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+        <span class="wordmark">my<span class="accent">.adhd</span></span>
+      </a>
+      <button class="theme-toggle" id="btn-theme-4" type="button" aria-label="Switch to dark mode">
+        <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
+        <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
+      </button>
+    </header>
+
+    <div class="soon-wrap">
+      <span class="soon-glyph" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><use href="#icon-heart"/></svg>
+      </span>
+      <h2 class="soon-title">Loved</h2>
+      <p class="soon-text">The tab is here, the feature is not. Whatever it ends
+        up being &mdash; favourites, wins worth keeping &mdash; it will live on this screen.</p>
+      <span class="soon-badge">Undecided</span>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 6: PROFILE ============ -->
+  <section class="screen is-hidden" id="screen-profile">
+    <header class="brand brand--sm">
+      <a class="brand-lockup" href="/" aria-label="my.adhd home">
+        <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+        <span class="wordmark">my<span class="accent">.adhd</span></span>
+      </a>
+      <button class="theme-toggle" id="btn-theme-5" type="button" aria-label="Switch to dark mode">
+        <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
+        <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
+      </button>
+    </header>
+
+    <div class="profile-wrap">
+      <div class="profile-card">
+        <span class="avatar-big" id="avatar-big" aria-hidden="true">🙂</span>
+        <p class="profile-name-big" id="profile-greeting">Hey there.</p>
+
+        <label class="field">
+          <span class="field-label">What should I call you?</span>
+          <input class="field-input" id="profile-name" type="text" maxlength="24"
+                 autocomplete="nickname" spellcheck="false" placeholder="Your name" />
+        </label>
+
+        <div class="field">
+          <span class="field-label">Pick a face</span>
+          <div class="avatar-picker" id="avatar-picker" role="group" aria-label="Pick an avatar"></div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat"><strong id="stat-open">0</strong><span>on your lists</span></div>
+        <div class="stat"><strong id="stat-done">0</strong><span>done</span></div>
+        <div class="stat"><strong id="stat-lists">0</strong><span>lists</span></div>
+      </div>
+
+      <p class="hint">This lives in this browser only &mdash; no account, no sync,
+        nothing leaves the device.</p>
+    </div>
+  </section>
+
 </div>
+
+
+<!-- ============ the floating tab bar ============
+     Hovers over every screen past the dump. The middle + goes back to the
+     dump box, which is how a new list gets made. -->
+<nav class="tabbar is-hidden" id="tabbar" aria-label="Sections">
+  <button class="tab" id="tab-lists" type="button" aria-label="My lists">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-lists"/></svg>
+    <span class="tab-dot is-hidden" id="tab-dot"></span>
+  </button>
+  <button class="tab" id="tab-calendar" type="button" aria-label="Calendar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-calendar"/></svg>
+  </button>
+  <button class="tab tab--add" id="tab-add" type="button" aria-label="Add to your lists">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-plus"/></svg>
+  </button>
+  <button class="tab" id="tab-loved" type="button" aria-label="Loved">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-heart"/></svg>
+  </button>
+  <button class="tab tab--me" id="tab-profile" type="button" aria-label="Profile">
+    <span class="tab-avatar" id="tab-avatar" aria-hidden="true">🙂</span>
+  </button>
+</nav>
 
 <div class="toast is-hidden" id="toast"></div>
 

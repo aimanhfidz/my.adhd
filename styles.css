@@ -468,6 +468,174 @@ body{
 }
 @keyframes toastIn{from{opacity:0; transform:translate(-50%,10px)} to{opacity:1; transform:translate(-50%,0)}}
 
+
+/* ---------- the floating tab bar ----------
+   A pill that hovers over the page rather than sitting in a bar welded to
+   the floor. It only appears past the dump screen: the dump is the one
+   place where the whole screen is the job. Its own tokens, because the
+   translucent ground has to survive both themes and no shared token
+   carries alpha. */
+:root{
+  --tab-bg:rgba(255,255,255,.88);
+  --tab-edge:rgba(16,16,24,.07);
+  --tab-shadow:0 22px 46px -20px rgba(16,16,24,.42), 0 3px 10px -6px rgba(16,16,24,.22);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --tab-bg:rgba(30,30,46,.90);
+    --tab-edge:rgba(255,255,255,.09);
+    --tab-shadow:0 22px 46px -20px rgba(0,0,0,.72), 0 3px 10px -6px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --tab-bg:rgba(30,30,46,.90);
+  --tab-edge:rgba(255,255,255,.09);
+  --tab-shadow:0 22px 46px -20px rgba(0,0,0,.72), 0 3px 10px -6px rgba(0,0,0,.5);
+}
+
+.tabbar{
+  position:fixed; z-index:45;
+  left:50%; bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  transform:translateX(-50%);
+  display:flex; align-items:center; gap:clamp(2px,1.6vw,10px);
+  padding:7px 9px;
+  background:var(--tab-bg);
+  border:1.5px solid var(--tab-edge);
+  border-radius:999px;
+  box-shadow:var(--tab-shadow);
+  -webkit-backdrop-filter:blur(16px) saturate(1.5);
+  backdrop-filter:blur(16px) saturate(1.5);
+  max-width:calc(100vw - 26px);
+  animation:tabIn .3s var(--ease) both;
+}
+@keyframes tabIn{from{opacity:0; transform:translate(-50%,14px)} to{opacity:1; transform:translate(-50%,0)}}
+
+.tab{
+  position:relative; flex:none;
+  width:clamp(48px,13.5vw,62px); height:46px;
+  display:grid; place-items:center;
+  background:none; border:none; border-radius:15px;
+  color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease), background .18s var(--ease), transform .12s var(--ease);
+}
+.tab svg{width:23px; height:23px; display:block}
+.tab:active{transform:scale(.92)}
+.tab:focus-visible{outline:none; box-shadow:0 0 0 3px var(--focus)}
+@media (hover:hover){ .tab:hover{color:var(--ink)} }
+
+/* the current section: the same soft slab the reference uses, not a colour */
+.tab.is-on{background:var(--wash-2); color:var(--ink)}
+.tab.is-on svg{stroke-width:2.5}
+
+/* the + never marks itself current — it is an action, not a place */
+.tab--add{color:var(--ink)}
+
+/* something waiting on the lists */
+.tab-dot{
+  position:absolute; top:8px; right:12px;
+  width:8px; height:8px; border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 2.5px var(--surface);
+}
+
+.tab-avatar{
+  width:31px; height:31px; border-radius:50%;
+  display:grid; place-items:center; font-size:17px; line-height:1;
+  background:var(--wash-2); border:1.5px solid var(--line-strong);
+  transition:border-color .18s var(--ease);
+}
+.tab--me.is-on{background:none}
+.tab--me.is-on .tab-avatar{border-color:var(--accent); box-shadow:0 0 0 2px var(--focus)}
+
+/* Room for the bar to hover over, rather than on top of, the last line of
+   the page — and the toast has to clear it too. */
+body.has-tabbar .screen{
+  padding-bottom:calc(96px + env(safe-area-inset-bottom, 0px));
+}
+body.has-tabbar .toast{
+  bottom:calc(88px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ---------- the two rooms that are not built yet ---------- */
+.soon-wrap{
+  margin:auto 0; padding:20px 0 40px; text-align:center;
+  display:flex; flex-direction:column; align-items:center;
+}
+.soon-glyph{
+  width:74px; height:74px; display:grid; place-items:center;
+  border-radius:26px; background:var(--wash); border:1.5px solid var(--line);
+  color:var(--accent); margin-bottom:20px;
+}
+.soon-glyph svg{width:32px; height:32px; display:block}
+.soon-title{
+  font-size:clamp(26px,6.4vw,32px); font-weight:800; letter-spacing:-.03em;
+  line-height:1.1; margin-bottom:10px;
+}
+.soon-text{
+  font-size:15px; color:var(--muted); line-height:1.6;
+  max-width:34ch; margin-bottom:18px;
+}
+.soon-badge{
+  font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+  color:var(--faint); border:1.5px dashed var(--line-strong);
+  border-radius:999px; padding:6px 14px;
+}
+
+/* ---------- profile ---------- */
+.profile-wrap{margin:0; padding-top:clamp(10px,2vh,22px)}
+
+.profile-card{
+  display:flex; flex-direction:column; align-items:center;
+  background:var(--wash); border:1.5px solid var(--line);
+  border-radius:var(--radius-card); padding:28px 22px 24px;
+}
+.avatar-big{
+  width:78px; height:78px; border-radius:50%;
+  display:grid; place-items:center; font-size:42px; line-height:1;
+  background:var(--surface); border:1.5px solid var(--line-strong);
+}
+.profile-name-big{
+  margin-top:14px; font-size:22px; font-weight:800; letter-spacing:-.02em;
+}
+
+.field{display:block; width:100%; margin-top:22px}
+.field-label{
+  display:block; font-size:12.5px; font-weight:600; color:var(--muted);
+  margin-bottom:8px;
+}
+.field-input{
+  width:100%; font-family:var(--display); font-size:16px; color:var(--ink);
+  background:var(--surface); border:1.5px solid var(--line-strong);
+  border-radius:var(--radius); padding:12px 14px;
+  transition:border-color .18s var(--ease), box-shadow .18s var(--ease);
+}
+.field-input::placeholder{color:var(--faint)}
+.field-input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+
+.avatar-picker{display:flex; flex-wrap:wrap; gap:8px}
+.avatar-opt{
+  width:44px; height:44px; border-radius:14px;
+  display:grid; place-items:center; font-size:22px; line-height:1;
+  background:var(--surface); border:1.5px solid var(--line-strong);
+  cursor:pointer; padding:0;
+  transition:border-color .18s var(--ease), transform .12s var(--ease), box-shadow .18s var(--ease);
+}
+.avatar-opt:active{transform:scale(.93)}
+.avatar-opt:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--focus)}
+@media (hover:hover){ .avatar-opt:hover{border-color:var(--accent)} }
+.avatar-opt.is-on{border-color:var(--accent); box-shadow:0 0 0 3px var(--focus)}
+
+.stat-row{display:flex; gap:10px; margin-top:18px}
+.stat{
+  flex:1 1 0; text-align:center;
+  border:1.5px solid var(--line); border-radius:var(--radius-lg);
+  padding:16px 8px;
+}
+.stat strong{display:block; font-size:26px; font-weight:800; letter-spacing:-.03em; line-height:1.1}
+.stat span{display:block; margin-top:4px; font-size:12.5px; color:var(--faint)}
+
+.profile-wrap .hint{margin-top:18px}
+
 /* ---------- night: the same monochrome, inverted ---------- */
 
 @media (prefers-reduced-motion:reduce){

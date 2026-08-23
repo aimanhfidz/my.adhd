@@ -36,6 +36,25 @@ const el = {
   btnDumpAgain: $('btn-dump-again'),
   clearedNote:  $('cleared-note'),
   toast:        $('toast'),
+
+  screenCal:    $('screen-calendar'),
+  screenLoved:  $('screen-loved'),
+  screenMe:     $('screen-profile'),
+  tabbar:       $('tabbar'),
+  tabLists:     $('tab-lists'),
+  tabCal:       $('tab-calendar'),
+  tabAdd:       $('tab-add'),
+  tabLoved:     $('tab-loved'),
+  tabMe:        $('tab-profile'),
+  tabDot:       $('tab-dot'),
+  tabAvatar:    $('tab-avatar'),
+  avatarBig:    $('avatar-big'),
+  avatarPick:   $('avatar-picker'),
+  greeting:     $('profile-greeting'),
+  nameInput:    $('profile-name'),
+  statOpen:     $('stat-open'),
+  statDone:     $('stat-done'),
+  statLists:    $('stat-lists'),
 };
 
 /* ---------------- state ---------------- */
@@ -43,12 +62,19 @@ const el = {
 let state = {
   tasks: [],          // {id,title,minutes,energy,urgency,firstStep,category,steps,done,skipped}
   energy: 'medium',   // how the user feels right now
+  profile: { name: '', avatar: '\u{1F642}' },   // this device only — no account behind it
 };
 
 function load() {
   try {
     const raw = localStorage.getItem(STORE_KEY);
-    if (raw) state = Object.assign(state, JSON.parse(raw));
+    if (raw) {
+      const saved = JSON.parse(raw);
+      state = Object.assign(state, saved);
+      // A store written before the profile existed has no profile key, and
+      // one written by a half-finished edit may be missing a field.
+      state.profile = Object.assign({ name: '', avatar: '\u{1F642}' }, saved.profile || {});
+    }
   } catch (_) { /* corrupt store — start fresh rather than crash */ }
 }
 
@@ -58,10 +84,40 @@ function save() {
 
 /* ---------------- screens ---------------- */
 
+const SCREENS = [el.screenDump, el.screenLoad, el.screenNow,
+                el.screenCal, el.screenLoved, el.screenMe];
+
+/* Which tab lights up on which screen. The dump and the wait are not
+   sections — the bar hides for both, so neither gets an entry. */
+const TAB_FOR = new Map([
+  [el.screenNow,   el.tabLists],
+  [el.screenCal,   el.tabCal],
+  [el.screenLoved, el.tabLoved],
+  [el.screenMe,    el.tabMe],
+]);
+
 function show(screen) {
-  [el.screenDump, el.screenLoad, el.screenNow].forEach(s => s.classList.add('is-hidden'));
+  SCREENS.forEach(s => s.classList.add('is-hidden'));
   screen.classList.remove('is-hidden');
   window.scrollTo(0, 0);
+  syncTabs(screen);
+}
+
+/** Show the bar on every section, hide it on the dump and the wait. */
+function syncTabs(screen) {
+  const current = TAB_FOR.get(screen);
+  el.tabbar.classList.toggle('is-hidden', !current);
+  document.body.classList.toggle('has-tabbar', !!current);
+
+  TAB_FOR.forEach(tab => {
+    const on = tab === current;
+    tab.classList.toggle('is-on', on);
+    if (on) tab.setAttribute('aria-current', 'page');
+    else tab.removeAttribute('aria-current');
+  });
+
+  const open = state.tasks.filter(t => !t.done).length;
+  el.tabDot.classList.toggle('is-hidden', open === 0 || current === el.tabLists);
 }
 
 let toastTimer;
@@ -345,6 +401,9 @@ function goToNext() {
   }
 
   el.lists.classList.remove('is-hidden');
+  el.eyebrow.textContent = state.profile.name
+    ? `Sorted, ${state.profile.name}.`
+    : 'Sorted into lists.';
   el.eyebrow.classList.remove('is-hidden');
   el.summary.classList.remove('is-hidden');
   el.clearedNote.classList.add('is-hidden');
@@ -644,6 +703,55 @@ function refreshListsButton() {
   el.listsBadge.textContent = open;
 }
 
+/* ---------------- profile ----------------
+   Local and deliberately small: a name to be greeted by, a face to
+   recognise the tab by, and a count of what you have got through. It rides
+   in the same localStorage record as the tasks, so clearing the site
+   clears all of it together. */
+
+const AVATARS = ['\u{1F642}', '\u{1F60E}', '\u{1F984}', '\u{1F431}', '\u{1F436}',
+                 '\u{1F338}', '\u{1F680}', '\u{1F9E0}', '\u{2B50}', '\u{1F525}'];
+
+function paintProfile() {
+  const { name, avatar } = state.profile;
+  el.tabAvatar.textContent = avatar;
+  el.avatarBig.textContent = avatar;
+  el.greeting.textContent = name ? `Hey ${name}.` : 'Hey there.';
+  if (el.nameInput.value !== name) el.nameInput.value = name;
+  [...el.avatarPick.children].forEach(b => {
+    const on = b.dataset.avatar === avatar;
+    b.classList.toggle('is-on', on);
+    b.setAttribute('aria-pressed', String(on));
+  });
+}
+
+function buildAvatarPicker() {
+  AVATARS.forEach(face => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'avatar-opt';
+    b.dataset.avatar = face;
+    b.textContent = face;
+    b.setAttribute('aria-label', `Use ${face} as your face`);
+    b.addEventListener('click', () => {
+      state.profile.avatar = face;
+      save();
+      paintProfile();
+    });
+    el.avatarPick.appendChild(b);
+  });
+}
+
+function showProfile() {
+  const open = state.tasks.filter(t => !t.done);
+  const done = state.tasks.filter(t => t.done);
+  el.statOpen.textContent = open.length;
+  el.statDone.textContent = done.length;
+  el.statLists.textContent = groupByCategory(open).length;
+  paintProfile();
+  show(el.screenMe);
+}
+
 /* ---------------- wiring ---------------- */
 
 el.triage.addEventListener('click', triage);
@@ -654,6 +762,20 @@ el.btnClearAll.addEventListener('click', stepClear);
 el.btnClearGo.addEventListener('click', stepClear);
 el.btnClearNo.addEventListener('click', resetClear);
 el.btnDumpAgain.addEventListener('click', newDump);
+
+/* The bar. The + is the way back to the dump box, which is the only place
+   a new list gets made — so it routes to newDump rather than a screen. */
+el.tabLists.addEventListener('click', goToNext);
+el.tabCal.addEventListener('click', () => show(el.screenCal));
+el.tabAdd.addEventListener('click', newDump);
+el.tabLoved.addEventListener('click', () => show(el.screenLoved));
+el.tabMe.addEventListener('click', showProfile);
+
+el.nameInput.addEventListener('input', () => {
+  state.profile.name = el.nameInput.value.trim().slice(0, 24);
+  save();
+  paintProfile();
+});
 
 el.input.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); triage(); }
@@ -729,5 +851,7 @@ document.querySelectorAll('.energy-opt').forEach(b => {
 // Opening the app always lands on the dump box — that is the thing you came
 // to do. The lists are one tap away when you want them.
 refreshListsButton();
+buildAvatarPicker();
+paintProfile();
 show(el.screenDump);
 el.input.focus();
