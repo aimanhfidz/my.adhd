@@ -34,8 +34,16 @@ MP4_SIZE, MP4_FPS = 800, 30
 SS = 3  # supersample factor; the arms are thin and alias badly without it
 GIF_COLOURS = 16
 
-# the loading-screen copies: --surface in each theme, from theme.css
-APP_SIZE, APP_FPS = 400, 30
+# the loading-screen copies: --surface in each theme, from theme.css.
+#
+# 60, not 30. The spark beat turns the mark 26 degrees between frames at 30fps
+# and the arms repeat every 45, so the eye loses which way it is going and the
+# spin reads as a strobe. Halving the step to 13 puts it back under the arm
+# period. APP_BLUR then averages a few sub-frames per frame, which is the same
+# thing a real shutter does — it costs render time, not playback time, and it
+# is what carries the fast beats rather than the frame rate alone.
+APP_SIZE, APP_FPS = 400, 60
+APP_BLUR, APP_SHUTTER = 4, 0.75
 APP_GROUNDS = {"light": "#FFFFFF", "dark": "#101018"}
 
 # the README copies, on GitHub's two canvas colours, swapped by <picture>
@@ -215,11 +223,30 @@ def frame(scene, p, size):
     return img.resize((size, size), Image.LANCZOS).convert("RGB")
 
 
-def render(scene, size, fps, ground=None):
+def render(scene, size, fps, ground=None, blur=1, shutter=0.75):
+    """blur: sub-frames averaged per output frame — motion blur, off at 1.
+
+    shutter is how much of a frame's interval the shutter is open, in the
+    film sense: 0.75 leaves a little crispness at the ends of a move while
+    still smearing the middle of a fast one.
+    """
     if ground:
         scene = dict(scene, ground=ground)
     n = int(round(scene["dur"] * fps))
-    return [frame(scene, i / n, size) for i in range(n)]
+    if blur <= 1:
+        return [frame(scene, i / n, size) for i in range(n)]
+
+    out = []
+    for i in range(n):
+        acc = None
+        for s in range(blur):
+            p = ((i + (s + 0.5) / blur * shutter) / n) % 1.0
+            f = frame(scene, p, size)
+            # running mean: blending in the k-th sample at 1/(k+1) leaves the
+            # accumulator holding the average of everything seen so far
+            acc = f if acc is None else Image.blend(acc, f, 1.0 / (s + 1))
+        out.append(acc)
+    return out
 
 
 def write_mp4(ffmpeg, frames, fps, path, full_range=False):
@@ -289,9 +316,23 @@ def gif_palette(scene, ground=None):
     return pal
 
 
-def main():
+def main(app_only=False):
     scene = parse(SVG)
     print(f"{SVG.name}: {scene['dur']}s loop")
+
+    if app_only:
+        ffmpeg = _ffmpeg()
+        if not ffmpeg:
+            print("SKIPPED — no ffmpeg. pip install --user imageio-ffmpeg")
+            return
+        app = OUT / "app"
+        app.mkdir(exist_ok=True)
+        for name, ground in APP_GROUNDS.items():
+            write_mp4(ffmpeg,
+                      render(scene, APP_SIZE, APP_FPS, ground=ground,
+                             blur=APP_BLUR, shutter=APP_SHUTTER),
+                      APP_FPS, app / f"morph-{name}.mp4", full_range=True)
+        return
 
     frames = render(scene, GIF_SIZE, GIF_FPS)
     gif = OUT / "my-adhd-morph.gif"
@@ -336,9 +377,11 @@ def main():
     app.mkdir(exist_ok=True)
     for name, ground in APP_GROUNDS.items():
         write_mp4(ffmpeg,
-                  render(scene, APP_SIZE, APP_FPS, ground=ground),
+                  render(scene, APP_SIZE, APP_FPS, ground=ground,
+                         blur=APP_BLUR, shutter=APP_SHUTTER),
                   APP_FPS, app / f"morph-{name}.mp4", full_range=True)
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    main(app_only="--app" in sys.argv)

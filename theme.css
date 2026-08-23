@@ -185,7 +185,13 @@
 /* ============ the brand lockup ============
    Defined once. It used to live in both landing.css and styles.css, which
    is how the app ended up a pixel tighter than the landing page. */
-.logo{width:26px; height:26px; flex:none; display:block}
+/* The asterisk spans 18-82 of its 100-unit viewBox, so the ink starts
+   --logo-bearing in from the edge of the box. A lockup sitting flush on the
+   gutter therefore *looks* inset by that much — which is why the toggle,
+   whose ring has no such bearing, read as closer to the screen edge than
+   the mark did even though both measured the same 20px. */
+:root{--logo-size:26px; --logo-bearing:calc(var(--logo-size) * .18)}
+.logo{width:var(--logo-size); height:var(--logo-size); flex:none; display:block}
 .lg-star{fill:var(--orange)}
 .lg-pill{stroke:var(--violet)}
 .wordmark{font-family:var(--display); font-size:16px; font-weight:700; letter-spacing:-.03em; color:var(--ink)}
@@ -198,6 +204,8 @@
    A round icon button that shows where a click takes you: a moon while
    the page is light, a sun while it is dark. */
 .theme-toggle{
+  /* the mark's optical bearing, given back to the other end of the bar */
+  margin-right:var(--logo-bearing);
   flex:none; width:34px; height:34px; display:grid; place-items:center;
   background:none; border:1.5px solid var(--line-strong); border-radius:999px;
   color:var(--muted); cursor:pointer; padding:0;
