@@ -972,14 +972,18 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
      than played. */
   animation:sheetUp .38s cubic-bezier(.32,.72,0,1) both;
   overflow:hidden;
-  /* the drag writes translateY here, so nothing else may own transform */
-  will-change:transform;
 }
 @keyframes sheetUp{from{transform:translateY(100%)} to{transform:translateY(0)}}
 
 /* While a finger is on it: no transition, the sheet is pinned to the
-   pointer. On release one of the two below takes over. */
-.composer-sheet.is-dragging{animation:none; transition:none}
+   pointer. On release one of the two below takes over.
+
+   will-change only for as long as it is moving — it buys the sheet its own
+   layer so a drag is a composite rather than a repaint, and a layer held
+   permanently is just memory spent on a screen the sheet is not on. */
+.composer-sheet.is-dragging{animation:none; transition:none; will-change:transform}
+.composer-sheet.is-settling,.composer-sheet.is-leaving{will-change:transform}
+.composer.is-dragging .composer-scrim{will-change:opacity}
 .composer-sheet.is-settling{
   animation:none;
   transition:transform .3s cubic-bezier(.32,.72,0,1);
@@ -989,10 +993,10 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
   transition:transform .26s cubic-bezier(.4,0,1,1);
   transform:translateY(100%);
 }
-/* Everything above the keyboard is draggable except the text itself, which
-   still has to take a caret and a selection. */
-.composer-bar,.composer-body{touch-action:pan-y}
-.composer-input{touch-action:auto}
+/* The bar has nothing to scroll, ever, so it never has to arbitrate. The
+   body's is set live in syncComposer — pan-y only while its content really
+   does overflow. */
+.composer-bar{touch-action:none}
 
 .composer-bar{
   flex:none;

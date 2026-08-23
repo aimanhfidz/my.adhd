@@ -994,6 +994,13 @@ function syncComposer() {
   el.compPost.disabled = el.compInput.value.trim().length === 0;
   growComposer();
   previewDates(el.compInput, el.compDates, el.compChips);
+
+  /* touch-action is what tells the browser whether it might need this
+     gesture for a scroll. While there is nothing to scroll to, saying so
+     means it stops holding the first pixels of a drag to find out — which
+     is the delay that made the sheet feel like it was catching up. */
+  el.compBody.style.touchAction =
+    el.compBody.scrollHeight > el.compBody.clientHeight ? 'pan-y' : 'none';
 }
 
 function openComposer() {
@@ -1023,7 +1030,9 @@ let composerCloseTimer = 0;
 function resetComposerMotion() {
   clearTimeout(composerCloseTimer);
   composerCloseTimer = 0;
+  if (dragRaf) { cancelAnimationFrame(dragRaf); dragRaf = 0; }
   dragging = false;
+  dragPending = false;
   el.compSheet.classList.remove('is-dragging', 'is-settling', 'is-leaving');
   el.compSheet.style.transform = '';
   el.compScrim.style.opacity = '';
@@ -1067,22 +1076,54 @@ function cancelComposer() {
 const DRAG_DISMISS_PX = 120;
 const DRAG_DISMISS_SPEED = 0.55;   // px per ms
 const DRAG_FLICK_WINDOW = 120;     // ms — older than this is not a flick
+/* A flick still has to be a movement. Pointer events arrive about every 8ms,
+   so a single gentle 4px step already computes to 0.5px/ms — right on the
+   threshold. Without a floor on the distance, a small twitch on release
+   threw the sheet away. */
+const DRAG_FLICK_MIN_PX = 40;
+/* And speed is smoothed rather than taken from the last pair of points, so
+   one quick sample among slow ones cannot decide the gesture on its own. */
+const DRAG_SPEED_SMOOTHING = 0.4;
 
-let dragFrom = 0, dragging = false;
+/* How far the finger has to commit before a drag that started on the text
+   counts as a drag. Everywhere else there is nothing to be confused with,
+   so the sheet moves from the first pixel. */
+const DRAG_CLAIM_PX = 8;
+
+let dragFrom = 0, dragX0 = 0, dragging = false;
+let dragPending = false;   // touched the text, has not committed yet
 /* Speed is measured over the last move, not the whole gesture: a drag that
    crawls down and then stops has an average that says "flick" and a finger
    that says otherwise. A hand resting before it lifts should drop the sheet
    back, so a stale last move counts as still. */
 let dragLastY = 0, dragLastT = 0, dragSpeed = 0;
 
-function dragStart(e) {
-  if (e.pointerType === 'mouse' && e.button !== 0) return;
-  // the text needs its caret and its selection; buttons need their taps
-  if (e.target.closest('.composer-input, button')) return;
-  // a body scrolled off its top is being read, not dragged
-  if (el.compBody.contains(e.target) && el.compBody.scrollTop > 0) return;
+/* Pointer events arrive faster than the screen redraws — 120Hz of them on a
+   recent iPhone against 60 frames. Writing the transform on each one queues
+   style work that will never be seen, and the frames that do land come late:
+   the sheet lags the finger and then catches up in a jump. One write per
+   frame, with the newest position, is what tracks. */
+let dragRaf = 0, dragDy = 0;
 
+function paintDrag() {
+  dragRaf = 0;
+  // translate3d, not translateY: this is the sheet's own layer to move, and
+  // the scrim behind it should not be repainted to do it
+  el.compSheet.style.transform = `translate3d(0,${dragDy}px,0)`;
+  el.compScrim.style.opacity = String(Math.max(0, 1 - dragDy / 420));
+}
+
+function queueDrag(dy) {
+  dragDy = dy;
+  if (!dragRaf) dragRaf = requestAnimationFrame(paintDrag);
+}
+
+/** Commit to the gesture: from here the sheet is on the finger. */
+function claimDrag(e) {
   dragging = true;
+  dragPending = false;
+  // rebased to where the finger is now, so committing does not jump the
+  // sheet by the distance it took to decide
   dragFrom = dragLastY = e.clientY;
   dragLastT = performance.now();
   dragSpeed = 0;
@@ -1093,24 +1134,50 @@ function dragStart(e) {
   try { el.compSheet.setPointerCapture(e.pointerId); } catch (_) {}
 }
 
+function dragStart(e) {
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  if (e.target.closest('button')) return;                    // taps are theirs
+  // a body scrolled off its top is being read, not dragged
+  if (el.compBody.contains(e.target) && el.compBody.scrollTop > 0) return;
+
+  dragFrom = dragLastY = e.clientY;
+  dragX0 = e.clientX;
+
+  /* The text is the one surface with something else to do with a touch — a
+     tap has to land a caret, a sideways drag has to select. So it waits to
+     see which way the finger goes; the header, the avatar and the whole
+     empty page below take the gesture immediately. */
+  if (e.target.closest('.composer-input')) { dragPending = true; return; }
+  claimDrag(e);
+}
+
 function dragMove(e) {
+  if (dragPending) {
+    const dy = e.clientY - dragFrom;
+    const dx = Math.abs(e.clientX - dragX0);
+    if (dy > DRAG_CLAIM_PX && dy > dx) claimDrag(e);          // down: ours
+    else if (dx > DRAG_CLAIM_PX || dy < -DRAG_CLAIM_PX) dragPending = false;
+    return;                                                   // sideways: theirs
+  }
   if (!dragging) return;
+
   // down only: dragging up must not lift the sheet off the top of the screen
   const dy = Math.max(0, e.clientY - dragFrom);
   const now = performance.now();
   if (now > dragLastT) {
-    dragSpeed = (e.clientY - dragLastY) / (now - dragLastT);
+    const instant = (e.clientY - dragLastY) / (now - dragLastT);
+    dragSpeed += (instant - dragSpeed) * DRAG_SPEED_SMOOTHING;
     dragLastY = e.clientY;
     dragLastT = now;
   }
-  el.compSheet.style.transform = `translateY(${dy}px)`;
-  // the page behind comes back as the sheet goes
-  el.compScrim.style.opacity = String(Math.max(0, 1 - dy / 420));
+  queueDrag(dy);
 }
 
 function dragEnd(e) {
+  dragPending = false;
   if (!dragging) return;
   dragging = false;
+  if (dragRaf) { cancelAnimationFrame(dragRaf); dragRaf = 0; }
   el.compSheet.classList.remove('is-dragging');
   el.composer.classList.remove('is-dragging');
 
@@ -1118,7 +1185,8 @@ function dragEnd(e) {
   const fresh = performance.now() - dragLastT < DRAG_FLICK_WINDOW;
   const speed = fresh ? dragSpeed : 0;
 
-  if (dy > DRAG_DISMISS_PX || speed > DRAG_DISMISS_SPEED) {
+  const flicked = dy > DRAG_FLICK_MIN_PX && speed > DRAG_DISMISS_SPEED;
+  if (dy > DRAG_DISMISS_PX || flicked) {
     cancelComposer();       // same as Cancel: the text is kept
     return;
   }
