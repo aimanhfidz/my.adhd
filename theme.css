@@ -41,7 +41,7 @@
   --ink:var(--black);
   --ink-soft:var(--navy);
   --muted:var(--stone);
-  --faint:#9797A6;
+  --faint:#6B6B7A;   /* AA on white and on --wash: 5.2:1 / 4.8:1 */
   --line:#E4E2F5;
   --line-strong:#CFCBE9;
   --accent:var(--blue);
@@ -111,7 +111,7 @@
     --ink:#F3F2FB;
     --ink-soft:#D6D4EA;
     --muted:#9A98AC;
-    --faint:#77758A;
+    --faint:#8B8AA0;
     --line:#262636;
     --line-strong:#3B3A52;
     --accent:#8B7DFF;
@@ -157,7 +157,7 @@
   --ink:#F3F2FB;
   --ink-soft:#D6D4EA;
   --muted:#9A98AC;
-  --faint:#77758A;
+  --faint:#8B8AA0;
   --line:#262636;
   --line-strong:#3B3A52;
   --accent:#8B7DFF;
