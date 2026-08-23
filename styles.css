@@ -100,7 +100,7 @@ body{
    gets a say; a taller window keeps the 264px cap exactly as before.
    Sits after the base rule on purpose: a media query adds no specificity. */
 @media (min-width:820px) and (max-height:880px){
-  .art--dump{width:min(264px,72%,28vh)}
+  .art--dump{width:min(264px,72%,24vh); margin-bottom:16px}
 }
 .art--think{width:200px; margin-bottom:20px}
 
@@ -146,6 +146,14 @@ body{
   resize:vertical; min-height:112px;
   margin-bottom:22px;
   transition:border-color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease);
+}
+/* Same short-desktop squeeze as the mascot: four fewer lines of empty box
+   so a returning user — who also carries the "View my lists" row — still
+   lands the whole composer on a 768px-tall window. Placed after the base
+   rule; a media query adds no specificity. */
+@media (min-width:820px) and (max-height:880px){
+  /* rows="4" sets the height, so min-height alone changes nothing */
+  .dump-input{min-height:96px; height:112px}
 }
 .dump-input::placeholder{color:var(--faint); line-height:1.7}
 .dump-input:focus{
