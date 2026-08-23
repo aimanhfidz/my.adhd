@@ -740,7 +740,43 @@ body.has-tabbar .toast{
   text-decoration:underline; text-underline-offset:3px;
 }
 
-.cal-agenda{margin-top:22px; display:flex; flex-direction:column; gap:22px}
+.cal-tip{
+  margin-top:20px; font-size:12.5px; color:var(--faint); text-align:center;
+}
+
+.cal-agenda{margin-top:14px; display:flex; flex-direction:column; gap:22px}
+
+/* ---- dragging a row onto a day ---- */
+.cal-item{
+  cursor:grab;
+  transition:opacity .18s var(--ease), transform .14s var(--ease);
+}
+.cal-item.is-pressed{transform:scale(.985)}
+/* the row stays in place, faded, so the list does not reflow under the hand */
+.cal-item.is-lifted{opacity:.3}
+
+.cal-ghost{
+  position:fixed; z-index:60; margin:0;
+  pointer-events:none;          /* so elementFromPoint sees the cell beneath */
+  max-width:min(230px, 62vw);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  background:var(--surface);
+  border:1.5px solid var(--accent); border-radius:999px;
+  padding:9px 15px;
+  font-family:var(--display); font-size:13.5px; font-weight:600; color:var(--ink);
+  box-shadow:0 18px 36px -12px rgba(16,16,24,.6);
+  transform:rotate(-1.2deg);
+}
+
+/* A ring rather than a fill, so it reads on a plain cell and on the
+   selected one, which is already carrying the accent as its background. */
+.cal-day.is-drop{
+  box-shadow:0 0 0 3px var(--accent);
+  transform:scale(1.08);
+}
+
+body.is-dragging{cursor:grabbing}
+body.is-dragging *{user-select:none; -webkit-user-select:none}
 
 .cal-group{animation:rise .3s var(--ease) both}
 .cal-group-head{

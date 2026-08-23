@@ -46,6 +46,7 @@ const el = {
   calGrid:      $('cal-grid'),
   calToday:     $('cal-today'),
   calAgenda:    $('cal-agenda'),
+  calTip:       $('cal-tip'),
   calUndated:   $('cal-undated'),
   screenLoved:  $('screen-loved'),
   fbForm:       $('fb-form'),
@@ -321,6 +322,14 @@ function timeLabel(at) {
   const suffix = h < 12 ? 'am' : 'pm';
   const hour = h % 12 === 0 ? 12 : h % 12;
   return m === 0 ? `${hour}${suffix}` : `${hour}.${pad2(m)}${suffix}`;
+}
+
+/** The same label, fit for the middle of a sentence. "Today" wants
+    lowercasing there; "Thu 27 Aug" does not — lowercasing the lot turns it
+    into "thu 27 aug". */
+function dayPhrase(key, today = dayKey()) {
+  const label = dayLabel(key, today);
+  return /^(Today|Tomorrow|Yesterday)$/.test(label) ? label.toLowerCase() : label;
 }
 
 /** "Today", "Tomorrow", "Mon 9 Mar" — relative where that reads faster. */
@@ -1026,6 +1035,7 @@ function renderCalendar() {
     const cell = document.createElement('button');
     cell.type = 'button';
     cell.className = 'cal-day';
+    cell.dataset.day = key;      // the drop target reads this
     cell.textContent = d;
     cell.classList.toggle('is-today', key === today);
     cell.classList.toggle('is-picked', key === calPicked);
@@ -1092,16 +1102,14 @@ function renderAgenda(today) {
   }
 
   const items = tasksOn(calPicked);
+  el.calTip.classList.toggle('is-hidden', !items.length && calPicked !== today);
+
   if (!items.length) {
     const empty = document.createElement('p');
     empty.className = 'cal-empty';
-    /* "Today"/"Tomorrow" want lowercasing mid-sentence; "Thu 27 Aug" does
-       not — lowercasing the lot turns it into "thu 27 aug". */
-    const label = dayLabel(calPicked, today);
-    const named = /^(Today|Tomorrow|Yesterday)$/.test(label);
     empty.textContent = calPicked === today
       ? 'Nothing on today. Say a day in the dump box and it lands here.'
-      : `Nothing on ${named ? label.toLowerCase() : label}.`;
+      : `Nothing on ${dayPhrase(calPicked, today)}.`;
     el.calAgenda.appendChild(empty);
     return;
   }
@@ -1149,6 +1157,7 @@ function agendaGroup(heading, items, today, late) {
     body.append(title, meta);
 
     li.append(check, slot, body);
+    li.addEventListener('pointerdown', (e) => watchPress(e, task, li));
     list.appendChild(li);
   });
 
@@ -1231,6 +1240,127 @@ async function sendFeedback() {
     el.fbSend.querySelector('.btn-text').textContent = 'Send it';
   }
 }
+
+/* ---------------- drag a row onto a day ----------------
+   Rescheduling without a date picker: hold a row, drag it up onto a cell,
+   let go. Only the day moves — a 4pm thing dropped on Friday is still 4pm.
+
+   Built on pointer events rather than HTML5 drag-and-drop, which does not
+   exist on iOS Safari, and this is a phone app first.
+
+   The press has to be held before it lifts, because the agenda lives in a
+   scroller: a drag that started instantly would steal every upward swipe.
+   Move further than a few pixels before the hold is up and it is read as
+   what it almost certainly was — a scroll — and the lift is called off. */
+
+const LIFT_MS = 320;
+const SLOP = 8;
+
+let press = null;   // a finger down, not yet committed to either reading
+let drag = null;    // a row in the air
+
+function watchPress(e, task, row) {
+  if (e.button > 0) return;                       // right-click and friends
+  if (e.target.closest('.task-check')) return;    // ticking off is not dragging
+  if (press || drag) return;
+
+  press = {
+    task, row, x: e.clientX, y: e.clientY,
+    timer: setTimeout(() => lift(), LIFT_MS),
+  };
+  row.classList.add('is-pressed');
+}
+
+function dropPress() {
+  if (!press) return;
+  clearTimeout(press.timer);
+  press.row.classList.remove('is-pressed');
+  press = null;
+}
+
+function lift() {
+  if (!press) return;
+  const { task, row, x, y } = press;
+  press.row.classList.remove('is-pressed');
+  press = null;
+
+  /* A compact chip rather than a clone of the row. A full-width copy is
+     wider than the whole week and sits straight on top of the cells you
+     are aiming at, hiding the very ring that says where it would land. */
+  const ghost = document.createElement('div');
+  ghost.className = 'cal-ghost';
+  ghost.textContent = task.at ? `${timeLabel(task.at)} · ${task.title}` : task.title;
+  document.body.appendChild(ghost);
+
+  drag = { task, row, ghost, cell: null };
+  placeGhost(x, y);
+  row.classList.add('is-lifted');
+  document.body.classList.add('is-dragging');
+  navigator.vibrate?.(8);   // only some phones; never fatal
+}
+
+/* Centred on the pointer and lifted clear of it, so a fingertip is not
+   parked on top of the answer. */
+function placeGhost(x, y) {
+  const g = drag.ghost.getBoundingClientRect();
+  drag.ghost.style.left = `${x - g.width / 2}px`;
+  drag.ghost.style.top  = `${y - g.height - 18}px`;
+}
+
+function overCell(x, y) {
+  /* The ghost is pointer-events:none, so it does not shadow the cell it is
+     sitting on top of. */
+  const el = document.elementFromPoint(x, y);
+  return el ? el.closest('.cal-day[data-day]') : null;
+}
+
+document.addEventListener('pointermove', (e) => {
+  if (press) {
+    // Enough movement before the hold is up means this was a scroll.
+    if (Math.hypot(e.clientX - press.x, e.clientY - press.y) > SLOP) dropPress();
+    return;
+  }
+  if (!drag) return;
+
+  placeGhost(e.clientX, e.clientY);
+  const cell = overCell(e.clientX, e.clientY);
+  if (cell !== drag.cell) {
+    drag.cell?.classList.remove('is-drop');
+    drag.cell = cell;
+    cell?.classList.add('is-drop');
+  }
+});
+
+/* Pointer events cannot call off a scroll on their own, and touch-action
+   set mid-gesture comes too late. Killing touchmove while a row is in the
+   air is what actually holds the page still under it. */
+document.addEventListener('touchmove', (e) => {
+  if (drag) e.preventDefault();
+}, { passive: false });
+
+function endDrag(commit) {
+  if (!drag) return;
+  const { task, row, ghost, cell } = drag;
+  ghost.remove();
+  row.classList.remove('is-lifted');
+  document.body.classList.remove('is-dragging');
+  cell?.classList.remove('is-drop');
+  drag = null;
+
+  if (!commit || !cell) return;
+
+  const day = cell.dataset.day;
+  if (day === task.when) return;    // dropped back where it started
+
+  task.when = day;
+  save();
+  calPicked = day;                  // follow it, so you land where it landed
+  renderCalendar();
+  toast(`Moved to ${dayPhrase(day)}.`);
+}
+
+document.addEventListener('pointerup',     () => { dropPress(); endDrag(true); });
+document.addEventListener('pointercancel', () => { dropPress(); endDrag(false); });
 
 /* ---------------- profile ----------------
    Local and deliberately small: a name to be greeted by, a face to
