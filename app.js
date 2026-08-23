@@ -1566,6 +1566,7 @@ function lift() {
   document.body.appendChild(ghost);
 
   drag = { task, row, ghost, cell: null };
+  document.addEventListener('touchmove', holdPageStill, { passive: false });
   placeGhost(x, y);
   row.classList.add('is-lifted');
   document.body.classList.add('is-dragging');
@@ -1604,15 +1605,25 @@ document.addEventListener('pointermove', (e) => {
   }
 });
 
-/* Pointer events cannot call off a scroll on their own, and touch-action
-   set mid-gesture comes too late. Killing touchmove while a row is in the
-   air is what actually holds the page still under it. */
-document.addEventListener('touchmove', (e) => {
+/* Pointer events cannot call off a scroll on their own, and touch-action set
+   mid-gesture comes too late. Killing touchmove while a row is in the air is
+   what actually holds the page still under it.
+
+   Bound only for as long as a row IS in the air. A non-passive touchmove
+   listener on the document is a promise that some JavaScript might cancel
+   the gesture, and the browser has to keep it: it cannot scroll or composite
+   a touch anywhere on the page until that handler has run and declined. Left
+   bound for the life of the app, this one was putting a main-thread round
+   trip in front of every touch in every screen — including the drag on the
+   composer, which is why that stayed a step behind the finger however much
+   was taken out of the drag itself. */
+function holdPageStill(e) {
   if (drag) e.preventDefault();
-}, { passive: false });
+}
 
 function endDrag(commit) {
   if (!drag) return;
+  document.removeEventListener('touchmove', holdPageStill, { passive: false });
   const { task, row, ghost, cell } = drag;
   ghost.remove();
   row.classList.remove('is-lifted');
