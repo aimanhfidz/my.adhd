@@ -114,16 +114,8 @@ body{
 /* .brand-lockup, .logo and .wordmark now live in theme.css */
 .lg-pill{stroke:var(--violet)}
 .brand .theme-toggle{margin-left:auto}
-.brand .ghost-btn{margin-left:8px}
 
 /* the toggle button itself is styled in theme.css */
-.ghost-btn{
-  background:none; border:1.5px solid var(--line-strong); color:var(--muted);
-  font:inherit; font-size:13px; font-weight:500;
-  padding:7px 14px; border-radius:999px; cursor:pointer;
-  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
-}
-.ghost-btn:hover{color:var(--accent); border-color:var(--accent)}
 
 /* ---------- screen 1: dump ---------- */
 .dump-wrap{margin:auto 0; padding:26px 0 0}

@@ -20,7 +20,6 @@ const el = {
   doneToggle:   $('done-toggle'),
   doneCount:    $('done-count'),
   doneList:     $('done-list'),
-  btnNewDump:   $('btn-new-dump'),
   btnViewLists: $('btn-view-lists'),
   listsBadge:   $('lists-badge'),
   offlineNote:  $('offline-note'),
@@ -755,7 +754,6 @@ function showProfile() {
 /* ---------------- wiring ---------------- */
 
 el.triage.addEventListener('click', triage);
-el.btnNewDump.addEventListener('click', newDump);
 el.btnViewLists.addEventListener('click', goToNext);
 el.btnResort.addEventListener('click', resortLocal);
 el.btnClearAll.addEventListener('click', stepClear);
