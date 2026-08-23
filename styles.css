@@ -947,6 +947,8 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
   position:absolute; inset:0;
   background:rgba(16,16,24,.42);
   animation:scrimIn .38s var(--ease) both;
+  /* same reasoning as the sheet: its own layer before the drag, not during */
+  will-change:opacity;
 }
 /* dragging thins it out in step with the sheet, so the page behind comes
    back as the sheet leaves rather than all at once at the end */
@@ -972,18 +974,18 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
      than played. */
   animation:sheetUp .38s cubic-bezier(.32,.72,0,1) both;
   overflow:hidden;
+  /* Promoted while the sheet exists at all, not once a finger lands on it.
+     Building the layer costs a frame, and asking for it on the first
+     pointermove spent that frame in the middle of the gesture — the sheet
+     sat still, then caught up. The whole composer is display:none when it
+     is closed, so there is no layer to hold in the meantime. */
+  will-change:transform;
 }
 @keyframes sheetUp{from{transform:translateY(100%)} to{transform:translateY(0)}}
 
 /* While a finger is on it: no transition, the sheet is pinned to the
-   pointer. On release one of the two below takes over.
-
-   will-change only for as long as it is moving — it buys the sheet its own
-   layer so a drag is a composite rather than a repaint, and a layer held
-   permanently is just memory spent on a screen the sheet is not on. */
-.composer-sheet.is-dragging{animation:none; transition:none; will-change:transform}
-.composer-sheet.is-settling,.composer-sheet.is-leaving{will-change:transform}
-.composer.is-dragging .composer-scrim{will-change:opacity}
+   pointer. On release one of the two below takes over. */
+.composer-sheet.is-dragging{animation:none; transition:none}
 .composer-sheet.is-settling{
   animation:none;
   transition:transform .3s cubic-bezier(.32,.72,0,1);
@@ -1064,4 +1066,13 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
   .composer-sheet{animation:none}
   .composer-scrim{animation:none}
   .composer-sheet.is-settling,.composer-sheet.is-leaving{transition-duration:.01s}
+}
+
+/* The tab bar blurs whatever is behind it, and a backdrop filter is redrawn
+   whenever that backdrop changes — so dragging the sheet across it made the
+   browser re-blur the width of the screen on every frame of the gesture, for
+   a bar the sheet is covering anyway. Nothing to see, all of the cost. */
+body.is-composing .tabbar{
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
 }

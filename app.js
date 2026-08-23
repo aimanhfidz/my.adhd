@@ -1013,6 +1013,7 @@ function openComposer() {
   el.compInput.value = el.input.value;
   resetComposerMotion();
   el.composer.classList.remove('is-hidden');
+  document.body.classList.add('is-composing');
   syncComposer();
 
   /* iOS only raises the keyboard for a focus it believes came from the tap,
@@ -1046,6 +1047,7 @@ function closeComposer(slide = false) {
 
   const done = () => {
     el.composer.classList.add('is-hidden');
+    document.body.classList.remove('is-composing');
     resetComposerMotion();
   };
 
@@ -1089,6 +1091,12 @@ const DRAG_SPEED_SMOOTHING = 0.4;
    counts as a drag. Everywhere else there is nothing to be confused with,
    so the sheet moves from the first pixel. */
 const DRAG_CLAIM_PX = 8;
+/* How far the sheet has to have actually travelled before the keyboard is
+   let go. iOS keeps the caret and the selection handles pinned to a focused
+   field, so every frame the sheet moves is a frame it re-places those —
+   but this cannot fire on claim, or a tap on the sheet's background would
+   put the keyboard away while you were still typing. */
+const DRAG_KEYBOARD_PX = 24;
 
 let dragFrom = 0, dragX0 = 0, dragging = false;
 let dragPending = false;   // touched the text, has not committed yet
@@ -1169,6 +1177,11 @@ function dragMove(e) {
     dragSpeed += (instant - dragSpeed) * DRAG_SPEED_SMOOTHING;
     dragLastY = e.clientY;
     dragLastT = now;
+  }
+  // past a real movement this is a drag, not a tap — and dragging a sheet
+  // down is how the platform puts a keyboard away anyway
+  if (dy > DRAG_KEYBOARD_PX && document.activeElement === el.compInput) {
+    el.compInput.blur();
   }
   queueDrag(dy);
 }
