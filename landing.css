@@ -122,6 +122,16 @@ body{
 
 /* footer */
 
+/* ---------- tall phones: let the hero grow into the slack ----------
+   Top-aligning the hero left a dead band above the footer on a big
+   phone (~110px on a 932px screen). Rather than pushing the headline
+   back down into the middle, the mascot and the gaps take the space —
+   the copy stays high and the screen reads full. */
+@media (min-width:0px) and (min-height:780px){
+  .hero-body{gap:clamp(14px,3vh,34px)}
+  .hero-art img, .hero-art .hero-mascot{height:min(44vh,410px)}
+}
+
 /* ---------- desktop: copy left, mascot right ---------- */
 @media (min-width:820px){
   .hero-body{
@@ -130,6 +140,13 @@ body{
   }
   .hero-copy{align-items:flex-start; max-width:36rem}
   .hero-art img, .hero-art .hero-mascot{height:min(64vh,520px)}
+}
+
+/* ---------- very short screens (an SE, a browser with two toolbars) ----
+   The hero is one viewport with nothing to scroll to, so on a 568px-tall
+   screen the mascot has to give way or the disclaimer falls off the end. */
+@media (max-height:620px){
+  .hero-art img, .hero-art .hero-mascot{height:min(30vh,220px)}
 }
 
 /* ---------- landscape phones ---------- */
