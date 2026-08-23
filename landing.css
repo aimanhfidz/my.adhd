@@ -15,6 +15,10 @@
   /* the one gap between the nav and the first line of copy — every page
      starts its content here, so the titles line up across the site */
   --top-gap:clamp(14px,3.4vh,34px);
+  /* read by both the hero's padding and the sticky nav's offset, so the bar
+     stops exactly where the status bar ends — same pair as the app */
+  --safe-top:env(safe-area-inset-top, 0px);
+  --nav-gap:clamp(10px,2vh,18px);
 }
 :root[data-theme="dark"]{
   --hero-glow-a:rgba(71,55,255,.32);
@@ -55,32 +59,48 @@ body{
   position:relative;
   min-height:100dvh;
   display:grid; grid-template-rows:auto 1fr auto;
-  padding:clamp(16px,3.2vh,28px) 0 clamp(14px,2.4vh,22px);
+  padding:var(--nav-gap) 0 clamp(14px,2.4vh,22px);
   /* the gutters below are relative to these, so the notch never crops the
      nav in landscape or under a home-screen launch */
-  padding-top:calc(clamp(16px,3.2vh,28px) + env(safe-area-inset-top, 0px));
+  padding-top:calc(var(--nav-gap) + var(--safe-top));
   padding-bottom:calc(clamp(14px,2.4vh,22px) + env(safe-area-inset-bottom, 0px));
   padding-left:env(safe-area-inset-left, 0px);
   padding-right:env(safe-area-inset-right, 0px);
-  overflow:hidden;
+  /* deliberately not overflow:hidden — an ancestor that clips is an
+     ancestor the sticky nav is stuck inside. .hero-glow clips instead. */
 }
-.hero::before,.hero::after{
+.hero-glow::before,.hero-glow::after{
   content:""; position:absolute; border-radius:50%; pointer-events:none; z-index:0;
 }
-.hero::before{
+.hero-glow::before{
   width:min(78vw,760px); aspect-ratio:1; top:-14%; right:-16%;
   background:radial-gradient(closest-side,var(--hero-glow-a),transparent 72%);
 }
-.hero::after{
+.hero-glow::after{
   width:min(60vw,520px); aspect-ratio:1; bottom:-20%; left:-18%;
   background:radial-gradient(closest-side,var(--hero-glow-b),transparent 72%);
 }
 .hero > *{position:relative; z-index:1}
+/* after .hero > *, which would otherwise make this relative. It fills the
+   same box the glows used to measure their percentages against, so they
+   land exactly where they did. */
+.hero-glow{
+  position:absolute; inset:0; z-index:0;
+  overflow:hidden; pointer-events:none;
+}
 
+/* The bar holds the top of the window while the page runs under it. */
 .nav{
+  position:sticky; top:var(--safe-top); z-index:20;
   display:flex; align-items:center; gap:10px;
   width:100%; max-width:1080px; margin:0 auto; padding:0 clamp(20px,5vw,40px);
 }
+/* No ground behind it, unlike the app's bar. This page is exactly one
+   viewport — the hero is the whole document and never scrolls — so nothing
+   ever passes behind the nav, and a band painted across the top would only
+   cut a seam through the hero glow. Add content below the hero and this
+   bar needs one: copy .brand::before from styles.css, which bleeds past
+   the 1080px cap to the window edges. */
 /* the mark on the left, the toggle on the right, nothing between */
 .nav .theme-toggle{margin-left:auto}
 

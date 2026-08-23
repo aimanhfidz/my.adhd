@@ -41,6 +41,9 @@
 
 <!-- ============ HERO — one viewport, full bleed ============ -->
 <header class="hero">
+  <!-- the two glows, in a layer that clips itself — the hero cannot do the
+       clipping any more, or it would trap the sticky nav inside it -->
+  <div class="hero-glow" aria-hidden="true"></div>
   <nav class="nav">
     <a class="brand-lockup" href="/" aria-label="my.adhd home">
       <svg class="logo" viewBox="0 0 100 100" aria-hidden="true">
