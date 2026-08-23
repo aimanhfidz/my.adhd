@@ -37,6 +37,23 @@ body{
 /* One flat page in the current theme's --surface. Content is held to a
    readable measure and centred — no card, no shadow, no tinted ground for
    it to float on. */
+/* The top inset and the gutter are read by both .screen and the brand bar,
+   which has to stop exactly where the status bar ends. Declared once so the
+   two can never drift apart.
+
+   The floor on --safe-top is the important half. Launched from the home
+   screen iOS does not always report an inset, and the gap alone puts the
+   toggle hard against the clock; max() leaves a phone that reports 59px
+   untouched and still clears the status bar on one that reports nothing.
+   See the standalone block below. */
+:root{
+  --safe-top:env(safe-area-inset-top, 0px);
+  --gutter:clamp(20px,5vw,40px);
+  /* the air above the mark — shorter than the old 22-34px, which sat the
+     lockup lower on the screen than it wanted to */
+  --brand-gap:clamp(12px,2vw,20px);
+}
+
 .screen{
   min-height:100%;
   display:flex; flex-direction:column; align-items:center;
@@ -44,17 +61,11 @@ body{
   background:var(--surface);
   /* viewport-fit=cover hands us the whole screen, notch included — so the
      gutters have to carry the insets themselves or the header sits under
-     the status bar once the app runs from the home screen.
-
-     The floor is the important half. Launched from the home screen iOS
-     does not always report an inset, and 22px alone puts the toggle hard
-     against the clock. max() takes whichever is larger, so a phone that
-     reports 59px is unaffected and one that reports nothing still clears
-     the status bar. */
-  padding-top:calc(clamp(22px,3.5vw,34px) + env(safe-area-inset-top, 0px));
-  padding-right:calc(clamp(20px,5vw,40px) + env(safe-area-inset-right, 0px));
+     the status bar once the app runs from the home screen. */
+  padding-top:calc(var(--brand-gap) + var(--safe-top));
+  padding-right:calc(var(--gutter) + env(safe-area-inset-right, 0px));
   padding-bottom:calc(clamp(48px,7vw,80px) + env(safe-area-inset-bottom, 0px));
-  padding-left:calc(clamp(20px,5vw,40px) + env(safe-area-inset-left, 0px));
+  padding-left:calc(var(--gutter) + env(safe-area-inset-left, 0px));
 }
 .screen > *{width:100%; max-width:var(--measure)}
 
@@ -66,7 +77,7 @@ body{
 }
 
 @media (display-mode:standalone){
-  .screen{padding-top:calc(clamp(22px,3.5vw,34px) + max(env(safe-area-inset-top, 0px), 34px))}
+  :root{--safe-top:max(env(safe-area-inset-top, 0px), 34px)}
 }
 
 .is-hidden{display:none !important}
@@ -116,8 +127,31 @@ body{
 .art--think{width:200px; margin-bottom:20px}
 
 /* ---------- brand ---------- */
-.brand{display:flex; align-items:center; gap:10px}
-.brand--sm{margin-bottom:22px}
+/* The bar holds its place while the page scrolls under it. #app is the
+   scroller, not the document, so sticky resolves against #app and the offset
+   only has to clear the status bar — which is exactly --safe-top, the same
+   length .screen pads by. */
+.brand{
+  position:sticky; top:var(--safe-top); z-index:20;
+  display:flex; align-items:center; gap:10px;
+  padding-bottom:10px;
+}
+.brand--sm{margin-bottom:12px}
+
+/* The ground the rows pass behind. The bar is held to --measure, so a
+   background on the bar itself would leave the gutters — and the strip up
+   under the status bar — uncovered. This is one full-bleed panel instead,
+   reaching from the top of the screen to the bottom of the bar. It sits at
+   z-index -1 inside the bar's own stacking context: behind the lockup,
+   still in front of the page. */
+.brand::before{
+  content:"";
+  position:absolute; z-index:-1;
+  left:50%; transform:translateX(-50%); width:100vw;
+  top:calc(-1 * (var(--safe-top) + var(--brand-gap)));
+  bottom:0;
+  background:var(--surface);
+}
 /* The mark links out to the landing page, on both screens. A real <a>, not a
    button: this leaves the app, so it should open in a new tab on middle-click
    and offer a URL on hover like any other link. Relative, so it also works

@@ -29,6 +29,8 @@
   --orange:#F75C03;      /* Vivid Orange */
   --violet:#7B3FE4;      /* logo capsule  */
   --danger:#D92D20;      /* destructive only — never decoration */
+  /* The word wears the capsule's colour, in both themes — the lockup reads
+     as one object only while the two purples are the same purple. */
   --wordmark-accent:var(--violet);
   --grad:linear-gradient(103deg,#101018 0%,#3529BF 38%,#4737FF 68%,#ACA5FF 100%);
 
@@ -115,7 +117,6 @@
     --line:#262636;
     --line-strong:#3B3A52;
     --accent:#8B7DFF;
-    --wordmark-accent:#A98CFF;
     --focus:rgba(139,125,255,.26);
 
     --on-accent:#101018;
@@ -161,7 +162,6 @@
   --line:#262636;
   --line-strong:#3B3A52;
   --accent:#8B7DFF;
-  --wordmark-accent:#A98CFF;
   --focus:rgba(139,125,255,.26);
 
   --on-accent:#101018;
