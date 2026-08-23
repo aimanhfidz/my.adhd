@@ -11,6 +11,8 @@ const el = {
   screenLoad:   $('screen-loading'),
   screenNow:    $('screen-now'),
   input:        $('dump-input'),
+  dumpDates:    $('dump-dates'),
+  dumpChips:    $('dump-chips'),
   triage:       $('btn-triage'),
   loadingText:  $('loading-text'),
   eyebrow:      $('eyebrow'),
@@ -216,6 +218,7 @@ async function triage() {
   state.tasks = state.tasks.concat(fresh);
   save();
   el.input.value = '';
+  previewDates();
   goToNext();
 
   if (dupes) {
@@ -478,12 +481,11 @@ function tidyWhen(line) {
   return out;
 }
 
-function parseLocally(text) {
-  const URGENT_HIGH = /\b(today|tonight|asap|urgent|overdue|deadline|due|now|immediately|last chance|expires?)\b/i;
-  const URGENT_SOON = /\b(tomorrow|this week|monday|tuesday|wednesday|thursday|friday|saturday|sunday|weekend|soon)\b/i;
-  const QUICK  = /\b(email|reply|text|call|book|order|pay|send|renew|confirm|cancel|rsvp)\b/i;
-  const BIG    = /\b(write|build|plan|report|design|research|clean|organi[sz]e|prepare|refactor|draft|deep)\b/i;
-
+/* Where one thing ends and the next begins. Pulled out of parseLocally so
+   the typing preview splits the dump exactly the way the parser will —
+   otherwise the chips would promise dates against lines that never end up
+   being lines. */
+function splitDump(text) {
   return text
     .split(/\n|(?:,\s(?=\w{4,}))|(?:\s+•\s+)|(?:;\s*)/)
     .map(s => s.replace(/^[\s\-–—*•\d.)]+/, '').trim())
@@ -494,7 +496,16 @@ function parseLocally(text) {
       else acc.push(frag);
       return acc;
     }, [])
-    .slice(0, 25)
+    .slice(0, 25);
+}
+
+function parseLocally(text) {
+  const URGENT_HIGH = /\b(today|tonight|asap|urgent|overdue|deadline|due|now|immediately|last chance|expires?)\b/i;
+  const URGENT_SOON = /\b(tomorrow|this week|monday|tuesday|wednesday|thursday|friday|saturday|sunday|weekend|soon)\b/i;
+  const QUICK  = /\b(email|reply|text|call|book|order|pay|send|renew|confirm|cancel|rsvp)\b/i;
+  const BIG    = /\b(write|build|plan|report|design|research|clean|organi[sz]e|prepare|refactor|draft|deep)\b/i;
+
+  return splitDump(text)
     .map(line => {
       const stated = parseMinutes(line);
       const day = parseDay(line);
@@ -917,6 +928,7 @@ async function breakDown(task, ui) {
 
 function newDump() {
   refreshListsButton();
+  previewDates();   // whatever is left in the box decides the strip
   show(el.screenDump);
   el.input.focus();
 }
@@ -1228,6 +1240,59 @@ function showProfile() {
   show(el.screenMe);
 }
 
+/* ---------------- the typing preview ----------------
+   Shows what the app has spotted a day in, while the dump is still being
+   written. It runs the offline date reader, not the model — that is the
+   point: it is instant and costs nothing, so it can run on every
+   keystroke. The model does the real extraction on submit and may read a
+   line differently, which is why the label says "heading for" rather than
+   promising a result.
+
+   Only days appear. A line the reader finds nothing in stays silent
+   rather than getting a chip saying so — the strip is there to confirm a
+   date landed, not to nag about the ones that did not. */
+
+const PREVIEW_MAX = 4;
+
+function previewDates() {
+  // Cheap on any realistic dump, but the reader runs a fistful of regexes
+  // per line and this fires on every keystroke, so the input is capped.
+  const text = el.input.value.slice(0, 4000);
+  const seen = new Map();
+
+  if (text.trim().length > 2) {
+    for (const line of splitDump(text)) {
+      const when = parseDay(line);
+      if (!when) continue;
+      const at = parseClock(line);
+      const key = `${when}|${at || ''}`;
+      if (!seen.has(key)) seen.set(key, { when, at });
+    }
+  }
+
+  const found = [...seen.values()]
+    .sort((a, b) => a.when.localeCompare(b.when)
+                 || (a.at || '99:99').localeCompare(b.at || '99:99'));
+
+  el.dumpDates.classList.toggle('is-hidden', found.length === 0);
+  el.dumpChips.innerHTML = '';   // cleared even when hiding: a live region
+  if (!found.length) return;     // should not keep announcing stale chips
+
+  found.slice(0, PREVIEW_MAX).forEach(d => {
+    const chip = document.createElement('span');
+    chip.className = 'chip chip--when';
+    chip.textContent = whenLabel(d);
+    el.dumpChips.appendChild(chip);
+  });
+
+  if (found.length > PREVIEW_MAX) {
+    const more = document.createElement('span');
+    more.className = 'dump-more';
+    more.textContent = `+${found.length - PREVIEW_MAX} more`;
+    el.dumpChips.appendChild(more);
+  }
+}
+
 /* ---------------- wiring ---------------- */
 
 el.triage.addEventListener('click', triage);
@@ -1260,6 +1325,8 @@ el.nameInput.addEventListener('input', () => {
   save();
   paintProfile();
 });
+
+el.input.addEventListener('input', previewDates);
 
 el.input.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); triage(); }
