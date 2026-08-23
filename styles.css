@@ -704,6 +704,20 @@ body.has-tabbar .toast{
 .cal-day.is-late .cal-dot{background:var(--orange)}
 .cal-day.is-picked .cal-dot{background:var(--on-accent)}
 
+/* the earliest time that day, in the dot's place. Out of flow so the date
+   stays optically centred whether or not there is a time under it. */
+.cal-time{
+  position:absolute; bottom:3px; left:0; right:0;
+  /* The widest label ("12.30pm") is what sizes this: at a fixed 9px it
+     clips by a hair once the cells drop under ~40px on a 320px phone. */
+  font-size:clamp(8px, 2.4vw, 9px);
+  font-weight:700; line-height:1; letter-spacing:-.02em;
+  color:var(--accent); font-variant-numeric:tabular-nums;
+  white-space:nowrap; overflow:hidden;
+}
+.cal-day.is-late .cal-time{color:var(--orange)}
+.cal-day.is-picked .cal-time{color:var(--on-accent)}
+
 .cal-today{
   display:block; margin:14px auto 0;
   background:none; border:none; padding:4px 8px;

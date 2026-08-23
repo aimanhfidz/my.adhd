@@ -1004,15 +1004,30 @@ function renderCalendar() {
     cell.classList.toggle('is-today', key === today);
     cell.classList.toggle('is-picked', key === calPicked);
     cell.setAttribute('aria-pressed', String(key === calPicked));
+    /* tasksOn sorts timed things ahead of loose ones, so the first with a
+       clock on it is the earliest of the day. */
+    const firstTimed = items.find(t => t.at);
+
     cell.setAttribute('aria-label',
-      `${dayLabel(key, today)}${items.length ? `, ${items.length} ${items.length === 1 ? 'thing' : 'things'}` : ', nothing'}`);
+      `${dayLabel(key, today)}${items.length ? `, ${items.length} ${items.length === 1 ? 'thing' : 'things'}` : ', nothing'}` +
+      (firstTimed ? `, from ${timeLabel(firstTimed.at)}` : ''));
 
     if (items.length) {
       cell.classList.add('has-items');
       if (key < today) cell.classList.add('is-late');
-      const dot = document.createElement('span');
-      dot.className = 'cal-dot';
-      cell.appendChild(dot);
+
+      /* The cell already says which day it is, so the time is the half of
+         the stamp worth printing. A day with things but no time on any of
+         them falls back to the dot — there is nothing to show, and an
+         invented "12am" would read as an appointment. */
+      const mark = document.createElement('span');
+      if (firstTimed) {
+        mark.className = 'cal-time';
+        mark.textContent = timeLabel(firstTimed.at);
+      } else {
+        mark.className = 'cal-dot';
+      }
+      cell.appendChild(mark);
     }
 
     cell.addEventListener('click', () => {
