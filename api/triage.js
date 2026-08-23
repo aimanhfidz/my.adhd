@@ -45,8 +45,16 @@ const TASK_SCHEMA = {
             description: 'A single physical action under 2 minutes that starts this task. Must be so small it feels stupid to refuse. No planning steps.',
           },
           category: { type: 'string', description: 'One word: admin, work, health, home, social, money, or errand.' },
+          when: {
+            type: ['string', 'null'],
+            description: 'The day this is tied to, as YYYY-MM-DD, ONLY when the dump names or implies a specific day: "tomorrow", "Friday", "9 March", "tonight", "next week Tuesday". null when no day is mentioned. Resolve every relative day against the current date given in the prompt, and never return a past date — a bare weekday or day-of-month that has already gone means the next one.',
+          },
+          at: {
+            type: ['string', 'null'],
+            description: 'The clock time as 24-hour HH:MM, ONLY when an actual time is mentioned: "4pm" -> "16:00", "half nine" -> "09:30", "noon" -> "12:00". null otherwise. Never invent a time from a vague word like "morning", "later", or "soon" — those give a day at most.',
+          },
         },
-        required: ['title', 'minutes', 'energy', 'urgency', 'firstStep', 'category'],
+        required: ['title', 'minutes', 'energy', 'urgency', 'firstStep', 'category', 'when', 'at'],
         additionalProperties: false,
       },
     },
@@ -83,6 +91,7 @@ Rules:
 - Rewrite each task in plain, concrete language. Never moralize, never add encouragement, never add emoji.
 - Every firstStep must be a physical action the person could do in the next 2 minutes without deciding anything: "open the email app", "put the laundry in the dryer", "find the insurance renewal letter". Never "think about", "plan", "decide", or "review".
 - Cap at 20 tasks. If the dump is longer, keep the 20 that matter most.
+- Timing is captured, never invented. A day only becomes a date when the dump gives you one, and a time only becomes a clock time when the dump gives you one. "Sometime this week" is not a date. When something is genuinely tied to a day, the urgency should reflect how close that day is.
 - If the dump contains no actionable items at all, return an empty tasks array.`;
 
 const BREAKDOWN_SYSTEM = `You break one overwhelming task into steps for someone with ADHD.
@@ -92,6 +101,14 @@ Rules:
 - Each step is one concrete physical action, not a phase. "Open the doc and write the three section headings" — not "draft the report".
 - The first step must take under 2 minutes and require no decisions.
 - Plain language. No encouragement, no emoji, no preamble.`;
+
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+/** "2026-03-09 (Monday)" — the weekday matters for resolving "next Friday". */
+function describeDay(key) {
+  const [y, m, d] = key.split('-').map(Number);
+  return `${key} (${DAYS[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]})`;
+}
 
 /** Pull the JSON text block out of a response that may also contain thinking blocks. */
 function extractJSON(message) {
@@ -149,9 +166,19 @@ export default async function handler(req, res) {
     const text = String(body.text || '').slice(0, 8000);
     if (!text.trim()) return res.status(400).json({ error: 'text is required' });
 
+    /* The browser sends its own date. This function runs somewhere in UTC,
+       and resolving "tomorrow" against the server's midnight would put a
+       task on the wrong day for anyone east or west of it. */
+    const today = /^\d{4}-\d{2}-\d{2}$/.test(String(body.today || ''))
+      ? describeDay(body.today)
+      : describeDay(new Date().toISOString().slice(0, 10));
+
     const out = await ask({
       system: SYSTEM,
-      prompt: `Their energy right now: ${energy}.\n\nBrain dump:\n"""\n${text}\n"""`,
+      prompt:
+        `Today is ${today}.\n` +
+        `Their energy right now: ${energy}.\n\n` +
+        `Brain dump:\n"""\n${text}\n"""`,
       schema: TASK_SCHEMA,
     });
     return res.status(200).json(out);

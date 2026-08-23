@@ -589,6 +589,111 @@ body.has-tabbar .toast{
   border-radius:999px; padding:6px 14px;
 }
 
+
+/* ---------- the calendar ----------
+   A month for orientation, an agenda for reading. The grid is deliberately
+   quiet: a dot is enough to say "something is on this day", and the detail
+   lives underneath where there is room for it. */
+.cal-wrap{margin:0; padding-top:clamp(6px,1.5vh,16px)}
+
+.cal-head{display:flex; align-items:center; gap:8px; margin-bottom:16px}
+.cal-month{
+  flex:1; text-align:center;
+  font-size:19px; font-weight:800; letter-spacing:-.02em;
+}
+.cal-nav{
+  flex:none; width:38px; height:38px; display:grid; place-items:center;
+  background:none; border:1.5px solid var(--line-strong); border-radius:999px;
+  color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+.cal-nav svg{width:17px; height:17px; display:block}
+.cal-nav:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+@media (hover:hover){ .cal-nav:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)} }
+
+.cal-dow,
+.cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:3px}
+.cal-dow{margin-bottom:6px}
+.cal-dow span{
+  text-align:center; font-size:11.5px; font-weight:700;
+  color:var(--faint); letter-spacing:.06em;
+}
+
+.cal-day{
+  position:relative;
+  aspect-ratio:1; width:100%; max-height:48px;
+  display:grid; place-items:center;
+  background:none; border:1.5px solid transparent; border-radius:13px;
+  font-family:var(--display); font-size:14.5px; font-weight:600;
+  color:var(--ink-soft); cursor:pointer; padding:0;
+  transition:background .16s var(--ease), border-color .16s var(--ease), color .16s var(--ease);
+}
+.cal-day.is-blank{pointer-events:none}
+.cal-day:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--focus)}
+@media (hover:hover){ .cal-day:not(.is-blank):hover{background:var(--wash)} }
+
+/* today is outlined, the picked day is filled — so both can show at once */
+.cal-day.is-today{border-color:var(--line-strong); color:var(--ink); font-weight:800}
+.cal-day.is-picked{background:var(--accent); border-color:var(--accent); color:var(--on-accent); font-weight:800}
+
+.cal-dot{
+  position:absolute; bottom:6px; left:50%; transform:translateX(-50%);
+  width:5px; height:5px; border-radius:50%; background:var(--accent);
+}
+.cal-day.is-late .cal-dot{background:var(--orange)}
+.cal-day.is-picked .cal-dot{background:var(--on-accent)}
+
+.cal-today{
+  display:block; margin:14px auto 0;
+  background:none; border:none; padding:4px 8px;
+  font-family:var(--display); font-size:13.5px; font-weight:600;
+  color:var(--accent); cursor:pointer;
+  text-decoration:underline; text-underline-offset:3px;
+}
+
+.cal-agenda{margin-top:22px; display:flex; flex-direction:column; gap:22px}
+
+.cal-group{animation:rise .3s var(--ease) both}
+.cal-group-head{
+  font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:10px;
+  padding-bottom:9px; border-bottom:1.5px solid var(--line);
+}
+.cal-group--late .cal-group-head{color:var(--orange); border-bottom-color:var(--orange)}
+
+.cal-items{list-style:none; display:flex; flex-direction:column; gap:8px}
+.cal-item{
+  display:flex; align-items:flex-start; gap:11px;
+  border:1.5px solid var(--line); border-radius:var(--radius-lg);
+  padding:13px 15px;
+}
+.cal-group--late .cal-item{border-left:3px solid var(--orange)}
+
+/* the time column: fixed width so every title starts on the same line */
+.cal-slot{
+  flex:none; width:62px; padding-top:1px;
+  font-size:13.5px; font-weight:700; color:var(--ink);
+  font-variant-numeric:tabular-nums;
+}
+.cal-slot.is-loose{color:var(--faint); font-weight:600}
+
+.cal-item-body{flex:1; min-width:0}
+.cal-item-title{font-size:15px; font-weight:600; line-height:1.35}
+.cal-item-meta{margin-top:3px; font-size:12.5px; color:var(--faint)}
+
+.cal-empty{
+  font-size:14.5px; color:var(--muted); line-height:1.6;
+  text-align:center; padding:26px 10px;
+}
+.cal-undated{
+  margin-top:24px; padding-top:16px; border-top:1.5px solid var(--line);
+  font-size:13px; color:var(--faint); line-height:1.55;
+}
+
+/* the day stamp on a task card, over on the lists screen */
+.chip--when{border-style:solid; color:var(--ink-soft); font-weight:600}
+.chip--when.is-late{color:var(--orange); border-color:var(--orange)}
+
 /* ---------- profile ---------- */
 .profile-wrap{margin:0; padding-top:clamp(10px,2vh,22px)}
 

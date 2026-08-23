@@ -38,6 +38,13 @@ const el = {
   scroller:     $('app'),
 
   screenCal:    $('screen-calendar'),
+  calMonth:     $('cal-month'),
+  calPrev:      $('cal-prev'),
+  calNext:      $('cal-next'),
+  calGrid:      $('cal-grid'),
+  calToday:     $('cal-today'),
+  calAgenda:    $('cal-agenda'),
+  calUndated:   $('cal-undated'),
   screenLoved:  $('screen-loved'),
   screenMe:     $('screen-profile'),
   tabbar:       $('tabbar'),
@@ -208,12 +215,160 @@ async function parseWithAI(text, energy) {
   const res = await fetch('/api/triage', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ mode: 'triage', text, energy }),
+    body: JSON.stringify({ mode: 'triage', text, energy, today: dayKey() }),
   });
   if (!res.ok) throw new Error('triage endpoint returned ' + res.status);
   const data = await res.json();
   if (!Array.isArray(data.tasks) || !data.tasks.length) throw new Error('no tasks in response');
   return data.tasks.map(normalizeTask);
+}
+
+/* ---------------- dates ----------------
+   A task carries two separate fields, not one instant: `when` is a day
+   (YYYY-MM-DD) and `at` is a clock time (HH:MM), either of which can be
+   null. "9 March" gives a day with no time; "tomorrow at 4" gives both.
+   Folding them into one timestamp would force a fake time onto every
+   dateless day, and storing that as UTC would shunt half of them onto the
+   wrong date. Everything below is deliberately local-time. */
+
+const pad2 = (n) => String(n).padStart(2, '0');
+
+/** The local calendar day as YYYY-MM-DD. Never toISOString — that is UTC. */
+function dayKey(d = new Date()) {
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+function keyToDate(key) {
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function addDays(d, n) {
+  const out = new Date(d);
+  out.setDate(out.getDate() + n);
+  return out;
+}
+
+/** Real date, real calendar day — rejects "2026-02-31" and anything malformed. */
+function normalizeDay(v) {
+  if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return null;
+  const d = keyToDate(v);
+  return Number.isNaN(d.getTime()) || dayKey(d) !== v ? null : v;
+}
+
+function normalizeTime(v) {
+  if (typeof v !== 'string') return null;
+  const m = v.match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return null;
+  const h = Number(m[1]), min = Number(m[2]);
+  return h > 23 || min > 59 ? null : `${pad2(h)}:${pad2(min)}`;
+}
+
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
+                     'July', 'August', 'September', 'October', 'November', 'December'];
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+/** "4pm", "09:30", or null for a day with no time on it. */
+function timeLabel(at) {
+  if (!at) return null;
+  const [h, m] = at.split(':').map(Number);
+  const suffix = h < 12 ? 'am' : 'pm';
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return m === 0 ? `${hour}${suffix}` : `${hour}.${pad2(m)}${suffix}`;
+}
+
+/** "Today", "Tomorrow", "Mon 9 Mar" — relative where that reads faster. */
+function dayLabel(key, today = dayKey()) {
+  if (key === today) return 'Today';
+  if (key === dayKey(addDays(keyToDate(today), 1))) return 'Tomorrow';
+  if (key === dayKey(addDays(keyToDate(today), -1))) return 'Yesterday';
+  const d = keyToDate(key);
+  const name = DAY_NAMES[d.getDay()].slice(0, 3);
+  const month = MONTH_NAMES[d.getMonth()].slice(0, 3);
+  const year = d.getFullYear() === keyToDate(today).getFullYear() ? '' : ` ${d.getFullYear()}`;
+  return `${name} ${d.getDate()} ${month}${year}`;
+}
+
+/** The whole stamp as one string: "Tomorrow · 4pm". */
+function whenLabel(task, today = dayKey()) {
+  if (!task.when) return null;
+  const t = timeLabel(task.at);
+  return t ? `${dayLabel(task.when, today)} · ${t}` : dayLabel(task.when, today);
+}
+
+const scheduled = (t) => !t.done && !!t.when;
+
+/* ---- the offline date reader ----
+   Same standing as the offline task parser: a guess, used only when the
+   backend is unreachable. It reads what is written and nothing more — no
+   time is invented out of "morning" or "soon", because a wrong time on the
+   calendar is worse than no time at all. */
+
+const MONTH_RE = 'jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t|tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?';
+const MONTH_INDEX = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+                      jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+
+function parseClock(line) {
+  const t = line.toLowerCase();
+
+  if (/\bnoon\b|\bmidday\b/.test(t)) return '12:00';
+  if (/\bmidnight\b/.test(t)) return '00:00';
+
+  // "4pm", "4.30pm", "9:15 am"
+  let m = t.match(/\b(\d{1,2})(?:[:.](\d{2}))?\s*(am|pm)\b/);
+  if (m) {
+    let h = Number(m[1]) % 12;
+    if (m[3] === 'pm') h += 12;
+    return `${pad2(h)}:${pad2(Number(m[2] || 0))}`;
+  }
+
+  // "16:00", "at 9:15" — bare 24-hour, only with a colon so "1 5 things" cannot match
+  m = t.match(/\b(\d{1,2}):(\d{2})\b/);
+  if (m && Number(m[1]) <= 23 && Number(m[2]) <= 59) {
+    return `${pad2(Number(m[1]))}:${pad2(Number(m[2]))}`;
+  }
+  return null;
+}
+
+function parseDay(line, now = new Date()) {
+  const t = line.toLowerCase();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  if (/\btoday\b|\btonight\b|\bthis evening\b|\bthis morning\b|\bthis afternoon\b/.test(t)) return dayKey(today);
+  if (/\bday after tomorrow\b/.test(t)) return dayKey(addDays(today, 2));
+  if (/\btomorrow\b|\btmr\b|\btmrw\b/.test(t)) return dayKey(addDays(today, 1));
+
+  let m = t.match(/\bin\s+(\d{1,3})\s+days?\b/);
+  if (m) return dayKey(addDays(today, Number(m[1])));
+  if (/\bin\s+a\s+week\b|\bnext\s+week\b/.test(t)) return dayKey(addDays(today, 7));
+
+  // a weekday name: the next one, or the one after that when "next" leads it
+  m = t.match(/\b(next\s+)?(sun|mon|tues?|wed(?:nes)?|thur?s?|fri|sat(?:ur)?)(?:day)?\b/);
+  if (m) {
+    const want = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+      .indexOf(m[2].slice(0, 3).replace('tues', 'tue').replace('thur', 'thu'));
+    if (want >= 0) {
+      let step = (want - today.getDay() + 7) % 7;
+      if (step === 0) step = 7;            // "Friday" said on a Friday means the next one
+      if (m[1]) step += (step <= 6 ? 7 : 0);
+      return dayKey(addDays(today, step));
+    }
+  }
+
+  // "9 March" / "March 9" / "9th of March"
+  m = t.match(new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?(${MONTH_RE})\\b`))
+   || t.match(new RegExp(`\\b(${MONTH_RE})\\s+(\\d{1,2})(?:st|nd|rd|th)?\\b`));
+  if (m) {
+    const numFirst = /^\d/.test(m[1]);
+    const day = Number(numFirst ? m[1] : m[2]);
+    const mon = MONTH_INDEX[(numFirst ? m[2] : m[1]).slice(0, 3)];
+    if (day >= 1 && day <= 31 && mon !== undefined) {
+      let d = new Date(today.getFullYear(), mon, day);
+      if (d < today) d = new Date(today.getFullYear() + 1, mon, day);   // it has gone: next year
+      if (d.getMonth() === mon) return dayKey(d);                        // rejects 31 February
+    }
+  }
+  return null;
 }
 
 /** No-backend fallback: split by line, guess size and urgency from wording. */
@@ -281,6 +436,31 @@ function tidyTitle(line) {
     .trim();
 }
 
+/* Strip a trailing when-clause once it has been read into `when`/`at`.
+   Sibling of tidyTitle: the stamp is already shown beside the task, so
+   leaving it in the title too gives "Dinner with Sara tonight at 7.30pm"
+   sitting next to a 7.30pm column. Peeled in a loop because a clause can
+   stack ("tonight" + "at 7.30pm"), and only ever from the end, so a date
+   in the middle of a real sentence is left alone. */
+const TRAILING_WHEN = new RegExp(
+  '[,;\\s\u2014-]*\\b(?:on|by|before|at|due|this|next)?\\s*(?:' +
+    'today|tonight|tomorrow|tmrw?|this (?:morning|afternoon|evening)|next week|in \\d{1,3} days?|' +
+    '(?:next\\s+)?(?:sun|mon|tues?|wed(?:nes)?|thur?s?|fri|sat(?:ur)?)(?:day)?|' +
+    '\\d{1,2}(?:st|nd|rd|th)?\\s+(?:of\\s+)?(?:' + MONTH_RE + ')|' +
+    '(?:' + MONTH_RE + ')\\s+\\d{1,2}(?:st|nd|rd|th)?|' +
+    '\\d{1,2}(?:[:.]\\d{2})?\\s*(?:am|pm)|\\d{1,2}:\\d{2}|noon|midday|midnight' +
+  ')\\.?$', 'i');
+
+function tidyWhen(line) {
+  let out = line;
+  for (let i = 0; i < 4; i++) {
+    const next = out.replace(TRAILING_WHEN, '').replace(/[,;\s]+$/, '').trim();
+    if (next === out || !next) break;   // never strip a title down to nothing
+    out = next;
+  }
+  return out;
+}
+
 function parseLocally(text) {
   const URGENT_HIGH = /\b(today|tonight|asap|urgent|overdue|deadline|due|now|immediately|last chance|expires?)\b/i;
   const URGENT_SOON = /\b(tomorrow|this week|monday|tuesday|wednesday|thursday|friday|saturday|sunday|weekend|soon)\b/i;
@@ -300,7 +480,19 @@ function parseLocally(text) {
     .slice(0, 25)
     .map(line => {
       const stated = parseMinutes(line);
-      const clean = (stated !== null ? tidyTitle(line) : line) || line;
+      const day = parseDay(line);
+      /* Both tidiers are anchored to the end of the string, so each can
+         uncover a clause for the other: "takes 25 min, tomorrow" only
+         offers up its duration once "tomorrow" is off. Alternate until
+         neither one bites. */
+      let clean = line;
+      for (let i = 0; i < 3; i++) {
+        const before = clean;
+        if (stated !== null) clean = tidyTitle(clean) || clean;
+        if (day) clean = tidyWhen(clean) || clean;
+        if (clean === before) break;
+      }
+      clean = clean || line;
       return normalizeTask({
         title: clean.charAt(0).toUpperCase() + clean.slice(1),
         minutes: stated !== null ? stated : (QUICK.test(line) ? 10 : BIG.test(line) ? 45 : 20),
@@ -308,6 +500,10 @@ function parseLocally(text) {
         urgency: URGENT_HIGH.test(line) ? 5 : URGENT_SOON.test(line) ? 4 : 3,
         firstStep: 'Open whatever you need for this and look at it for 2 minutes. Nothing more.',
         category: guessCategory(line),
+        when: day,
+        // A time with no day is a time on no calendar, so it is dropped
+        // rather than parked on today and quietly wrong.
+        at: day ? parseClock(line) : null,
         local: true,
       });
     });
@@ -326,6 +522,8 @@ function normalizeTask(t) {
     urgency: clamp(t.urgency, 1, 5, 3),
     firstStep: String(t.firstStep || t.first_step || 'Open it and look at it for 2 minutes.').slice(0, 240),
     category: String(t.category || 'general').slice(0, 40),
+    when: normalizeDay(t.when),   // a day, or null
+    at:   normalizeTime(t.at),    // a clock time on that day, or null
     steps: Array.isArray(t.steps) ? t.steps.slice(0, 7).map(String) : null,
     local: t.local === true,   // sorted by the offline parser, not the model
     done: false,
@@ -486,6 +684,16 @@ function renderTask(task) {
   energy.textContent = `${task.energy} energy`;
 
   meta.append(time, energy);
+
+  const stamp = whenLabel(task);
+  if (stamp) {
+    const when = document.createElement('span');
+    when.className = 'chip chip--when';
+    when.textContent = stamp;
+    if (task.when < dayKey()) when.classList.add('is-late');
+    meta.appendChild(when);
+  }
+
   if (task.urgency >= 5) {
     const urgent = document.createElement('span');
     urgent.className = 'chip chip--urgent';
@@ -653,13 +861,13 @@ async function resortLocal() {
   }
 }
 
-function markDone(id) {
+function markDone(id, after = goToNext) {
   const t = state.tasks.find(x => x.id === id);
   if (!t) return;
   t.done = true;
   save();
   toast('Done. That one is gone.');
-  goToNext();
+  after();
 }
 
 async function breakDown(task, ui) {
@@ -701,6 +909,186 @@ function refreshListsButton() {
   const open = state.tasks.filter(t => !t.done).length;
   el.btnViewLists.classList.toggle('is-hidden', open === 0);
   el.listsBadge.textContent = open;
+}
+
+/* ---------------- the calendar ----------------
+   Only ever a view of the lists. A task lands here because the dump said
+   when it was — nothing is created on this screen, and a task with a day
+   is still on its list. That is the whole integration: say a time in the
+   dump box and the thing shows up on a day.
+
+   The month grid is for orientation; the agenda under it is the part you
+   read. Today is selected on arrival, and its agenda opens with anything
+   that has already gone past, because an overdue task nobody surfaces is
+   the exact failure this app exists to prevent. */
+
+let calCursor = null;     // the month on screen: a Date on the 1st
+let calPicked = null;     // the selected day, as a YYYY-MM-DD key
+
+function tasksOn(key) {
+  return state.tasks
+    .filter(t => scheduled(t) && t.when === key)
+    .sort((a, b) => (a.at || '99:99').localeCompare(b.at || '99:99')
+                 || b.urgency - a.urgency);
+}
+
+function overdueTasks(today = dayKey()) {
+  return state.tasks
+    .filter(t => scheduled(t) && t.when < today)
+    .sort((a, b) => a.when.localeCompare(b.when));
+}
+
+function showCalendar() {
+  const today = dayKey();
+  if (!calPicked) calPicked = today;
+  if (!calCursor) calCursor = keyToDate(calPicked.slice(0, 8) + '01');
+  renderCalendar();
+  show(el.screenCal);
+}
+
+function renderCalendar() {
+  const today = dayKey();
+  el.calMonth.textContent =
+    `${MONTH_NAMES[calCursor.getMonth()]} ${calCursor.getFullYear()}`;
+
+  /* Weeks start on Monday. getDay() counts from Sunday, so the leading
+     blanks are (day + 6) % 7 rather than day. */
+  const first = new Date(calCursor.getFullYear(), calCursor.getMonth(), 1);
+  const blanks = (first.getDay() + 6) % 7;
+  const days = new Date(calCursor.getFullYear(), calCursor.getMonth() + 1, 0).getDate();
+
+  el.calGrid.innerHTML = '';
+  for (let i = 0; i < blanks; i++) {
+    const gap = document.createElement('span');
+    gap.className = 'cal-day is-blank';
+    el.calGrid.appendChild(gap);
+  }
+
+  for (let d = 1; d <= days; d++) {
+    const key = dayKey(new Date(calCursor.getFullYear(), calCursor.getMonth(), d));
+    const items = tasksOn(key);
+
+    const cell = document.createElement('button');
+    cell.type = 'button';
+    cell.className = 'cal-day';
+    cell.textContent = d;
+    cell.classList.toggle('is-today', key === today);
+    cell.classList.toggle('is-picked', key === calPicked);
+    cell.setAttribute('aria-pressed', String(key === calPicked));
+    cell.setAttribute('aria-label',
+      `${dayLabel(key, today)}${items.length ? `, ${items.length} ${items.length === 1 ? 'thing' : 'things'}` : ', nothing'}`);
+
+    if (items.length) {
+      cell.classList.add('has-items');
+      if (key < today) cell.classList.add('is-late');
+      const dot = document.createElement('span');
+      dot.className = 'cal-dot';
+      cell.appendChild(dot);
+    }
+
+    cell.addEventListener('click', () => {
+      calPicked = key;
+      renderCalendar();
+    });
+    el.calGrid.appendChild(cell);
+  }
+
+  el.calToday.classList.toggle('is-hidden',
+    calPicked === today && calCursor.getMonth() === keyToDate(today).getMonth()
+                        && calCursor.getFullYear() === keyToDate(today).getFullYear());
+
+  renderAgenda(today);
+
+  const undated = state.tasks.filter(t => !t.done && !t.when).length;
+  el.calUndated.classList.toggle('is-hidden', undated === 0);
+  if (undated) {
+    el.calUndated.textContent = undated === 1
+      ? '1 more thing has no day on it — it is waiting on your lists.'
+      : `${undated} more things have no day on them — they are waiting on your lists.`;
+  }
+}
+
+function renderAgenda(today) {
+  el.calAgenda.innerHTML = '';
+
+  // Anything already missed rides on top of today, never buried in the past
+  // where you would have to go looking for it.
+  if (calPicked === today) {
+    const late = overdueTasks(today);
+    if (late.length) {
+      el.calAgenda.appendChild(
+        agendaGroup(`${late.length} overdue`, late, today, true));
+    }
+  }
+
+  const items = tasksOn(calPicked);
+  if (!items.length) {
+    const empty = document.createElement('p');
+    empty.className = 'cal-empty';
+    /* "Today"/"Tomorrow" want lowercasing mid-sentence; "Thu 27 Aug" does
+       not — lowercasing the lot turns it into "thu 27 aug". */
+    const label = dayLabel(calPicked, today);
+    const named = /^(Today|Tomorrow|Yesterday)$/.test(label);
+    empty.textContent = calPicked === today
+      ? 'Nothing on today. Say a day in the dump box and it lands here.'
+      : `Nothing on ${named ? label.toLowerCase() : label}.`;
+    el.calAgenda.appendChild(empty);
+    return;
+  }
+  el.calAgenda.appendChild(agendaGroup(dayLabel(calPicked, today), items, today, false));
+}
+
+function agendaGroup(heading, items, today, late) {
+  const section = document.createElement('section');
+  section.className = 'cal-group' + (late ? ' cal-group--late' : '');
+
+  const head = document.createElement('h3');
+  head.className = 'cal-group-head';
+  head.textContent = heading;
+  section.appendChild(head);
+
+  const list = document.createElement('ul');
+  list.className = 'cal-items';
+
+  items.forEach(task => {
+    const li = document.createElement('li');
+    li.className = 'cal-item';
+
+    const check = document.createElement('button');
+    check.className = 'task-check';
+    check.setAttribute('aria-label', `Mark "${task.title}" done`);
+    check.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l5 5L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    check.addEventListener('click', () => markDone(task.id, renderCalendar));
+
+    const slot = document.createElement('span');
+    slot.className = 'cal-slot';
+    // A day with no time is not a 00:00 appointment, and should not read as one.
+    slot.textContent = timeLabel(task.at) || 'any time';
+    if (!task.at) slot.classList.add('is-loose');
+
+    const body = document.createElement('div');
+    body.className = 'cal-item-body';
+    const title = document.createElement('p');
+    title.className = 'cal-item-title';
+    title.textContent = task.title;
+    const meta = document.createElement('p');
+    meta.className = 'cal-item-meta';
+    meta.textContent = late
+      ? `${dayLabel(task.when, today)} · ${minutesLabel(task.minutes)}`
+      : `${minutesLabel(task.minutes)} · ${task.energy} energy`;
+    body.append(title, meta);
+
+    li.append(check, slot, body);
+    list.appendChild(li);
+  });
+
+  section.appendChild(list);
+  return section;
+}
+
+function stepMonth(n) {
+  calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + n, 1);
+  renderCalendar();
 }
 
 /* ---------------- profile ----------------
@@ -765,7 +1153,14 @@ el.btnDumpAgain.addEventListener('click', newDump);
 /* The bar. The + is the way back to the dump box, which is the only place
    a new list gets made — so it routes to newDump rather than a screen. */
 el.tabLists.addEventListener('click', goToNext);
-el.tabCal.addEventListener('click', () => show(el.screenCal));
+el.tabCal.addEventListener('click', showCalendar);
+el.calPrev.addEventListener('click', () => stepMonth(-1));
+el.calNext.addEventListener('click', () => stepMonth(1));
+el.calToday.addEventListener('click', () => {
+  calPicked = dayKey();
+  calCursor = keyToDate(calPicked.slice(0, 8) + '01');
+  renderCalendar();
+});
 el.tabAdd.addEventListener('click', newDump);
 el.tabLoved.addEventListener('click', () => show(el.screenLoved));
 el.tabMe.addEventListener('click', showProfile);

@@ -259,14 +259,27 @@
       </button>
     </header>
 
-    <div class="soon-wrap">
-      <span class="soon-glyph" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><use href="#icon-calendar"/></svg>
-      </span>
-      <h2 class="soon-title">Calendar</h2>
-      <p class="soon-text">Not built yet. The plan: anything with a time on it
-        lands here, so a day reads as a day instead of another list.</p>
-      <span class="soon-badge">Coming later</span>
+    <div class="cal-wrap">
+      <div class="cal-head">
+        <button class="cal-nav" id="cal-prev" type="button" aria-label="Previous month">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h2 class="cal-month" id="cal-month" aria-live="polite">Month</h2>
+        <button class="cal-nav" id="cal-next" type="button" aria-label="Next month">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <div class="cal-dow" aria-hidden="true">
+        <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+
+      <button class="cal-today is-hidden" id="cal-today" type="button">Back to today</button>
+
+      <div class="cal-agenda" id="cal-agenda"></div>
+
+      <p class="cal-undated is-hidden" id="cal-undated"></p>
     </div>
   </section>
 
