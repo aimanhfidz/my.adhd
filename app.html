@@ -284,7 +284,7 @@
     </div>
   </section>
 
-  <!-- ============ SCREEN 5: LOVED (placeholder) ============ -->
+  <!-- ============ SCREEN 5: FEEDBACK ============ -->
   <section class="screen is-hidden" id="screen-loved">
     <header class="brand brand--sm">
       <a class="brand-lockup" href="/" aria-label="my.adhd home">
@@ -297,14 +297,43 @@
       </button>
     </header>
 
-    <div class="soon-wrap">
-      <span class="soon-glyph" aria-hidden="true">
+    <div class="fb-wrap">
+      <span class="fb-glyph" aria-hidden="true">
         <svg viewBox="0 0 24 24"><use href="#icon-heart"/></svg>
       </span>
-      <h2 class="soon-title">Loved</h2>
-      <p class="soon-text">The tab is here, the feature is not. Whatever it ends
-        up being &mdash; favourites, wins worth keeping &mdash; it will live on this screen.</p>
-      <span class="soon-badge">Undecided</span>
+
+      <h2 class="fb-title">Tell us what to fix</h2>
+      <p class="fb-lede">Your ADHD is already halfway through a list of things
+        this app should do differently. We would genuinely like that list.
+        No name, no account &mdash; just say it.</p>
+
+      <div class="fb-form" id="fb-form">
+        <label class="field">
+          <span class="field-label">What would make this better?</span>
+          <textarea class="fb-input" id="fb-input" rows="5" maxlength="2000"
+                    spellcheck="false"
+                    placeholder="the thing that annoyed you, the feature you keep reaching for, the bit that made no sense&hellip;"></textarea>
+        </label>
+
+        <div class="fb-foot">
+          <span class="fb-count" id="fb-count">0 / 2000</span>
+          <button class="btn-primary fb-send" id="fb-send" type="button">
+            <span class="btn-text">Send it</span>
+          </button>
+        </div>
+
+        <p class="fb-note">
+          <strong>One a day.</strong> Keeps the spam out, and it means the notes
+          that land are the ones someone actually thought about. Nothing you send
+          is tied to you &mdash; no name, no account, no email.
+        </p>
+      </div>
+
+      <div class="fb-thanks is-hidden" id="fb-thanks">
+        <p class="fb-thanks-title">Got it. Thank you.</p>
+        <p class="fb-thanks-text" id="fb-thanks-text">That is your one for today
+          &mdash; the box opens again tomorrow.</p>
+      </div>
     </div>
   </section>
 
@@ -366,7 +395,7 @@
   <button class="tab tab--add" id="tab-add" type="button" aria-label="Add to your lists">
     <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-plus"/></svg>
   </button>
-  <button class="tab" id="tab-loved" type="button" aria-label="Loved">
+  <button class="tab" id="tab-loved" type="button" aria-label="Feedback">
     <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-heart"/></svg>
   </button>
   <button class="tab tab--me" id="tab-profile" type="button" aria-label="Profile">

@@ -46,6 +46,12 @@ const el = {
   calAgenda:    $('cal-agenda'),
   calUndated:   $('cal-undated'),
   screenLoved:  $('screen-loved'),
+  fbForm:       $('fb-form'),
+  fbInput:      $('fb-input'),
+  fbCount:      $('fb-count'),
+  fbSend:       $('fb-send'),
+  fbThanks:     $('fb-thanks'),
+  fbThanksText: $('fb-thanks-text'),
   screenMe:     $('screen-profile'),
   tabbar:       $('tabbar'),
   tabLists:     $('tab-lists'),
@@ -70,6 +76,7 @@ let state = {
   tasks: [],          // {id,title,minutes,energy,urgency,firstStep,category,steps,done,skipped}
   energy: 'medium',   // how the user feels right now
   profile: { name: '', avatar: '\u{1F642}' },   // this device only — no account behind it
+  sentFeedbackOn: null,   // the UTC day of the last note sent from this device
 };
 
 function load() {
@@ -1091,6 +1098,77 @@ function stepMonth(n) {
   renderCalendar();
 }
 
+/* ---------------- feedback ----------------
+   Anonymous, and one a day. The limit is enforced twice on purpose: this
+   side so the box tells you before you type a paragraph you cannot send,
+   and the server side by a unique index, which is the one that actually
+   holds — anything here can be cleared by wiping site data.
+
+   The day is UTC on both sides. Using the local day would let anyone with
+   a timezone get a second go, and would drift out of step with the index
+   that does the real work. */
+
+function utcDay(d = new Date()) {
+  return d.toISOString().slice(0, 10);
+}
+
+function feedbackSentToday() {
+  return state.sentFeedbackOn === utcDay();
+}
+
+function showFeedback() {
+  paintFeedback();
+  show(el.screenLoved);
+}
+
+function paintFeedback() {
+  const spent = feedbackSentToday();
+  el.fbForm.classList.toggle('is-hidden', spent);
+  el.fbThanks.classList.toggle('is-hidden', !spent);
+  if (!spent) {
+    el.fbCount.textContent = `${el.fbInput.value.trim().length} / 2000`;
+    el.fbSend.disabled = el.fbInput.value.trim().length < 4;
+  }
+}
+
+async function sendFeedback() {
+  const body = el.fbInput.value.trim();
+  if (body.length < 4) { el.fbInput.focus(); return; }
+
+  el.fbSend.disabled = true;
+  el.fbSend.querySelector('.btn-text').textContent = 'Sending…';
+
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ body }),
+    });
+
+    if (res.ok || res.status === 429) {
+      // 429 means the server already has one from today. Either way this
+      // device is spent for the day, and the thanks screen is honest.
+      state.sentFeedbackOn = utcDay();
+      save();
+      el.fbInput.value = '';
+      el.fbThanksText.textContent = res.status === 429
+        ? 'Looks like one already came through from here today — the box opens again tomorrow.'
+        : 'That is your one for today — the box opens again tomorrow.';
+      paintFeedback();
+      return;
+    }
+
+    if (res.status === 503) throw new Error('the feedback box is not wired up yet');
+    throw new Error('something broke on our end');
+  } catch (err) {
+    console.warn('feedback failed:', err.message);
+    toast(`Could not send — ${err.message}.`);
+    el.fbSend.disabled = false;
+  } finally {
+    el.fbSend.querySelector('.btn-text').textContent = 'Send it';
+  }
+}
+
 /* ---------------- profile ----------------
    Local and deliberately small: a name to be greeted by, a face to
    recognise the tab by, and a count of what you have got through. It rides
@@ -1162,7 +1240,9 @@ el.calToday.addEventListener('click', () => {
   renderCalendar();
 });
 el.tabAdd.addEventListener('click', newDump);
-el.tabLoved.addEventListener('click', () => show(el.screenLoved));
+el.tabLoved.addEventListener('click', showFeedback);
+el.fbSend.addEventListener('click', sendFeedback);
+el.fbInput.addEventListener('input', paintFeedback);
 el.tabMe.addEventListener('click', showProfile);
 
 el.nameInput.addEventListener('input', () => {
