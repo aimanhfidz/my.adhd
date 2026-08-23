@@ -364,7 +364,7 @@ body{
 .offline-note strong{color:var(--orange); font-weight:700}
 .offline-note .btn-soft{width:100%; min-width:0}
 
-.list-group{animation:rise .34s var(--ease) both}
+.list-group{animation:rise .18s var(--ease) both}
 @keyframes rise{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
 
 .list-head{
@@ -589,10 +589,19 @@ body{
   display:grid; place-items:center;
   background:none; border:none; border-radius:15px;
   color:var(--muted); cursor:pointer; padding:0;
-  transition:color .18s var(--ease), background .18s var(--ease), transform .12s var(--ease);
+  /* The switch itself costs a few ms — what made it feel slow was waiting
+     for it to be acknowledged, so the "you are here" slab lands in .12s
+     rather than .18s. */
+  transition:color .12s var(--ease), background .12s var(--ease), transform .16s var(--ease);
+  /* no double-tap-zoom delay to sit through before the tap counts */
+  touch-action:manipulation;
 }
 .tab svg{width:23px; height:23px; display:block}
-.tab:active{transform:scale(.92)}
+/* The press dent is the receipt for the tap, so it has to be instant —
+   easing it in over .12s meant the finger was already lifting before the
+   button admitted it had been touched. It still eases back out on release,
+   which is what the base transition above is for. */
+.tab:active{transform:scale(.92); transition-duration:0s}
 .tab:focus-visible{outline:none; box-shadow:0 0 0 3px var(--focus)}
 @media (hover:hover){ .tab:hover{color:var(--ink)} }
 
@@ -812,7 +821,7 @@ body.has-tabbar .toast{
 body.is-dragging{cursor:grabbing}
 body.is-dragging *{user-select:none; -webkit-user-select:none}
 
-.cal-group{animation:rise .3s var(--ease) both}
+.cal-group{animation:rise .18s var(--ease) both}
 .cal-group-head{
   font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
   color:var(--muted); margin-bottom:10px;
