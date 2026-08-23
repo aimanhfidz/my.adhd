@@ -27,7 +27,12 @@ body{
   font-family:var(--display);
   -webkit-font-smoothing:antialiased;
   line-height:1.5;
-  overflow:hidden;   /* one viewport, nothing to scroll to */
+  /* The hero aims at one viewport, but a real phone adds a notch inset and
+     browser chrome on top of that. When it does not fit, it has to scroll —
+     clipping it hid the disclaimer off the bottom of the screen. */
+  overflow-x:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
 
 /* ---------- shared bits ---------- */
@@ -109,7 +114,7 @@ body{
 .hero-foot{
   text-align:center; padding:0 clamp(20px,5vw,40px);
   font-size:clamp(11px,1.3vh,12.5px); line-height:1.55;
-  color:var(--faint); max-width:60ch; margin:0 auto;
+  color:var(--faint); max-width:60ch; margin:clamp(14px,2.2vh,24px) auto 0;
 }
 
 /* steps */
@@ -124,12 +129,13 @@ body{
 
 /* ---------- tall phones: let the hero grow into the slack ----------
    Top-aligning the hero left a dead band above the footer on a big
-   phone (~110px on a 932px screen). Rather than pushing the headline
-   back down into the middle, the mascot and the gaps take the space —
-   the copy stays high and the screen reads full. */
+   phone. Rather than pushing the headline back down into the middle,
+   the mascot and the gaps take the space. Held to 40vh, not more: a
+   real iPhone spends part of that same viewport on the notch inset,
+   and 44vh had the note and the disclaimer touching. */
 @media (min-width:0px) and (min-height:780px){
   .hero-body{gap:clamp(14px,3vh,34px)}
-  .hero-art img, .hero-art .hero-mascot{height:min(44vh,410px)}
+  .hero-art img, .hero-art .hero-mascot{height:min(40vh,380px)}
 }
 
 /* ---------- desktop: copy left, mascot right ---------- */
