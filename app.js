@@ -71,6 +71,7 @@ const el = {
   statOpen:     $('stat-open'),
   statDone:     $('stat-done'),
   statLists:    $('stat-lists'),
+  statDated:    $('stat-dated'),
 };
 
 /* ---------------- state ---------------- */
@@ -1251,6 +1252,9 @@ function showProfile() {
   el.statOpen.textContent = open.length;
   el.statDone.textContent = done.length;
   el.statLists.textContent = groupByCategory(open).length;
+  // "on the calendar" is the same set the calendar screen draws: still to
+  // do, and carrying a day.
+  el.statDated.textContent = open.filter(t => t.when).length;
   paintProfile();
   show(el.screenMe);
 }

@@ -813,9 +813,15 @@ body.has-tabbar .toast{
 @media (hover:hover){ .avatar-opt:hover{border-color:var(--accent)} }
 .avatar-opt.is-on{border-color:var(--accent); box-shadow:0 0 0 3px var(--focus)}
 
-.stat-row{display:flex; gap:10px; margin-top:18px}
+/* A fourth stat will not sit in one row on a phone without squeezing the
+   labels to shreds, so the row is a grid that folds to 2x2 when the cards
+   would go under 140px, and lines all four up once there is room. */
+.stat-row{
+  display:grid; gap:10px; margin-top:18px;
+  grid-template-columns:repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+}
 .stat{
-  flex:1 1 0; text-align:center;
+  text-align:center;
   border:1.5px solid var(--line); border-radius:var(--radius-lg);
   padding:16px 8px;
 }
