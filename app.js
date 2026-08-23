@@ -72,6 +72,8 @@ const el = {
   statDone:     $('stat-done'),
   statLists:    $('stat-lists'),
   statDated:    $('stat-dated'),
+  statOverdue:  $('stat-overdue'),
+  statOverdueCard: $('stat-overdue-card'),
 };
 
 /* ---------------- state ---------------- */
@@ -1264,6 +1266,15 @@ function showProfile() {
   // "on the calendar" is the same set the calendar screen draws: still to
   // do, and carrying a day.
   el.statDated.textContent = open.filter(t => t.when).length;
+
+  /* Overdue is a subset of that, and the only card here that is ever bad
+     news — so it is the only one that changes colour. It is shown at zero
+     rather than hidden: "0 overdue" is worth reading, and a card that only
+     appears when things have gone wrong makes its own arrival alarming.
+     overdueTasks() is strict about the boundary — today is not late yet. */
+  const late = overdueTasks().length;
+  el.statOverdue.textContent = late;
+  el.statOverdueCard.classList.toggle('is-late', late > 0);
   paintProfile();
   show(el.screenMe);
 }

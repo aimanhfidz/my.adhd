@@ -839,6 +839,13 @@ body.has-tabbar .toast{
   border:1.5px solid var(--line); border-radius:var(--radius-lg);
   padding:16px 8px;
 }
+/* Overdue takes the whole row: it is the odd one out of five, and it is
+   the only card here that is ever bad news, so it reads better as its own
+   line than as a stray fifth tile with a hole beside it. */
+.stat--overdue{grid-column:1 / -1}
+.stat--overdue.is-late{border-color:var(--orange); background:var(--danger-wash)}
+.stat--overdue.is-late strong{color:var(--orange)}
+
 .stat strong{display:block; font-size:26px; font-weight:800; letter-spacing:-.03em; line-height:1.1}
 .stat span{display:block; margin-top:4px; font-size:12.5px; color:var(--faint)}
 
