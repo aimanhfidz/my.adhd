@@ -431,6 +431,38 @@
   </button>
 </nav>
 
+<!-- ============ THE COMPOSER ============
+     What the + opens. The dump screen is still the cold start, but adding
+     something while you are reading a list should not take the list away —
+     so this comes up over it, the way a post box does, and hands the screen
+     straight back when it closes. It writes into the dump box and runs the
+     same triage; there is no second pipeline here. -->
+<div class="composer is-hidden" id="composer" role="dialog" aria-modal="true"
+     aria-labelledby="composer-title">
+  <div class="composer-scrim" id="composer-scrim"></div>
+
+  <div class="composer-sheet">
+    <header class="composer-bar">
+      <button class="composer-cancel" id="composer-cancel" type="button">Cancel</button>
+      <h2 class="composer-title" id="composer-title">New dump</h2>
+      <button class="composer-post" id="composer-post" type="button" disabled>Sort it</button>
+    </header>
+
+    <div class="composer-body">
+      <span class="composer-face" id="composer-face" aria-hidden="true">🙂</span>
+      <div class="composer-field">
+        <span class="composer-name" id="composer-name">you</span>
+        <textarea id="composer-input" class="composer-input" rows="1" spellcheck="false"
+                  placeholder="just tell me, i&#39;ll sort it out."></textarea>
+        <div class="dump-dates is-hidden" id="composer-dates" aria-live="polite">
+          <span class="dump-dates-label">Heading for the calendar</span>
+          <div class="dump-chips" id="composer-chips"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast is-hidden" id="toast"></div>
 
 <script src="app.js"></script>

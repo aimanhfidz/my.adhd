@@ -935,3 +935,95 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important}
 }
+
+/* ---------- the composer ----------
+   The + opens this over whatever is on screen. Anchored to the top rather
+   than centred, because the keyboard takes the bottom half the moment it
+   opens — the input has to already be up where the eye is, not slide out
+   from under a keyboard. Nothing here reaches below the fold on purpose. */
+.composer{position:fixed; inset:0; z-index:70}
+
+.composer-scrim{
+  position:absolute; inset:0;
+  background:rgba(16,16,24,.42);
+  animation:scrimIn .18s var(--ease) both;
+}
+@keyframes scrimIn{from{opacity:0} to{opacity:1}}
+
+.composer-sheet{
+  position:absolute; left:0; right:0;
+  /* just clear of the status bar, so the screen underneath still shows as a
+     sliver and the sheet reads as sitting on top of it */
+  top:calc(env(safe-area-inset-top, 0px) + 10px);
+  bottom:0;
+  display:flex; flex-direction:column;
+  background:var(--surface);
+  border-radius:22px 22px 0 0;
+  /* On a dark page the sheet and the screen behind it are the same value,
+     and a shadow alone does not separate them — the hairline does. */
+  border-top:1.5px solid var(--line);
+  box-shadow:0 -12px 40px -12px rgba(16,16,24,.45);
+  animation:sheetIn .26s var(--ease) both;
+  overflow:hidden;
+}
+@keyframes sheetIn{from{transform:translateY(18px); opacity:0} to{transform:none; opacity:1}}
+
+.composer-bar{
+  flex:none;
+  display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px;
+  padding:14px clamp(16px,4vw,22px);
+  border-bottom:1.5px solid var(--line);
+}
+.composer-title{font-size:16px; font-weight:800; letter-spacing:-.02em; text-align:center}
+
+.composer-cancel{
+  justify-self:start;
+  background:none; border:none; padding:6px 2px;
+  font-family:var(--display); font-size:15px; font-weight:600;
+  color:var(--ink); cursor:pointer; touch-action:manipulation;
+}
+.composer-cancel:active{transform:scale(.96); transition-duration:0s}
+
+.composer-post{
+  justify-self:end;
+  background:var(--grad); color:#fff;
+  border:none; border-radius:999px; padding:9px 20px;
+  font-family:var(--display); font-size:14.5px; font-weight:700;
+  cursor:pointer; touch-action:manipulation;
+  transition:opacity .14s var(--ease), transform .16s var(--ease);
+}
+.composer-post:active{transform:scale(.96); transition-duration:0s}
+/* Dimmed rather than hidden — the button is the thing you are working
+   towards, so it should be visible before it is usable. */
+.composer-post:disabled{opacity:.4; cursor:default}
+.composer-cancel:focus-visible,
+.composer-post:focus-visible{outline:none; box-shadow:0 0 0 3px var(--focus)}
+
+.composer-body{
+  flex:1 1 auto; min-height:0; overflow-y:auto;
+  /* a scroll that runs off the end stays here rather than moving the list
+     the sheet is covering */
+  overscroll-behavior:contain;
+  display:flex; gap:12px;
+  padding:16px clamp(16px,4vw,22px) 24px;
+}
+.composer-face{
+  flex:none; width:38px; height:38px; border-radius:999px;
+  display:grid; place-items:center; font-size:21px; line-height:1;
+  background:var(--wash-2);
+}
+.composer-field{flex:1 1 auto; min-width:0}
+.composer-name{
+  display:block; font-size:14.5px; font-weight:700; color:var(--ink);
+  margin-bottom:2px;
+}
+.composer-input{
+  display:block; width:100%; resize:none;
+  background:none; border:none; padding:0;
+  font-family:var(--display); font-size:16.5px; line-height:1.45; color:var(--ink);
+  /* grown to fit by script; this is the floor, about one line */
+  min-height:26px;
+}
+.composer-input:focus{outline:none}
+.composer-input::placeholder{color:var(--faint)}
+.composer .dump-dates{margin-top:16px}

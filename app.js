@@ -65,6 +65,15 @@ const el = {
   tabMarkLists: $('tab-mark-lists'),
   tabBadgeCal:  $('tab-badge-cal'),
   tabAvatar:    $('tab-avatar'),
+  composer:     $('composer'),
+  compScrim:    $('composer-scrim'),
+  compCancel:   $('composer-cancel'),
+  compPost:     $('composer-post'),
+  compFace:     $('composer-face'),
+  compName:     $('composer-name'),
+  compInput:    $('composer-input'),
+  compDates:    $('composer-dates'),
+  compChips:    $('composer-chips'),
   avatarBig:    $('avatar-big'),
   avatarPick:   $('avatar-picker'),
   greeting:     $('profile-greeting'),
@@ -968,6 +977,70 @@ function newDump() {
   el.input.focus();
 }
 
+/* ---------------- the composer ----------------
+   The + used to swap the whole screen for the dump page, which meant losing
+   the list you were reading to add one thing to it. This opens over the top
+   instead and hands the screen back on cancel. It is a front end for the
+   dump box, not a second one: on send it writes into el.input and calls the
+   same triage(), so the loading morph, the parser and the de-duping are all
+   the one path they were before. */
+
+/* Nothing is stashed to return to: the composer is an overlay, so the screen
+   underneath is never hidden and is still exactly where it was — including
+   how far down it was scrolled — when the sheet closes. */
+
+function growComposer() {
+  // A textarea will not size itself. Reset first, or it only ever grows.
+  el.compInput.style.height = 'auto';
+  el.compInput.style.height = el.compInput.scrollHeight + 'px';
+}
+
+function syncComposer() {
+  el.compPost.disabled = el.compInput.value.trim().length === 0;
+  growComposer();
+  previewDates(el.compInput, el.compDates, el.compChips);
+}
+
+function openComposer() {
+  const { name, avatar } = state.profile;
+  el.compFace.textContent = avatar;
+  el.compName.textContent = name || 'you';
+
+  // Carries over whatever is sitting in the dump box, so a half-written
+  // thought is not lost by reaching for the + instead of the dump screen.
+  el.compInput.value = el.input.value;
+  el.composer.classList.remove('is-hidden');
+  syncComposer();
+
+  /* iOS only raises the keyboard for a focus it believes came from the tap,
+     and the sheet is still animating in on this frame — focusing after the
+     paint is what makes the keyboard actually come up. */
+  requestAnimationFrame(() => el.compInput.focus());
+}
+
+function closeComposer() {
+  el.composer.classList.add('is-hidden');
+  el.compInput.blur();
+}
+
+/** Cancel keeps the text — in the dump box, where the dump screen will find it. */
+function cancelComposer() {
+  el.input.value = el.compInput.value;
+  previewDates();
+  refreshListsButton();
+  closeComposer();
+}
+
+function sendComposer() {
+  const text = el.compInput.value.trim();
+  if (!text) { el.compInput.focus(); return; }
+  el.input.value = el.compInput.value;
+  // Closed before triage, so the loading screen is what comes up behind it
+  // rather than the sheet sitting over the morph.
+  closeComposer();
+  triage();
+}
+
 /** The shortcut back into the lists — only worth showing when there are some. */
 function refreshListsButton() {
   const open = state.tasks.filter(t => !t.done).length;
@@ -1437,10 +1510,10 @@ function showProfile() {
 
 const PREVIEW_MAX = 4;
 
-function previewDates() {
+function previewDates(src = el.input, box = el.dumpDates, chips = el.dumpChips) {
   // Cheap on any realistic dump, but the reader runs a fistful of regexes
   // per line and this fires on every keystroke, so the input is capped.
-  const text = el.input.value.slice(0, 4000);
+  const text = src.value.slice(0, 4000);
   const seen = new Map();
 
   if (text.trim().length > 2) {
@@ -1457,15 +1530,15 @@ function previewDates() {
     .sort((a, b) => a.when.localeCompare(b.when)
                  || (a.at || '99:99').localeCompare(b.at || '99:99'));
 
-  el.dumpDates.classList.toggle('is-hidden', found.length === 0);
-  el.dumpChips.innerHTML = '';   // cleared even when hiding: a live region
+  box.classList.toggle('is-hidden', found.length === 0);
+  chips.innerHTML = '';          // cleared even when hiding: a live region
   if (!found.length) return;     // should not keep announcing stale chips
 
   found.slice(0, PREVIEW_MAX).forEach(d => {
     const chip = document.createElement('span');
     chip.className = 'chip chip--when';
     chip.textContent = whenLabel(d);
-    el.dumpChips.appendChild(chip);
+    chips.appendChild(chip);
   });
 
   if (found.length > PREVIEW_MAX) {
@@ -1497,7 +1570,17 @@ el.calToday.addEventListener('click', () => {
   calCursor = keyToDate(calPicked.slice(0, 8) + '01');
   renderCalendar();
 });
-el.tabAdd.addEventListener('click', newDump);
+el.tabAdd.addEventListener('click', openComposer);
+el.compCancel.addEventListener('click', cancelComposer);
+el.compScrim.addEventListener('click', cancelComposer);
+el.compPost.addEventListener('click', sendComposer);
+el.compInput.addEventListener('input', syncComposer);
+el.compInput.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); sendComposer(); }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !el.composer.classList.contains('is-hidden')) cancelComposer();
+});
 el.tabLoved.addEventListener('click', showFeedback);
 el.fbSend.addEventListener('click', sendFeedback);
 el.fbInput.addEventListener('input', paintFeedback);
