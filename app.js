@@ -60,6 +60,7 @@ const el = {
   tabLoved:     $('tab-loved'),
   tabMe:        $('tab-profile'),
   tabDot:       $('tab-dot'),
+  tabDotCal:    $('tab-dot-cal'),
   tabAvatar:    $('tab-avatar'),
   avatarBig:    $('avatar-big'),
   avatarPick:   $('avatar-picker'),
@@ -130,8 +131,17 @@ function syncTabs(screen) {
     else tab.removeAttribute('aria-current');
   });
 
+  /* Both dots mean the same thing — there is something over there you are
+     not looking at — so each hides once you are on its own tab. */
   const open = state.tasks.filter(t => !t.done).length;
   el.tabDot.classList.toggle('is-hidden', open === 0 || current === el.tabLists);
+
+  /* The calendar's dot is about time, not volume: it lights only for
+     something dated today or already past. A task sitting on next Tuesday
+     is not news, and a dot that is always lit stops being a signal. */
+  const today = dayKey();
+  const dueNow = state.tasks.some(t => scheduled(t) && t.when <= today);
+  el.tabDotCal.classList.toggle('is-hidden', !dueNow || current === el.tabCal);
 }
 
 let toastTimer;
