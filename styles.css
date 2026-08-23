@@ -13,21 +13,32 @@ body{
   font-family:var(--display);
   -webkit-font-smoothing:antialiased;
   line-height:1.45;
-  overflow-x:hidden;
+  /* The document must not scroll — see #app. */
+  overflow:hidden;
 }
 
 /* soft geometry in the backdrop — the reference's floating circles */
 
+/* #app is the scroller, not the document.
+   iOS drags position:fixed elements along with the rubber band when the
+   *document* overscrolls, which is why the tab bar drifted up and down at
+   the ends of a scroll instead of holding its place. A fixed element only
+   holds still if the thing behind it never moves, so the page scrolls
+   inside this box and the document stays put. overscroll-behavior stops a
+   scroll that runs off either end from being handed back up to it. */
 #app{
   position:relative; z-index:1;
-  min-height:100%;
+  height:100%; height:100dvh;
+  overflow-y:auto; overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
 }
 
 /* One flat page in the current theme's --surface. Content is held to a
    readable measure and centred — no card, no shadow, no tinted ground for
    it to float on. */
 .screen{
-  min-height:100vh; min-height:100dvh;
+  min-height:100%;
   display:flex; flex-direction:column; align-items:center;
   width:100%;
   background:var(--surface);
@@ -487,24 +498,29 @@ body{
 
 .tabbar{
   position:fixed; z-index:45;
-  left:50%; bottom:calc(16px + env(safe-area-inset-bottom, 0px));
-  transform:translateX(-50%);
-  display:flex; align-items:center; gap:clamp(2px,1.6vw,10px);
-  padding:7px 9px;
+  bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  /* Stretched between the two edges rather than sized by its contents, so
+     the five sections spread across the screen instead of huddling in the
+     middle. left+right+auto margins keep it centred once the max-width
+     starts binding on a desktop window. */
+  left:calc(14px + env(safe-area-inset-left, 0px));
+  right:calc(14px + env(safe-area-inset-right, 0px));
+  max-width:440px; margin-inline:auto;
+  display:flex; align-items:center;
+  padding:7px 8px;
   background:var(--tab-bg);
   border:1.5px solid var(--tab-edge);
   border-radius:999px;
   box-shadow:var(--tab-shadow);
   -webkit-backdrop-filter:blur(16px) saturate(1.5);
   backdrop-filter:blur(16px) saturate(1.5);
-  max-width:calc(100vw - 26px);
   animation:tabIn .3s var(--ease) both;
 }
-@keyframes tabIn{from{opacity:0; transform:translate(-50%,14px)} to{opacity:1; transform:translate(-50%,0)}}
+@keyframes tabIn{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:translateY(0)}}
 
 .tab{
-  position:relative; flex:none;
-  width:clamp(48px,13.5vw,62px); height:46px;
+  position:relative;
+  flex:1 1 0; min-width:0; height:46px;
   display:grid; place-items:center;
   background:none; border:none; border-radius:15px;
   color:var(--muted); cursor:pointer; padding:0;
@@ -524,7 +540,7 @@ body{
 
 /* something waiting on the lists */
 .tab-dot{
-  position:absolute; top:8px; right:12px;
+  position:absolute; top:8px; left:calc(50% + 7px);
   width:8px; height:8px; border-radius:50%;
   background:var(--accent);
   box-shadow:0 0 0 2.5px var(--surface);

@@ -35,6 +35,7 @@ const el = {
   btnDumpAgain: $('btn-dump-again'),
   clearedNote:  $('cleared-note'),
   toast:        $('toast'),
+  scroller:     $('app'),
 
   screenCal:    $('screen-calendar'),
   screenLoved:  $('screen-loved'),
@@ -98,7 +99,7 @@ const TAB_FOR = new Map([
 function show(screen) {
   SCREENS.forEach(s => s.classList.add('is-hidden'));
   screen.classList.remove('is-hidden');
-  window.scrollTo(0, 0);
+  el.scroller.scrollTop = 0;   // the page scrolls inside #app, not the document
   syncTabs(screen);
 }
 
