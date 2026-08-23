@@ -61,7 +61,7 @@ const el = {
   tabAdd:       $('tab-add'),
   tabLoved:     $('tab-loved'),
   tabMe:        $('tab-profile'),
-  tabDot:       $('tab-dot'),
+  tabMarkLists: $('tab-mark-lists'),
   tabBadgeCal:  $('tab-badge-cal'),
   tabAvatar:    $('tab-avatar'),
   avatarBig:    $('avatar-big'),
@@ -136,10 +136,25 @@ function syncTabs(screen) {
     else tab.removeAttribute('aria-current');
   });
 
-  /* Both dots mean the same thing — there is something over there you are
-     not looking at — so each hides once you are on its own tab. */
+  const today = dayKey();
+
+  /* The lists mark has two states. A plain dot for "there is something over
+     there", which is all it needs to say on a good day — and a count the
+     moment any of it has gone past its day, because how many you have
+     missed is worth a number where merely having tasks is not.
+
+     Overdue things are open things, so the count can never outrun the dot
+     and one mark carries both without them contradicting each other.
+     Either way it hides once you are on the lists tab. */
   const open = state.tasks.filter(t => !t.done).length;
-  el.tabDot.classList.toggle('is-hidden', open === 0 || current === el.tabLists);
+  const late = overdueTasks(today).length;
+  const mark = el.tabMarkLists;
+
+  mark.classList.toggle('tab-dot', late === 0);
+  mark.classList.toggle('tab-badge', late > 0);
+  mark.classList.toggle('is-late', late > 0);
+  mark.textContent = late > 0 ? (late > 99 ? '99+' : String(late)) : '';
+  mark.classList.toggle('is-hidden', open === 0 || current === el.tabLists);
 
   /* The calendar carries a count rather than a dot: how many things have a
      day on them, the same number the profile calls "on the calendar".
@@ -149,7 +164,6 @@ function syncTabs(screen) {
      moment any of them is due today or already past, accent otherwise. The
      badge answers "how much is scheduled", the colour answers "does any of
      it want me now". */
-  const today = dayKey();
   const dated = state.tasks.filter(scheduled);
   const overdue = dated.some(t => t.when <= today);
 
