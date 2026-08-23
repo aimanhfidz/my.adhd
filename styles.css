@@ -498,7 +498,11 @@ body{
 
 .tabbar{
   position:fixed; z-index:45;
-  bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  /* Low, close to the home indicator rather than floating well above it.
+     The inset already reserves the indicator's own strip, so 4px on top of
+     it is enough clearance; max() keeps a sane gap on anything that reports
+     no inset at all, like a desktop window. */
+  bottom:max(12px, calc(4px + env(safe-area-inset-bottom, 0px)));
   /* Stretched between the two edges rather than sized by its contents, so
      the five sections spread across the screen instead of huddling in the
      middle. left+right+auto margins keep it centred once the max-width
@@ -533,7 +537,13 @@ body{
 
 /* the current section: the same soft slab the reference uses, not a colour */
 .tab.is-on{background:var(--wash-2); color:var(--ink)}
-.tab.is-on svg{stroke-width:2.5}
+
+/* ...and its glyph fills in, which is the reference's real "you are here"
+   signal. --icon-fill is a custom property because it has to cross into
+   the <use> shadow tree, and only inherited properties do that. The
+   calendar is left outlined — a filled one is an unreadable slab. */
+.tab{--icon-fill:none}
+#tab-lists.is-on, #tab-loved.is-on{--icon-fill:currentColor}
 
 /* the + never marks itself current — it is an action, not a place */
 .tab--add{color:var(--ink)}
