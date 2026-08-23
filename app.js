@@ -62,7 +62,7 @@ const el = {
   tabLoved:     $('tab-loved'),
   tabMe:        $('tab-profile'),
   tabDot:       $('tab-dot'),
-  tabDotCal:    $('tab-dot-cal'),
+  tabBadgeCal:  $('tab-badge-cal'),
   tabAvatar:    $('tab-avatar'),
   avatarBig:    $('avatar-big'),
   avatarPick:   $('avatar-picker'),
@@ -139,12 +139,21 @@ function syncTabs(screen) {
   const open = state.tasks.filter(t => !t.done).length;
   el.tabDot.classList.toggle('is-hidden', open === 0 || current === el.tabLists);
 
-  /* The calendar's dot is about time, not volume: it lights only for
-     something dated today or already past. A task sitting on next Tuesday
-     is not news, and a dot that is always lit stops being a signal. */
+  /* The calendar carries a count rather than a dot: how many things have a
+     day on them, the same number the profile calls "on the calendar".
+
+     That number is lit most of the time, so on its own it would say little
+     — which is why the urgency lives in the colour instead. Orange the
+     moment any of them is due today or already past, accent otherwise. The
+     badge answers "how much is scheduled", the colour answers "does any of
+     it want me now". */
   const today = dayKey();
-  const dueNow = state.tasks.some(t => scheduled(t) && t.when <= today);
-  el.tabDotCal.classList.toggle('is-hidden', !dueNow || current === el.tabCal);
+  const dated = state.tasks.filter(scheduled);
+  const overdue = dated.some(t => t.when <= today);
+
+  el.tabBadgeCal.textContent = dated.length > 99 ? '99+' : String(dated.length);
+  el.tabBadgeCal.classList.toggle('is-late', overdue);
+  el.tabBadgeCal.classList.toggle('is-hidden', dated.length === 0 || current === el.tabCal);
 }
 
 let toastTimer;

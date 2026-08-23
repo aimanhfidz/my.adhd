@@ -583,6 +583,20 @@ body{
   box-shadow:0 0 0 2.5px var(--surface);
 }
 
+/* the calendar's count. Sits where the dot sits, sized to its digits, and
+   turns orange the moment any of what it counts is due or overdue — the
+   number is the volume, the colour is the urgency. */
+.tab-badge{
+  position:absolute; top:5px; left:calc(50% + 4px);
+  min-width:16px; height:16px; padding:0 4px;
+  display:grid; place-items:center;
+  border-radius:999px; background:var(--accent); color:var(--on-accent);
+  font-size:10px; font-weight:800; line-height:1;
+  font-variant-numeric:tabular-nums;
+  box-shadow:0 0 0 2px var(--surface);
+}
+.tab-badge.is-late{background:var(--orange); color:#FFFFFF}
+
 .tab-avatar{
   width:31px; height:31px; border-radius:50%;
   display:grid; place-items:center; font-size:17px; line-height:1;
