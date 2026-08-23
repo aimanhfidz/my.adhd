@@ -1031,7 +1031,6 @@ let composerCloseTimer = 0;
 function resetComposerMotion() {
   clearTimeout(composerCloseTimer);
   composerCloseTimer = 0;
-  if (dragRaf) { cancelAnimationFrame(dragRaf); dragRaf = 0; }
   dragging = false;
   dragPending = false;
   el.compSheet.classList.remove('is-dragging', 'is-settling', 'is-leaving');
@@ -1106,24 +1105,22 @@ let dragPending = false;   // touched the text, has not committed yet
    back, so a stale last move counts as still. */
 let dragLastY = 0, dragLastT = 0, dragSpeed = 0;
 
-/* Pointer events arrive faster than the screen redraws — 120Hz of them on a
-   recent iPhone against 60 frames. Writing the transform on each one queues
-   style work that will never be seen, and the frames that do land come late:
-   the sheet lags the finger and then catches up in a jump. One write per
-   frame, with the newest position, is what tracks. */
-let dragRaf = 0, dragDy = 0;
+/* Written straight from the move handler, deliberately.
+   Batching into requestAnimationFrame looks like the careful thing to do and
+   was making this worse: a touchmove already arrives just before the frame
+   it belongs to, so deferring the write to the next rAF callback posts it a
+   whole frame late — every frame. The sheet then trails the finger by a
+   fixed gap, which is exactly what "laggy" feels like. Setting one
+   compositor-only property twice in a frame costs far less than being a
+   frame behind for the whole gesture. */
+let dragDy = 0;
 
-function paintDrag() {
-  dragRaf = 0;
+function paintDrag(dy) {
+  dragDy = dy;
   // translate3d, not translateY: this is the sheet's own layer to move, and
   // the scrim behind it should not be repainted to do it
-  el.compSheet.style.transform = `translate3d(0,${dragDy}px,0)`;
-  el.compScrim.style.opacity = String(Math.max(0, 1 - dragDy / 420));
-}
-
-function queueDrag(dy) {
-  dragDy = dy;
-  if (!dragRaf) dragRaf = requestAnimationFrame(paintDrag);
+  el.compSheet.style.transform = `translate3d(0,${dy}px,0)`;
+  el.compScrim.style.opacity = String(Math.max(0, 1 - dy / 420));
 }
 
 /** Commit to the gesture: from here the sheet is on the finger. */
@@ -1137,9 +1134,21 @@ function claimDrag(e) {
   dragSpeed = 0;
   el.compSheet.classList.add('is-dragging');
   el.composer.classList.add('is-dragging');
-  // capture keeps the moves coming if the finger slides off the sheet;
-  // a pointer the element never really owned throws, and that is harmless
-  try { el.compSheet.setPointerCapture(e.pointerId); } catch (_) {}
+  // capture keeps mouse moves coming if the cursor slides off the sheet; a
+  // touch is already captured by the element it started on, and a pointer
+  // the element never really owned would throw
+  if (e.pointerId >= 0) {
+    try { el.compSheet.setPointerCapture(e.pointerId); } catch (_) {}
+  }
+}
+
+/* Safari builds its Pointer Events on top of its Touch Events, and hands
+   them over later — noticeably later, on a gesture the eye is tracking. The
+   touch stream is the one the platform actually has first, so a touch device
+   is driven by that and the pointer path is left for a mouse. */
+function touchPos(e) {
+  const t = e.touches && e.touches[0] ? e.touches[0] : e.changedTouches[0];
+  return { clientX: t.clientX, clientY: t.clientY, target: t.target };
 }
 
 function dragStart(e) {
@@ -1183,14 +1192,13 @@ function dragMove(e) {
   if (dy > DRAG_KEYBOARD_PX && document.activeElement === el.compInput) {
     el.compInput.blur();
   }
-  queueDrag(dy);
+  paintDrag(dy);
 }
 
 function dragEnd(e) {
   dragPending = false;
   if (!dragging) return;
   dragging = false;
-  if (dragRaf) { cancelAnimationFrame(dragRaf); dragRaf = 0; }
   el.compSheet.classList.remove('is-dragging');
   el.composer.classList.remove('is-dragging');
 
@@ -1768,10 +1776,43 @@ el.compCancel.addEventListener('click', cancelComposer);
 el.compScrim.addEventListener('click', cancelComposer);
 el.compPost.addEventListener('click', sendComposer);
 el.compInput.addEventListener('input', syncComposer);
-el.compSheet.addEventListener('pointerdown', dragStart);
-el.compSheet.addEventListener('pointermove', dragMove);
-el.compSheet.addEventListener('pointerup', dragEnd);
-el.compSheet.addEventListener('pointercancel', dragEnd);
+/* Touch first, pointer only for a mouse — see touchPos. The move listener is
+   deliberately not passive: once the gesture is ours, preventDefault stops
+   Safari doing anything else with it. */
+el.compSheet.addEventListener('touchstart', (e) => {
+  const p = touchPos(e);
+  dragStart({ clientX: p.clientX, clientY: p.clientY, target: p.target, pointerId: -1 });
+}, { passive: true });
+
+el.compSheet.addEventListener('touchmove', (e) => {
+  const p = touchPos(e);
+  dragMove({ clientX: p.clientX, clientY: p.clientY, target: p.target });
+  if (dragging && e.cancelable) e.preventDefault();
+}, { passive: false });
+
+const endFromTouch = (e) => {
+  const p = touchPos(e);
+  dragEnd({ clientX: p.clientX, clientY: p.clientY, target: p.target });
+};
+el.compSheet.addEventListener('touchend', endFromTouch);
+el.compSheet.addEventListener('touchcancel', endFromTouch);
+
+el.compSheet.addEventListener('pointerdown', (e) => {
+  if (e.pointerType !== 'mouse') return;   // the touch listeners have it
+  dragStart(e);
+});
+el.compSheet.addEventListener('pointermove', (e) => {
+  if (e.pointerType !== 'mouse') return;
+  dragMove(e);
+});
+el.compSheet.addEventListener('pointerup', (e) => {
+  if (e.pointerType !== 'mouse') return;
+  dragEnd(e);
+});
+el.compSheet.addEventListener('pointercancel', (e) => {
+  if (e.pointerType !== 'mouse') return;
+  dragEnd(e);
+});
 el.compInput.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); sendComposer(); }
 });
