@@ -1014,12 +1014,61 @@ function openComposer() {
   resetComposerMotion();
   el.composer.classList.remove('is-hidden');
   document.body.classList.add('is-composing');
+
+  /* Off again as soon as it has played, so no later state change can start
+     the entrance over. */
+  el.compSheet.classList.add('is-entering');
+  const entered = () => el.compSheet.classList.remove('is-entering');
+  el.compSheet.addEventListener('animationend', entered, { once: true });
+  setTimeout(entered, 500);
   syncComposer();
 
   /* iOS only raises the keyboard for a focus it believes came from the tap,
      and the sheet is still animating in on this frame — focusing after the
      paint is what makes the keyboard actually come up. */
   requestAnimationFrame(() => el.compInput.focus());
+}
+
+/* ---- moving the sheet under its own power ----
+   The Web Animations API rather than a class with a CSS transition, because
+   a transition has to interpolate from whatever the element's style already
+   says — and during a drag that is an inline transform, which no stylesheet
+   rule can override. That is what made a release freeze and then vanish: the
+   rule said translateY(100%), the style attribute still said 140px, the
+   style attribute won, nothing moved, and the sheet was hidden outright when
+   the fallback timer ran out.
+
+   An animation takes both ends as arguments. There is nothing to override
+   and nothing to out-specify: it starts exactly where the finger left off. */
+const EASE_OUT_SHEET = 'cubic-bezier(.33,0,.68,1)';
+const EASE_SETTLE = 'cubic-bezier(.32,.72,0,1)';
+
+let sheetAnim = null, scrimAnim = null;
+
+function stillMotion() {
+  return matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function slideSheet(fromPx, to, ms, ease, then) {
+  sheetAnim?.cancel();
+  const dur = stillMotion() ? 1 : ms;
+  sheetAnim = el.compSheet.animate(
+    [{ transform: `translate3d(0,${fromPx}px,0)` }, { transform: `translate3d(0,${to},0)` }],
+    { duration: dur, easing: ease, fill: 'forwards' }
+  );
+  /* finished rejects when an animation is cancelled — which is exactly what
+     happens when the sheet is grabbed again mid-flight, and is not an error. */
+  sheetAnim.finished.then(then, () => {});
+}
+
+function fadeScrim(to, ms) {
+  scrimAnim?.cancel();
+  const from = el.compScrim.style.opacity === '' ? 1 : Number(el.compScrim.style.opacity);
+  scrimAnim = el.compScrim.animate(
+    [{ opacity: from }, { opacity: to }],
+    { duration: stillMotion() ? 1 : ms, easing: 'ease', fill: 'forwards' }
+  );
+  scrimAnim.finished.catch(() => {});
 }
 
 /* The safety net under the leave animation, held so it can be called off.
@@ -1031,11 +1080,16 @@ let composerCloseTimer = 0;
 function resetComposerMotion() {
   clearTimeout(composerCloseTimer);
   composerCloseTimer = 0;
+  sheetAnim?.cancel(); sheetAnim = null;
+  scrimAnim?.cancel(); scrimAnim = null;
   dragging = false;
   dragPending = false;
-  el.compSheet.classList.remove('is-dragging', 'is-settling', 'is-leaving');
+  el.compSheet.classList.remove('is-entering', 'is-dragging', 'is-settling', 'is-leaving');
   el.compSheet.style.transform = '';
+  el.compSheet.style.transitionDuration = '';
   el.compScrim.style.opacity = '';
+  el.compScrim.style.transitionDuration = '';
+  dragDy = 0;
   el.composer.classList.remove('is-dragging');
 }
 
@@ -1055,11 +1109,23 @@ function closeComposer(slide = false) {
   clearTimeout(composerCloseTimer);
   el.compSheet.classList.remove('is-dragging', 'is-settling');
   el.compSheet.classList.add('is-leaving');
-  el.compScrim.style.opacity = '0';
-  el.compSheet.addEventListener('transitionend', done, { once: true });
-  // a transition that never runs — reduced motion, a backgrounded tab — must
-  // not leave the sheet stuck open
-  composerCloseTimer = setTimeout(done, 400);
+
+  const from = dragDy;
+  const travel = Math.max(1, el.compSheet.offsetHeight - from);
+
+  /* Carried out at something like the speed it was released at, so letting go
+     mid-drag continues the movement rather than restarting it. A sheet let go
+     from halfway has half as far to go and should not take as long over it. */
+  const speed = Math.min(Math.max(dragSpeed, 0.9), 3.2);   // px per ms
+  const ms = Math.round(Math.min(300, Math.max(130, travel / speed)));
+
+  slideSheet(from, '100%', ms, EASE_OUT_SHEET, done);
+  fadeScrim(0, ms);
+
+  /* An animation that never finishes must not leave the sheet up: a tab put
+     in the background mid-flight stops running its animations, and comes
+     back to a composer that will not go away. done() twice is harmless. */
+  composerCloseTimer = setTimeout(done, ms + 150);
 }
 
 /** Cancel keeps the text — in the dump box, where the dump screen will find it. */
@@ -1132,6 +1198,9 @@ function claimDrag(e) {
   dragFrom = dragLastY = e.clientY;
   dragLastT = performance.now();
   dragSpeed = 0;
+  el.compSheet.classList.remove('is-entering');   // the finger has it now
+  sheetAnim?.cancel(); sheetAnim = null;
+  scrimAnim?.cancel(); scrimAnim = null;
   el.compSheet.classList.add('is-dragging');
   el.composer.classList.add('is-dragging');
   // capture keeps mouse moves coming if the cursor slides off the sheet; a
@@ -1216,7 +1285,11 @@ function dragEnd(e) {
   const settled = () => {
     if (el.compSheet.classList.contains('is-leaving')) return;   // gone already
     el.compSheet.classList.remove('is-settling');
+    sheetAnim?.cancel(); sheetAnim = null;
+    scrimAnim?.cancel(); scrimAnim = null;
     el.compSheet.style.transform = '';
+    el.compScrim.style.opacity = '';
+    dragDy = 0;
   };
   el.compScrim.style.opacity = '';
 
@@ -1226,9 +1299,9 @@ function dragEnd(e) {
   if (dy === 0) { settled(); return; }
 
   el.compSheet.classList.add('is-settling');
-  el.compSheet.style.transform = 'translateY(0)';
-  el.compSheet.addEventListener('transitionend', settled, { once: true });
-  setTimeout(settled, 400);
+  slideSheet(dy, '0px', 280, EASE_SETTLE, settled);
+  fadeScrim(1, 280);
+  setTimeout(settled, 430);   // same net as the exit's
 }
 
 function sendComposer() {

@@ -968,11 +968,6 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
      and a shadow alone does not separate them — the hairline does. */
   border-top:1.5px solid var(--line);
   box-shadow:0 -12px 40px -12px rgba(16,16,24,.45);
-  /* Comes up from below the screen rather than fading in place. The curve
-     is the one iOS uses for a sheet: almost all of the travel is spent
-     slowing down, which is what makes it feel like it was thrown rather
-     than played. */
-  animation:sheetUp .38s cubic-bezier(.32,.72,0,1) both;
   overflow:hidden;
   /* Promoted while the sheet exists at all, not once a finger lands on it.
      Building the layer costs a frame, and asking for it on the first
@@ -981,20 +976,30 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
      is closed, so there is no layer to hold in the meantime. */
   will-change:transform;
 }
+/* Comes up from below the screen rather than fading in place. The curve is
+   the one iOS uses for a sheet: almost all of the travel is spent slowing
+   down, which is what makes it feel like it was thrown rather than played.
+
+   On its own class, not on .composer-sheet, and taken off again the moment
+   it has played. Held on the base rule it had to be suppressed with
+   animation:none by every other state, and the moment one of those was
+   removed — a spring-back finishing, say — the entrance would start over and
+   the sheet would drop away and fly back up. */
+.composer-sheet.is-entering{animation:sheetUp .38s cubic-bezier(.32,.72,0,1) both}
 @keyframes sheetUp{from{transform:translateY(100%)} to{transform:translateY(0)}}
 
 /* While a finger is on it: no transition, the sheet is pinned to the
    pointer. On release one of the two below takes over. */
-.composer-sheet.is-dragging{animation:none; transition:none}
-.composer-sheet.is-settling{
-  animation:none;
-  transition:transform .3s cubic-bezier(.32,.72,0,1);
-}
-.composer-sheet.is-leaving{
-  animation:none;
-  transition:transform .26s cubic-bezier(.4,0,1,1);
-  transform:translateY(100%);
-}
+.composer-sheet.is-dragging{transition:none}
+
+/* The transform itself is written inline by closeComposer, over the drag's
+   own inline one — a rule here could never win against the style attribute.
+   This owns the curve; the duration is set inline too, from how far the
+   sheet still has to fall and how fast it was going when it was let go. */
+
+/* No transitions on either of these: the sheet and the scrim are moved by
+   script, with the Web Animations API, so that a release can start from
+   wherever the finger left them. See slideSheet in app.js. */
 /* The bar has nothing to scroll, ever, so it never has to arbitrate. The
    body's is set live in syncComposer — pan-y only while its content really
    does overflow. */
@@ -1063,9 +1068,10 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
 /* Someone who has asked for less movement gets the sheet without the
    journey — it is still a sheet, it just does not fly. */
 @media (prefers-reduced-motion:reduce){
-  .composer-sheet{animation:none}
+  .composer-sheet.is-entering{animation:none}
   .composer-scrim{animation:none}
-  .composer-sheet.is-settling,.composer-sheet.is-leaving{transition-duration:.01s}
+  /* the leaving and settling moves are script's, and check the same
+     preference themselves — see stillMotion in app.js */
 }
 
 /* The tab bar blurs whatever is behind it, and a backdrop filter is redrawn
