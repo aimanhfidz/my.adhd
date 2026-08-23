@@ -499,10 +499,11 @@ body{
 .tabbar{
   position:fixed; z-index:45;
   /* Low, close to the home indicator rather than floating well above it.
-     The inset already reserves the indicator's own strip, so 4px on top of
-     it is enough clearance; max() keeps a sane gap on anything that reports
-     no inset at all, like a desktop window. */
-  bottom:max(12px, calc(4px + env(safe-area-inset-bottom, 0px)));
+     The inset reserves more room than the indicator actually occupies —
+     it is a ~5pt bar sitting ~8pt off the floor — so the pill sits a
+     little way into that strip and still clears it. max() keeps a sane
+     gap on anything reporting no inset at all, like a desktop window. */
+  bottom:max(8px, calc(env(safe-area-inset-bottom, 0px) - 4px));
   /* Stretched between the two edges rather than sized by its contents, so
      the five sections spread across the screen instead of huddling in the
      middle. left+right+auto margins keep it centred once the max-width
