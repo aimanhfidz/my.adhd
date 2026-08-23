@@ -13,6 +13,11 @@ body{
   -webkit-font-smoothing:antialiased;
   line-height:1.5;
   min-height:100dvh;
+  /* landing.css pins its hero to one viewport with overflow:hidden — this
+     page is a guide, not a hero, so give it back its scrollbar */
+  overflow-x:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
 
 .page{
@@ -49,7 +54,14 @@ body{
 .nav .theme-toggle{margin-left:10px}
 
 /* ---------- body ---------- */
-.main{display:flex; flex-direction:column; justify-content:center; min-height:0; padding-block:clamp(20px,4vh,44px)}
+/* top-aligned, like the rest of the site: the title sits right under the
+   nav and the upper third of the screen carries it, rather than the copy
+   drifting to the middle and pushing the steps off a short phone */
+.main{
+  display:flex; flex-direction:column; justify-content:flex-start; min-height:0;
+  padding-top:var(--top-gap);
+  padding-bottom:clamp(20px,4vh,44px);
+}
 
 .eyebrow{
   font-size:12.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
@@ -60,14 +72,6 @@ body{
   letter-spacing:-.035em; line-height:1.06; margin-bottom:10px;
 }
 .lede{font-size:clamp(14px,1.9vh,17px); color:var(--muted); max-width:46ch; margin-bottom:clamp(18px,3vh,28px)}
-
-/* the three payoffs — why bother pinning it */
-.perks{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:clamp(18px,3vh,28px); list-style:none}
-.perks li{
-  font-size:13px; font-weight:600; color:var(--ink-soft);
-  padding:7px 14px; border-radius:999px;
-  background:var(--wash); border:1px solid var(--line);
-}
 
 /* platform switch */
 .tabs{display:flex; gap:6px; margin-bottom:16px}

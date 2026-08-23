@@ -12,6 +12,9 @@
 :root{
   --hero-glow-a:rgba(71,55,255,.13);
   --hero-glow-b:rgba(53,41,191,.11);
+  /* the one gap between the nav and the first line of copy — every page
+     starts its content here, so the titles line up across the site */
+  --top-gap:clamp(14px,3.4vh,34px);
 }
 :root[data-theme="dark"]{
   --hero-glow-a:rgba(71,55,255,.32);
@@ -76,12 +79,14 @@ body{
 /* the mark on the left, the toggle on the right, nothing between */
 .nav .theme-toggle{margin-left:auto}
 
+/* top-aligned: the headline claims the upper screen rather than sitting
+   dead-centre with a void above it. Same --top-gap as the install page. */
 .hero-body{
   min-height:0;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
   gap:clamp(10px,2.4vh,24px);
   text-align:center;
-  padding:0 clamp(20px,5vw,40px);
+  padding:var(--top-gap) clamp(20px,5vw,40px) 0;
 }
 .hero-art{min-height:0; display:flex; justify-content:center}
 .hero-art img, .hero-art .hero-mascot{
@@ -120,7 +125,7 @@ body{
 /* ---------- desktop: copy left, mascot right ---------- */
 @media (min-width:820px){
   .hero-body{
-    flex-direction:row-reverse; justify-content:center;
+    flex-direction:row-reverse; justify-content:center; align-items:center;
     gap:clamp(40px,6vw,88px); text-align:left;
   }
   .hero-copy{align-items:flex-start; max-width:36rem}
@@ -129,7 +134,7 @@ body{
 
 /* ---------- landscape phones ---------- */
 @media (max-height:520px){
-  .hero-body{flex-direction:row-reverse; gap:26px; text-align:left}
+  .hero-body{flex-direction:row-reverse; align-items:center; justify-content:center; gap:26px; text-align:left}
   .hero-copy{align-items:flex-start}
   .hero-art img, .hero-art .hero-mascot{height:min(46vh,210px)}
   .hero-sub{display:none}
