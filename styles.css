@@ -946,8 +946,11 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
 .composer-scrim{
   position:absolute; inset:0;
   background:rgba(16,16,24,.42);
-  animation:scrimIn .18s var(--ease) both;
+  animation:scrimIn .38s var(--ease) both;
 }
+/* dragging thins it out in step with the sheet, so the page behind comes
+   back as the sheet leaves rather than all at once at the end */
+.composer.is-dragging .composer-scrim{animation:none}
 @keyframes scrimIn{from{opacity:0} to{opacity:1}}
 
 .composer-sheet{
@@ -963,10 +966,33 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
      and a shadow alone does not separate them — the hairline does. */
   border-top:1.5px solid var(--line);
   box-shadow:0 -12px 40px -12px rgba(16,16,24,.45);
-  animation:sheetIn .26s var(--ease) both;
+  /* Comes up from below the screen rather than fading in place. The curve
+     is the one iOS uses for a sheet: almost all of the travel is spent
+     slowing down, which is what makes it feel like it was thrown rather
+     than played. */
+  animation:sheetUp .38s cubic-bezier(.32,.72,0,1) both;
   overflow:hidden;
+  /* the drag writes translateY here, so nothing else may own transform */
+  will-change:transform;
 }
-@keyframes sheetIn{from{transform:translateY(18px); opacity:0} to{transform:none; opacity:1}}
+@keyframes sheetUp{from{transform:translateY(100%)} to{transform:translateY(0)}}
+
+/* While a finger is on it: no transition, the sheet is pinned to the
+   pointer. On release one of the two below takes over. */
+.composer-sheet.is-dragging{animation:none; transition:none}
+.composer-sheet.is-settling{
+  animation:none;
+  transition:transform .3s cubic-bezier(.32,.72,0,1);
+}
+.composer-sheet.is-leaving{
+  animation:none;
+  transition:transform .26s cubic-bezier(.4,0,1,1);
+  transform:translateY(100%);
+}
+/* Everything above the keyboard is draggable except the text itself, which
+   still has to take a caret and a selection. */
+.composer-bar,.composer-body{touch-action:pan-y}
+.composer-input{touch-action:auto}
 
 .composer-bar{
   flex:none;
@@ -1027,3 +1053,11 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
 .composer-input:focus{outline:none}
 .composer-input::placeholder{color:var(--faint)}
 .composer .dump-dates{margin-top:16px}
+
+/* Someone who has asked for less movement gets the sheet without the
+   journey — it is still a sheet, it just does not fly. */
+@media (prefers-reduced-motion:reduce){
+  .composer-sheet{animation:none}
+  .composer-scrim{animation:none}
+  .composer-sheet.is-settling,.composer-sheet.is-leaving{transition-duration:.01s}
+}

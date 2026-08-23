@@ -66,6 +66,8 @@ const el = {
   tabBadgeCal:  $('tab-badge-cal'),
   tabAvatar:    $('tab-avatar'),
   composer:     $('composer'),
+  compSheet:    document.querySelector('.composer-sheet'),
+  compBody:     document.querySelector('.composer-body'),
   compScrim:    $('composer-scrim'),
   compCancel:   $('composer-cancel'),
   compPost:     $('composer-post'),
@@ -970,17 +972,10 @@ async function breakDown(task, ui) {
   }
 }
 
-function newDump() {
-  refreshListsButton();
-  previewDates();   // whatever is left in the box decides the strip
-  show(el.screenDump);
-  el.input.focus();
-}
-
 /* ---------------- the composer ----------------
-   The + used to swap the whole screen for the dump page, which meant losing
-   the list you were reading to add one thing to it. This opens over the top
-   instead and hands the screen back on cancel. It is a front end for the
+   The + and Dump again both used to swap the whole screen for the dump page,
+   which meant losing the list you were reading to add one thing to it. Both
+   open this over the top instead, and hand the screen back on cancel. It is a front end for the
    dump box, not a second one: on send it writes into el.input and calls the
    same triage(), so the loading morph, the parser and the de-duping are all
    the one path they were before. */
@@ -1009,6 +1004,7 @@ function openComposer() {
   // Carries over whatever is sitting in the dump box, so a half-written
   // thought is not lost by reaching for the + instead of the dump screen.
   el.compInput.value = el.input.value;
+  resetComposerMotion();
   el.composer.classList.remove('is-hidden');
   syncComposer();
 
@@ -1018,9 +1014,42 @@ function openComposer() {
   requestAnimationFrame(() => el.compInput.focus());
 }
 
-function closeComposer() {
-  el.composer.classList.add('is-hidden');
-  el.compInput.blur();
+/* The safety net under the leave animation, held so it can be called off.
+   Reopening inside those 400ms used to let the old timer fire and hide the
+   sheet that had just come up. */
+let composerCloseTimer = 0;
+
+/** Everything the sheet has to forget between one opening and the next. */
+function resetComposerMotion() {
+  clearTimeout(composerCloseTimer);
+  composerCloseTimer = 0;
+  dragging = false;
+  el.compSheet.classList.remove('is-dragging', 'is-settling', 'is-leaving');
+  el.compSheet.style.transform = '';
+  el.compScrim.style.opacity = '';
+  el.composer.classList.remove('is-dragging');
+}
+
+/* `slide` plays the sheet back down before it goes; a send skips it, because
+   the loading screen is what should be arriving, not an empty sheet. */
+function closeComposer(slide = false) {
+  el.compInput.blur();   // first, so the keyboard drops with the sheet
+
+  const done = () => {
+    el.composer.classList.add('is-hidden');
+    resetComposerMotion();
+  };
+
+  if (!slide) { done(); return; }
+
+  clearTimeout(composerCloseTimer);
+  el.compSheet.classList.remove('is-dragging', 'is-settling');
+  el.compSheet.classList.add('is-leaving');
+  el.compScrim.style.opacity = '0';
+  el.compSheet.addEventListener('transitionend', done, { once: true });
+  // a transition that never runs — reduced motion, a backgrounded tab — must
+  // not leave the sheet stuck open
+  composerCloseTimer = setTimeout(done, 400);
 }
 
 /** Cancel keeps the text — in the dump box, where the dump screen will find it. */
@@ -1028,7 +1057,89 @@ function cancelComposer() {
   el.input.value = el.compInput.value;
   previewDates();
   refreshListsButton();
-  closeComposer();
+  closeComposer(true);
+}
+
+/* ---- drag it down to put it away ----
+   The sheet follows the finger one to one, and on release either carries on
+   out or springs back. Threshold is distance OR speed: a slow deliberate
+   pull past a third of the way, or a quick flick from anywhere. */
+const DRAG_DISMISS_PX = 120;
+const DRAG_DISMISS_SPEED = 0.55;   // px per ms
+const DRAG_FLICK_WINDOW = 120;     // ms — older than this is not a flick
+
+let dragFrom = 0, dragging = false;
+/* Speed is measured over the last move, not the whole gesture: a drag that
+   crawls down and then stops has an average that says "flick" and a finger
+   that says otherwise. A hand resting before it lifts should drop the sheet
+   back, so a stale last move counts as still. */
+let dragLastY = 0, dragLastT = 0, dragSpeed = 0;
+
+function dragStart(e) {
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  // the text needs its caret and its selection; buttons need their taps
+  if (e.target.closest('.composer-input, button')) return;
+  // a body scrolled off its top is being read, not dragged
+  if (el.compBody.contains(e.target) && el.compBody.scrollTop > 0) return;
+
+  dragging = true;
+  dragFrom = dragLastY = e.clientY;
+  dragLastT = performance.now();
+  dragSpeed = 0;
+  el.compSheet.classList.add('is-dragging');
+  el.composer.classList.add('is-dragging');
+  // capture keeps the moves coming if the finger slides off the sheet;
+  // a pointer the element never really owned throws, and that is harmless
+  try { el.compSheet.setPointerCapture(e.pointerId); } catch (_) {}
+}
+
+function dragMove(e) {
+  if (!dragging) return;
+  // down only: dragging up must not lift the sheet off the top of the screen
+  const dy = Math.max(0, e.clientY - dragFrom);
+  const now = performance.now();
+  if (now > dragLastT) {
+    dragSpeed = (e.clientY - dragLastY) / (now - dragLastT);
+    dragLastY = e.clientY;
+    dragLastT = now;
+  }
+  el.compSheet.style.transform = `translateY(${dy}px)`;
+  // the page behind comes back as the sheet goes
+  el.compScrim.style.opacity = String(Math.max(0, 1 - dy / 420));
+}
+
+function dragEnd(e) {
+  if (!dragging) return;
+  dragging = false;
+  el.compSheet.classList.remove('is-dragging');
+  el.composer.classList.remove('is-dragging');
+
+  const dy = Math.max(0, e.clientY - dragFrom);
+  const fresh = performance.now() - dragLastT < DRAG_FLICK_WINDOW;
+  const speed = fresh ? dragSpeed : 0;
+
+  if (dy > DRAG_DISMISS_PX || speed > DRAG_DISMISS_SPEED) {
+    cancelComposer();       // same as Cancel: the text is kept
+    return;
+  }
+
+  // not far enough — put it back
+  const settled = () => {
+    if (el.compSheet.classList.contains('is-leaving')) return;   // gone already
+    el.compSheet.classList.remove('is-settling');
+    el.compSheet.style.transform = '';
+  };
+  el.compScrim.style.opacity = '';
+
+  // A press that never moved has nothing to animate back, and a transition
+  // with no distance fires no transitionend — which used to leave the class
+  // on, and its transition with it, for the next drag to fight.
+  if (dy === 0) { settled(); return; }
+
+  el.compSheet.classList.add('is-settling');
+  el.compSheet.style.transform = 'translateY(0)';
+  el.compSheet.addEventListener('transitionend', settled, { once: true });
+  setTimeout(settled, 400);
 }
 
 function sendComposer() {
@@ -1557,10 +1668,11 @@ el.btnResort.addEventListener('click', resortLocal);
 el.btnClearAll.addEventListener('click', stepClear);
 el.btnClearGo.addEventListener('click', stepClear);
 el.btnClearNo.addEventListener('click', resetClear);
-el.btnDumpAgain.addEventListener('click', newDump);
+el.btnDumpAgain.addEventListener('click', openComposer);
 
-/* The bar. The + is the way back to the dump box, which is the only place
-   a new list gets made — so it routes to newDump rather than a screen. */
+/* The bar. The + opens the composer over whatever is on screen — the dump
+   box is still the only place a new list gets made, but reaching it should
+   not cost you the page you were on. */
 el.tabLists.addEventListener('click', goToNext);
 el.tabCal.addEventListener('click', showCalendar);
 el.calPrev.addEventListener('click', () => stepMonth(-1));
@@ -1575,6 +1687,10 @@ el.compCancel.addEventListener('click', cancelComposer);
 el.compScrim.addEventListener('click', cancelComposer);
 el.compPost.addEventListener('click', sendComposer);
 el.compInput.addEventListener('input', syncComposer);
+el.compSheet.addEventListener('pointerdown', dragStart);
+el.compSheet.addEventListener('pointermove', dragMove);
+el.compSheet.addEventListener('pointerup', dragEnd);
+el.compSheet.addEventListener('pointercancel', dragEnd);
 el.compInput.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); sendComposer(); }
 });
