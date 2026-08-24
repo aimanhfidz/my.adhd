@@ -2153,7 +2153,10 @@ function markSync(next) {
   if (next !== 'error' && next !== 'stale') syncError = null;
   if (syncState === next) return;
   syncState = next;
-  if (el.screenMe && !el.screenMe.classList.contains('is-hidden')) paintGoogle();
+  if (el.screenMe && !el.screenMe.classList.contains('is-hidden')) {
+    paintGoogle();
+    paintAccount();   // it owns the button that drives this now
+  }
 }
 
 /* ---- the card on the profile ---- */
@@ -2225,6 +2228,9 @@ function paintGoogle() {
   el.gcalOff.classList.toggle('is-hidden', !on);
 
   if (!on) {
+    /* Not linked yet, so this is the button that links it — nothing else
+       on the screen offers that. */
+    el.gcalBtn.classList.remove('is-hidden');
     el.gcalState.textContent = 'Not linked';
     el.gcalNote.textContent =
       'Put your dated tasks straight into Google Calendar. The app makes its own ' +
@@ -2233,6 +2239,17 @@ function paintGoogle() {
     el.gcalBtn.textContent = 'Link Google Calendar';
     return;
   }
+
+  /* The duplicate goes. Signed in, the account card's button already
+     pushes this card too, and two buttons a thumb apart both saying Sync
+     now is a question the screen should never have asked.
+
+     It comes back for the one thing that button cannot do: reconnecting.
+     That is not a sync, it is Google asking for consent again, and it
+     needs the popup this click opens. Signed out there is no account
+     button at all, so the card keeps its own. */
+  const merged = window.auth && auth.configured() && auth.signedIn();
+  el.gcalBtn.classList.toggle('is-hidden', merged && syncState !== 'stale');
 
   el.gcalState.textContent =
     syncState === 'working' ? 'Syncing…' :
@@ -2306,20 +2323,33 @@ function paintAccount() {
   el.acctFace.textContent = '\u{2713}';
   el.acctTitle.textContent = user.name || 'Signed in';
   el.acctState.textContent = user.email || '';
+  /* When the calendar is linked this button drives that too, and the note
+     is the only place that can say so — the card it used to have its own
+     button on is below this one. */
   el.acctNote.textContent =
-    'Your lists sync to every device you sign in on, and the calendar link '
-    + 'renews itself.';
+    window.gcal && gcal.connected() && syncState !== 'stale'
+      ? 'Your lists sync to every device you sign in on, and the calendar link '
+        + 'renews itself. Sync now pushes both.'
+      : 'Your lists sync to every device you sign in on, and the calendar link '
+        + 'renews itself.';
   /* Signed in, the button that offered sign-in becomes the one that forces
-     a pass. It exists because of the failure it is named after: a device
+     everything through: the lists to the account, and the dated ones on to
+     Google. It exists because of the failure it is named after — a device
      that has not checked in for a while is indistinguishable, from the
-     outside, from a device whose lists are simply up to date. A poll gets
-     there eventually and "eventually" is no use to somebody standing in
-     front of a screen that is wrong. The calendar card next door has had
-     this button all along for the same reason. */
+     outside, from a device whose lists are simply up to date, and
+     "eventually" is no use to somebody standing in front of a screen that
+     is wrong.
+
+     One button rather than the two that were here, because two buttons
+     with the same word on them, one above the other, is a question nobody
+     should have to answer to press either. The calendar card keeps its own
+     only for the thing this one cannot do — see paintGoogle(). */
+  const listsBusy = window.cloud && cloud.state() === 'working';
+  const calBusy = syncState === 'working';
+
   el.acctBtn.classList.remove('is-hidden');
-  el.acctBtn.disabled = window.cloud ? cloud.state() === 'working' : false;
-  el.acctBtn.textContent =
-    window.cloud && cloud.state() === 'working' ? 'Checking…' : 'Sync now';
+  el.acctBtn.disabled = listsBusy || calBusy;
+  el.acctBtn.textContent = listsBusy || calBusy ? 'Syncing…' : 'Sync now';
 
   /* The hint line doubles as the sync's only report. It says the reassuring
      thing almost always, because almost always that is the true thing —
@@ -2361,26 +2391,45 @@ function paintLocalNote() {
 
 /* One button, two jobs, decided by whether there is an account behind it. */
 async function acctAction() {
-  if (window.auth && auth.signedIn()) return syncListsNow();
+  if (window.auth && auth.signedIn()) return syncEverything();
 
   el.acctBtn.disabled = true;
   el.acctBtn.textContent = 'Taking you to Google…';
   auth.signIn();     // leaves the page
 }
 
-/* The manual pass. paintAccount() already draws whatever cloud.js is
-   doing, so the only thing left to add is the answer at the end — because
-   a pass that finds nothing to do looks exactly like a pass that never
-   ran, and the whole point of pressing the button is to stop wondering. */
-async function syncListsNow() {
-  if (!window.cloud) return;
+/* Everything the profile screen can push, in one press.
 
+   The lists go first and the calendar second, and that order is the whole
+   reason this is one button rather than two run at the same time: a pass
+   can bring a dated task down from the other device, and doing Google
+   second means that task reaches the calendar in the same press rather
+   than waiting for the next one.
+
+   paintAccount() already draws what both halves are doing, so the only
+   thing to add is the answer at the end — a pass that finds nothing looks
+   exactly like a pass that never ran, and being told is the entire reason
+   to press it. */
+async function syncEverything() {
   const before = state.tasks.length;
+  const linked = window.gcal && gcal.connected();
+
   paintAccount();
-  await cloud.now();
+  if (window.cloud) await cloud.now();
   paintAccount();
 
-  if (cloud.state() === 'error') { toast('Could not reach your lists. It keeps trying.'); return; }
+  const listsBroke = window.cloud && cloud.state() === 'error';
+  if (linked && !listsBroke) { await syncNow(); paintAccount(); paintGoogle(); }
+
+  if (listsBroke) { toast('Could not reach your lists. It keeps trying.'); return; }
+  if (linked && syncState === 'error') {
+    toast('Lists are up to date. Google did not answer — it keeps trying.');
+    return;
+  }
+  if (linked && syncState === 'stale') {
+    toast('Lists are up to date. Google wants you to sign in again.');
+    return;
+  }
 
   const added = state.tasks.length - before;
   toast(

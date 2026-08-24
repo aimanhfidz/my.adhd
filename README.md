@@ -186,7 +186,11 @@ seconds ticked five. This is the likeliest reason a desktop was found sitting
 on a stale list.
 
 The account card's **Sync now** forces a pass, because a device that has not
-checked in looks exactly like a device that is already up to date.
+checked in looks exactly like a device that is already up to date. Signed in,
+it is the only sync button on the screen: it runs the lists first and then the
+calendar, so a dated task arriving from another device reaches Google in the
+same press. The calendar card shows a button only for **Link** and
+**Reconnect** — consent prompts, which the shared button cannot open.
 
 The Google Calendar link keeps its own small record under `myadhd.gcal.v1`:
 whether it is linked, which calendar it made, and the access token until it
