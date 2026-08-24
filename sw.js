@@ -7,7 +7,7 @@
    the cache is the parachute, not the source of truth. The triage API is
    never cached — a stale answer is worse than an honest failure. */
 
-const CACHE = 'myadhd-v10';
+const CACHE = 'myadhd-v11';
 
 const SHELL = [
   '/',
@@ -17,6 +17,7 @@ const SHELL = [
   '/terms',
   '/app.js',
   '/gcal.js',
+  '/auth.js',
   '/config.js',
   '/theme.js',
   '/styles.css',

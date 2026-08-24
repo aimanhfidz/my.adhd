@@ -240,6 +240,21 @@
         <button class="btn-soft" id="btn-resort">Sort these properly</button>
       </div>
 
+      <!-- The onboarding offer, and it waits its turn. It appears after a
+           list exists, never before: asking someone to sign in before the
+           app has done anything for them is asking for trust on credit.
+           By here they have watched it work, so the offer can be about
+           keeping what they can already see. Dismissed once, gone. -->
+      <div class="signup-offer is-hidden" id="signup-offer">
+        <button class="signup-x" id="signup-no" type="button" aria-label="No thanks">&times;</button>
+        <p class="signup-title">Keep these on your other devices?</p>
+        <p class="signup-body">Right now this list lives in this browser only — clear
+          your history and it is gone, and your phone and laptop each keep their own
+          separate copy. Signing in gives you one list everywhere, and puts your dated
+          tasks in Google Calendar without asking again.</p>
+        <button class="btn-primary signup-go" id="signup-yes" type="button">Sign in with Google</button>
+      </div>
+
       <div class="lists" id="lists"></div>
 
       <div class="done-block is-hidden" id="done-block">
@@ -401,6 +416,29 @@
       </div>
 
 
+      <!-- Signing in. Optional, and it stays optional: the app opened on
+           the dump box before you got here and works with no account at
+           all. This says what it buys rather than asking for trust up
+           front. -->
+      <div class="gcal-card acct-card is-hidden" id="acct-card">
+        <div class="gcal-head">
+          <span class="acct-face" id="acct-face" aria-hidden="true">👤</span>
+          <div>
+            <p class="gcal-title" id="acct-title">Just this device</p>
+            <p class="gcal-state" id="acct-state">Not signed in</p>
+          </div>
+        </div>
+
+        <p class="gcal-note" id="acct-note"></p>
+
+        <button class="btn-primary gcal-go" id="acct-btn" type="button">Sign in with Google</button>
+
+        <div class="gcal-more">
+          <span class="acct-hint" id="acct-hint"></span>
+          <button class="btn-danger-quiet is-hidden" id="acct-out" type="button">Sign out</button>
+        </div>
+      </div>
+
       <!-- The one thing on this screen that reaches outside the browser, so
            it gets its own card rather than a row in the one above: that card
            is who you are, this is a wiring decision. The whole block is
@@ -494,6 +532,7 @@
 <!-- config.js first: gcal.js reads the client ID out of it at load, and
      app.js only ever asks gcal whether the feature is available. -->
 <script src="config.js"></script>
+<script src="auth.js"></script>
 <script src="gcal.js"></script>
 <script src="app.js"></script>
 <script>

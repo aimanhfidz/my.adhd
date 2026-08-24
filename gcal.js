@@ -146,8 +146,56 @@
      this browser and the grant is still there; when it does not, it fails
      fast and the profile card asks for a reconnect rather than throwing a
      popup at someone who was doing something else. */
+  /* The signed-in path, and the reason accounts exist here at all.
+     Our server holds a refresh token and spends it to mint a fresh access
+     token, server to server. No popup, no iframe, no Google session
+     needed in this browser — which is exactly what iOS would not give us.
+     Returns null when there is no account or no link yet, so the caller
+     can fall through to the browser flow below. */
+  async function serverToken() {
+    if (!window.auth || !auth.signedIn()) return null;
+
+    const jwt = await auth.token();
+    if (!jwt) return null;
+
+    let res;
+    try {
+      res = await fetch('/api/gcal-token', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + jwt },
+      });
+    } catch (_) {
+      return null;                     // offline; the pass will run again
+    }
+
+    if (res.status === 404) return null;   // signed in, calendar not linked
+    if (res.status === 409) {
+      /* The grant was revoked on Google's side. Forget the link so the
+         card asks to link again rather than retrying a dead token. */
+      link.connected = false;
+      setToken(null);
+      return null;
+    }
+    if (!res.ok) return null;
+
+    const d = await res.json().catch(() => null);
+    if (!d || !d.accessToken) return null;
+
+    if (d.calendarId && !link.calendarId) { link.calendarId = d.calendarId; }
+    setToken({
+      value: d.accessToken,
+      expiresAt: Date.now() + (Number(d.expiresIn) || 3600) * 1000,
+    });
+    return d.accessToken;
+  }
+
   async function getToken(interactive) {
     if (tokenLive()) return token.value;
+
+    /* Try the account first. When it works it is silent and reliable; the
+       browser flow below is the fallback for anyone not signed in. */
+    const minted = await serverToken();
+    if (minted) return minted;
 
     const client = await ensureClient();
     if (pending) throw new Error('another sign-in is already open');
@@ -333,6 +381,18 @@
     warm: async () => {
       if (!link.connected) return false;
       try { await getToken(false); return true; } catch (_) { return false; }
+    },
+    /* Called after a sign-in that carried the calendar scope. That sign-in
+       already granted everything the old Link button used to ask for, so
+       there is nothing to prompt for — just confirm the server can mint a
+       token and make sure the calendar exists. */
+    async adopt() {
+      const minted = await serverToken();
+      if (!minted) return false;
+      link.connected = true;
+      persist();
+      try { await ensureCalendar(); } catch (_) { /* next pass retries */ }
+      return true;
     },
     connect, disconnect, insert, patch, remove,
   };

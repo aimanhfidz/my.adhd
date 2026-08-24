@@ -94,6 +94,18 @@ const el = {
   gcalOpen:     $('gcal-open'),
   gcalOff:      $('gcal-off'),
   localNote:    $('local-note'),
+
+  acctCard:     $('acct-card'),
+  acctFace:     $('acct-face'),
+  acctTitle:    $('acct-title'),
+  acctState:    $('acct-state'),
+  acctNote:     $('acct-note'),
+  acctBtn:      $('acct-btn'),
+  acctHint:     $('acct-hint'),
+  acctOut:      $('acct-out'),
+  signupOffer:  $('signup-offer'),
+  signupYes:    $('signup-yes'),
+  signupNo:     $('signup-no'),
 };
 
 /* ---------------- state ---------------- */
@@ -103,6 +115,9 @@ let state = {
   energy: 'medium',   // how the user feels right now
   profile: { name: '', avatar: '\u{1F642}' },   // this device only — no account behind it
   sentFeedbackOn: null,   // the UTC day of the last note sent from this device
+
+  /* The onboarding offer, once turned down, stays turned down. */
+  signupOfferHidden: false,
 
   /* Calendar events whose task no longer exists to hang them off. A task
      is deleted from the store the moment you remove it, which would strand
@@ -730,6 +745,7 @@ function groupByCategory(tasks) {
 function goToNext() {
   show(el.screenNow);
   save();
+  paintSignupOffer();   // there is a list now, so the offer has something to offer
 
   const open = state.tasks.filter(t => !t.done);
   const done = state.tasks.filter(t => t.done);
@@ -2207,6 +2223,101 @@ function paintGoogle() {
   el.gcalBtn.textContent = syncState === 'stale' ? 'Reconnect' : 'Sync now';
 }
 
+/* ---------------- the account ----------------
+   Optional, and it has to stay that way. Everything below runs only when
+   someone has chosen to sign in; a signed-out user sees the same app that
+   existed before any of this, works offline, and is never asked twice.
+
+   Signing in buys exactly two things, and the copy says so rather than
+   implying a third: your lists follow you to another device, and the
+   calendar link stops expiring — because the refresh token then lives on
+   our server, where iOS cannot get in the way of renewing it. */
+
+/* Dismissed once, never shown again. Sits in the same store as everything
+   else so clearing the site clears this too. */
+function offerDismissed() { return state.signupOfferHidden === true; }
+
+function paintSignupOffer() {
+  if (!el.signupOffer) return;
+  const worth = window.auth && auth.configured()
+    && !auth.signedIn()
+    && !offerDismissed()
+    && state.tasks.some(t => !t.done);
+  el.signupOffer.classList.toggle('is-hidden', !worth);
+}
+
+function paintAccount() {
+  if (!el.acctCard) return;
+
+  if (!window.auth || !auth.configured()) {
+    el.acctCard.classList.add('is-hidden');
+    return;
+  }
+  el.acctCard.classList.remove('is-hidden');
+
+  const user = auth.user();
+  el.acctCard.classList.toggle('is-on', !!user);
+  el.acctOut.classList.toggle('is-hidden', !user);
+
+  if (!user) {
+    el.acctFace.textContent = '\u{1F464}';
+    el.acctTitle.textContent = 'Just this device';
+    el.acctState.textContent = 'Not signed in';
+    el.acctNote.textContent =
+      'Your lists live in this browser alone, so your phone and your laptop '
+      + 'each keep a separate one. Sign in and they become the same list — and '
+      + 'the calendar link stops asking you to reconnect.';
+    el.acctBtn.textContent = 'Sign in with Google';
+    el.acctBtn.classList.remove('is-hidden');
+    el.acctHint.textContent = '';
+    return;
+  }
+
+  el.acctFace.textContent = '\u{2713}';
+  el.acctTitle.textContent = user.name || 'Signed in';
+  el.acctState.textContent = user.email || '';
+  el.acctNote.textContent =
+    'Your lists sync to every device you sign in on, and the calendar link '
+    + 'renews itself.';
+  el.acctBtn.classList.add('is-hidden');
+  el.acctHint.textContent = 'Signing out leaves this device’s copy alone.';
+}
+
+async function signIn() {
+  el.acctBtn.disabled = true;
+  el.acctBtn.textContent = 'Taking you to Google…';
+  auth.signIn();     // leaves the page
+}
+
+async function signOutHere() {
+  await auth.signOut();
+  paintAccount();
+  paintSignupOffer();
+  toast('Signed out. Your lists are still here.');
+}
+
+/* Runs once at boot, before anything is drawn. Two jobs: catch the tokens
+   coming back from Google, and — if there is an account — tell gcal.js it
+   can stop asking the browser for tokens and ask the server instead. */
+async function wakeAccount() {
+  if (!window.auth || !auth.configured()) return;
+
+  let arrived = false;
+  try { arrived = await auth.absorbRedirect(); } catch (_) {}
+
+  if (auth.signedIn() && window.gcal && gcal.configured()) {
+    try { await gcal.adopt(); } catch (_) { /* the card reports it */ }
+  }
+
+  paintAccount();
+  paintSignupOffer();
+
+  if (arrived) {
+    toast('Signed in. Your lists follow you now.');
+    syncSoon();
+  }
+}
+
 /* ---------------- profile ----------------
    Local and deliberately small: a name to be greeted by, a face to
    recognise the tab by, and a count of what you have got through. It rides
@@ -2266,6 +2377,7 @@ function showProfile() {
   el.statOverdueCard.classList.toggle('is-late', late > 0);
   paintProfile();
   paintGoogle();
+  paintAccount();
   show(el.screenMe);
 }
 
@@ -2397,6 +2509,24 @@ el.fbSend.addEventListener('click', sendFeedback);
 el.fbInput.addEventListener('input', paintFeedback);
 el.tabMe.addEventListener('click', showProfile);
 
+if (el.acctBtn) {
+  el.acctBtn.addEventListener('click', signIn);
+  el.acctOut.addEventListener('click', signOutHere);
+}
+
+if (el.signupYes) {
+  el.signupYes.addEventListener('click', () => {
+    el.signupYes.disabled = true;
+    el.signupYes.textContent = 'Taking you to Google…';
+    auth.signIn();
+  });
+  el.signupNo.addEventListener('click', () => {
+    state.signupOfferHidden = true;
+    save();
+    paintSignupOffer();
+  });
+}
+
 el.nameInput.addEventListener('input', () => {
   state.profile.name = el.nameInput.value.trim().slice(0, 24);
   save();
@@ -2504,8 +2634,13 @@ paintProfile();
 show(el.screenDump);
 el.input.focus();
 
-/* The calendar catches up in the background, behind the screen the user
-   actually came for. Nothing here is allowed to hold up the dump box, and
-   a failure is silent — the profile card is where the state is reported,
-   and it is the only place someone can do anything about it. */
-if (window.gcal && gcal.connected()) syncSoon();
+/* The account and the calendar both catch up in the background, behind the
+   screen the user actually came for. Nothing here is allowed to hold up the
+   dump box, and a failure is silent — the profile cards are where the state
+   is reported, and the only place someone can do anything about it.
+
+   wakeAccount() runs first because it is what turns a fresh redirect from
+   Google into a session, and gcal.js asks that session for its tokens. */
+wakeAccount().finally(() => {
+  if (window.gcal && gcal.connected()) syncSoon();
+});
