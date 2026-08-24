@@ -7,7 +7,7 @@
    the cache is the parachute, not the source of truth. The triage API is
    never cached — a stale answer is worse than an honest failure. */
 
-const CACHE = 'myadhd-v9';
+const CACHE = 'myadhd-v10';
 
 const SHELL = [
   '/',
@@ -25,12 +25,12 @@ const SHELL = [
   '/legal.css',
   '/install.css',
   '/mascot.svg',
-  '/favicon.svg?v=2',
+  '/favicon.svg?v=3',
   '/fonts/Baloo2-Variable.ttf',
-  '/icons/apple-touch-icon.png?v=2',
-  '/icons/icon-192.png?v=2',
-  '/icons/icon-512.png?v=2',
-  '/site.webmanifest?v=2',
+  '/icons/apple-touch-icon.png?v=3',
+  '/icons/icon-192.png?v=3',
+  '/icons/icon-512.png?v=3',
+  '/site.webmanifest?v=3',
 ];
 
 self.addEventListener('install', (e) => {
