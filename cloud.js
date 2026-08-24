@@ -59,10 +59,14 @@
 
   /* While the app is in front, ask for other devices' changes on a timer.
      Postgres can push changes over a websocket instead, which would be
-     both faster and cheaper, but it is another connection to keep alive
-     and another failure mode on a phone that sleeps. A poll this size is
-     a few hundred bytes a minute and it cannot get stuck. */
-  const POLL = 60_000;
+     faster still, but it is another connection to keep alive and another
+     failure mode on a phone that sleeps. A poll cannot get stuck.
+
+     Twelve seconds because a minute is long enough to sit looking at a
+     list you know is wrong. What makes that affordable is the probe
+     below: most of these ticks never fetch a task at all, so the cost of
+     asking five times a minute is a few hundred bytes. */
+  const POLL = 12_000;
 
   /* How long a tombstone is kept. Past this the row is still on the
      server; this is only about how long *this* device argues for a delete
@@ -119,6 +123,19 @@
   let lastPullAt = 0;
   const watchers = [];
 
+  /* The two things the cheap poll reasons from.
+
+     newestSeen is the highest updated_at this device has seen on the
+     account. If the server's highest still matches it, no device has
+     written anything since we last looked and there is nothing to come
+     down.
+
+     dirty is the other half of the question: whether there is anything to
+     go up. It starts true because a page that has just loaded cannot know
+     — a task edited offline yesterday is still owed a push. */
+  let newestSeen = '';
+  let dirty = true;
+
   function setPhase(next, err) {
     lastError = next === 'error' ? err || 'could not reach the server' : null;
     if (phase === next && next !== 'error') return;
@@ -174,7 +191,7 @@
       if (now - at > GRAVE_TTL) { delete book.graves[id]; moved = true; }
     }
 
-    if (moved) persistBook();
+    if (moved) { dirty = true; persistBook(); }
     return moved;
   }
 
@@ -359,6 +376,11 @@
 
       const rows = await rest('tasks?select=id,payload,updated_at,deleted') || [];
 
+      /* What the cheap poll compares against from here on. Taken before
+         the merge, because the merge is allowed to change our copy but
+         not what the server currently holds. */
+      for (const r of rows) if (r.updated_at > newestSeen) newestSeen = r.updated_at;
+
       const touched = merge(rows);
       if (touched) {
         host.persist();     // the merged store, written without re-stamping
@@ -374,7 +396,15 @@
           headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
           body: out,
         });
+        /* Our own writes are now the newest thing on the account. Saying
+           so here is what stops the next probe seeing them as somebody
+           else's news and pulling the whole list back down. */
+        for (const r of out) if (r.updated_at > newestSeen) newestSeen = r.updated_at;
       }
+
+      /* Everything owed is now sent. Anything written from here on goes
+         through stamp(), which sets this again. */
+      dirty = false;
 
       lastPullAt = Date.now();
       setPhase('idle');
@@ -426,9 +456,22 @@
 
   /** A pass, but only if one is actually due. Safe to call on any event. */
   function wake() {
+    schedulePoll();   // the timer chain may have been frozen while we were away
     if (document.hidden || !ready()) return;
     if (Date.now() - lastPullAt < 2000) return;   // several of these fire together
     soon();
+  }
+
+  /** Has anybody written anything since we last looked?
+
+      A few dozen bytes: one column, one row, newest first. Polling four
+      times a minute would otherwise mean dragging the whole list down
+      four times a minute for the rare tick that has news in it, which on
+      a phone is somebody's data allowance. */
+  async function anythingNew() {
+    const rows = await rest('tasks?select=updated_at&order=updated_at.desc&limit=1');
+    const newest = (rows && rows[0] && rows[0].updated_at) || '';
+    return newest !== newestSeen;
   }
 
   /* The timer ticks well inside POLL rather than exactly on it. A browser
@@ -436,11 +479,49 @@
      interval of exactly POLL drifts and a device can go minutes past due
      without noticing. Ticking often and deciding from the clock instead
      means the pass lands on time whatever the browser did to the timer. */
-  setInterval(() => {
-    if (document.hidden || !ready()) return;
+  async function poll() {
+    if (document.hidden || !ready() || running) return;
     if (Date.now() - lastPullAt < POLL) return;
-    soon();
-  }, 15_000);
+
+    /* Something of ours is owed either way, so there is nothing to ask. */
+    if (dirty) { soon(); return; }
+
+    try {
+      /* run() rather than soon(): the debounce exists to collapse a burst
+         of save() calls, and a probe that has already confirmed there is
+         something waiting has nothing to collapse. Skipping it is a
+         second and a half off every pickup. */
+      if (await anythingNew()) await run();
+      else lastPullAt = Date.now();   // asked, nothing there, clock restarts
+    } catch (_) {
+      /* Not worth reporting a probe that failed — the next tick asks
+         again, and a real pass is what earns the error on the card. */
+    }
+  }
+
+  /* A self-rescheduling timeout rather than setInterval, and every wake
+     event re-arms it.
+
+     This is not style. A single long-lived interval is exactly what left
+     a desktop sitting on a stale list: a browser freezes a background
+     tab's timers, and an interval registered once at load can stop firing
+     and never come back on its own. Measured in a backgrounded tab, the
+     load-time interval ticked zero times in fifteen seconds while a
+     timeout armed during those same fifteen seconds ticked five.
+
+     A chain that re-arms after every tick, and that any of the four wake
+     events can restart from cold, cannot get permanently stuck: the worst
+     a freeze costs is the ticks it slept through. */
+  let pollTimer = null;
+
+  function schedulePoll() {
+    clearTimeout(pollTimer);
+    pollTimer = setTimeout(async () => {
+      try { await poll(); } finally { schedulePoll(); }
+    }, 3_000);
+  }
+
+  schedulePoll();
 
   /* ---------------- what app.js sees ---------------- */
 

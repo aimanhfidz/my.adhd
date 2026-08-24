@@ -168,11 +168,25 @@ The profile name and face, the energy setting and the calendar link do not
 sync. They are per device deliberately.
 
 A pass runs on a write, on `visibilitychange` / `pageshow` / `focus` /
-`online`, and on a timer that ticks every 15s but only acts once `POLL` has
-actually elapsed — browsers throttle timers in background tabs, so an
-interval of exactly `POLL` drifts and leaves a device minutes past due. The
-account card's **Sync now** forces one, because a device that has not checked
-in looks exactly like a device that is already up to date.
+`online`, and on a timer. `POLL` is 12s, so a change made on one device shows
+up on another in about 15s at worst.
+
+Polling that often is affordable because most ticks fetch no tasks at all.
+The timer first asks for one column of one row — the newest `updated_at` on
+the account, about forty bytes — and only pulls the list if that has moved or
+this device has something of its own owed. An idle signed-in tab costs roughly
+200 bytes a minute.
+
+The timer is a self-rescheduling `setTimeout` that every wake event re-arms,
+**not** a `setInterval`. That is not style: a browser freezes a background
+tab's timers, and an interval registered once at load can stop firing and
+never come back. Measured in a backgrounded tab, the load-time interval ticked
+zero times in fifteen seconds while a timeout armed during those same fifteen
+seconds ticked five. This is the likeliest reason a desktop was found sitting
+on a stale list.
+
+The account card's **Sync now** forces a pass, because a device that has not
+checked in looks exactly like a device that is already up to date.
 
 The Google Calendar link keeps its own small record under `myadhd.gcal.v1`:
 whether it is linked, which calendar it made, and the access token until it
