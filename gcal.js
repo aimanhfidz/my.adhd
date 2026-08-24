@@ -36,11 +36,10 @@
   const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
   /* ---------------- the stored half ----------------
-     Only what has to survive a reload: whether we are linked, which
-     calendar we made, and who it belongs to so the profile can say.
-     The token is *not* in here — see below. */
+     What has to survive a reload: whether we are linked, which calendar we
+     made, and — see the long note below — the token, until it expires. */
 
-  let link = { connected: false, calendarId: null, email: null };
+  let link = { connected: false, calendarId: null, email: null, token: null };
 
   try {
     const raw = localStorage.getItem(STORE_KEY);
@@ -52,17 +51,50 @@
   }
 
   /* ---------------- the token ----------------
-     Memory only, on purpose. An access token in localStorage is a bearer
-     credential sitting on disk for anything that can run script on this
-     origin to read. Google hands out a fresh one silently when there is a
-     live session in the browser, so the cost of not keeping it is one
-     invisible round-trip on the first sync after a reload. */
+     This was memory-only, which is the safer thing and was the right
+     instinct: an access token on disk is a bearer credential that any
+     script on this origin can read. It leaned on Google renewing silently,
+     so the only cost of forgetting it was an invisible round-trip after a
+     reload.
 
-  let token = null;        // { value, expiresAt }
+     On a phone that turned out to be wrong. The silent path needs Google's
+     iframe on accounts.google.com to read its own session cookie, and iOS
+     blocks precisely that: Safari's tracking prevention refuses
+     third-party cookie access, and a home-screen install gets its own
+     storage container with no Google session in it at all. So every reopen
+     failed to renew and the app demanded a reconnect before it would save
+     one dated task. A security property that nobody can use is not a
+     security property; it is a broken feature with a good excuse.
+
+     So it is kept, and only until it expires — an hour, Google's number.
+     What that buys against what it costs: the scope is
+     calendar.app.created, so the worst this token can do is edit the app's
+     own calendar. It cannot read, change or delete anything on the
+     calendars you already had. There is no XSS path to it today — every
+     piece of task text reaches the DOM through textContent. Unlinking
+     deletes it and asks Google to revoke it.
+
+     Persisting a token that could reach a real diary would not be worth
+     it. This one is. */
+
+  let token = null;        // { value, expiresAt }, mirrored into `link`
   let tokenClient = null;
   let gisLoading = null;
 
+  /* Half a minute of headroom, so a token that would die mid-request is
+     never handed out in the first place. */
   const tokenLive = () => !!token && Date.now() < token.expiresAt - 30_000;
+  const stillGood = (t) => !!t && Date.now() < t.expiresAt - 30_000;
+
+  if (stillGood(link.token)) token = link.token;
+  else if (link.token) { link.token = null; persist(); }
+
+  /** Remember it, or forget it. Both have to reach disk. */
+  function setToken(next) {
+    token = next;
+    link.token = next;
+    persist();
+  }
 
   function loadGIS() {
     if (window.google?.accounts?.oauth2) return Promise.resolve();
@@ -95,10 +127,10 @@
         const settle = pending; pending = null;
         if (!settle) return;
         if (resp.error) { settle.reject(new Error(resp.error)); return; }
-        token = {
+        setToken({
           value: resp.access_token,
           expiresAt: Date.now() + (Number(resp.expires_in) || 3600) * 1000,
-        };
+        });
         settle.resolve(token.value);
       },
       error_callback: (err) => {
@@ -162,7 +194,9 @@
     });
 
     if (res.status === 401 && !retried) {
-      token = null;
+      /* Rejected, so the stored copy is worthless too — drop it from disk
+         rather than leaving a dead credential lying about. */
+      setToken(null);
       return call(path, opts, true);
     }
 
@@ -284,7 +318,7 @@
     if (token) { try { google.accounts.oauth2.revoke(token.value, () => {}); } catch (_) {} }
 
     token = null;
-    link = { connected: false, calendarId: null, email: null };
+    link = { connected: false, calendarId: null, email: null, token: null };
     persist();
   }
 

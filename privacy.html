@@ -110,13 +110,25 @@
     diary.
   </p>
   <p>
-    The access token Google issues is held in your browser's memory for the
-    hour it is valid and is never written to disk. We never see it: the calls
-    go from your browser straight to Google and do not pass through our
-    servers. Unlinking forgets the connection and tells Google to revoke the
-    token; the events already in your calendar are left alone, and you can
-    delete the <strong>my.adhd</strong> calendar yourself at any time from
-    Google Calendar. You can also revoke the app's access from your
+    The access token Google issues is stored in your browser, on your device,
+    and is discarded the moment it expires — Google gives it one hour. We never
+    see it: the calls go from your browser straight to Google and never pass
+    through our servers, so there is no copy of it anywhere else.
+  </p>
+  <p class="legal-note">
+    It used to be held only in memory, which is safer, and it was changed
+    deliberately. Renewing it invisibly requires a Google session that iPhones
+    do not allow an app like this to reach, so on a phone the app ended up
+    asking you to sign in again before it would save a single dated task. What
+    made that trade acceptable is how little the token can do: it only ever
+    reaches the <strong>my.adhd</strong> calendar, never the ones you already
+    had.
+  </p>
+  <p>
+    Unlinking forgets the connection, deletes the stored token, and tells
+    Google to revoke it. The events already in your calendar are left alone,
+    and you can delete the <strong>my.adhd</strong> calendar yourself at any
+    time from Google Calendar. You can also revoke the app's access from your
     <a href="https://myaccount.google.com/permissions" rel="noopener">Google
     account permissions</a> page.
   </p>

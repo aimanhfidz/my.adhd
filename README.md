@@ -147,9 +147,10 @@ friction is where ADHD users leave. `state` in `app.js` is a plain object, so
 swapping in Supabase later means replacing `load()` / `save()` only.
 
 The Google Calendar link keeps its own small record under `myadhd.gcal.v1`:
-whether it is linked and which calendar it made. The access token is not in
-there — it is held in memory for the hour it lasts and re-requested silently
-after that. See [Google Calendar](#google-calendar).
+whether it is linked, which calendar it made, and the access token until it
+expires. The token was memory-only until iOS proved that unworkable — see
+[Where the auth lives](#where-the-auth-lives) for why it changed and what
+makes the trade acceptable.
 
 ## Google Calendar
 
@@ -171,16 +172,32 @@ checkbox, so it can be hidden without unlinking anything.
 ### Where the auth lives
 
 In the browser, and nowhere else. Google Identity Services hands out an access
-token that lives in memory for an hour and is never written to disk; there is
-no client secret, no refresh token, and no server-side session, because there
-is no server-side anything. The API calls in `gcal.js` go straight from the
-browser to `googleapis.com` and never touch `/api`. Unlinking revokes the token
-and forgets the link; the events already in Google are left where they are.
+token that lasts an hour; there is no client secret, no refresh token, and no
+server-side session, because there is no server-side anything. The API calls in
+`gcal.js` go straight from the browser to `googleapis.com` and never touch
+`/api`. Unlinking revokes the token and forgets the link; the events already in
+Google are left where they are.
 
-Keeping the token out of `localStorage` costs one silent round-trip to Google
-on the first sync after a page load. That is the right trade: a bearer
-credential sitting on disk is readable by anything that can run script on the
-origin.
+**The token is kept in `localStorage` until it expires, and that reversed an
+earlier decision.** It was memory-only, on the reasoning that a bearer
+credential on disk is readable by anything that can run script on the origin —
+and the only cost looked like one silent round-trip after a reload.
+
+iOS disproved that. Silent renewal needs Google's iframe on
+`accounts.google.com` to read its own session cookie, and Safari's tracking
+prevention refuses third-party cookie access; a home-screen install is worse
+still, because it gets a storage container with no Google session in it at all.
+So every reopen failed to renew, and the app demanded a reconnect before it
+would save one dated task. A security property nobody can use is not a security
+property.
+
+What makes the trade acceptable is the scope. `calendar.app.created` means the
+worst this token can do is edit the app's own calendar — it cannot read, change
+or delete anything on the calendars the user already had. There is no XSS path
+to it either: every piece of task text reaches the DOM through `textContent`,
+and all eight `innerHTML` writes in `app.js` are either clearing a node or
+writing a static SVG. A token that could reach a real diary would not be worth
+persisting. This one is.
 
 ### Setting it up
 
