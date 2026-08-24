@@ -1,0 +1,105 @@
+/* ============ my.adhd — the legal pages ============
+   Long-form prose, which the site has not had anywhere else: the landing
+   page is one viewport of headline and the app is all cards and rows.
+   So this is the one stylesheet that is really about reading — a single
+   measured column, generous leading, and nothing in the margins to look
+   at instead.
+
+   Loaded after landing.css and borrows its tokens, its body ground and
+   its nav. The one thing it overrides is the stickiness: landing.css
+   pins the bar because that page never scrolls, and a bar with no ground
+   behind it would drag a seam through this one. */
+
+.legal-nav{position:static; margin-bottom:clamp(18px,4vh,36px)}
+
+.legal{
+  max-width:68ch;
+  margin:0 auto;
+  padding:0 clamp(20px,5vw,40px) clamp(60px,12vh,120px);
+  padding-left:max(clamp(20px,5vw,40px), env(safe-area-inset-left, 0px));
+  padding-right:max(clamp(20px,5vw,40px), env(safe-area-inset-right, 0px));
+  font-size:16px;
+  line-height:1.68;
+  color:var(--muted);
+}
+
+.legal-title{
+  font-size:clamp(30px,6vw,42px); font-weight:800; letter-spacing:-.03em;
+  line-height:1.1; color:var(--ink);
+}
+.legal-date{margin-top:8px; font-size:13px; color:var(--faint)}
+
+.legal-lede{
+  margin-top:22px; font-size:17.5px; line-height:1.6; color:var(--ink);
+}
+
+/* The summary box. Anyone who reads one thing on this page reads this,
+   so it is the only block that gets a ground of its own. */
+.legal-tldr{
+  margin-top:28px; padding:22px clamp(18px,4vw,26px);
+  background:var(--wash); border:1.5px solid var(--line);
+  border-radius:var(--radius-card);
+}
+/* Specificity bumped past the generic `.legal h2` below, which is an equal
+   match and wins on order — this heading is a label on a box, not a
+   section break, and must not carry the section break's air above it. */
+.legal .legal-tldr h2{
+  margin:0 0 12px; font-size:13px; font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--faint);
+}
+.legal-tldr ul{margin:0; padding:0; list-style:none}
+.legal-tldr li{
+  position:relative; padding-left:22px; margin-top:10px; line-height:1.55;
+}
+.legal-tldr li:first-child{margin-top:0}
+.legal-tldr li::before{
+  content:""; position:absolute; left:4px; top:.62em;
+  width:7px; height:7px; border-radius:50%; background:var(--accent);
+}
+.legal-tldr strong{color:var(--ink); font-weight:700}
+
+.legal h2{
+  margin-top:clamp(34px,6vh,52px); margin-bottom:10px;
+  font-size:21px; font-weight:800; letter-spacing:-.02em;
+  line-height:1.25; color:var(--ink);
+}
+
+.legal p{margin-top:14px}
+.legal p:first-of-type{margin-top:0}
+
+.legal ul:not(.legal-tldr ul){margin-top:14px; padding-left:22px}
+.legal ul:not(.legal-tldr ul) li{margin-top:9px}
+.legal ul:not(.legal-tldr ul) li::marker{color:var(--faint)}
+
+.legal strong{color:var(--ink); font-weight:650}
+
+.legal code{
+  font-family:ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size:.88em; padding:2px 6px; border-radius:6px;
+  background:var(--wash); border:1px solid var(--line);
+  color:var(--ink); overflow-wrap:anywhere;
+}
+
+.legal a{
+  color:var(--accent); text-decoration:underline;
+  text-underline-offset:2px; text-decoration-thickness:1.5px;
+  overflow-wrap:anywhere;   /* a long mailto must not push the column wide */
+}
+.legal a:hover{text-decoration-thickness:2.5px}
+.legal a:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+
+/* An aside rather than a clause: the plain-language warning that belongs
+   next to the AI section without pretending to be part of the promise. */
+.legal-note{
+  margin-top:16px; padding:14px 16px;
+  border-left:3px solid var(--line-strong);
+  background:var(--wash); border-radius:0 12px 12px 0;
+  font-size:15px; color:var(--muted);
+}
+
+.legal-back{
+  margin-top:clamp(40px,8vh,72px); padding-top:24px;
+  border-top:1.5px solid var(--line); font-size:15px;
+}
+.legal-back a{text-decoration:none; font-weight:600}
+.legal-back a:hover{text-decoration:underline}

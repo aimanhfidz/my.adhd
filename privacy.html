@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Privacy — my.adhd</title>
+<meta name="description" content="What my.adhd does with what you type. Short version: your lists never leave your device, the dump goes to an AI to be sorted, and nothing is tracked." />
+
+<link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=2" />
+
+<link rel="stylesheet" href="theme.css" />
+<link rel="stylesheet" href="landing.css" />
+<link rel="stylesheet" href="legal.css" />
+<script src="theme.js"></script>
+</head>
+<body>
+
+<nav class="nav legal-nav">
+  <a class="brand-lockup" href="/" aria-label="my.adhd home">
+    <svg class="logo" viewBox="0 0 100 100" aria-hidden="true">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </svg>
+    <span class="wordmark">my<span class="accent">.adhd</span></span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+    <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.9 8.9 0 1 0 11.1 11.1z"/></svg>
+    <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+  </button>
+</nav>
+
+<main class="legal">
+
+  <h1 class="legal-title">Privacy</h1>
+  <p class="legal-date">Last updated <time datetime="2026-08-24">24 August 2026</time></p>
+
+  <p class="legal-lede">
+    This is the whole of it, written to be read rather than to be survived.
+    If anything below turns out not to match what the app does, the app is
+    the bug and we want to hear about it.
+  </p>
+
+  <section class="legal-tldr">
+    <h2>The short version</h2>
+    <ul>
+      <li><strong>Your tasks never leave your device.</strong> There is no
+        account, no login, and no copy of your lists on any server of ours.</li>
+      <li><strong>What you type into the dump box is sent to an AI</strong> to
+        be turned into tasks, and is not stored afterwards.</li>
+      <li><strong>Google Calendar is off unless you turn it on</strong>, and
+        when it is on, the app can only touch a calendar it made itself.</li>
+      <li><strong>There is no tracking of any kind.</strong> No analytics, no
+        advertising, no cookies, no third-party scripts on the page.</li>
+    </ul>
+  </section>
+
+  <h2>Your tasks and your profile</h2>
+  <p>
+    Everything on your lists — the tasks, their dates, the steps, the name and
+    face on your profile — lives in your browser's local storage on the device
+    you typed it on. It is not sent anywhere, not backed up, and not readable
+    by us. That is also the trade-off: clear your browser data and it is gone,
+    and there is nothing we can do to bring it back.
+  </p>
+
+  <h2>The dump box, and the AI that sorts it</h2>
+  <p>
+    When you press the button, the text you wrote is sent to our server and
+    passed straight to <a href="https://www.anthropic.com/" rel="noopener">Anthropic</a>'s
+    API, which reads it and returns a structured list of tasks. That round trip
+    is the feature; there is no way to have the sorting without it.
+  </p>
+  <p>
+    We do not keep the text. It is held in memory for the length of the request
+    and not written to any database of ours. Anthropic processes it as our
+    service provider, and does not train models on it. If the network is down
+    or the AI is unreachable, the app falls back to a much simpler parser that
+    runs entirely in your browser and sends nothing — you will see an "Offline
+    mode" note when that happens.
+  </p>
+  <p class="legal-note">
+    Practically: treat the dump box the way you would treat any AI chat. It is
+    a good place for "chase the landlord about the boiler" and a bad place for
+    your passwords.
+  </p>
+
+  <h2>Google Calendar</h2>
+  <p>
+    This is off until you link it, and the app works fully without it.
+  </p>
+  <p>
+    When you link it, the app asks Google for one narrow permission:
+    <code>calendar.app.created</code>. That lets it create its own calendar,
+    named <strong>my.adhd</strong>, and manage events on that one calendar.
+    It cannot read, change or delete anything on the calendars you already had.
+    This is enforced by Google, not merely promised here.
+  </p>
+  <p>
+    For each task that has a date, the app writes an event to that calendar
+    containing the task's title, its first step, its rough duration, its
+    category and its energy level. When you tick the task off, delete it, or
+    clear your lists, the event is deleted too. Nothing is ever read back out
+    of your calendar, so the app never learns anything about the rest of your
+    diary.
+  </p>
+  <p>
+    The access token Google issues is held in your browser's memory for the
+    hour it is valid and is never written to disk. We never see it: the calls
+    go from your browser straight to Google and do not pass through our
+    servers. Unlinking forgets the connection and tells Google to revoke the
+    token; the events already in your calendar are left alone, and you can
+    delete the <strong>my.adhd</strong> calendar yourself at any time from
+    Google Calendar. You can also revoke the app's access from your
+    <a href="https://myaccount.google.com/permissions" rel="noopener">Google
+    account permissions</a> page.
+  </p>
+
+  <h2>Feedback</h2>
+  <p>
+    If you send a note from the feedback screen, we store the text of it. We do
+    not store your name, your email, or anything that identifies you, because
+    the app has never asked you for any of those.
+  </p>
+  <p>
+    We do store a one-way, salted hash of your IP address alongside it, for one
+    reason: the box takes one note per person per day, and something has to
+    count. The hash cannot be turned back into an address, it is never shown to
+    anyone, and it is not used to link your notes to each other or to anything
+    else. Notes are stored with <a href="https://supabase.com/" rel="noopener">Supabase</a>,
+    our database provider.
+  </p>
+
+  <h2>Hosting and logs</h2>
+  <p>
+    The site is hosted on <a href="https://vercel.com/" rel="noopener">Vercel</a>,
+    which keeps ordinary server logs — IP address, timestamp, which page was
+    requested — as every web host does. We do not add anything to those logs,
+    do not analyse them, and cannot use them to identify you.
+  </p>
+
+  <h2>What we do not do</h2>
+  <ul>
+    <li>No analytics. Not Google Analytics, not a privacy-friendly alternative,
+      not a page-view counter. There is genuinely nothing.</li>
+    <li>No advertising, and no data sold, rented or shared with anyone for it.</li>
+    <li>No cookies. The app stores things in your browser, but nothing is sent
+      to a server, so no cookie banner is needed and none is shown.</li>
+    <li>No third-party scripts on the page — except Google's own sign-in
+      library, which is loaded only at the moment you press "Link Google
+      Calendar", and never before.</li>
+    <li>No profiling, no automated decisions about you, and no attempt to work
+      out who you are.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>
+    This is not built or intended for children under 13, and we do not
+    knowingly collect anything from them. Since we do not collect identifying
+    information from anyone, we have no way to detect age — which is a
+    limitation, stated plainly rather than dressed up.
+  </p>
+
+  <h2>Your rights over your data</h2>
+  <p>
+    Most of the usual rights — access, correction, deletion, portability — are
+    unusual here because we mostly do not hold anything to exercise them
+    against. In practice:
+  </p>
+  <ul>
+    <li><strong>Your lists:</strong> yours already. "Clear everything" on the
+      profile screen deletes them, as does clearing site data in your browser.</li>
+    <li><strong>Your calendar events:</strong> unlink on the profile screen,
+      then delete the <strong>my.adhd</strong> calendar in Google if you want
+      the events gone as well.</li>
+    <li><strong>A feedback note:</strong> we cannot find it by asking you who
+      you are, because we do not know. Quote it back to us and we will delete
+      it.</li>
+  </ul>
+  <p>
+    If you are in the UK, the EU, or anywhere with similar law, you also have
+    the right to complain to your data protection authority.
+  </p>
+
+  <h2>Changes</h2>
+  <p>
+    If this changes in a way that affects what happens to what you type, the
+    date at the top changes and the change is described here rather than
+    quietly folded in.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions, corrections, or a note to delete:
+    <a href="mailto:CONTACT_EMAIL">CONTACT_EMAIL</a>.
+  </p>
+
+  <p class="legal-back"><a href="/">&larr; Back to my.adhd</a></p>
+
+</main>
+
+</body>
+</html>

@@ -984,6 +984,11 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
 .stat span{display:block; margin-top:4px; font-size:12.5px; color:var(--faint)}
 
 .profile-wrap .hint{margin-top:18px}
+/* The policy link sits directly under the hint it qualifies, so it gets a
+   tighter gap than the hint's own — they read as one block. */
+.hint--link{margin-top:6px}
+.hint--link a{color:var(--muted); text-underline-offset:2px}
+.hint--link a:hover{color:var(--accent)}
 
 
 /* ---------- the Google Calendar card ----------
