@@ -1,0 +1,47 @@
+/* ============ my.adhd — the notes page ============
+   Borrows legal.css for the column and the type, because this is also a
+   page you read down. What it adds is the gate and the note cards.
+
+   Deliberately plain. It is a page for one person, seen rarely, and
+   anything decorative here is work that should have gone into the app. */
+
+.admin{max-width:72ch}
+
+.admin-gate{
+  margin-top:28px; padding:28px 22px; text-align:center;
+  background:var(--wash); border:1.5px solid var(--line);
+  border-radius:var(--radius-card);
+}
+.admin-gate-text{font-size:15px; color:var(--muted); line-height:1.55}
+.admin-in{margin-top:18px; max-width:320px; margin-left:auto; margin-right:auto}
+
+.admin-bar{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; margin-top:22px; padding-bottom:14px;
+  border-bottom:1.5px solid var(--line);
+}
+.admin-who{font-size:13px; color:var(--faint); overflow-wrap:anywhere}
+
+.note{
+  margin-top:14px; padding:16px 18px;
+  background:var(--surface); border:1.5px solid var(--line);
+  border-radius:var(--radius-lg);
+}
+.note-when{
+  font-size:12px; font-weight:600; letter-spacing:.02em;
+  color:var(--faint); margin-bottom:8px;
+}
+/* Someone else's words, so they are shown as written: line breaks kept,
+   long unbroken strings wrapped rather than allowed to widen the page. */
+.note-body{
+  font-size:15px; line-height:1.6; color:var(--ink);
+  white-space:pre-wrap; overflow-wrap:anywhere;
+}
+
+.admin-empty{
+  margin-top:22px; padding:26px 18px; text-align:center;
+  font-size:14.5px; color:var(--faint);
+  border:1.5px dashed var(--line-strong); border-radius:var(--radius-lg);
+}
+
+.is-hidden{display:none !important}

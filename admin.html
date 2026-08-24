@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Notes — my.adhd</title>
+<meta name="robots" content="noindex, nofollow" />
+
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+<link rel="stylesheet" href="theme.css" />
+<link rel="stylesheet" href="landing.css" />
+<link rel="stylesheet" href="legal.css" />
+<link rel="stylesheet" href="admin.css" />
+<script src="theme.js"></script>
+</head>
+<body>
+
+<nav class="nav legal-nav">
+  <a class="brand-lockup" href="/" aria-label="my.adhd home">
+    <svg class="logo" viewBox="0 0 100 100" aria-hidden="true">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </svg>
+    <span class="wordmark">my<span class="accent">.adhd</span></span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+    <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.9 8.9 0 1 0 11.1 11.1z"/></svg>
+    <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+  </button>
+</nav>
+
+<main class="legal admin">
+
+  <h1 class="legal-title">Notes</h1>
+  <p class="legal-date" id="admin-sub">Everything sent from the feedback screen.</p>
+
+  <!-- Signed out. Not a lock — the API is the lock — just the door. -->
+  <div class="admin-gate" id="admin-gate">
+    <p class="admin-gate-text" id="admin-gate-text">Sign in to read the notes.</p>
+    <button class="btn-primary admin-in" id="admin-in" type="button">Sign in with Google</button>
+  </div>
+
+  <div class="admin-body is-hidden" id="admin-body">
+    <div class="admin-bar">
+      <span class="admin-who" id="admin-who"></span>
+      <button class="btn-danger-quiet" id="admin-out" type="button">Sign out</button>
+    </div>
+    <div id="admin-list"></div>
+  </div>
+
+  <p class="legal-back"><a href="/app">&larr; Back to the app</a></p>
+
+</main>
+
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script src="admin.js"></script>
+
+</body>
+</html>
