@@ -146,6 +146,103 @@ fully reproducible builds.
 friction is where ADHD users leave. `state` in `app.js` is a plain object, so
 swapping in Supabase later means replacing `load()` / `save()` only.
 
+The Google Calendar link keeps its own small record under `myadhd.gcal.v1`:
+whether it is linked and which calendar it made. The access token is not in
+there — it is held in memory for the hour it lasts and re-requested silently
+after that. See [Google Calendar](#google-calendar).
+
+## Google Calendar
+
+Off by default, and invisible until it is configured. When it is on, every task
+that carries a day is mirrored into Google Calendar; tick it off, delete it, or
+clear the lists and the event goes with it. It is one-way — the app is the
+source of truth and the calendar is a view of it, so an event edited on the
+Google side is put back the next time its task changes.
+
+### What it is allowed to do
+
+The scope is `calendar.app.created`. That lets the app create **its own**
+secondary calendar, named `my.adhd`, and edit events on that one only. It
+cannot read, change or delete anything on the calendars you already had — not
+because it politely declines to, but because Google will not let it. The
+calendar shows up in the normal Google grid with its own colour and its own
+checkbox, so it can be hidden without unlinking anything.
+
+### Where the auth lives
+
+In the browser, and nowhere else. Google Identity Services hands out an access
+token that lives in memory for an hour and is never written to disk; there is
+no client secret, no refresh token, and no server-side session, because there
+is no server-side anything. The API calls in `gcal.js` go straight from the
+browser to `googleapis.com` and never touch `/api`. Unlinking revokes the token
+and forgets the link; the events already in Google are left where they are.
+
+Keeping the token out of `localStorage` costs one silent round-trip to Google
+on the first sync after a page load. That is the right trade: a bearer
+credential sitting on disk is readable by anything that can run script on the
+origin.
+
+### Setting it up
+
+1. In the [Google Cloud Console](https://console.cloud.google.com/), make a
+   project (or pick one) and enable the **Google Calendar API**.
+2. Under **APIs & Services → OAuth consent screen**, choose **External**, fill
+   in the app name and support email, and add the scope
+   `https://www.googleapis.com/auth/calendar.app.created`. While the app is in
+   **Testing** only the accounts listed under **Test users** can link, which is
+   fine for personal use and does not expire the way a refresh-token flow would.
+3. Under **Credentials**, create an **OAuth client ID** of type **Web
+   application**. Add every origin the app is served from to **Authorised
+   JavaScript origins** — production, previews, and `http://localhost:8000` for
+   `npm run dev`. Leave the redirect URIs empty; the token flow does not use one.
+4. Paste the client ID into `config.js`:
+
+   ```js
+   window.MYADHD_GOOGLE_CLIENT_ID = '1234567890-abc.apps.googleusercontent.com';
+   ```
+
+5. Deploy. The card appears on the profile screen.
+
+The client ID is public — it is in every OAuth request Google performs and in
+Google's own sample code. What actually stops anyone else using it is the
+authorised-origins list in step 3, which is why that step is the one to get
+right. Leave `config.js` empty and the feature does not appear at all; the rest
+of the app is unchanged.
+
+Vercel previews get a new origin per deployment, so the card will fail to link
+on a preview URL unless that exact origin has been added. That is expected.
+
+### How the sync works
+
+A reconcile, not a queue. Each task keeps `gcal: { id, sig }` — the id of its
+event and a signature of the fields the event is built from. A pass walks the
+tasks and fixes the difference:
+
+| Task | Event |
+|---|---|
+| Has a day, no `gcal` | created |
+| Has a day, `sig` moved | patched |
+| Ticked off, or its day was taken away | deleted, `gcal` cleared |
+| Deleted from the store | id parked in `state.gcalOrphans`, deleted next pass |
+
+Nothing is lost by running it twice, which is what makes it survive the things
+that actually go wrong: a closed laptop mid-sync, a dead tunnel, a token that
+aged out between two calls. It is debounced 1200ms behind `save()` so a triage
+that lands eight tasks is one burst rather than eight, capped at 24 operations
+a pass so a first link with a backlog does not trip the rate limiter, and run
+again on tab focus and on `online`.
+
+A task with a time becomes a timed event of `minutes` length; a task with only
+a day becomes an all-day event. The first step travels in the description,
+because "Open the letter and read the first line" is worth far more in a phone
+notification than the task title repeated.
+
+### Still not in it
+
+Reading events back out, so the app never knows you are busy. Recurrence.
+Reminder overrides. Multiple calendars. Sharing. All of those want a two-way
+sync, and a two-way sync wants conflict resolution, which wants a server.
+
 ## Files
 
 | File | What it is |
@@ -159,7 +256,9 @@ swapping in Supabase later means replacing `load()` / `save()` only.
 | `fonts/` | Baloo 2 (variable, wght 400-800), self-hosted |
 | `docs/` | README screenshots and the two theme gifs. Not served by the app |
 | `styles.css` | App layout: one white page, content held to `--measure` (720px), gradient pill actions |
-| `app.js` | State, triage call, ordering, rendering, the composer, the calendar, the profile |
+| `app.js` | State, triage call, ordering, rendering, the composer, the calendar, the profile, the calendar sync |
+| `gcal.js` | Google Calendar: the OAuth token dance and the three verbs. Loads before `app.js`, which only ever asks it whether the feature is available |
+| `config.js` | Public front-end config — currently just the Google OAuth client ID. Empty means the calendar feature stays hidden |
 | `api/triage.js` | Claude call — triage + breakdown modes |
 | `api/feedback.js` | The note sent from the feedback screen. One per device per UTC day |
 | `install.html` / `install.css` | The "add to home screen" walkthrough |
@@ -412,3 +511,10 @@ those is a reason for the app to feel like homework.
 out of plain language, so the dates existed whether or not anything drew
 them — the calendar screen shows what was already there rather than asking
 anyone to schedule. Nothing else here has earned the same exception yet.
+
+**Google Calendar came off it too, on the same argument and one more.** The
+dates were already there; the only question was whether they stayed trapped in
+one browser. It stayed honest about the rest of the list by keeping the auth
+entirely client-side — there is still no account and still no server holding
+anything of yours — and by asking for a scope that cannot touch the calendars
+you already had. It is off until you turn it on.

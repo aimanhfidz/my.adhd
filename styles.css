@@ -985,6 +985,50 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
 
 .profile-wrap .hint{margin-top:18px}
 
+
+/* ---------- the Google Calendar card ----------
+   Deliberately quieter than the profile card above it: it is a setting,
+   not the subject of the screen. It only earns the accent border once it
+   is actually linked, and the amber only when it needs a hand. */
+
+.gcal-card{
+  margin-top:18px; padding:20px 18px;
+  background:var(--surface); border:1.5px solid var(--line);
+  border-radius:var(--radius-card);
+  transition:border-color .22s var(--ease), background .22s var(--ease);
+}
+.gcal-card.is-on{border-color:var(--line-strong); background:var(--wash)}
+.gcal-card.is-stale{border-color:var(--orange); background:var(--danger-wash)}
+
+.gcal-head{display:flex; align-items:center; gap:12px}
+.gcal-mark{
+  width:34px; height:34px; flex:none; padding:6px;
+  border-radius:12px; color:var(--accent);
+  background:var(--wash); border:1.5px solid var(--line-strong);
+}
+.gcal-card.is-on .gcal-mark{background:var(--surface)}
+.gcal-card.is-stale .gcal-mark{color:var(--orange); border-color:var(--orange)}
+
+.gcal-title{font-size:15.5px; font-weight:700; letter-spacing:-.015em; line-height:1.2}
+.gcal-state{margin-top:2px; font-size:12.5px; font-weight:600; color:var(--faint)}
+.gcal-card.is-on .gcal-state{color:var(--accent)}
+.gcal-card.is-stale .gcal-state{color:var(--orange)}
+
+.gcal-note{margin-top:12px; font-size:13.5px; line-height:1.5; color:var(--muted)}
+
+/* Narrower than the full-bleed primary on the dump screen — this is a
+   settings action, and a button the width of the phone reads like the
+   point of the page. */
+.gcal-go{margin-top:16px; font-size:15px; padding:13px 20px}
+
+.gcal-more{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; margin-top:12px;
+}
+.gcal-more:empty{display:none}
+.gcal-more .btn-soft{flex:0 1 auto; min-width:0; padding:9px 16px; font-size:13.5px}
+.gcal-more .is-hidden{display:none}
+
 /* ---------- night: the same monochrome, inverted ---------- */
 
 @media (prefers-reduced-motion:reduce){

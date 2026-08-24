@@ -86,6 +86,14 @@ const el = {
   statDated:    $('stat-dated'),
   statOverdue:  $('stat-overdue'),
   statOverdueCard: $('stat-overdue-card'),
+
+  gcalCard:     $('gcal-card'),
+  gcalState:    $('gcal-state'),
+  gcalNote:     $('gcal-note'),
+  gcalBtn:      $('gcal-btn'),
+  gcalOpen:     $('gcal-open'),
+  gcalOff:      $('gcal-off'),
+  localNote:    $('local-note'),
 };
 
 /* ---------------- state ---------------- */
@@ -95,6 +103,12 @@ let state = {
   energy: 'medium',   // how the user feels right now
   profile: { name: '', avatar: '\u{1F642}' },   // this device only — no account behind it
   sentFeedbackOn: null,   // the UTC day of the last note sent from this device
+
+  /* Calendar events whose task no longer exists to hang them off. A task
+     is deleted from the store the moment you remove it, which would strand
+     its event in Google for ever — so the event id is dropped here on the
+     way out and the sync clears it on the next pass. */
+  gcalOrphans: [],
 };
 
 function load() {
@@ -112,6 +126,7 @@ function load() {
 
 function save() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (_) {}
+  syncSoon();   // no-op unless the calendar is linked
 }
 
 /* How long a finished task stays in the "N done" pile before it is dropped
@@ -138,7 +153,12 @@ function pruneDone() {
   });
 
   const before = state.tasks.length;
-  state.tasks = state.tasks.filter(t => !t.done || now - t.doneAt < DONE_TTL);
+  const keep = [];
+  state.tasks.forEach(t => {
+    if (!t.done || now - t.doneAt < DONE_TTL) { keep.push(t); return; }
+    orphanEvent(t);   // it is about to stop existing; its event must not outlive it
+  });
+  state.tasks = keep;
 
   if (stamped || state.tasks.length !== before) save();
 }
@@ -651,6 +671,7 @@ function normalizeTask(t) {
     at:   normalizeTime(t.at),    // a clock time on that day, or null
     steps: Array.isArray(t.steps) ? t.steps.slice(0, 7).map(String) : null,
     local: t.local === true,   // sorted by the offline parser, not the model
+    gcal: null,   // { id, sig } once this one has been pushed to Google
     done: false,
     doneAt: null,   // stamped by markDone, read by pruneDone
     skipped: false,
@@ -985,6 +1006,7 @@ function stepClear() {
     el.clearConfirm.classList.add('is-final');
   } else {
     const gone = state.tasks.length;
+    state.tasks.forEach(orphanEvent);
     state.tasks = [];
     save();
     resetClear();
@@ -1076,11 +1098,17 @@ function removeTask(id) {
   const i = state.tasks.findIndex(t => t.id === id);
   if (i === -1) return;
   const [gone] = state.tasks.splice(i, 1);
+  orphanEvent(gone);
   save();
   goToNext();
   toast('Removed.', {
     label: 'Undo',
     fn: () => {
+      /* Pull the event back off the death row list if the sync has not got
+         to it yet. If it has, unorphan finds nothing, the task comes back
+         with a gcal id pointing at a deleted event, and the next push gets
+         a 404 and rebuilds it. Either way it ends up right. */
+      unorphanEvent(gone);
       state.tasks.splice(Math.min(i, state.tasks.length), 0, gone);
       save();
       goToNext();
@@ -1873,6 +1901,312 @@ function endDrag(commit) {
 document.addEventListener('pointerup',     () => { dropPress(); endDrag(true); });
 document.addEventListener('pointercancel', () => { dropPress(); endDrag(false); });
 
+/* ---------------- Google Calendar ----------------
+   One direction only: the app is the source of truth and the calendar is
+   a view of it. Whatever is on your agenda — still to do, and carrying a
+   day — gets an event; everything else does not. Tick something off,
+   delete it, or clear the lists, and the event goes with it. Nothing is
+   ever read back out of Google, so an event you edit over there will be
+   put back the next time the task it came from changes.
+
+   The push is a reconcile, not a queue of operations. Each task remembers
+   the id of its event and a signature of the fields the event is built
+   from; a pass compares what should exist against that record and fixes
+   the difference. It costs one loop over the tasks and it is idempotent,
+   which is what makes it survive the things that actually go wrong here —
+   a closed laptop mid-sync, a dead tunnel, a token that aged out between
+   two calls. Nothing is lost by running it again.
+
+   None of this touches the calendars you already had. The scope the app
+   asks for only lets it create and edit its own. See gcal.js. */
+
+/* Long enough to swallow a burst — a triage lands eight tasks with eight
+   save() calls — short enough that a single edit feels immediate. */
+const SYNC_DEBOUNCE = 1200;
+
+/* A cap per pass, so a first link with a big backlog does not fire two
+   hundred requests at once and trip Google's rate limiter. What is left
+   over is picked up by the pass this one schedules on its way out. */
+const SYNC_BATCH = 24;
+
+let syncTimer = null;
+let syncing = false;
+let syncState = 'idle';   // idle | working | stale | error
+let syncError = null;
+
+/** Belongs on the calendar: still to do, and pinned to a day. */
+const syncable = (t) => !t.done && !!t.when;
+
+/* The fields the event is actually built from. If none of these moved,
+   the event on Google is still correct and the pass skips it — which is
+   why re-rendering, ticking a different task, or renaming yourself does
+   not generate any traffic at all. */
+function eventSig(t) {
+  return [t.title, t.when, t.at || '', t.minutes, t.firstStep || ''].join(' :: ');
+}
+
+function localStamp(d) {
+  return `${dayKey(d)}T${pad2(d.getHours())}:${pad2(d.getMinutes())}:00`;
+}
+
+function eventBody(t) {
+  const body = {
+    summary: t.title,
+    /* The first step is the whole point of the app, so it travels with the
+       event: seeing "Open the letter and read the first line" in a phone
+       notification is worth far more than seeing the task title again. */
+    description: [
+      t.firstStep ? `First step: ${t.firstStep}` : null,
+      `${minutesLabel(t.minutes)} · ${t.energy} energy · ${categoryLabel(t.category)}`,
+      '',
+      'Added by my.adhd. Tick it off in the app and this disappears.',
+    ].filter(line => line !== null).join('\n'),
+    /* Stamped so an event can be traced back to its task from the Google
+       side — and so a future two-way sync has something to match on that
+       does not depend on the title. */
+    extendedProperties: { private: { myadhdId: t.id } },
+  };
+
+  if (t.at) {
+    const [h, m] = t.at.split(':').map(Number);
+    const start = keyToDate(t.when);
+    start.setHours(h, m, 0, 0);
+    const end = new Date(start.getTime() + t.minutes * 60000);
+    body.start = { dateTime: localStamp(start), timeZone: gcal.timeZone() };
+    body.end   = { dateTime: localStamp(end),   timeZone: gcal.timeZone() };
+  } else {
+    /* A day with no time is an all-day event, not an invented 9am. The end
+       date on an all-day event is exclusive, hence the +1. */
+    body.start = { date: t.when };
+    body.end   = { date: dayKey(addDays(keyToDate(t.when), 1)) };
+  }
+
+  return body;
+}
+
+/** Send a task's event id to be deleted, because the task is going away. */
+function orphanEvent(t) {
+  if (t && t.gcal && t.gcal.id && !state.gcalOrphans.includes(t.gcal.id)) {
+    state.gcalOrphans.push(t.gcal.id);
+  }
+}
+
+/** Undo's half of that, for a removal that gets taken back in time. */
+function unorphanEvent(t) {
+  if (!t || !t.gcal || !t.gcal.id) return;
+  state.gcalOrphans = state.gcalOrphans.filter(id => id !== t.gcal.id);
+}
+
+/* save() calls this on every write. It has to be free for everyone who
+   never turns the calendar on, which is the common case. */
+function syncSoon() {
+  if (syncing) return;                        // the pass re-checks on its way out
+  if (!window.gcal || !gcal.connected()) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncNow, SYNC_DEBOUNCE);
+}
+
+async function syncNow() {
+  if (syncing || !window.gcal || !gcal.connected()) return;
+
+  /* Work out what needs doing before anything is awaited. The store can be
+     written to while a request is in flight — the plan is a snapshot, and
+     each step re-checks the task it is about to touch. */
+  const plan = [];
+  for (const t of state.tasks) {
+    if (syncable(t)) {
+      if (!t.gcal) plan.push({ op: 'add', t });
+      else if (t.gcal.sig !== eventSig(t)) plan.push({ op: 'edit', t });
+    } else if (t.gcal) {
+      plan.push({ op: 'drop', t });           // ticked off, or its day was taken away
+    }
+  }
+  for (const id of state.gcalOrphans) plan.push({ op: 'kill', id });
+
+  if (!plan.length) { markSync('idle'); return; }
+
+  syncing = true;
+  markSync('working');
+
+  const batch = plan.slice(0, SYNC_BATCH);
+  let dirty = false;
+  let failure = null;
+
+  try {
+    /* A live token first, so a whole batch does not fail one call at a
+       time when the hour is simply up. */
+    const live = await gcal.warm();
+    if (!live) throw new Error('reconnect');
+
+    for (const step of batch) {
+      try {
+        if (step.op === 'add') {
+          if (!syncable(step.t)) continue;    // changed under us; the next pass has it
+          const sig = eventSig(step.t);
+          step.t.gcal = { id: await gcal.insert(eventBody(step.t)), sig };
+          dirty = true;
+
+        } else if (step.op === 'edit') {
+          if (!syncable(step.t) || !step.t.gcal) continue;
+          const sig = eventSig(step.t);
+          try {
+            await gcal.patch(step.t.gcal.id, eventBody(step.t));
+            step.t.gcal.sig = sig;
+          } catch (err) {
+            if (err.status !== 404 && err.status !== 410) throw err;
+            /* Deleted on the Google side. Rebuild it rather than carrying
+               a dead id around for ever. */
+            step.t.gcal = { id: await gcal.insert(eventBody(step.t)), sig };
+          }
+          dirty = true;
+
+        } else if (step.op === 'drop') {
+          if (syncable(step.t) || !step.t.gcal) continue;
+          await gcal.remove(step.t.gcal.id);
+          step.t.gcal = null;
+          dirty = true;
+
+        } else {
+          await gcal.remove(step.id);
+          state.gcalOrphans = state.gcalOrphans.filter(x => x !== step.id);
+          dirty = true;
+        }
+      } catch (err) {
+        /* Rate limiting is not a failure, it is a "later". Stop the batch
+           and let the next pass carry on from where this one got to — the
+           plan is rebuilt from scratch each time, so nothing is skipped. */
+        if (err.status === 403 || err.status === 429) { failure = err; break; }
+        throw err;
+      }
+    }
+  } catch (err) {
+    failure = err;
+  } finally {
+    syncing = false;
+    /* Written directly rather than through save(), which would call
+       syncSoon() straight back round. The scheduling below is the
+       deliberate version of that. */
+    if (dirty) { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (_) {} }
+  }
+
+  if (failure) {
+    syncError = failure.message;
+    /* An expired grant is the one worth telling the user about, because
+       they are the only one who can fix it. The rest is worth retrying
+       quietly rather than nagging about. */
+    markSync(/reconnect|interaction_required|invalid_grant|401/.test(failure.message)
+      ? 'stale' : 'error');
+    return;
+  }
+
+  markSync('idle');
+  if (plan.length > batch.length) syncTimer = setTimeout(syncNow, 400);
+  else syncSoon();   // catches anything written while the batch was in flight
+}
+
+function markSync(next) {
+  if (next !== 'error' && next !== 'stale') syncError = null;
+  if (syncState === next) return;
+  syncState = next;
+  if (el.screenMe && !el.screenMe.classList.contains('is-hidden')) paintGoogle();
+}
+
+/* ---- the card on the profile ---- */
+
+async function connectGoogle() {
+  /* Already linked, so the button is a "go on then" for anyone watching a
+     change and wondering whether it went. */
+  if (gcal.connected() && syncState !== 'stale') {
+    el.gcalBtn.disabled = true;
+    await syncNow();
+    paintGoogle();
+    return;
+  }
+
+  el.gcalBtn.disabled = true;
+  el.gcalBtn.textContent = 'Opening Google…';
+
+  try {
+    await gcal.connect();
+    markSync('idle');
+    paintGoogle();
+    toast('Linked. Anything with a date on it goes to your calendar.');
+    await syncNow();
+    paintGoogle();
+  } catch (err) {
+    /* Closing the popup is a decision, not a fault, and it should not come
+       back looking like something broke. */
+    const quiet = /popup_closed|access_denied|already open/.test(err.message);
+    if (!quiet) console.warn('google link failed:', err.message);
+    paintGoogle();
+    toast(quiet ? 'No problem — nothing was linked.' : `Could not link — ${err.message}.`);
+  }
+}
+
+async function disconnectGoogle() {
+  await gcal.disconnect();
+  /* The events stay in Google; what goes is this device's memory of them.
+     Clearing the ids means linking again rebuilds from scratch rather than
+     patching events it can no longer prove it owns. */
+  state.tasks.forEach(t => { t.gcal = null; });
+  state.gcalOrphans = [];
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (_) {}
+  markSync('idle');
+  paintGoogle();
+  toast('Unlinked. The events already in Google were left where they are.');
+}
+
+function paintGoogle() {
+  if (!el.gcalCard) return;
+
+  /* No client ID in config.js means this build cannot do it at all, and a
+     button that can only ever fail is worse than no button. The note under
+     it goes back to the unqualified promise, because with the card gone
+     that promise is once again the whole truth. */
+  if (!window.gcal || !gcal.configured()) {
+    el.gcalCard.classList.add('is-hidden');
+    el.localNote.textContent =
+      'This lives in this browser only \u2014 no account, no sync, nothing leaves the device.';
+    return;
+  }
+  el.gcalCard.classList.remove('is-hidden');
+
+  const on = gcal.connected();
+  const dated = state.tasks.filter(syncable).length;
+
+  el.gcalCard.classList.toggle('is-on', on);
+  el.gcalCard.classList.toggle('is-stale', on && syncState === 'stale');
+  el.gcalBtn.disabled = syncState === 'working';
+  el.gcalOpen.classList.toggle('is-hidden', !on);
+  el.gcalOff.classList.toggle('is-hidden', !on);
+
+  if (!on) {
+    el.gcalState.textContent = 'Not linked';
+    el.gcalNote.textContent =
+      'Put your dated tasks straight into Google Calendar. The app makes its own ' +
+      '“my.adhd” calendar and is only allowed to touch that one — the calendars ' +
+      'you already have stay off limits.';
+    el.gcalBtn.textContent = 'Link Google Calendar';
+    return;
+  }
+
+  el.gcalState.textContent =
+    syncState === 'working' ? 'Syncing…' :
+    syncState === 'stale'   ? 'Needs reconnecting' :
+    syncState === 'error'   ? 'Sync paused' : 'Linked';
+
+  el.gcalNote.textContent =
+    syncState === 'stale'
+      ? 'Google wants you to sign in again before the next change can go over.'
+      : syncState === 'error'
+      ? `The last try did not go through${syncError ? ` — ${syncError}` : ''}. It keeps trying.`
+      : dated === 0
+      ? 'Nothing on your lists has a date yet. Anything that gets one turns up in your “my.adhd” calendar.'
+      : `${dated === 1 ? '1 dated task is' : `${dated} dated tasks are`} kept in your “my.adhd” calendar. Tick one off and it goes from there too.`;
+
+  el.gcalBtn.textContent = syncState === 'stale' ? 'Reconnect' : 'Sync now';
+}
+
 /* ---------------- profile ----------------
    Local and deliberately small: a name to be greeted by, a face to
    recognise the tab by, and a count of what you have got through. It rides
@@ -1931,6 +2265,7 @@ function showProfile() {
   el.statOverdue.textContent = late;
   el.statOverdueCard.classList.toggle('is-late', late > 0);
   paintProfile();
+  paintGoogle();
   show(el.screenMe);
 }
 
@@ -2068,6 +2403,25 @@ el.nameInput.addEventListener('input', () => {
   paintProfile();
 });
 
+if (el.gcalBtn) {
+  el.gcalBtn.addEventListener('click', connectGoogle);
+  el.gcalOff.addEventListener('click', disconnectGoogle);
+  el.gcalOpen.addEventListener('click', () => {
+    /* Straight to the calendar in Google rather than to a settings page:
+       the point of linking is to see the thing over there. */
+    window.open('https://calendar.google.com/', '_blank', 'noopener');
+  });
+}
+
+/* Coming back to the tab is the moment worth catching. A phone that has
+   been asleep since yesterday has an hour-old token and a store that may
+   have been edited on another device's copy of the app; both are sorted
+   by one quiet pass. */
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) syncSoon();
+});
+window.addEventListener('online', syncSoon);
+
 el.input.addEventListener('input', previewDates);
 
 el.input.addEventListener('keydown', (e) => {
@@ -2149,3 +2503,9 @@ buildAvatarPicker();
 paintProfile();
 show(el.screenDump);
 el.input.focus();
+
+/* The calendar catches up in the background, behind the screen the user
+   actually came for. Nothing here is allowed to hold up the dump box, and
+   a failure is silent — the profile card is where the state is reported,
+   and it is the only place someone can do anything about it. */
+if (window.gcal && gcal.connected()) syncSoon();

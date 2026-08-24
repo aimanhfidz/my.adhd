@@ -400,8 +400,33 @@
         </div>
       </div>
 
-      <p class="hint">This lives in this browser only &mdash; no account, no sync,
-        nothing leaves the device.</p>
+
+      <!-- The one thing on this screen that reaches outside the browser, so
+           it gets its own card rather than a row in the one above: that card
+           is who you are, this is a wiring decision. The whole block is
+           hidden when no client ID is configured. -->
+      <div class="gcal-card is-hidden" id="gcal-card">
+        <div class="gcal-head">
+          <svg class="gcal-mark" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-calendar"/></svg>
+          <div>
+            <p class="gcal-title">Google Calendar</p>
+            <p class="gcal-state" id="gcal-state">Not linked</p>
+          </div>
+        </div>
+
+        <p class="gcal-note" id="gcal-note"></p>
+
+        <button class="btn-primary gcal-go" id="gcal-btn" type="button">Link Google Calendar</button>
+
+        <div class="gcal-more">
+          <button class="btn-soft is-hidden" id="gcal-open" type="button">Open in Google</button>
+          <button class="btn-danger-quiet is-hidden" id="gcal-off" type="button">Unlink</button>
+        </div>
+      </div>
+
+      <p class="hint" id="local-note">Your tasks live in this browser only &mdash; no account,
+        no server. The calendar link above is the one exception, and only while
+        it is switched on.</p>
     </div>
   </section>
 
@@ -465,6 +490,10 @@
 
 <div class="toast is-hidden" id="toast"></div>
 
+<!-- config.js first: gcal.js reads the client ID out of it at load, and
+     app.js only ever asks gcal whether the feature is available. -->
+<script src="config.js"></script>
+<script src="gcal.js"></script>
 <script src="app.js"></script>
 <script>
 /* Registered so the home-screen copy opens without a connection — and so
