@@ -30,9 +30,20 @@ export default async function handler(req, res) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
-  if (!configured() || !clientId || !clientSecret) {
-    console.error('[gcal-token] missing SUPABASE_* / GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET');
-    return res.status(503).json({ error: 'not configured' });
+  /* Name what is missing rather than saying "not configured" and leaving
+     someone to guess across four variables. Only ever booleans — whether a
+     name is set, never any part of a value. A config error you cannot
+     diagnose from the outside costs more than this tells an attacker,
+     which is nothing they could not learn by trying. */
+  const missing = [
+    !configured() && 'SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY',
+    !clientId && 'GOOGLE_CLIENT_ID',
+    !clientSecret && 'GOOGLE_CLIENT_SECRET',
+  ].filter(Boolean);
+
+  if (missing.length) {
+    console.error('[gcal-token] missing:', missing.join(', '));
+    return res.status(503).json({ error: 'not configured', missing });
   }
 
   const userId = await userFromRequest(req);
