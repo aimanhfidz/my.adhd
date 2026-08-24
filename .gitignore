@@ -1,10 +1,17 @@
 # dependencies
 node_modules/
 
-# secrets — ANTHROPIC_API_KEY lives in Vercel env vars, never in the repo
+# secrets — every key this project uses lives in Vercel env vars, never here.
+# ANTHROPIC_API_KEY, SUPABASE_SERVICE_ROLE_KEY, GOOGLE_CLIENT_SECRET.
 .env
 .env.*
 !.env.example
+
+# Google hands you the OAuth client secret as a download and no longer lets
+# you view it again, which makes it exactly the sort of file that ends up
+# sitting in a project folder. This repo is public.
+client_secret*.json
+*credentials*.json
 
 # vercel
 .vercel/
