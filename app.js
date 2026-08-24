@@ -114,6 +114,35 @@ function save() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (_) {}
 }
 
+/* How long a finished task stays in the "N done" pile before it is dropped
+   for good. Long enough that undo is still there the next day, short
+   enough that the store does not grow without limit — every task ever
+   ticked was being kept, re-rendered on every visit to the lists, and
+   counted on the profile for ever. */
+const DONE_TTL = 7 * 24 * 60 * 60 * 1000;
+
+/** How many of the done pile are drawn. The rest are counted, not listed. */
+const DONE_SHOWN = 20;
+
+/* Called once at startup, before anything is drawn.
+   A store written before doneAt existed has finished tasks with no stamp.
+   They are stamped now rather than dropped: a missing timestamp means we
+   do not know when it happened, and guessing "long ago" would silently
+   delete the pile the first time someone opened the updated app. */
+function pruneDone() {
+  const now = Date.now();
+  let stamped = 0;
+
+  state.tasks.forEach(t => {
+    if (t.done && !t.doneAt) { t.doneAt = now; stamped++; }
+  });
+
+  const before = state.tasks.length;
+  state.tasks = state.tasks.filter(t => !t.done || now - t.doneAt < DONE_TTL);
+
+  if (stamped || state.tasks.length !== before) save();
+}
+
 /* ---------------- screens ---------------- */
 
 const SCREENS = [el.screenDump, el.screenLoad, el.screenNow,
@@ -185,11 +214,33 @@ function syncTabs(screen) {
 }
 
 let toastTimer;
-function toast(msg) {
-  el.toast.textContent = msg;
+
+/* `action` turns the toast into the undo for whatever just happened:
+   {label, fn}. It gets a longer life than a plain message, because a
+   message only has to be read and an offer has to be reached. */
+function toast(msg, action = null) {
+  el.toast.textContent = '';
+  const text = document.createElement('span');
+  text.textContent = msg;
+  el.toast.appendChild(text);
+
+  if (action) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'toast-do';
+    btn.textContent = action.label;
+    btn.addEventListener('click', () => {
+      clearTimeout(toastTimer);
+      el.toast.classList.add('is-hidden');
+      action.fn();
+    });
+    el.toast.appendChild(btn);
+  }
+
+  el.toast.classList.toggle('toast--action', !!action);
   el.toast.classList.remove('is-hidden');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.toast.classList.add('is-hidden'), 2600);
+  toastTimer = setTimeout(() => el.toast.classList.add('is-hidden'), action ? 6000 : 2600);
 }
 
 const LOADING_LINES = [
@@ -601,6 +652,7 @@ function normalizeTask(t) {
     steps: Array.isArray(t.steps) ? t.steps.slice(0, 7).map(String) : null,
     local: t.local === true,   // sorted by the offline parser, not the model
     done: false,
+    doneAt: null,   // stamped by markDone, read by pruneDone
     skipped: false,
   };
 }
@@ -808,7 +860,28 @@ function renderTask(task) {
     breakDown(task, { stepText, stepsBlock, stepsList, breakBtn });
   });
 
-  detail.append(step, stepsBlock, breakBtn);
+  /* Repair, not decoration. The model splits and rewrites, and it gets
+     things wrong — without these two the only exits from a bad task are
+     lying about it with the tick or clearing the whole store. Both live
+     inside the detail so the row itself stays scannable. */
+  const fixRow = document.createElement('div');
+  fixRow.className = 'task-fix';
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'task-fix-btn';
+  editBtn.type = 'button';
+  editBtn.textContent = 'Edit';
+  editBtn.addEventListener('click', (e) => { e.stopPropagation(); editTitle(task, title, li); });
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'task-fix-btn task-fix-btn--danger';
+  delBtn.type = 'button';
+  delBtn.textContent = 'Remove';
+  delBtn.addEventListener('click', (e) => { e.stopPropagation(); removeTask(task.id); });
+
+  fixRow.append(editBtn, delBtn);
+
+  detail.append(step, stepsBlock, breakBtn, fixRow);
   if (task.steps && task.steps.length) paintSteps(task.steps, stepsBlock, stepsList);
 
   body.appendChild(detail);
@@ -840,7 +913,16 @@ function renderDone(done) {
   el.doneBlock.classList.remove('is-hidden');
   el.doneCount.textContent = done.length === 1 ? '1 done' : `${done.length} done`;
   el.doneList.innerHTML = '';
-  done.forEach(t => {
+
+  /* Newest first, and only the most recent DONE_SHOWN. The pile is there
+     to be undone from, and nobody undoes the fortieth thing they ticked
+     last Tuesday — past that it is a wall of text to scroll under. */
+  const recent = [...done]
+    .sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0))
+    .slice(0, DONE_SHOWN);
+  const hidden = done.length - recent.length;
+
+  recent.forEach(t => {
     const li = document.createElement('li');
     li.className = 'done-item';
 
@@ -853,6 +935,7 @@ function renderDone(done) {
     undo.textContent = 'Undo';
     undo.addEventListener('click', () => {
       t.done = false;
+      t.doneAt = null;   // back on the lists, and no longer ageing out
       save();
       goToNext();
     });
@@ -860,6 +943,13 @@ function renderDone(done) {
     li.append(title, undo);
     el.doneList.appendChild(li);
   });
+
+  if (hidden) {
+    const note = document.createElement('li');
+    note.className = 'done-note';
+    note.textContent = `${hidden} older ${hidden === 1 ? 'one is' : 'ones are'} not shown. Finished tasks clear themselves after a week.`;
+    el.doneList.appendChild(note);
+  }
 }
 
 /* ---------------- clear everything ----------------
@@ -935,10 +1025,74 @@ async function resortLocal() {
   }
 }
 
+/* Edit the title in place rather than re-rendering the lists: a full
+   redraw would collapse the detail the button was pressed in. Nothing
+   else on the screen is derived from the title, so in-place is safe. */
+function editTitle(task, titleEl, li) {
+  if (li.querySelector('.task-edit')) return;
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'task-edit';
+  input.value = task.title;
+  input.maxLength = 160;
+  input.setAttribute('aria-label', 'Edit this task');
+
+  /* The row toggles its own detail on click. Without this, every tap
+     into the field would shut the field. */
+  ['click', 'pointerdown', 'touchstart'].forEach(ev =>
+    input.addEventListener(ev, (e) => e.stopPropagation()));
+
+  let closed = false;
+  const finish = (commit) => {
+    if (closed) return;
+    closed = true;
+    const next = input.value.trim();
+    if (commit && next && next !== task.title) {
+      task.title = next.slice(0, 160);
+      save();
+      toast('Reworded.');
+    }
+    titleEl.textContent = task.title;
+    input.replaceWith(titleEl);
+  };
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+    if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+  });
+  input.addEventListener('blur', () => finish(true));
+
+  titleEl.replaceWith(input);
+  input.focus();
+  input.select();
+}
+
+/* Removing is not completing. The tick means "I did this" and feeds the
+   done count; this is for the ones the model invented or split wrongly,
+   and it leaves no trace. Undo is the whole safety net, so the task is
+   put back at the index it left rather than appended. */
+function removeTask(id) {
+  const i = state.tasks.findIndex(t => t.id === id);
+  if (i === -1) return;
+  const [gone] = state.tasks.splice(i, 1);
+  save();
+  goToNext();
+  toast('Removed.', {
+    label: 'Undo',
+    fn: () => {
+      state.tasks.splice(Math.min(i, state.tasks.length), 0, gone);
+      save();
+      goToNext();
+    },
+  });
+}
+
 function markDone(id, after = goToNext) {
   const t = state.tasks.find(x => x.id === id);
   if (!t) return;
   t.done = true;
+  t.doneAt = Date.now();   // what pruneDone() ages it out on
   save();
   toast('Done. That one is gone.');
   after();
@@ -1979,6 +2133,7 @@ window.myadhdTheme.onChange(paintMorph);
 /* ---------------- boot ---------------- */
 
 load();
+pruneDone();
 paintMorph();
 
 document.querySelectorAll('.energy-opt').forEach(b => {

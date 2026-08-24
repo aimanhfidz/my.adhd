@@ -15,16 +15,15 @@ a single task with a 2-minute first step. Everything else is parked out of sight
 
 ## The feature
 
-1. **Dump** — one textarea, no structure, no categories. Plus a *fuel* selector
-   (running on fumes / okay-ish / wired).
+1. **Dump** — one textarea, no structure, no categories.
 2. **Triage** — Claude turns the mess into structured tasks: rewritten title,
    realistic minutes, energy cost, urgency, and a first step small enough that
    refusing feels stupid.
 3. **The lists** — everything comes back grouped by category (work, admin,
    money, health, home, social, errand). Within a list: most urgent first,
    then shortest. Between lists: whichever holds the most urgent item leads.
-   Tap a task for its first step and "break it down". Completed items collect
-   in a "N done" row with undo.
+   Tap a task for its first step, "break it down", and **Edit / Remove**.
+   Completed items collect in a "N done" row with undo.
 
 ### Dumps accumulate
 
@@ -35,10 +34,25 @@ which shows the open count.
 
 ### Why it orders what it orders
 
-`score()` in `app.js` weighs urgency, then **penalizes tasks that need more
-fuel than the user currently has**. A task you have no energy for is worse than
-useless — it's the one you stare at before closing the app. Short tasks win
-ties, because momentum beats optimality.
+`groupByCategory()` in `app.js` sorts **within** a list by urgency, then by
+length — short tasks win ties, because momentum beats optimality. **Between**
+lists, whichever holds the most urgent item leads.
+
+**Energy is captured but does not affect ordering.** The model rates every
+task `low` / `medium` / `high` and the chip on the row shows it, but nothing
+sorts on it.
+
+That is a gap, not a design decision, and it has a second half. The *fuel*
+selector (running on fumes / okay-ish / wired) that fed it **no longer exists
+in `app.html`** — the markup and CSS are gone, while the wiring for
+`.energy-opt` is still in `app.js` (twice) and matches nothing. So
+`state.energy` is pinned at `'medium'` for everyone and is sent to
+`/api/triage` on every triage and breakdown call as a constant.
+
+The dead wiring is left in deliberately: it is the hook a "just one thing"
+focus screen would pick up, which is where the missing `score()` — urgency,
+then a penalty on tasks needing more fuel than the user has — belongs. Delete
+it only if that idea is dropped for good.
 
 ## Screens
 
@@ -138,15 +152,18 @@ swapping in Supabase later means replacing `load()` / `save()` only.
 |---|---|
 | `index.html` | Landing page — the front door. Full-bleed hero + copy |
 | `landing.css` | Landing-only layout |
-| `app.html` | The app. Three screens: dump, loading, now — plus the mascot and logo SVG sprite |
+| `app.html` | The app. Six screens: dump, loading, lists, calendar, feedback, profile — plus the composer sheet, the tab bar, and the mascot and logo SVG sprite |
 | `theme.css` | Palette, type, mascot colours. Loaded by **both** pages before their own stylesheet |
 | `mascot.svg` | Standalone mascot for the landing hero (`<img>` can't read the page's CSS, so its colours are baked in) |
 | `favicon.svg` | The logo mark, standalone |
 | `fonts/` | Baloo 2 (variable, wght 400-800), self-hosted |
 | `docs/` | README screenshots and the two theme gifs. Not served by the app |
 | `styles.css` | App layout: one white page, content held to `--measure` (720px), gradient pill actions |
-| `app.js` | State, triage call, scoring, rendering |
+| `app.js` | State, triage call, ordering, rendering, the composer, the calendar, the profile |
 | `api/triage.js` | Claude call — triage + breakdown modes |
+| `api/feedback.js` | The note sent from the feedback screen. One per device per UTC day |
+| `install.html` / `install.css` | The "add to home screen" walkthrough |
+| `sw.js` / `site.webmanifest` / `icons/` | The PWA shell: service worker, manifest, and the icon set behind it |
 | `animation/` | Logo morph exports — self-animating svg, mp4, gif. For social and this README |
 | `animation/app/` | The loading screen's mp4, one per theme. **Loaded by the app** |
 | `animation/source/` | `gen.py` (svg), `render.py` (gif + mp4), the four beats, the motion sheet |
@@ -331,6 +348,53 @@ no-JS fallback, not dead code. Deleting it means a no-JS visitor on a dark
 phone gets the light app; deleting the guard instead means a dark phone
 overrides a saved light choice.
 
+## Repairing one task
+
+The model splits, merges and rewrites, and it gets things wrong. Without a
+per-task exit the only two moves were lying about it with the tick or
+**Clear everything** — so **Edit** and **Remove** sit in the task detail,
+under "break it down".
+
+They are the quietest controls on the screen on purpose: they are the exits,
+not the offer. Both are inside the detail, so the collapsed row stays
+scannable.
+
+- **Edit** swaps the title for a field in place — Enter or blur commits,
+  Escape cancels, and an empty value is refused. It deliberately does **not**
+  re-render the lists: a redraw would collapse the very detail the button was
+  pressed in. Nothing else on screen derives from the title, so editing in
+  place is safe. The field stops `click`, `pointerdown` and `touchstart` from
+  bubbling, because the row toggles its own detail on click and without that
+  every tap into the field would shut it.
+- **Remove** is not "done". The tick means *I did this* and feeds the done
+  count; Remove is for the ones the model invented, and it leaves no trace.
+  Undo is the whole safety net, so the task goes back at the index it left
+  rather than being appended.
+
+Undo is offered through the toast, which now takes an optional
+`{label, fn}` action and lives for 6s rather than 2.6s when it carries one —
+a message only has to be read, an offer has to be reached.
+
+## The done pile clears itself
+
+Ticked tasks used to be kept for ever: re-rendered on every visit to the
+lists, counted on the profile, and growing the `localStorage` record without
+limit.
+
+`pruneDone()` runs once at startup, before anything is drawn, and drops
+finished tasks older than **`DONE_TTL`, 7 days** — long enough that undo is
+still there the next day. `markDone()` stamps `doneAt`; undo clears it.
+
+**A store written before `doneAt` existed is migrated, not emptied.** Its
+finished tasks have no stamp, and a missing timestamp means we don't know
+when it happened — guessing "long ago" would silently delete someone's whole
+pile the first time they opened the updated app. They are stamped at first
+sight instead, so they get a full week from then.
+
+The list also draws only the most recent **`DONE_SHOWN`, 20**, newest first,
+with a line counting the rest. The pile exists to be undone from, and nobody
+undoes the fortieth thing they ticked last Tuesday.
+
 ## Clearing
 
 **Clear everything** sits at the foot of the lists, quiet until armed. It
@@ -341,5 +405,10 @@ final. `--danger` is reserved for this; it is never decoration.
 
 ## Deliberately not in v1
 
-Timers, streaks, XP, calendars, notifications, sub-projects, tags, accounts.
-Every one of those is a reason for the app to feel like homework.
+Timers, streaks, XP, notifications, sub-projects, tags, accounts. Every one of
+those is a reason for the app to feel like homework.
+
+**Calendars were on this list and came off it.** The dump reads days and times
+out of plain language, so the dates existed whether or not anything drew
+them — the calendar screen shows what was already there rather than asking
+anyone to schedule. Nothing else here has earned the same exception yet.

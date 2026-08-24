@@ -422,6 +422,37 @@ body{
 .task-detail .steps-block{margin-bottom:12px}
 .task-break{width:100%}
 
+/* repair — edit and remove.
+   Deliberately the quietest thing in the detail: they are the exits, not
+   the offer. Sitting below the break-it-down button, which is the one the
+   detail was opened for. */
+.task-fix{display:flex; gap:8px; margin-top:10px}
+.task-fix-btn{
+  flex:1 1 0;
+  background:none; border:none; cursor:pointer;
+  font:inherit; font-size:13px; font-weight:600;
+  color:var(--faint); padding:8px 6px; border-radius:999px;
+  transition:color .18s var(--ease), background .18s var(--ease);
+}
+.task-fix-btn:hover{color:var(--accent); background:var(--wash)}
+.task-fix-btn:focus-visible{outline:none; box-shadow:0 0 0 3px var(--wash-2)}
+/* --danger is for the thing that cannot be undone; removing one task can,
+   so this takes the softer --danger-ink and only on hover. */
+.task-fix-btn--danger:hover{color:var(--danger-ink); background:var(--danger-wash)}
+.task-fix-btn--danger:focus-visible{box-shadow:0 0 0 3px var(--danger-edge)}
+
+/* The title, while it is being reworded. Sized and weighted exactly like
+   the .task-title it replaces, so the row does not jump on either swap. */
+.task-edit{
+  display:block; width:100%;
+  font:inherit; font-size:15.5px; font-weight:600; color:var(--ink);
+  line-height:1.35; letter-spacing:-.01em;
+  margin:-7px 0 1px; padding:6px 9px;
+  background:var(--surface);
+  border:1.5px solid var(--accent); border-radius:10px;
+  outline:none;
+}
+
 /* done pile */
 .done-block{margin-top:30px; padding-top:6px}
 .done-list{list-style:none; margin-top:10px; display:flex; flex-direction:column; gap:7px}
@@ -432,6 +463,12 @@ body{
   font-size:14.5px; color:var(--faint);
 }
 .done-item .p-title{flex:1; min-width:0; text-decoration:line-through}
+
+/* the tail of the pile — a count, not a row */
+.done-note{
+  font-size:12.5px; line-height:1.45; color:var(--faint);
+  padding:2px 4px;
+}
 
 /* Undo. Orange because putting something back is the one move on this
    screen that reverses a decision — it should catch the eye without
@@ -530,6 +567,24 @@ body{
   max-width:calc(100vw - 40px); text-align:center;
 }
 @keyframes toastIn{from{opacity:0; transform:translate(-50%,10px)} to{opacity:1; transform:translate(-50%,0)}}
+
+/* A toast carrying an offer rather than a message: it holds an Undo, so
+   it needs a row and a longer life (see toast() in app.js). */
+.toast--action{
+  display:flex; align-items:center; gap:14px;
+  text-align:left; padding:10px 12px 10px 20px;
+}
+.toast-do{
+  flex:none; background:none;
+  border:1.5px solid currentColor; border-radius:999px;
+  color:var(--toast-ink); font:inherit; font-size:12.5px; font-weight:700;
+  line-height:1; letter-spacing:.01em;
+  padding:7px 14px; cursor:pointer;
+  transition:transform .12s var(--ease), opacity .18s var(--ease);
+}
+.toast-do:active{transform:scale(.94)}
+.toast-do:hover{opacity:.75}
+.toast-do:focus-visible{outline:none; box-shadow:0 0 0 3px rgba(255,255,255,.3)}
 
 
 /* ---------- the floating tab bar ----------
