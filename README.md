@@ -7,8 +7,8 @@
 
 **Brain dump → auto-triage → one task.**
 
-Live at **[myadhd.vercel.app](https://myadhd.vercel.app)** — the app itself is
-at [/app](https://myadhd.vercel.app/app).
+Live at **[myadhd.my](https://myadhd.my)** — the app itself is
+at [/app](https://myadhd.my/app).
 
 The whole app does one thing: you empty your head into a box, and it hands back
 a single task with a 2-minute first step. Everything else is parked out of sight.
@@ -109,7 +109,7 @@ not runtime dependencies, and nothing in the deployed app touches them.
 
 ## Deploying
 
-**One Vercel project — `myadhd`, serving <https://myadhd.vercel.app>** — linked
+**One Vercel project — `myadhd`, serving <https://myadhd.my>** — linked
 to this repo, so a push to `main` deploys. There were briefly four projects on
 the same repo, each rebuilding on every push; the other three are deleted. If
 you find yourself with a spare, delete it rather than leaving it to serve a
@@ -217,9 +217,17 @@ consent screen"), at **APIs & Services → Google Auth Platform**.
    JavaScript origins**:
 
    ```
-   https://myadhd.vercel.app
+   https://myadhd.my
+   https://www.myadhd.my
    http://localhost:8000
    ```
+
+   Include the `www` form only if the site actually answers on it. Every
+   origin listed has to be one you serve, and one you have verified ownership
+   of if the app ever goes for verification -- which is why the custom domain
+   matters more than it looks. `myadhd.vercel.app` can stay on the list while
+   the domain is settling, but it is not a domain you own, so verification
+   will not accept it.
 
    Origins only — no path, no trailing slash. Leave **Authorised redirect URIs**
    empty; the token flow does not use one.
@@ -241,6 +249,22 @@ of the app is unchanged.
 Vercel previews get a new origin per deployment, so the card will fail to link
 on a preview URL unless that exact origin has been added. Test on production or
 on localhost instead; this is expected rather than broken.
+
+### Letting other people link, not just you
+
+Everything above gets *you* linked. Opening it to other people needs two more
+things, in this order:
+
+1. **Publish the app** (Audience -> Publish). Unpublished means the 7-day
+   expiry and a 100-user cap.
+2. **Check whether the console tags `calendar.app.created` as Sensitive.** If
+   it does not, there is nothing else to do -- no verification, no warning
+   screen, no cap. If it does, verification is needed to lose the
+   "Google hasn't verified this app" interstitial, and that wants a homepage,
+   a privacy policy, terms, a demo video, and a domain you can prove you own.
+
+The site carries `/privacy` and `/terms` for exactly that, both linked from the
+landing page where a reviewer will look for them.
 
 ### When it will not link
 
@@ -301,6 +325,8 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `api/triage.js` | Claude call — triage + breakdown modes |
 | `api/feedback.js` | The note sent from the feedback screen. One per device per UTC day |
 | `install.html` / `install.css` | The "add to home screen" walkthrough |
+| `privacy.html` / `terms.html` | The legal pages. Written against the code -- if they disagree with it, one of the two is a bug |
+| `legal.css` | Long-form prose: one measured column. The only stylesheet on the site that is about reading |
 | `sw.js` / `site.webmanifest` / `icons/` | The PWA shell: service worker, manifest, and the icon set behind it |
 | `animation/` | Logo morph exports — self-animating svg, mp4, gif. For social and this README |
 | `animation/app/` | The loading screen's mp4, one per theme. **Loaded by the app** |
