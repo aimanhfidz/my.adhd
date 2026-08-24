@@ -7,6 +7,23 @@
 
 .admin{max-width:72ch}
 
+/* legal.css zeroes the top margin on the first <p> in the column. That is
+   right for a policy page, where the opening paragraph sits directly under
+   its heading — and wrong here, where it was collapsing two gaps to
+   nothing: the subtitle sat flush against the title, and the empty state
+   sat flush against the account bar. Both are the first <p> in their
+   container, so both got caught.
+
+   Note the `p` in these selectors, which is doing real work.
+   `.legal p:first-of-type` scores (0,2,1) — `:first-of-type` counts as a
+   class — so `.admin .legal-date` at (0,2,0) lost to it silently. Adding
+   the type selector ties the score, and admin.css is loaded after
+   legal.css, so the tie breaks this way. */
+.admin p.legal-date{margin-top:10px}
+.admin .admin-bar{margin-top:26px}
+.admin p.admin-empty{margin-top:20px}
+.admin .note:first-child{margin-top:20px}
+
 /* ---------- the two buttons ----------
    Both of these exist in styles.css, which this page deliberately does not
    load: that file is 46KB of app-specific layout, and pulling it in for two
