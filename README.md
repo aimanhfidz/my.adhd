@@ -184,33 +184,72 @@ origin.
 
 ### Setting it up
 
+The console calls this area **Google Auth Platform** now (it used to be "OAuth
+consent screen"), at **APIs & Services → Google Auth Platform**.
+
 1. In the [Google Cloud Console](https://console.cloud.google.com/), make a
-   project (or pick one) and enable the **Google Calendar API**.
-2. Under **APIs & Services → OAuth consent screen**, choose **External**, fill
-   in the app name and support email, and add the scope
-   `https://www.googleapis.com/auth/calendar.app.created`. While the app is in
-   **Testing** only the accounts listed under **Test users** can link, which is
-   fine for personal use and does not expire the way a refresh-token flow would.
-3. Under **Credentials**, create an **OAuth client ID** of type **Web
-   application**. Add every origin the app is served from to **Authorised
-   JavaScript origins** — production, previews, and `http://localhost:8000` for
-   `npm run dev`. Leave the redirect URIs empty; the token flow does not use one.
-4. Paste the client ID into `config.js`:
+   project (or pick one) and enable the **Google Calendar API** under
+   **APIs & Services → Library**.
+
+2. **Google Auth Platform → Branding.** App name, user support email, developer
+   contact email. This is what the consent screen shows, so the app name is the
+   one the user reads when deciding whether to trust it.
+
+3. **Google Auth Platform → Audience.** Choose **External**.
+
+   Then **publish the app** rather than leaving it in Testing. Testing mode
+   expires every authorisation **seven days after consent** — the app degrades
+   politely to its "Needs reconnecting" card, but it means pressing Reconnect
+   roughly weekly for ever. Published-and-unverified is the better resting
+   place for personal use: it does not expire, and the cost is a one-time
+   "Google hasn't verified this app" interstitial (*Advanced → Continue*).
+
+4. **Google Auth Platform → Data Access.** Add the scope
+   `https://www.googleapis.com/auth/calendar.app.created`.
+
+   Check whether the console tags it **Sensitive**. If it does not, an
+   unverified published app is all this ever needs. If it does, the app still
+   works unverified for personal use behind the interstitial, capped at 100
+   users; verification is only worth doing if this is ever handed to strangers.
+
+5. **Google Auth Platform → Clients.** Create an **OAuth client ID**, type
+   **Web application**. Add every origin the app is served from to **Authorised
+   JavaScript origins**:
+
+   ```
+   https://myadhd.vercel.app
+   http://localhost:8000
+   ```
+
+   Origins only — no path, no trailing slash. Leave **Authorised redirect URIs**
+   empty; the token flow does not use one.
+
+6. Paste the client ID into `config.js`:
 
    ```js
    window.MYADHD_GOOGLE_CLIENT_ID = '1234567890-abc.apps.googleusercontent.com';
    ```
 
-5. Deploy. The card appears on the profile screen.
+7. Deploy. The card appears on the profile screen.
 
 The client ID is public — it is in every OAuth request Google performs and in
 Google's own sample code. What actually stops anyone else using it is the
-authorised-origins list in step 3, which is why that step is the one to get
+authorised-origins list in step 5, which is why that step is the one to get
 right. Leave `config.js` empty and the feature does not appear at all; the rest
 of the app is unchanged.
 
 Vercel previews get a new origin per deployment, so the card will fail to link
-on a preview URL unless that exact origin has been added. That is expected.
+on a preview URL unless that exact origin has been added. Test on production or
+on localhost instead; this is expected rather than broken.
+
+### When it will not link
+
+| What you see | What it is |
+|---|---|
+| `origin_mismatch`, or the popup closes instantly | The origin is not in the authorised list, or has a trailing slash or a path on it |
+| "Google hasn't verified this app" | Published but unverified. *Advanced → Continue*. Expected for personal use |
+| The card goes amber about weekly | The app is still in **Testing**; grants expire after 7 days. Publish it (step 3) |
+| `idpiframe_initialization_failed`, or silent renewal never succeeds | Third-party cookies are blocked for `accounts.google.com`. The Reconnect button still works |
 
 ### How the sync works
 
