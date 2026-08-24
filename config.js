@@ -16,4 +16,4 @@
    app works exactly as it did before.
    ============================================================ */
 
-window.MYADHD_GOOGLE_CLIENT_ID = '';
+window.MYADHD_GOOGLE_CLIENT_ID = '303221611117-6t5ss8n6cuq5048dtra6jchu0tjcceo4.apps.googleusercontent.com';
