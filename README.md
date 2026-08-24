@@ -167,6 +167,13 @@ device has deleted.
 The profile name and face, the energy setting and the calendar link do not
 sync. They are per device deliberately.
 
+A pass runs on a write, on `visibilitychange` / `pageshow` / `focus` /
+`online`, and on a timer that ticks every 15s but only acts once `POLL` has
+actually elapsed — browsers throttle timers in background tabs, so an
+interval of exactly `POLL` drifts and leaves a device minutes past due. The
+account card's **Sync now** forces one, because a device that has not checked
+in looks exactly like a device that is already up to date.
+
 The Google Calendar link keeps its own small record under `myadhd.gcal.v1`:
 whether it is linked, which calendar it made, and the access token until it
 expires. The token was memory-only until iOS proved that unworkable — see

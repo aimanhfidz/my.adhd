@@ -401,17 +401,46 @@
 
   /* ---------------- when to run ----------------
      A write schedules a pass. Coming back to the app runs one, because
-     that is the moment the other device's changes matter. */
+     that is the moment the other device's changes matter.
 
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) soon(); });
-  window.addEventListener('online', soon);
-  window.addEventListener('focus', soon);
+     There are more events here than looks necessary, and each one is a
+     way a device gets left sitting on a stale list while another device
+     is doing the work:
 
+       visibilitychange - the tab was behind something and is now not.
+       pageshow         - restored from the back/forward cache, which is
+                          how a desktop tab that has been open for hours
+                          comes back. It fires instead of load, and it can
+                          fire without visibilitychange.
+       focus            - clicked into, on a desktop where the window was
+                          visible the whole time and so never went hidden.
+       online           - the connection came back.
+
+     None of them is reliable on its own. Together they cover it, and the
+     timer below covers the case where none of them ever fires. */
+
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) wake(); });
+  window.addEventListener('pageshow', wake);
+  window.addEventListener('focus', wake);
+  window.addEventListener('online', wake);
+
+  /** A pass, but only if one is actually due. Safe to call on any event. */
+  function wake() {
+    if (document.hidden || !ready()) return;
+    if (Date.now() - lastPullAt < 2000) return;   // several of these fire together
+    soon();
+  }
+
+  /* The timer ticks well inside POLL rather than exactly on it. A browser
+     throttles timers in a background tab to roughly once a minute, so an
+     interval of exactly POLL drifts and a device can go minutes past due
+     without noticing. Ticking often and deciding from the clock instead
+     means the pass lands on time whatever the browser did to the timer. */
   setInterval(() => {
     if (document.hidden || !ready()) return;
-    if (Date.now() - lastPullAt < POLL - 1000) return;
+    if (Date.now() - lastPullAt < POLL) return;
     soon();
-  }, POLL);
+  }, 15_000);
 
   /* ---------------- what app.js sees ---------------- */
 

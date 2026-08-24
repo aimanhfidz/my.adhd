@@ -2309,7 +2309,17 @@ function paintAccount() {
   el.acctNote.textContent =
     'Your lists sync to every device you sign in on, and the calendar link '
     + 'renews itself.';
-  el.acctBtn.classList.add('is-hidden');
+  /* Signed in, the button that offered sign-in becomes the one that forces
+     a pass. It exists because of the failure it is named after: a device
+     that has not checked in for a while is indistinguishable, from the
+     outside, from a device whose lists are simply up to date. A poll gets
+     there eventually and "eventually" is no use to somebody standing in
+     front of a screen that is wrong. The calendar card next door has had
+     this button all along for the same reason. */
+  el.acctBtn.classList.remove('is-hidden');
+  el.acctBtn.disabled = window.cloud ? cloud.state() === 'working' : false;
+  el.acctBtn.textContent =
+    window.cloud && cloud.state() === 'working' ? 'Checking…' : 'Sync now';
 
   /* The hint line doubles as the sync's only report. It says the reassuring
      thing almost always, because almost always that is the true thing —
@@ -2349,10 +2359,35 @@ function paintLocalNote() {
       + 'leaves the device.';
 }
 
-async function signIn() {
+/* One button, two jobs, decided by whether there is an account behind it. */
+async function acctAction() {
+  if (window.auth && auth.signedIn()) return syncListsNow();
+
   el.acctBtn.disabled = true;
   el.acctBtn.textContent = 'Taking you to Google…';
   auth.signIn();     // leaves the page
+}
+
+/* The manual pass. paintAccount() already draws whatever cloud.js is
+   doing, so the only thing left to add is the answer at the end — because
+   a pass that finds nothing to do looks exactly like a pass that never
+   ran, and the whole point of pressing the button is to stop wondering. */
+async function syncListsNow() {
+  if (!window.cloud) return;
+
+  const before = state.tasks.length;
+  paintAccount();
+  await cloud.now();
+  paintAccount();
+
+  if (cloud.state() === 'error') { toast('Could not reach your lists. It keeps trying.'); return; }
+
+  const added = state.tasks.length - before;
+  toast(
+    added > 0  ? `Up to date. ${added === 1 ? '1 task' : `${added} tasks`} came over.`
+  : added < 0  ? 'Up to date. Your other device had removed some.'
+  : 'Already up to date.'
+  );
 }
 
 async function signOutHere() {
@@ -2582,7 +2617,7 @@ el.fbInput.addEventListener('input', paintFeedback);
 el.tabMe.addEventListener('click', showProfile);
 
 if (el.acctBtn) {
-  el.acctBtn.addEventListener('click', signIn);
+  el.acctBtn.addEventListener('click', acctAction);
   el.acctOut.addEventListener('click', signOutHere);
 }
 
