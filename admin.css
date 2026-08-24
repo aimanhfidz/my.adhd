@@ -7,6 +7,37 @@
 
 .admin{max-width:72ch}
 
+/* ---------- the two buttons ----------
+   Both of these exist in styles.css, which this page deliberately does not
+   load: that file is 46KB of app-specific layout, and pulling it in for two
+   buttons would drag in rules that fight with legal.css. So they are
+   restated here, from the same theme.css tokens, and look identical.
+
+   Keep them in step with styles.css by hand. That is the cost of not
+   loading it, and it is the cheaper side of the trade. */
+
+.btn-primary{
+  width:100%;
+  display:flex; align-items:center; justify-content:center; gap:12px;
+  background:var(--grad); border:none; border-radius:999px;
+  color:#fff; font-family:var(--display);
+  font-size:16.5px; font-weight:700; letter-spacing:-.01em;
+  padding:17px 24px; cursor:pointer;
+  transition:transform .16s var(--ease), opacity .18s var(--ease);
+  box-shadow:0 16px 34px -16px rgba(71,55,255,.85);
+}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{opacity:.4; cursor:not-allowed; transform:none}
+
+.btn-danger-quiet{
+  background:none; border:none; cursor:pointer;
+  font:inherit; font-size:13.5px; font-weight:600;
+  color:var(--faint); padding:6px 0;
+  transition:color .18s var(--ease);
+}
+.btn-danger-quiet:hover{color:var(--danger-ink)}
+
 .admin-gate{
   margin-top:28px; padding:28px 22px; text-align:center;
   background:var(--wash); border:1.5px solid var(--line);
