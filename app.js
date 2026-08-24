@@ -79,6 +79,9 @@ const el = {
   compInput:    $('composer-input'),
   compDates:    $('composer-dates'),
   compChips:    $('composer-chips'),
+  compVoice:    $('composer-voice'),
+  compMic:      $('composer-mic'),
+  compMicHint:  $('composer-mic-hint'),
   avatarBig:    $('avatar-big'),
   avatarPick:   $('avatar-picker'),
   greeting:     $('profile-greeting'),
@@ -96,6 +99,9 @@ const el = {
   gcalBtn:      $('gcal-btn'),
   gcalOpen:     $('gcal-open'),
   gcalOff:      $('gcal-off'),
+  gcalDupe:     $('gcal-dupe'),
+  gcalDupeNote: $('gcal-dupe-note'),
+  gcalDupeBtn:  $('gcal-dupe-btn'),
   localNote:    $('local-note'),
 
   acctCard:     $('acct-card'),
@@ -1250,10 +1256,22 @@ function openComposer() {
   setTimeout(entered, 500);
   syncComposer();
 
-  /* iOS only raises the keyboard for a focus it believes came from the tap,
-     and the sheet is still animating in on this frame — focusing after the
-     paint is what makes the keyboard actually come up. */
-  requestAnimationFrame(() => el.compInput.focus());
+  /* Deliberately not focused. Focusing here brought the keyboard up with
+     the sheet, which covered the mic before it had been seen once — and
+     for a one-handed dump the thumb wants the mic, not the caret. The
+     keyboard is one tap away and that tap is the whole body: see
+     focusComposer. */
+  el.composer.classList.remove('is-typing');
+  el.compVoice.classList.toggle('is-hidden', !Voice.available());
+  restMic();
+}
+
+/* Anywhere in the empty space under the text. iOS only raises the
+   keyboard for a focus it believes came from a tap, and this one did. */
+function focusComposer() {
+  el.compInput.focus();
+  const end = el.compInput.value.length;
+  try { el.compInput.setSelectionRange(end, end); } catch (_) {}
 }
 
 /* ---- moving the sheet under its own power ----
@@ -1357,6 +1375,9 @@ function closeComposer(slide = false) {
 
 /** Cancel keeps the text — in the dump box, where the dump screen will find it. */
 function cancelComposer() {
+  /* A hold that is still running when the sheet goes would keep the mic
+     open on a screen that no longer exists. */
+  if (Voice.live()) { Voice.stop(); restMic(); }
   el.input.value = el.compInput.value;
   previewDates();
   refreshListsButton();
@@ -1392,6 +1413,10 @@ const DRAG_KEYBOARD_PX = 24;
 
 let dragFrom = 0, dragX0 = 0, dragging = false;
 let dragPending = false;   // touched the text, has not committed yet
+/* A settled drag and a tap both end with the sheet where it started. This
+   is what tells them apart, so a short drag does not also raise the
+   keyboard on the way back. */
+let dragMoved = false;
 /* Speed is measured over the last move, not the whole gesture: a drag that
    crawls down and then stops has an average that says "flick" and a finger
    that says otherwise. A hand resting before it lifts should drop the sheet
@@ -1455,6 +1480,7 @@ function dragStart(e) {
 
   dragFrom = dragLastY = e.clientY;
   dragX0 = e.clientX;
+  dragMoved = false;
 
   /* The text is the one surface with something else to do with a touch — a
      tap has to land a caret, a sideways drag has to select. So it waits to
@@ -1473,6 +1499,9 @@ function dragMove(e) {
     return;                                                   // sideways: theirs
   }
   if (!dragging) return;
+
+  if (Math.abs(e.clientY - dragFrom) > DRAG_CLAIM_PX ||
+      Math.abs(e.clientX - dragX0) > DRAG_CLAIM_PX) dragMoved = true;
 
   // down only: dragging up must not lift the sheet off the top of the screen
   const dy = Math.max(0, e.clientY - dragFrom);
@@ -2159,6 +2188,118 @@ function markSync(next) {
   }
 }
 
+/* ---------------- the duplicate calendars ----------------
+   Ours to offer to clean up, because ours to have made: for a while every
+   device that linked ran its own find-or-create, and two that linked close
+   together both found nothing and both created one.
+
+   The check is cheap and quiet — it costs one list call when the profile
+   screen opens, and says nothing at all in the normal case where there is
+   only ever one. */
+
+let strayCals = [];
+
+async function checkDuplicateCalendars() {
+  if (!window.gcal || !gcal.connected()) { strayCals = []; return; }
+  try {
+    strayCals = await gcal.strays();
+  } catch (_) {
+    strayCals = [];
+  }
+  paintGoogle();
+}
+
+/* Two stages, like clearing the lists: the first press says what it found
+   and what it is about to do, the second does it. A calendar is somebody's
+   data even when we are the ones who put it there. */
+let dupeArmed = false;
+
+async function removeDuplicateCalendar() {
+  const stray = strayCals[0];
+  if (!stray) return;
+
+  if (!dupeArmed) {
+    dupeArmed = true;
+    el.gcalDupeBtn.textContent = 'Checking what is in it…';
+    el.gcalDupeBtn.disabled = true;
+
+    let found;
+    try {
+      found = await gcal.inspect(stray.id);
+    } catch (err) {
+      dupeArmed = false;
+      el.gcalDupeBtn.disabled = false;
+      el.gcalDupeBtn.textContent = 'Remove the spare';
+      toast('Could not look inside it. Nothing was touched.');
+      return;
+    }
+
+    /* The one thing that stops this. Everything the app puts in a calendar
+       carries the id of the task it came from; anything without one was
+       put there by a person, and a person's event is not ours to delete
+       along with the calendar holding it. */
+    if (found.foreign > 0) {
+      dupeArmed = false;
+      el.gcalDupeBtn.classList.add('is-hidden');
+      el.gcalDupeNote.textContent =
+        `That spare calendar has ${found.foreign === 1 ? 'an event' : found.foreign + ' events'} `
+        + 'in it that did not come from this app, so it is not mine to delete. '
+        + 'Have a look in Google and remove it there if you want it gone.';
+      return;
+    }
+
+    el.gcalDupeBtn.disabled = false;
+    el.gcalDupeBtn.textContent = found.total
+      ? `Delete it and its ${found.total === 1 ? 'event' : found.total + ' events'}`
+      : 'Delete it — it is empty';
+    el.gcalDupeNote.textContent = found.total
+      ? 'Everything in it came from your lists, so it will all come back on the '
+        + 'calendar you are keeping. Press again to go ahead.'
+      : 'Nothing is in it. Press again to go ahead.';
+    strayCals[0].found = found;
+    return;
+  }
+
+  el.gcalDupeBtn.disabled = true;
+  el.gcalDupeBtn.textContent = 'Removing…';
+
+  try {
+    await gcal.drop(stray.id);
+  } catch (err) {
+    dupeArmed = false;
+    el.gcalDupeBtn.disabled = false;
+    el.gcalDupeBtn.textContent = 'Remove the spare';
+    toast(`Could not remove it — ${err.message}.`);
+    return;
+  }
+
+  /* The events in it are gone with it, so every task that had one is now
+     carrying a dead id. Clearing it is what puts them back: the next pass
+     sees a dated task with no event and makes one, on the calendar we are
+     keeping. Without this they would quietly stay missing — an unchanged
+     task is never re-sent, so nothing would ever notice. */
+  const orphaned = new Set((stray.found && stray.found.ours) || []);
+  let rebuilding = 0;
+  state.tasks.forEach(t => {
+    if (t.gcal && orphaned.has(t.id)) { t.gcal = null; rebuilding++; }
+  });
+  state.gcalOrphans = state.gcalOrphans.filter(id => !orphaned.has(id));
+  save();
+
+  dupeArmed = false;
+  strayCals = strayCals.slice(1);
+  el.gcalDupeBtn.disabled = false;
+  el.gcalDupeBtn.textContent = 'Remove the spare';
+  paintGoogle();
+
+  toast(rebuilding
+    ? `Gone. ${rebuilding === 1 ? '1 task is' : rebuilding + ' tasks are'} moving to the one you kept.`
+    : 'Gone. One my.adhd calendar left.');
+
+  if (rebuilding) await syncNow();
+  paintGoogle();
+}
+
 /* ---- the card on the profile ---- */
 
 async function connectGoogle() {
@@ -2230,6 +2371,7 @@ function paintGoogle() {
   if (!on) {
     /* Not linked yet, so this is the button that links it — nothing else
        on the screen offers that. */
+    el.gcalDupe.classList.add('is-hidden');
     el.gcalBtn.classList.remove('is-hidden');
     el.gcalState.textContent = 'Not linked';
     el.gcalNote.textContent =
@@ -2250,6 +2392,19 @@ function paintGoogle() {
      button at all, so the card keeps its own. */
   const merged = window.auth && auth.configured() && auth.signedIn();
   el.gcalBtn.classList.toggle('is-hidden', merged && syncState !== 'stale');
+
+  /* Only ever visible because of a bug of ours, and it says which one. */
+  const spare = strayCals.length;
+  el.gcalDupe.classList.toggle('is-hidden', spare === 0);
+  if (spare && !dupeArmed) {
+    el.gcalDupeNote.textContent =
+      `There ${spare === 1 ? 'is a second calendar' : `are ${spare} more calendars`} called `
+      + '“my.adhd” in your Google account. That was my fault — for a while two devices '
+      + `linking close together could each make one. Your tasks are on the one above; `
+      + `${spare === 1 ? 'the spare is' : 'the spares are'} leftovers.`;
+    el.gcalDupeBtn.textContent = 'Remove the spare';
+    el.gcalDupeBtn.disabled = false;
+  }
 
   el.gcalState.textContent =
     syncState === 'working' ? 'Syncing…' :
@@ -2458,6 +2613,26 @@ async function wakeAccount() {
 
   if (auth.signedIn() && window.gcal && gcal.configured()) {
     try { await gcal.adopt(); } catch (_) { /* the card reports it */ }
+
+    /* Two devices that linked before the account settled which calendar is
+       ours each kept their own. This is where they stop disagreeing: the
+       account names one, and the device that was using the other one lets
+       go of it here.
+
+       Everything this device put in the calendar it just left has to be
+       forgotten along with it — an event id is only meaningful inside the
+       calendar it was made in, and a task still holding one would never be
+       re-sent, so it would simply stop appearing. Cleared, they are rebuilt
+       on the shared calendar by the next pass. */
+    try {
+      const gaveUp = await gcal.reconcile();
+      if (gaveUp) {
+        let moving = 0;
+        state.tasks.forEach(t => { if (t.gcal) { t.gcal = null; moving++; } });
+        state.gcalOrphans = [];   // they lived on the calendar we no longer read
+        if (moving) { save(); syncSoon(); }
+      }
+    } catch (_) { /* next boot tries again */ }
   }
 
   paintAccount();
@@ -2535,6 +2710,10 @@ function showProfile() {
   paintGoogle();
   paintAccount();
   show(el.screenMe);
+
+  /* Behind the screen, like everything else on this card. One list call,
+     and in the ordinary case it finds nothing and says nothing. */
+  checkDuplicateCalendars();
 }
 
 /* ---------------- the typing preview ----------------
@@ -2613,6 +2792,96 @@ el.calToday.addEventListener('click', () => {
   renderCalendar();
 });
 el.tabAdd.addEventListener('click', openComposer);
+/* ---- tap the empty space to get the keyboard ----
+   The textarea is one line tall at the top of a full-height sheet, so
+   aiming for it is a two-handed job. The whole body is the target
+   instead; the buttons and the text keep their own taps, and a drag
+   that came back is not a tap. */
+el.compBody.addEventListener('click', (e) => {
+  if (dragMoved) return;
+  if (e.target.closest('button')) return;
+  if (e.target.closest('.composer-input')) return;   // its own caret
+  if (e.target.closest('.dump-chips')) return;
+  focusComposer();
+});
+
+/* The keyboard and the mic cannot both have the bottom of the screen. */
+el.compInput.addEventListener('focus', () => {
+  el.composer.classList.add('is-typing');
+});
+el.compInput.addEventListener('blur', () => {
+  el.composer.classList.remove('is-typing');
+  syncComposer();
+});
+
+/* ---- hold to talk ----
+   Press and hold, not tap-to-toggle. A toggle leaves the app listening
+   after you have walked away from it, and needs you to remember it is
+   on; a hold cannot be left running, and letting go is the same gesture
+   as being finished. */
+let micBase = '';      // what was in the box before this hold
+let micHeld = 0;       // when the finger landed
+
+function restMic() {
+  el.compMic.classList.remove('is-live');
+  el.compVoice.classList.remove('is-live');
+  el.compMicHint.textContent = 'hold to talk';
+}
+
+function micDown(e) {
+  if (!Voice.available() || Voice.live()) return;
+  e.preventDefault();              // no long-press menu, no text selection
+  micHeld = performance.now();
+  micBase = el.compInput.value.trim();
+
+  el.compMic.classList.add('is-live');
+  el.compVoice.classList.add('is-live');
+  el.compMicHint.textContent = 'listening… let go when done';
+
+  Voice.start({
+    /* Straight into the box as it is heard. Waiting until release to
+       show anything makes the first hold feel like nothing happened. */
+    onText(text) {
+      el.compInput.value = micBase ? micBase + ' ' + text : text;
+      syncComposer();
+    },
+    onError(why) {
+      restMic();
+      toast(why === 'mic-denied'
+        ? 'no mic access — allow it in your browser settings'
+        : "couldn't hear that, try again");
+    },
+  });
+}
+
+function micUp() {
+  if (!Voice.live()) { restMic(); return; }
+  const said = Voice.stop();
+  const quick = performance.now() - micHeld < 400;
+  restMic();
+
+  el.compInput.value = said ? (micBase ? micBase + ' ' + said : said) : micBase;
+  syncComposer();
+
+  /* Tapped it rather than held it — say so, rather than leaving a
+     button that appears to have done nothing. */
+  if (!said && quick) el.compMicHint.textContent = 'hold it down while you talk';
+}
+
+el.compMic.addEventListener('pointerdown', micDown);
+el.compMic.addEventListener('pointerup', micUp);
+el.compMic.addEventListener('pointercancel', micUp);
+/* The finger sliding off the button still ends the hold — it is released
+   somewhere, and the recording should not outlive it. */
+el.compMic.addEventListener('pointerleave', () => { if (Voice.live()) micUp(); });
+/* Space and Enter on a focused button fire a click, not a hold, so the
+   keyboard path is a plain toggle. */
+el.compMic.addEventListener('keydown', (e) => {
+  if (e.key !== ' ' && e.key !== 'Enter') return;
+  e.preventDefault();
+  if (Voice.live()) micUp(); else micDown(e);
+});
+
 el.compCancel.addEventListener('click', cancelComposer);
 el.compScrim.addEventListener('click', cancelComposer);
 el.compPost.addEventListener('click', sendComposer);
@@ -2667,6 +2936,7 @@ el.tabMe.addEventListener('click', showProfile);
 
 if (el.acctBtn) {
   el.acctBtn.addEventListener('click', acctAction);
+  if (el.gcalDupeBtn) el.gcalDupeBtn.addEventListener('click', removeDuplicateCalendar);
   el.acctOut.addEventListener('click', signOutHere);
 }
 

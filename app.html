@@ -454,6 +454,16 @@
 
         <p class="gcal-note" id="gcal-note"></p>
 
+        <!-- Shown only when there is more than one calendar called my.adhd,
+             which was a bug of ours and is therefore ours to offer to clean
+             up. It is a button rather than something automatic because
+             deleting a calendar out of somebody's Google account is not a
+             thing to do quietly on a background sync. -->
+        <div class="gcal-dupe is-hidden" id="gcal-dupe">
+          <p class="gcal-note" id="gcal-dupe-note"></p>
+          <button class="btn-danger-quiet" id="gcal-dupe-btn" type="button">Remove the spare</button>
+        </div>
+
         <button class="btn-primary gcal-go" id="gcal-btn" type="button">Link Google Calendar</button>
 
         <div class="gcal-more">
@@ -524,6 +534,24 @@
         </div>
       </div>
     </div>
+
+    <!-- Hold to talk. Outside .composer-body on purpose: the body scrolls
+         and this must not scroll away with it. Hidden by app.js when the
+         browser has no SpeechRecognition, so it is never a button that
+         does nothing. -->
+    <div class="composer-voice is-hidden" id="composer-voice">
+      <button class="composer-mic" id="composer-mic" type="button"
+              aria-describedby="composer-mic-hint">
+        <span class="composer-mic-ring" aria-hidden="true"></span>
+        <svg class="composer-mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/>
+          <path d="M5 11a7 7 0 0 0 14 0M12 18v3" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="sr-only">Hold to talk</span>
+      </button>
+      <p class="composer-mic-hint" id="composer-mic-hint" aria-live="polite">hold to talk</p>
+    </div>
   </div>
 </div>
 
@@ -535,6 +563,7 @@
 <script src="auth.js"></script>
 <script src="gcal.js"></script>
 <script src="cloud.js"></script>
+<script src="voice.js"></script>
 <script src="app.js"></script>
 <script>
 /* Registered so the home-screen copy opens without a connection — and so

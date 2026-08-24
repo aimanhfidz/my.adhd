@@ -198,6 +198,32 @@ expires. The token was memory-only until iOS proved that unworkable — see
 [Where the auth lives](#where-the-auth-lives) for why it changed and what
 makes the trade acceptable.
 
+### One calendar, not two
+
+`google_tokens.calendar_id` is the account's answer to "which calendar is
+ours", and `/api/gcal-calendar` is the only thing that writes it. The write is
+conditional — `PATCH ...&calendar_id=is.null` — so it is a claim, not an
+overwrite: the first device to ask wins and every later one reads back the
+winner.
+
+That column existed and was read by `/api/gcal-token` long before anything
+set it, so every device fell through to `ensureCalendar()`'s find-or-create.
+That is a check-then-act race, and it lost: two devices linking close together
+both listed, both saw nothing, and both created a `my.adhd` calendar. Order
+now is ask the account, then look through the calendar list, then create — and
+whatever is created is claimed, with the loser deleting the calendar it just
+made and adopting the winner.
+
+`gcal.reconcile()` handles the devices that were already wrong before any of
+this shipped: it offers the id it has, and switches if the account names a
+different one. Switching clears every local `t.gcal`, because an event id only
+means anything inside the calendar it was made in.
+
+The leftovers are `gcal.strays()` / `inspect()` / `drop()`, behind a
+two-press button on the profile. `inspect()` is the point of the three: it
+refuses to delete a calendar holding any event without a `myadhdId` on it,
+because that event was put there by a person.
+
 ## Google Calendar
 
 Off by default, and invisible until it is configured. When it is on, every task

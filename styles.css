@@ -1039,6 +1039,16 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
    Quieter than the calendar card below it until it is actually signed in:
    this is an offer, not a task. */
 
+/* The duplicate-calendar notice. Orange like the other "something is off"
+   states on this card, and boxed so it reads as a thing to act on rather
+   than another sentence in the note above it. */
+.gcal-dupe{
+  margin:12px 0 14px; padding:12px 14px;
+  border:1px solid var(--orange); border-radius:14px;
+  background:var(--danger-wash);
+}
+.gcal-dupe .gcal-note{margin:0 0 8px}
+
 .acct-card{margin-top:18px}
 .acct-face{
   width:34px; height:34px; flex:none;
@@ -1208,6 +1218,84 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
 .composer-input:focus{outline:none}
 .composer-input::placeholder{color:var(--faint)}
 .composer .dump-dates{margin-top:16px}
+
+/* ---------- hold to talk ----------
+   The sheet opens with no keyboard (see openComposer), so this is what
+   is under the thumb when it arrives. Anchored to the bottom of the
+   sheet rather than sitting in the flow, because the body scrolls and a
+   mic that scrolls off is a mic you cannot find one-handed.
+
+   It goes when the keyboard comes. There is no arrangement in which a
+   button 34px off the bottom of the screen is visible over a keyboard,
+   and hiding it is more honest than letting it be covered. */
+.composer-voice{
+  position:absolute; left:0; right:0;
+  bottom:calc(30px + env(safe-area-inset-bottom, 0px));
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  pointer-events:none;                     /* only the button takes touches */
+  transition:opacity .18s var(--ease), transform .18s var(--ease);
+}
+.composer-voice.is-hidden{display:none}
+
+/* Typing and talking are alternatives, not a pair. */
+.composer.is-typing .composer-voice{
+  opacity:0; transform:translateY(10px); pointer-events:none;
+}
+
+.composer-mic{
+  pointer-events:auto;
+  position:relative;
+  width:76px; height:76px; border-radius:999px;
+  border:none; background:var(--grad); color:#fff;
+  display:grid; place-items:center;
+  cursor:pointer;
+  box-shadow:0 10px 28px -10px rgba(16,16,24,.5);
+  /* A press-and-hold is not a scroll, not a text selection and not a
+     long-press menu. Saying so up front is what stops iOS spending the
+     first 300ms deciding. */
+  touch-action:none;
+  -webkit-user-select:none; user-select:none;
+  -webkit-touch-callout:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .16s var(--ease), box-shadow .16s var(--ease);
+}
+.composer-mic:focus-visible{outline:none; box-shadow:0 0 0 3px var(--focus)}
+
+.composer-mic-icon{width:30px; height:30px; fill:currentColor; position:relative; z-index:1}
+
+/* Held: it grows and keeps growing a ring, so there is something moving
+   for as long as it is listening. A recording with no feedback is a
+   recording you do not trust. */
+.composer-mic.is-live{transform:scale(1.12); box-shadow:0 14px 34px -10px rgba(16,16,24,.55)}
+
+.composer-mic-ring{
+  position:absolute; inset:0; border-radius:999px;
+  background:var(--grad); opacity:0;
+}
+.composer-mic.is-live .composer-mic-ring{animation:micPulse 1.5s ease-out infinite}
+@keyframes micPulse{
+  from{opacity:.5; transform:scale(1)}
+  to{opacity:0; transform:scale(1.9)}
+}
+
+.composer-mic-hint{
+  margin:0; font-size:13.5px; font-weight:600; color:var(--faint);
+  letter-spacing:-.01em; text-align:center;
+}
+.composer-voice.is-live .composer-mic-hint{color:var(--ink)}
+
+@media (prefers-reduced-motion:reduce){
+  .composer-mic.is-live .composer-mic-ring{animation:none; opacity:.28}
+}
+
+/* Clears the mic so a long dump never ends up underneath it. */
+.composer-body{padding-bottom:150px}
+.composer.is-typing .composer-body{padding-bottom:24px}
+
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
 
 /* Someone who has asked for less movement gets the sheet without the
    journey — it is still a sheet, it just does not fly. */

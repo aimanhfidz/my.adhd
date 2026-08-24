@@ -263,26 +263,67 @@
   }
 
   /* ---------------- our calendar ----------------
-     Found before it is made. Clearing site data or opening the app on a
-     second device loses the stored id but not the calendar itself, and
-     creating a second "my.adhd" every time would leave a pile of them in
-     someone's sidebar. The list call is allowed to fail — under this scope
-     it only ever returns calendars this app made, and if it is refused
-     outright we can still fall through and create one. */
+     Found before it is made, and asked about before either.
+
+     This used to be: look through the calendar list for one called
+     my.adhd, and make one if there isn't. That is a check-then-act race,
+     and it lost. Two devices linked a minute apart both looked, both saw
+     nothing — the first one's calendar had not surfaced in the second
+     one's list yet — and both created one. Two identical my.adhd
+     calendars, half the tasks in each.
+
+     The account is the tiebreaker now. It is asked first, and told after,
+     and the telling is a claim that only takes while the answer is still
+     empty. A device that loses adopts the winner and bins what it made.
+     The list is still consulted in the middle, because somebody with no
+     account has no tiebreaker and the list is the best guess there is. */
+
+  /** What the account already calls ours, or null. Never throws. */
+  async function claimCalendar(id) {
+    if (!window.auth || !auth.signedIn()) return null;
+    try {
+      const token = await auth.token();
+      if (!token) return null;
+      const res = await fetch('/api/gcal-calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ calendarId: id || '' }),
+      });
+      if (!res.ok) return null;
+      const d = await res.json().catch(() => null);
+      return (d && d.calendarId) || null;
+    } catch (_) {
+      return null;   // no account, no signal, no tiebreaker — carry on
+    }
+  }
 
   async function ensureCalendar() {
     if (link.calendarId) return link.calendarId;
 
+    /* 1. Does the account already know? Costs one small request and saves
+          every device after the first from guessing at all. */
+    const settled = await claimCalendar('');
+    if (settled) {
+      link.calendarId = settled;
+      persist();
+      return settled;
+    }
+
+    /* 2. Has this Google account got one we made earlier? Under this scope
+          the list only ever returns calendars this app created, and if it
+          is refused outright we can still fall through and make one. */
     try {
       const list = await call('/users/me/calendarList?minAccessRole=owner&maxResults=250');
       const hit = (list?.items || []).find(c => c.summary === CAL_NAME);
       if (hit) {
         link.calendarId = hit.id;
         persist();
+        await claimCalendar(hit.id);   // so the next device is told, not left guessing
         return hit.id;
       }
     } catch (_) { /* not fatal — make one */ }
 
+    /* 3. Make one. */
     const made = await call('/calendars', {
       method: 'POST',
       body: {
@@ -291,6 +332,20 @@
         timeZone: TZ,
       },
     });
+
+    /* 4. And claim it. If somebody else got there while we were making
+          ours, theirs is the answer — and ours is seconds old, empty, and
+          ours to remove, which is the difference between this race costing
+          nothing and it costing a duplicate calendar for ever. */
+    const winner = await claimCalendar(made.id);
+    if (winner && winner !== made.id) {
+      try {
+        await call('/calendars/' + encodeURIComponent(made.id), { method: 'DELETE' });
+      } catch (_) { /* it is empty; a leftover is untidy, not harmful */ }
+      link.calendarId = winner;
+      persist();
+      return winner;
+    }
 
     link.calendarId = made.id;
     persist();
@@ -337,6 +392,84 @@
       if (err.status === 404 || err.status === 410) return;
       throw err;
     }
+  }
+
+  /* ---------------- the duplicates we already made ----------------
+     The claim above stops another one appearing. It cannot do anything
+     about the ones that exist already, and those are the ones actually
+     sitting in somebody's sidebar with half their tasks in.
+
+     Nothing here deletes anything on its own. strays() finds them,
+     inspect() opens one up and says what is inside, and drop() removes it
+     — three steps because the middle one is the point: a calendar is only
+     safe to delete once you have looked and found nothing in it but our
+     own events. app.js puts a button on the last step. */
+
+  /* The devices that are already wrong.
+
+     ensureCalendar() settles it for anyone linking from now on, and does
+     nothing for the two devices that each already have their own id
+     stored — they never ask, because they already think they know. This
+     is the one that makes them agree: it offers what it has, and if the
+     account names a different one, that one wins and this device switches.
+
+     Returns the id it gave up, or null. The caller has to act on that:
+     every event this device made lives in the calendar it just walked
+     away from, so the tasks holding those ids have to forget them or they
+     will sit there pointing at events on a calendar nobody is reading. */
+  async function reconcile() {
+    if (!link.calendarId) return null;
+    const winner = await claimCalendar(link.calendarId);
+    if (!winner || winner === link.calendarId) return null;
+
+    const was = link.calendarId;
+    link.calendarId = winner;
+    persist();
+    return was;
+  }
+
+  /** Other calendars called my.adhd. Never the one we are using. */
+  async function strays() {
+    if (!link.calendarId) return [];
+    try {
+      const list = await call('/users/me/calendarList?minAccessRole=owner&maxResults=250');
+      return (list?.items || [])
+        .filter(c => c.summary === CAL_NAME && c.id !== link.calendarId)
+        .map(c => ({ id: c.id, summary: c.summary }));
+    } catch (_) {
+      return [];   // cannot see, will not guess
+    }
+  }
+
+  /** What is in one: our task ids, and a count of anything that is not ours. */
+  async function inspect(calendarId) {
+    const ours = [];
+    let foreign = 0;
+    let pageToken = null;
+
+    do {
+      const page = await call(
+        '/calendars/' + encodeURIComponent(calendarId) + '/events'
+        + '?maxResults=250&showDeleted=false'
+        + (pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : '')
+      );
+      for (const ev of page?.items || []) {
+        const mine = ev.extendedProperties?.private?.myadhdId;
+        if (mine) ours.push(mine);
+        else foreign++;
+      }
+      pageToken = page?.nextPageToken || null;
+    } while (pageToken);
+
+    return { ours, foreign, total: ours.length + foreign };
+  }
+
+  /** Bin one. Refuses the calendar we are actually using, on principle. */
+  async function drop(calendarId) {
+    if (!calendarId || calendarId === link.calendarId) {
+      throw new Error('that is the calendar in use');
+    }
+    await call('/calendars/' + encodeURIComponent(calendarId), { method: 'DELETE' });
   }
 
   /* ---------------- connect / disconnect ---------------- */
@@ -395,5 +528,6 @@
       return true;
     },
     connect, disconnect, insert, patch, remove,
+    strays, inspect, drop, reconcile,
   };
 })();
