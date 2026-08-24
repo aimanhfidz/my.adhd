@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Privacy — my.adhd</title>
-<meta name="description" content="What my.adhd does with what you type. Short version: your lists never leave your device, the dump goes to an AI to be sorted, and nothing is tracked." />
+<meta name="description" content="What my.adhd does with what you type. Short version: your lists stay on your device unless you sign in to share them across your own devices, the dump goes to an AI to be sorted, and nothing is tracked." />
 
 <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png?v=3" />
@@ -38,7 +38,7 @@
 <main class="legal">
 
   <h1 class="legal-title">Privacy</h1>
-  <p class="legal-date">Last updated <time datetime="2026-08-24">24 August 2026</time></p>
+  <p class="legal-date">Last updated <time datetime="2026-08-25">25 August 2026</time></p>
 
   <p class="legal-lede">
     This is the whole of it, written to be read rather than to be survived.
@@ -49,8 +49,10 @@
   <section class="legal-tldr">
     <h2>The short version</h2>
     <ul>
-      <li><strong>Your tasks never leave your device.</strong> There is no
-        account, no login, and no copy of your lists on any server of ours.</li>
+      <li><strong>Your tasks stay on your device unless you sign in.</strong>
+        Signing in is optional and exists for one reason: so the same lists
+        appear on your phone and your laptop. Do not sign in and there is no
+        account, no login, and no copy of your lists anywhere but here.</li>
       <li><strong>What you type into the dump box is sent to an AI</strong> to
         be turned into tasks, and is not stored afterwards.</li>
       <li><strong>Google Calendar is off unless you turn it on</strong>, and
@@ -64,9 +66,33 @@
   <p>
     Everything on your lists — the tasks, their dates, the steps, the name and
     face on your profile — lives in your browser's local storage on the device
-    you typed it on. It is not sent anywhere, not backed up, and not readable
-    by us. That is also the trade-off: clear your browser data and it is gone,
-    and there is nothing we can do to bring it back.
+    you typed it on. Signed out, that is the only place it is: not sent
+    anywhere, not backed up, not readable by us. That is also the trade-off:
+    clear your browser data and it is gone, and there is nothing we can do to
+    bring it back.
+  </p>
+
+  <h2>Signing in, and what that changes</h2>
+  <p>
+    Signing in with Google is optional and the app never asks twice. It buys
+    two things: your lists appear on every device you sign in on, and the
+    calendar link stops expiring. Nothing else about the app changes.
+  </p>
+  <p>
+    To make the first of those work, a copy of your tasks is kept in our
+    database at <a href="https://supabase.com/" rel="noopener">Supabase</a> —
+    the title, the date and time, the steps, and whether it is done. Each row
+    is locked to your account by the database itself, so no other signed-in
+    person can read it. Your local storage is still where the app reads from;
+    the copy exists so the devices have somewhere to meet.
+  </p>
+  <p>
+    Your name, your chosen face, your energy setting and your calendar link
+    are not part of that. They stay on each device separately.
+  </p>
+  <p>
+    Signing out stops the copying and leaves the lists on that device alone.
+    Deleting your account deletes the copy with it — email us and it is done.
   </p>
 
   <h2>The dump box, and the AI that sorts it</h2>

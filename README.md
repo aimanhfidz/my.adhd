@@ -142,9 +142,30 @@ fully reproducible builds.
 
 ## Data
 
-`localStorage`, key `myadhd.v1`. No accounts, no signup, no sync — signup
-friction is where ADHD users leave. `state` in `app.js` is a plain object, so
-swapping in Supabase later means replacing `load()` / `save()` only.
+`localStorage`, key `myadhd.v1`, and that is the source of truth whether or
+not there is an account. Nothing about opening the app touches the network:
+signup friction is where ADHD users leave, so signing in stays optional for
+ever.
+
+Signed in, `cloud.js` keeps a second copy of the tasks in the `tasks` table so
+the same lists turn up on every device. It is a reconcile, not a replacement —
+`load()` and `save()` still read and write `localStorage`, and a pass merges
+the two sides afterwards.
+
+Conflicts are settled last-write-wins per task on `updatedAt`, which `save()`
+stamps only on the tasks whose contents actually changed. Per task rather than
+per store on purpose: whole-store versioning would make two devices that each
+added something between passes lose a whole list, where this loses at most one
+edit to one task edited in two places at once. Deletes travel as tombstones —
+the row stays and `deleted` goes true — because an absent row cannot say
+anything. `cloud.js` opens with the long version.
+
+Its own bookkeeping lives under `myadhd.cloud.v1`: a signature per task, which
+is what makes a `save()` that changed nothing send nothing, and the ids this
+device has deleted.
+
+The profile name and face, the energy setting and the calendar link do not
+sync. They are per device deliberately.
 
 The Google Calendar link keeps its own small record under `myadhd.gcal.v1`:
 whether it is linked, which calendar it made, and the access token until it

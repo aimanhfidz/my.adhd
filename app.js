@@ -1,6 +1,9 @@
 /* ============================================================
    my.adhd — MVP feature: Brain Dump -> Auto-Triage -> One Task
-   Storage: localStorage only. No accounts, no sync, no friction.
+   Storage: localStorage, always, account or not — the app opens with no
+   network and no signup, which is the whole point. An optional account
+   adds a second copy in cloud.js so the lists reach your other devices;
+   nothing here reads from it.
    ============================================================ */
 
 const STORE_KEY = 'myadhd.v1';
@@ -139,9 +142,22 @@ function load() {
   } catch (_) { /* corrupt store — start fresh rather than crash */ }
 }
 
-function save() {
+/* The store, written and nothing else. cloud.js uses this after a merge:
+   the tasks that just came down are already stamped with the timestamps
+   they arrived carrying, and running them back through save() would
+   restamp them as local edits and bounce them straight up again. */
+function persistOnly() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (_) {}
+}
+
+function save() {
+  /* Before the write, so what lands on disk carries the timestamps the
+     other devices will settle conflicts on. Free when signed out — it is
+     one hash per task and no network. */
+  if (window.cloud) cloud.stamp();
+  persistOnly();
   syncSoon();   // no-op unless the calendar is linked
+  if (window.cloud) cloud.soon();   // no-op unless there is an account
 }
 
 /* How long a finished task stays in the "N done" pile before it is dropped
@@ -176,6 +192,19 @@ function pruneDone() {
   state.tasks = keep;
 
   if (stamped || state.tasks.length !== before) save();
+}
+
+/* Redraw whatever is on screen, because the lists changed underneath it —
+   another device added, edited or removed something. Only ever called
+   when a pull actually moved something, so it cannot loop with the save()
+   that goToNext() does on its way through. */
+function repaintLists() {
+  refreshListsButton();
+
+  if (!el.screenNow.classList.contains('is-hidden')) goToNext();
+  else if (!el.screenCal.classList.contains('is-hidden')) renderCalendar();
+  else if (!el.screenMe.classList.contains('is-hidden')) showProfile();
+  else syncTabs(el.screenDump);   // the dump box: only the tab marks can move
 }
 
 /* ---------------- screens ---------------- */
@@ -2181,8 +2210,7 @@ function paintGoogle() {
      that promise is once again the whole truth. */
   if (!window.gcal || !gcal.configured()) {
     el.gcalCard.classList.add('is-hidden');
-    el.localNote.textContent =
-      'This lives in this browser only \u2014 no account, no sync, nothing leaves the device.';
+    paintLocalNote();   // with the card gone the note has a shorter truth to tell
     return;
   }
   el.gcalCard.classList.remove('is-hidden');
@@ -2270,6 +2298,8 @@ function paintAccount() {
     el.acctBtn.textContent = 'Sign in with Google';
     el.acctBtn.classList.remove('is-hidden');
     el.acctHint.textContent = '';
+    el.acctCard.classList.remove('is-stale');
+    paintLocalNote();
     return;
   }
 
@@ -2280,7 +2310,43 @@ function paintAccount() {
     'Your lists sync to every device you sign in on, and the calendar link '
     + 'renews itself.';
   el.acctBtn.classList.add('is-hidden');
-  el.acctHint.textContent = 'Signing out leaves this device’s copy alone.';
+
+  /* The hint line doubles as the sync's only report. It says the reassuring
+     thing almost always, because almost always that is the true thing —
+     and it says so plainly when a pass is failing, since a list quietly
+     not travelling is the exact bug this file was written to end. */
+  const cloudState = window.cloud ? cloud.state() : 'idle';
+  el.acctHint.textContent =
+    cloudState === 'working'
+      ? 'Bringing this device up to date…'
+      : cloudState === 'error'
+      ? `Your lists are not travelling right now${cloud.error() ? ` — ${cloud.error()}` : ''}. It keeps trying.`
+      : 'Signing out leaves this device’s copy alone.';
+  el.acctCard.classList.toggle('is-stale', cloudState === 'error');
+  paintLocalNote();
+}
+
+/* The line at the bottom of the profile, which is a promise and therefore
+   has to keep being true. Signed out it is the flat one it always was.
+   Signed in it cannot be — the lists are in the account, that is the whole
+   point of the account — so it says so rather than quietly going on
+   claiming otherwise. */
+function paintLocalNote() {
+  if (!el.localNote) return;
+
+  const gcalOn = window.gcal && gcal.configured();
+  const signedIn = window.auth && auth.configured() && auth.signedIn();
+
+  el.localNote.textContent = signedIn
+    ? 'Your lists are on this device and in your account, which is how they '
+      + 'reach your other devices. Your name, your face and the calendar link '
+      + 'stay on this device only.'
+    : gcalOn
+    ? 'Your tasks live in this browser only \u2014 no account, no server. The '
+      + 'calendar link above is the one exception, and only while it is '
+      + 'switched on.'
+    : 'This lives in this browser only \u2014 no account, no sync, nothing '
+      + 'leaves the device.';
 }
 
 async function signIn() {
@@ -2291,6 +2357,7 @@ async function signIn() {
 
 async function signOutHere() {
   await auth.signOut();
+  if (window.cloud) cloud.forget();
   paintAccount();
   paintSignupOffer();
   toast('Signed out. Your lists are still here.');
@@ -2313,9 +2380,14 @@ async function wakeAccount() {
   paintSignupOffer();
 
   if (arrived) {
-    toast('Signed in. Your lists follow you now.');
+    toast('Signed in. Bringing your lists together…');
     syncSoon();
   }
+
+  /* Whether the session arrived just now or came off disk, this is the
+     first moment there is one — so it is the first moment the lists can
+     be merged with the other devices'. */
+  if (auth.signedIn() && window.cloud) cloud.now();
 }
 
 /* ---------------- profile ----------------
@@ -2617,6 +2689,24 @@ window.myadhdTheme.onChange(paintMorph);
 /* ---------------- boot ---------------- */
 
 load();
+
+/* Before pruneDone(), which deletes and therefore needs the bookkeeping in
+   place to leave tombstones behind rather than silently dropping tasks
+   that would come straight back down on the next pull. */
+if (window.cloud) {
+  cloud.attach({
+    read:    () => state.tasks,
+    write:   (tasks) => { state.tasks = tasks; },
+    persist: persistOnly,
+    repaint: repaintLists,
+  });
+  cloud.onChange(() => {
+    // Only the account card reads this, and only while it is on screen.
+    if (!el.screenMe.classList.contains('is-hidden')) paintAccount();
+  });
+  if (cloud.stamp()) persistOnly();
+}
+
 pruneDone();
 paintMorph();
 
