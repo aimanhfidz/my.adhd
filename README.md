@@ -15,7 +15,8 @@ a single task with a 2-minute first step. Everything else is parked out of sight
 
 ## The feature
 
-1. **Dump** — one textarea, no structure, no categories.
+1. **Dump** — one textarea, no structure, no categories. Or hold the mic and
+   say it, which is the same funnel with the typing taken out.
 2. **Triage** — Claude turns the mess into structured tasks: rewritten title,
    realistic minutes, energy cost, urgency, and a first step small enough that
    refusing feels stupid.
@@ -208,6 +209,14 @@ expires. The token was memory-only until iOS proved that unworkable — see
 [Where the auth lives](#where-the-auth-lives) for why it changed and what
 makes the trade acceptable.
 
+Recordings are the one thing here with no storage at all. A hold exists as
+float samples in a page that is still open, becomes a WAV at the moment you
+let go, and is gone as soon as the request finishes — not written to
+`localStorage`, not sent to Supabase, not kept by the function that forwards
+it. What survives a hold is text in a box, which is why the transcript lands
+somewhere editable rather than straight on a list. See
+[Hold to talk](#hold-to-talk).
+
 ### One calendar, not two
 
 `google_tokens.calendar_id` is the account's answer to "which calendar is
@@ -233,6 +242,113 @@ The leftovers are `gcal.strays()` / `inspect()` / `drop()`, behind a
 two-press button on the profile. `inspect()` is the point of the three: it
 refuses to delete a calendar holding any event without a `myadhdId` on it,
 because that event was put there by a person.
+
+## Hold to talk
+
+Press and hold the mic in the composer, say the thing, let go. The text lands
+in the box for you to read and fix before it becomes tasks — this is a second
+way into the dump box, not a second dump box.
+
+It exists because typing is the narrowest part of a funnel whose whole purpose
+is getting a thought out of your head before it goes. The thought you have on
+the bus does not survive the walk to a keyboard.
+
+### What does the listening
+
+Gemini, from the recording — not the browser, from a stream of phonemes.
+
+`SpeechRecognition` was the first version and it lost the two things a dump is
+actually made of. It takes exactly one language, so a Malay sentence with three
+English words in it comes back half phonetic; and it has no vocabulary, so an
+apartment block, a clinic or a person's name comes back as whatever it rhymed
+with. On an iPhone saved to the home screen it did not run at all, which hid
+the feature from the people least likely to be near a keyboard.
+
+The browser engine is still there, demoted. It runs alongside the recording so
+there is rough text in the box while you are still talking — a mic that shows
+nothing for two seconds reads as a mic that did not work — and the real
+transcript replaces it on release. It is also the fallback: if `/api/transcribe`
+cannot be reached, `stop()` hands back what the engine heard rather than
+nothing. A worse transcript beats a lost thought.
+
+### What gets sent
+
+A 16 kHz mono 16-bit WAV, built in the browser and posted as raw bytes.
+
+`MediaRecorder` is no use here. Gemini accepts wav, mp3, aiff, aac, ogg and
+flac; Chrome produces webm and Safari produces mp4, neither of which is on that
+list. So `voice.js` captures raw PCM through an `AudioWorklet`, resamples to
+16 kHz, and writes the 44-byte header by hand. It is the least code of any
+route that works on both.
+
+Alongside it goes one header, `X-Voice-Meta`: how long the recording was, and
+the proper nouns already on your lists. That vocabulary is not decoration —
+the same clip with and without it comes back as "ring **Aunty Siti** about the
+**kenduri**" or "ring **Wanty City** about the **Kendari**".
+
+### 130 seconds, and where that number comes from
+
+Not a view about how long a thought is allowed to be. Vercel gives the function
+a 4.5 MB request body, 16 kHz mono is 32 KB a second, and 130 seconds is
+4.16 MB.
+
+It was 90 for a while because the WAV went up base64-encoded inside JSON, which
+costs a third of the budget in padding — and a third of that budget is forty
+seconds of somebody's thinking. Sending the bytes raw bought it back. Hitting
+the cap ends the hold and transcribes what it has rather than dropping it,
+with a nudge at 115 seconds.
+
+### Choosing the model
+
+`gemini-3.5-flash`, with `gemini-3.5-flash-lite` behind it. Both were picked by
+running the real request against this project's key, and there are two traps
+worth knowing about before changing either.
+
+**The model list is not a list of models that answer.** `gemini-3.7-flash` is
+in it, and `generateContent` on it never returns — no error, no 404, just
+silence until the function hits its timeout and the platform serves a 504.
+`gemini-flash-latest` aliases to it and does the same. That is why there is a
+fallback model at all, and why the request carries a 25-second abort.
+
+**`thinkingLevel` is not a field `v1beta` knows** at the top of
+`generationConfig`; every model that answers rejects it in about 170 ms.
+Transcription is recognition rather than reasoning, so omitting thinking
+entirely is both the working request and the fast one.
+
+The lites are faster and were rejected on behaviour: handed the vocabulary,
+the smaller models will put one of those names into a sentence that did not
+contain it — "call the clinic" came back as "call the Klinik Kesihatan". The
+prompt now says in as many words that the list is for spelling and never for
+substitution, but the larger model needed telling less.
+
+### The hold itself
+
+The button takes pointer capture on the way down. A dump takes half a minute
+and a thumb does not hold still for it — it rolls and slides and ends up half
+off a 76px circle without the person knowing they moved. That used to fire
+`pointerleave` and end the recording mid-sentence. There is no `pointerleave`
+listener any more, and letting go is the only thing that stops a hold.
+
+Nothing that fails is allowed to take the words with it. An empty result leaves
+whatever the preview heard on screen rather than clearing the box, and a
+microphone that never opened is reported differently from a hold with nothing
+said, because the two want opposite advice.
+
+### What triage is told
+
+A spoken dump reaches `/api/triage` with `spoken`, `lang` and `vocab` set, and
+the extractor branches on which transcriber produced it: a Gemini transcript is
+accurate and is left alone, a browser one still gets the old repair pass. Typed
+dumps get neither — inviting repairs on text somebody actually typed means
+their own words get rewritten under them.
+
+### Still not in it
+
+Streaming, so the transcript arrives all at once rather than as you speak.
+Anything offline: the browser engine is a fallback for a failed request, not an
+offline mode, and on an iPhone there is no fallback engine at all. Speaker
+separation, because a brain dump is one person. And no audio is ever kept —
+there is nothing to play back, by design.
 
 ## Google Calendar
 
