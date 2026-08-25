@@ -122,7 +122,7 @@ const el = {
 let state = {
   tasks: [],          // {id,title,minutes,energy,urgency,firstStep,category,steps,done,skipped}
   energy: 'medium',   // how the user feels right now
-  profile: { name: '', avatar: 'focus' },   // this device only — no account behind it
+  profile: { name: '', avatar: '\u{1F642}' },   // this device only — no account behind it
   sentFeedbackOn: null,   // the UTC day of the last note sent from this device
 
   /* The onboarding offer, once turned down, stays turned down. */
@@ -143,7 +143,7 @@ function load() {
       state = Object.assign(state, saved);
       // A store written before the profile existed has no profile key, and
       // one written by a half-finished edit may be missing a field.
-      state.profile = Object.assign({ name: '', avatar: 'focus' }, saved.profile || {});
+      state.profile = Object.assign({ name: '', avatar: '\u{1F642}' }, saved.profile || {});
     }
   } catch (_) { /* corrupt store — start fresh rather than crash */ }
 }
@@ -1259,7 +1259,7 @@ function syncComposer() {
 
 function openComposer() {
   const { name, avatar } = state.profile;
-  el.compFace.textContent = avatar;
+  el.compFace.textContent = avatarFace(avatar);
   el.compName.textContent = name || 'you';
 
   // Carries over whatever is sitting in the dump box, so a half-written
@@ -2678,41 +2678,57 @@ async function wakeAccount() {
    in the same localStorage record as the tasks, so clearing the site
    clears all of it together. */
 
-const AVATARS = [
-  ['focus', 'Focus'], ['spark', 'Spark'], ['steady', 'Steady'], ['maker', 'Maker'],
-  ['thinker', 'Thinker'], ['nightowl', 'Night owl'], ['zen', 'Zen'], ['explorer', 'Explorer'],
-  ['sun', 'Sun'], ['rebel', 'Rebel'], ['grow', 'Grow'], ['dreamer', 'Dreamer'],
-  ['sharp', 'Sharp']
-];
+const AVATARS = ['\u{1F642}', '\u{1F60E}', '\u{1F984}', '\u{1F431}', '\u{1F436}',
+                 '\u{1F338}', '\u{1F680}', '\u{1F9E0}', '\u{2B50}', '\u{1F525}'];
 
-function avatarMark(avatar) {
-  const id = AVATARS.some(([key]) => key === avatar) ? avatar : 'focus';
-  return `<svg viewBox="0 0 64 64" focusable="false" aria-hidden="true"><use href="avatars.svg#avatar-${id}"></use></svg>`;
+/* The one place a stored avatar becomes something to draw.
+
+   A profile is written once and read by every version of the app that
+   comes after it, so the value in it is not guaranteed to be one this
+   build offers — a store can outlive the list that filled it. Handed
+   something unrecognised, textContent will happily print it: a face slot
+   with a word in it, wide enough to overflow its circle and sit on top of
+   the name beside it.
+
+   A function rather than a line in each painter, because three places
+   draw this face — the tab bar, the profile card and the composer — and a
+   guard written into one of them is a guard the other two do not have.
+   Anything that shows the avatar goes through here.
+
+   The substitution is at the point of drawing and nowhere else. Writing a
+   corrected value back to the store would be the tidier-looking fix and
+   the wrong one: it would overwrite a choice somebody made, on a device
+   that merely happens to be running an older list than the one they made
+   it from. What they chose stays saved; only what is on screen changes. */
+function avatarFace(avatar) {
+  return AVATARS.includes(avatar) ? avatar : AVATARS[0];
 }
 
 function paintProfile() {
   const { name, avatar } = state.profile;
-  el.tabAvatar.innerHTML = avatarMark(avatar);
-  el.avatarBig.innerHTML = avatarMark(avatar);
+  const face = avatarFace(avatar);
+
+  el.tabAvatar.textContent = face;
+  el.avatarBig.textContent = face;
   el.greeting.textContent = name ? `Hey ${name}.` : 'Hey there.';
   if (el.nameInput.value !== name) el.nameInput.value = name;
   [...el.avatarPick.children].forEach(b => {
-    const on = b.dataset.avatar === avatar;
+    const on = b.dataset.avatar === face;
     b.classList.toggle('is-on', on);
     b.setAttribute('aria-pressed', String(on));
   });
 }
 
 function buildAvatarPicker() {
-  AVATARS.forEach(([id, label]) => {
+  AVATARS.forEach(face => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'avatar-opt';
-    b.dataset.avatar = id;
-    b.innerHTML = avatarMark(id);
-    b.setAttribute('aria-label', `Use ${label} as your avatar`);
+    b.dataset.avatar = face;
+    b.textContent = face;
+    b.setAttribute('aria-label', `Use ${face} as your face`);
     b.addEventListener('click', () => {
-      state.profile.avatar = id;
+      state.profile.avatar = face;
       save();
       paintProfile();
     });
