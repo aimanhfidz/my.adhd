@@ -19,8 +19,23 @@
  * the answer, on text the person has had a chance to read and fix.
  */
 
-const MODEL = 'gemini-3.7-flash';
-const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+/* Both verified against this project's key on real audio, because the
+   model list is not a list of models that answer: gemini-3.7-flash is in
+   it and generateContent on it never returns at all — no error, no 404,
+   just silence until the function times out. So the model here is one
+   that has been heard from, and there is a second one for when the first
+   goes the way of the last.
+
+   3.5-flash over the lites on one observed behaviour: handed a list of
+   names the speaker uses, the smaller models will drop one into a
+   sentence that did not contain it — "call the clinic" came back as
+   "call the Klinik Kesihatan". Recognition is the whole job here, so the
+   extra second is worth it. */
+const MODEL = 'gemini-3.5-flash';
+const FALLBACK_MODEL = 'gemini-3.5-flash-lite';
+
+const endpoint = (model) =>
+  `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
 /* 90 seconds of 16 kHz mono WAV is about 2.9 MB, which is 3.8 MB of
    base64. Vercel gives this function a 4.5 MB body, so anything much
@@ -90,35 +105,47 @@ function vocabNote(vocab) {
     .map((w) => w.trim().slice(0, 60))
     .slice(0, 40);
   if (!known.length) return '';
-  return `\n\nNames from this person's own task list, spelled the way they use them. When something in the recording sounds like one of these, it almost certainly is one — prefer these spellings over anything phonetically close:\n${known.map((w) => `- ${w}`).join('\n')}`;
+  return `\n\nNames from this person's own task list, spelled the way they use them. These are a SPELLING aid and nothing more: when a word in the recording sounds like one of these, spell it this way instead of phonetically.
+
+Do not put one of these into a sentence that did not contain it. An ordinary word stays an ordinary word — if they said "the clinic", write "the clinic", even when a clinic's name is on this list. Substituting a name for a word they actually said is the worst thing you can do here, because it reads as correct and is not.
+
+${known.map((w) => `- ${w}`).join('\n')}`;
 }
 
-/* thinkingLevel is the newest thing in this request and the only field
-   that is model-specific, which makes it the one most likely to be
-   renamed or dropped from under us. An unknown field is a 400, and a 400
-   here is the microphone not working at all — so a rejected request gets
-   one more go without it. Slower and slightly worse beats gone. */
+/* A model can stop serving without being withdrawn from the model list,
+   and when it does the request simply never comes back. That is the worst
+   shape of failure to have here, because it costs the caller the full
+   function timeout before they learn the mic did nothing. So a failure of
+   any kind gets one attempt on a different model before giving up.
+
+   Not a retry of the same model: the failure that prompted this was not
+   transient, and asking the silent one twice just doubles the wait. */
 async function callGemini(body) {
   try {
-    return await post(body);
+    return await post(body, MODEL);
   } catch (err) {
-    if (!/gemini 400/.test(err.message) || !body.generationConfig.thinkingLevel) throw err;
-    console.warn('[transcribe] retrying without thinkingLevel —', err.message);
-    const { thinkingLevel, ...rest } = body.generationConfig;
-    return post({ ...body, generationConfig: rest });
+    console.warn(`[transcribe] ${MODEL} failed (${err.message}) — trying ${FALLBACK_MODEL}`);
+    return post(body, FALLBACK_MODEL);
   }
 }
 
-async function post(body) {
-  const res = await fetch(ENDPOINT, {
+async function post(body, model) {
+  /* An upstream that never answers must not become sixty seconds of
+     function time and a platform 504 — that reads to the browser as a
+     dead endpoint rather than a slow one, and voice.js can fall back to
+     the rough transcript far sooner than that. */
+  const res = await fetch(endpoint(model), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       /* The header form, not ?key= — a key in a query string ends up in
-         every access log between here and Google. */
-      'x-goog-api-key': process.env.GEMINI_API_KEY,
+         every access log between here and Google. Trimmed because a key
+         pasted into a dashboard field very often arrives with a newline
+         on the end, and a header value containing one throws. */
+      'x-goog-api-key': (process.env.GEMINI_API_KEY || '').trim(),
     },
     body: JSON.stringify(body),
+    signal: AbortSignal.timeout(25_000),
   });
 
   const data = await res.json().catch(() => null);
@@ -127,7 +154,7 @@ async function post(body) {
        a model id goes stale, and it is worth having in the log rather
        than a bare status. It stays out of the response to the browser. */
     const why = data?.error?.message || res.statusText;
-    throw new Error(`gemini ${res.status}: ${why}`);
+    throw new Error(`gemini ${res.status} on ${model}: ${why}`);
   }
 
   if (data?.promptFeedback?.blockReason) {
@@ -163,8 +190,22 @@ export default async function handler(req, res) {
     const mimeType = ALLOWED_MIME.has(body.mimeType) ? body.mimeType : 'audio/wav';
     const seconds = Number.isFinite(body.seconds) ? Math.round(body.seconds) : null;
 
-    const out = await callGemini({
-      systemInstruction: { parts: [{ text: SYSTEM + vocabNote(body.vocab) }] },
+    const out = await callGemini(buildBody({ audio, mimeType, seconds, vocab: body.vocab }));
+    const text = out.speech === false ? '' : String(out.text || '').trim();
+    return res.status(200).json({
+      text,
+      lang: String(out.lang || '').slice(0, 40) || null,
+      speech: !!text,
+    });
+  } catch (err) {
+    console.error('[transcribe]', err);
+    return res.status(502).json({ error: 'transcription failed' });
+  }
+}
+
+function buildBody({ audio, mimeType, seconds, vocab }) {
+  return {
+    systemInstruction: { parts: [{ text: SYSTEM + vocabNote(vocab) }] },
       contents: [{
         role: 'user',
         parts: [
@@ -177,12 +218,14 @@ export default async function handler(req, res) {
         ],
       }],
       generationConfig: {
-        /* Transcription is recognition, not reasoning. Anything above low
-           spends time and tokens second-guessing words it already heard,
-           and the person is standing there waiting for the box to fill. */
-        thinkingLevel: 'low',
-        /* No creativity wanted anywhere in this. Every degree of freedom
-           here shows up as a word nobody said. */
+        /* No thinking config here on purpose. v1beta rejects thinkingLevel
+           at the top of generationConfig on every model that answers, and
+           nesting it under thinkingConfig buys nothing this needs —
+           transcription is recognition, not reasoning. Omitting it is both
+           the working request and the fast one.
+
+           No creativity wanted anywhere in this either. Every degree of
+           freedom here shows up as a word nobody said. */
         temperature: 0,
         responseMimeType: 'application/json',
         responseSchema: SCHEMA,
@@ -198,16 +241,5 @@ export default async function handler(req, res) {
         'HARM_CATEGORY_SEXUALLY_EXPLICIT',
         'HARM_CATEGORY_DANGEROUS_CONTENT',
       ].map((category) => ({ category, threshold: 'BLOCK_ONLY_HIGH' })),
-    });
-
-    const text = out.speech === false ? '' : String(out.text || '').trim();
-    return res.status(200).json({
-      text,
-      lang: String(out.lang || '').slice(0, 40) || null,
-      speech: !!text,
-    });
-  } catch (err) {
-    console.error('[transcribe]', err);
-    return res.status(502).json({ error: 'transcription failed' });
-  }
+  };
 }
