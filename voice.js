@@ -54,12 +54,15 @@
   const RATE = 16000;
 
   /* 16-bit mono at 16 kHz is 32 KB a second, and the function this posts
-     to takes a 4.5 MB body. 90 seconds is 2.9 MB of WAV and about 3.8 MB
-     once base64 has had its way with it, which leaves room to spare.
-     Nobody holds a button down for 90 seconds anyway; the cap exists so
-     that the one person who does gets a transcript instead of a 413. */
-  const MAX_SECONDS = 90;
-  const WARN_SECONDS = 75;
+     to takes a 4.5 MB body — so the cap is not a judgement about how long
+     a thought should be, it is that number divided by this one.
+
+     It used to be 90, because the WAV went up as base64 inside JSON and
+     that costs a third of the budget in padding. The bytes go up raw now,
+     which buys back the third: 130 seconds is 4.16 MB, still inside the
+     limit, and the metadata rides in a header instead. */
+  const MAX_SECONDS = 130;
+  const WARN_SECONDS = 115;
 
   /* The rough live text. One line to turn off if running two captures of
      the same microphone ever turns out to upset a browser. */
@@ -352,15 +355,20 @@
   /* ============ the round trip ============ */
 
   async function transcribe(pcm, seconds, vocab) {
+    /* The WAV is the body and nothing else is, because base64 in JSON was
+       costing a third of the request budget to say the same thing. What
+       is left to send — how long it was, and the names this person uses —
+       goes in a header, encoded because those names are the whole point
+       and some of them are not ASCII. */
+    const meta = base64(new TextEncoder().encode(JSON.stringify({
+      seconds: Math.round(seconds),
+      vocab: Array.isArray(vocab) ? vocab.slice(0, 40) : [],
+    })));
+
     const res = await fetch('/api/transcribe', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        audio: base64(toWav(pcm, RATE)),
-        mimeType: 'audio/wav',
-        seconds: Math.round(seconds),
-        vocab: Array.isArray(vocab) ? vocab.slice(0, 40) : [],
-      }),
+      headers: { 'Content-Type': 'audio/wav', 'X-Voice-Meta': meta },
+      body: toWav(pcm, RATE),
     });
     if (!res.ok) throw new Error('transcribe returned ' + res.status);
     const data = await res.json();
@@ -447,10 +455,15 @@
       live = false;
 
       stopPreview();
-      const pcm = resample(joined(), capRate, RATE);
+      /* joined() is already a full second copy of the recording, and at
+         130 seconds of 48 kHz input that is 25 MB apiece. Dropping the
+         chunk list before resampling lets the first one go rather than
+         holding three at once on a phone. */
+      const raw = joined();
+      chunks = [];
+      const pcm = resample(raw, capRate, RATE);
       const rough = clean(settled);
       closeMic();
-      chunks = [];
 
       const seconds = pcm.length / RATE;
       if (!pcm.length || !heardAnything(pcm)) {

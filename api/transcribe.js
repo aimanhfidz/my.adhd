@@ -1,10 +1,14 @@
 /**
  * POST /api/transcribe
  *
- *   { audio, mimeType, seconds, vocab } -> { text, lang, speech }
+ *   body:   the WAV itself, raw
+ *   header: X-Voice-Meta, base64 JSON { seconds, vocab }
+ *   ->      { text, lang, speech }
  *
- * `audio` is base64 WAV built in the browser by voice.js: 16 kHz, mono,
- * 16-bit. Everything about that shape is chosen to keep this body small.
+ * The body is a WAV built in the browser by voice.js: 16 kHz, mono,
+ * 16-bit, and sent as bytes rather than base64 in JSON. Everything about
+ * that shape is chosen to keep this body small, because the length of a
+ * hold is Vercel's 4.5 MB divided by 32 KB a second and nothing else.
  *
  * Requires GEMINI_API_KEY in the environment (Vercel project settings).
  * The key never reaches the browser — that's the whole reason this file
@@ -37,12 +41,13 @@ const FALLBACK_MODEL = 'gemini-3.5-flash-lite';
 const endpoint = (model) =>
   `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
-/* 90 seconds of 16 kHz mono WAV is about 2.9 MB, which is 3.8 MB of
-   base64. Vercel gives this function a 4.5 MB body, so anything much
-   past the cap voice.js enforces is a bug or somebody poking at it. */
-const MAX_BASE64 = 4_200_000;
-
-const ALLOWED_MIME = new Set(['audio/wav', 'audio/mp3', 'audio/aiff', 'audio/aac', 'audio/ogg', 'audio/flac']);
+/* The body is the WAV itself, raw. It arrived as base64 inside JSON to
+   begin with, which was simpler and cost a third of the request budget in
+   padding — at 32 KB a second that third is forty seconds of someone's
+   thinking. Vercel gives this function 4.5 MB, voice.js caps a hold at
+   130 seconds, and 130 seconds is 4.16 MB, so this sits just under with
+   room for the headers. Anything past it is a bug or somebody poking. */
+const MAX_BYTES = 4_400_000;
 
 const SCHEMA = {
   type: 'object',
@@ -172,6 +177,42 @@ async function post(body, model) {
   return JSON.parse(text);
 }
 
+/* Vercel parses a body it recognises and leaves the rest alone, and which
+   of those happened is not worth guessing at from in here — so take the
+   Buffer if there is one and read the stream if there is not. Never a
+   string: a WAV decoded as text is a corrupted WAV, and it would arrive
+   looking fine and transcribe as silence. */
+async function readAudio(req) {
+  if (Buffer.isBuffer(req.body)) return req.body;
+  if (req.body instanceof ArrayBuffer) return Buffer.from(req.body);
+
+  const parts = [];
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > MAX_BYTES) throw new Error('recording is too long');
+    parts.push(chunk);
+  }
+  return Buffer.concat(parts);
+}
+
+/* Everything that is not audio rides in one header, base64 so that a name
+   with a tittle or a tone mark on it survives the trip — those names are
+   the entire reason the vocabulary is sent at all. */
+function readMeta(req) {
+  const raw = req.headers['x-voice-meta'];
+  if (!raw) return { seconds: null, vocab: [] };
+  try {
+    const meta = JSON.parse(Buffer.from(String(raw), 'base64').toString('utf8'));
+    return {
+      seconds: Number.isFinite(meta.seconds) ? Math.round(meta.seconds) : null,
+      vocab: Array.isArray(meta.vocab) ? meta.vocab : [],
+    };
+  } catch (_) {
+    return { seconds: null, vocab: [] };   // a mangled header is not worth failing the dump over
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'POST only' });
@@ -181,16 +222,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
+    const wav = await readAudio(req);
+    if (!wav.length) return res.status(400).json({ error: 'audio is required' });
+    if (wav.length > MAX_BYTES) return res.status(413).json({ error: 'recording is too long' });
 
-    const audio = String(body.audio || '');
-    if (!audio) return res.status(400).json({ error: 'audio is required' });
-    if (audio.length > MAX_BASE64) return res.status(413).json({ error: 'recording is too long' });
+    const { seconds, vocab } = readMeta(req);
 
-    const mimeType = ALLOWED_MIME.has(body.mimeType) ? body.mimeType : 'audio/wav';
-    const seconds = Number.isFinite(body.seconds) ? Math.round(body.seconds) : null;
-
-    const out = await callGemini(buildBody({ audio, mimeType, seconds, vocab: body.vocab }));
+    const out = await callGemini(buildBody({
+      audio: wav.toString('base64'), mimeType: 'audio/wav', seconds, vocab,
+    }));
     const text = out.speech === false ? '' : String(out.text || '').trim();
     return res.status(200).json({
       text,
@@ -199,6 +239,7 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error('[transcribe]', err);
+    if (/too long/.test(err.message)) return res.status(413).json({ error: 'recording is too long' });
     return res.status(502).json({ error: 'transcription failed' });
   }
 }

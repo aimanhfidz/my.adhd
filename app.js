@@ -2946,11 +2946,11 @@ async function micDown(e) {
       if (Voice.live()) el.compMicHint.textContent = 'nearly at the limit — wrap it up';
     },
 
-    /* The cap. Ending it here rather than throwing it away means the 90
-       seconds someone just said still becomes tasks. */
+    /* The cap. Ending it here rather than throwing it away means the two
+       minutes someone just said still becomes tasks. */
     onCap() {
       micUp();
-      toast('That was the 90 second limit — got what you said so far.');
+      toast('That was the limit — got what you said so far.');
     },
 
     onError(why) {
