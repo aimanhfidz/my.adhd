@@ -122,7 +122,7 @@ const el = {
 let state = {
   tasks: [],          // {id,title,minutes,energy,urgency,firstStep,category,steps,done,skipped}
   energy: 'medium',   // how the user feels right now
-  profile: { name: '', avatar: '\u{1F642}' },   // this device only — no account behind it
+  profile: { name: '', avatar: 'focus' },   // this device only — no account behind it
   sentFeedbackOn: null,   // the UTC day of the last note sent from this device
 
   /* The onboarding offer, once turned down, stays turned down. */
@@ -143,7 +143,7 @@ function load() {
       state = Object.assign(state, saved);
       // A store written before the profile existed has no profile key, and
       // one written by a half-finished edit may be missing a field.
-      state.profile = Object.assign({ name: '', avatar: '\u{1F642}' }, saved.profile || {});
+      state.profile = Object.assign({ name: '', avatar: 'focus' }, saved.profile || {});
     }
   } catch (_) { /* corrupt store — start fresh rather than crash */ }
 }
@@ -2678,13 +2678,22 @@ async function wakeAccount() {
    in the same localStorage record as the tasks, so clearing the site
    clears all of it together. */
 
-const AVATARS = ['\u{1F642}', '\u{1F60E}', '\u{1F984}', '\u{1F431}', '\u{1F436}',
-                 '\u{1F338}', '\u{1F680}', '\u{1F9E0}', '\u{2B50}', '\u{1F525}'];
+const AVATARS = [
+  ['focus', 'Focus'], ['spark', 'Spark'], ['steady', 'Steady'], ['maker', 'Maker'],
+  ['thinker', 'Thinker'], ['nightowl', 'Night owl'], ['zen', 'Zen'], ['explorer', 'Explorer'],
+  ['sun', 'Sun'], ['rebel', 'Rebel'], ['grow', 'Grow'], ['dreamer', 'Dreamer'],
+  ['sharp', 'Sharp']
+];
+
+function avatarMark(avatar) {
+  const id = AVATARS.some(([key]) => key === avatar) ? avatar : 'focus';
+  return `<svg viewBox="0 0 64 64" focusable="false" aria-hidden="true"><use href="avatars.svg#avatar-${id}"></use></svg>`;
+}
 
 function paintProfile() {
   const { name, avatar } = state.profile;
-  el.tabAvatar.textContent = avatar;
-  el.avatarBig.textContent = avatar;
+  el.tabAvatar.innerHTML = avatarMark(avatar);
+  el.avatarBig.innerHTML = avatarMark(avatar);
   el.greeting.textContent = name ? `Hey ${name}.` : 'Hey there.';
   if (el.nameInput.value !== name) el.nameInput.value = name;
   [...el.avatarPick.children].forEach(b => {
@@ -2695,15 +2704,15 @@ function paintProfile() {
 }
 
 function buildAvatarPicker() {
-  AVATARS.forEach(face => {
+  AVATARS.forEach(([id, label]) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'avatar-opt';
-    b.dataset.avatar = face;
-    b.textContent = face;
-    b.setAttribute('aria-label', `Use ${face} as your face`);
+    b.dataset.avatar = id;
+    b.innerHTML = avatarMark(id);
+    b.setAttribute('aria-label', `Use ${label} as your avatar`);
     b.addEventListener('click', () => {
-      state.profile.avatar = face;
+      state.profile.avatar = id;
       save();
       paintProfile();
     });
@@ -2886,6 +2895,18 @@ function knownNames() {
 async function micDown(e) {
   if (!Voice.available() || Voice.live() || micBusy) return;
   e.preventDefault();              // no long-press menu, no text selection
+
+  /* Pin the gesture to the button. A dump takes half a minute and a thumb
+     does not hold still for it — it rolls, it slides, it ends up half off
+     a 76px circle without the person having any idea they moved. Without
+     capture that is pointerleave, and pointerleave used to end the
+     recording in the middle of a sentence. With it, every pointer event
+     including the release comes back here no matter where the finger has
+     wandered to, and the only thing that stops a recording is letting go. */
+  if (e.pointerId !== undefined && el.compMic.setPointerCapture) {
+    try { el.compMic.setPointerCapture(e.pointerId); } catch (_) {}
+  }
+
   micHeld = performance.now();
   micBase = el.compInput.value.trim();
 
@@ -2971,7 +2992,16 @@ async function micUp() {
   if (!micBusy) return;
   restMic();
 
-  el.compInput.value = text ? (micBase ? micBase + ' ' + text : text) : micBase;
+  /* Only ever written when there is something to write. The old line put
+     micBase back on an empty result, which on a phone meant a long dump
+     the preview had been filling in live vanished the moment anything
+     went wrong — the worst possible ending for the one feature whose
+     entire job is not losing what you just thought of. Nothing came back,
+     so nothing is touched, and whatever the preview heard stays on screen
+     to be edited. */
+  if (text) {
+    el.compInput.value = micBase ? micBase + ' ' + text : text;
+  }
   syncComposer();
 
   if (!text) {
@@ -2996,10 +3026,23 @@ async function micUp() {
 
 el.compMic.addEventListener('pointerdown', micDown);
 el.compMic.addEventListener('pointerup', micUp);
+/* The gesture being taken away — the system stepping in, the pointer dying
+   under us — ends the hold like a release rather than throwing it away.
+   Something was said, and a partial transcript beats none. */
 el.compMic.addEventListener('pointercancel', micUp);
-/* The finger sliding off the button still ends the hold — it is released
-   somewhere, and the recording should not outlive it. */
-el.compMic.addEventListener('pointerleave', () => { if (Voice.live()) micUp(); });
+/* No pointerleave. It used to be here on the reasoning that a finger
+   sliding off the button has released it somewhere; on a phone a finger
+   slides off the button constantly without releasing anything, and this
+   was cutting long dumps off mid-word. Capture makes it moot. */
+
+/* Deliberately nothing on visibilitychange. Ending a live hold when the
+   page hides looks right on paper — a backgrounded tab cannot record —
+   but a permission prompt, a keyboard and an app switcher all hide the
+   page on some browser somewhere, and every one of those would cut a
+   recording off mid-sentence. That is the bug this pass exists to fix,
+   and it is not worth reintroducing from another direction. Letting go
+   is the only thing that ends a hold; if the phone goes away mid-dump
+   the pointer is released too, and that path already works. */
 /* Space and Enter on a focused button fire a click, not a hold, so the
    keyboard path is a plain toggle. */
 el.compMic.addEventListener('keydown', (e) => {
