@@ -104,20 +104,18 @@ body{
 /* the mark on the left, the toggle on the right, nothing between */
 .nav .theme-toggle{margin-left:auto}
 
-/* top-aligned: the headline claims the upper screen rather than sitting
-   dead-centre with a void above it. Same --top-gap as the install page. */
+/* Centred in its row. This was top-aligned, on the reasoning that the
+   headline should claim the upper screen rather than sit dead-centre with
+   a void above it — which was right while an illustration filled the
+   space underneath. With only the copy left, top-aligning puts that same
+   void below instead, and on a tall phone it took half the screen. The
+   concern was always the void, not the alignment. */
 .hero-body{
   min-height:0;
-  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:clamp(10px,2.4vh,24px);
   text-align:center;
-  padding:var(--top-gap) clamp(20px,5vw,40px) 0;
-}
-.hero-art{min-height:0; display:flex; justify-content:center}
-.hero-art img, .hero-art .hero-mascot{
-  display:block; height:min(38vh,340px); width:auto; max-width:100%;
-  /* the mascot sits back — the headline and CTA carry the screen */
-  opacity:.92;
+  padding:0 clamp(20px,5vw,40px);
 }
 .hero-copy{display:flex; flex-direction:column; align-items:center; min-height:0}
 .hero-title{
@@ -150,37 +148,25 @@ body{
 /* ---------- tall phones: let the hero grow into the slack ----------
    Top-aligning the hero left a dead band above the footer on a big
    phone. Rather than pushing the headline back down into the middle,
-   the mascot and the gaps take the space. Held to 40vh, not more: a
-   real iPhone spends part of that same viewport on the notch inset,
-   and 44vh had the note and the disclaimer touching. */
+   the gaps take the space. */
 @media (min-width:0px) and (min-height:780px){
   .hero-body{gap:clamp(14px,3vh,34px)}
-  .hero-art img, .hero-art .hero-mascot{height:min(40vh,380px)}
 }
 
-/* ---------- desktop: copy left, mascot right ---------- */
+/* ---------- desktop ----------
+   This was two columns, copy beside an illustration. With one child left
+   the row direction decided nothing, so the hero is a centred column at
+   every width and only the measure changes. */
 @media (min-width:820px){
-  .hero-body{
-    flex-direction:row-reverse; justify-content:center; align-items:center;
-    gap:clamp(40px,6vw,88px); text-align:left;
-  }
-  .hero-copy{align-items:flex-start; max-width:36rem}
-  .hero-art img, .hero-art .hero-mascot{height:min(64vh,520px)}
+  .hero-copy{max-width:36rem}
 }
 
-/* ---------- very short screens (an SE, a browser with two toolbars) ----
-   The hero is one viewport with nothing to scroll to, so on a 568px-tall
-   screen the mascot has to give way or the disclaimer falls off the end. */
-@media (max-height:620px){
-  .hero-art img, .hero-art .hero-mascot{height:min(30vh,220px)}
-}
-
-/* ---------- landscape phones ---------- */
+/* ---------- landscape phones ----------
+   The subtitle used to be hidden here: the hero is one viewport with
+   nothing to scroll to, and something had to give so the disclaimer did
+   not fall off the end. What was taking the room has gone, so it stays. */
 @media (max-height:520px){
-  .hero-body{flex-direction:row-reverse; align-items:center; justify-content:center; gap:26px; text-align:left}
-  .hero-copy{align-items:flex-start}
-  .hero-art img, .hero-art .hero-mascot{height:min(46vh,210px)}
-  .hero-sub{display:none}
+  .hero-body{gap:14px}
 }
 
 @media (prefers-reduced-motion:reduce){

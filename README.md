@@ -527,9 +527,8 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 |---|---|
 | `index.html` | Landing page — the front door. Full-bleed hero + copy |
 | `landing.css` | Landing-only layout |
-| `app.html` | The app. Six screens: dump, loading, lists, calendar, feedback, profile — plus the composer sheet, the tab bar, and the mascot and logo SVG sprite |
-| `theme.css` | Palette, type, mascot colours. Loaded by **both** pages before their own stylesheet |
-| `mascot.svg` | Standalone mascot for the landing hero (`<img>` can't read the page's CSS, so its colours are baked in) |
+| `app.html` | The app. Six screens: dump, loading, lists, calendar, feedback, profile — plus the composer sheet, the tab bar, and the icon and logo SVG sprite |
+| `theme.css` | Palette and type. Loaded by **both** pages before their own stylesheet |
 | `favicon.svg` | The logo mark, standalone |
 | `fonts/` | Baloo 2 (variable, wght 400-800), self-hosted |
 | `docs/` | README screenshots and the two theme gifs. Not served by the app |
@@ -697,13 +696,18 @@ Type is Baloo 2, served from `fonts/` — no Google Fonts request, so the app
 still renders correctly offline. `Baloo2-ExtraBold.ttf` is unused; the
 variable file covers 400-800 on its own.
 
-**`mascot.svg` duplicates the mascot geometry** held in the `index.html`
-sprite — an `<img>` cannot reference a symbol defined in another document.
-Edit the character in one and copy it to the other, or they will drift.
+The interface icons and the logo are inline SVG symbols in a hidden sprite
+at the top of each page (`#logo-mark`, `#icon-lists`, `#icon-calendar` and
+the rest), pulled in with `<use>` and coloured through tokens — so each
+shape is defined once for the whole app.
 
-The mascot and the logo are inline SVG symbols at the top of `index.html`
-(`#mx-head`, `#mx-bust`, `#logo-mark`), pulled in with `<use>` and coloured
-through tokens — so each shape is defined once for the whole app.
+There was a drawn character here too, on the landing hero and above the
+dump box. It is gone: the markup, the palette tokens it was the only
+consumer of, the sizing rules, and `mascot.svg`, which duplicated its
+geometry because an `<img>` cannot reference a symbol defined in another
+document. The landing hero centres its copy rather than top-aligning it
+now — top alignment was there to keep the headline above the illustration,
+and without one it left half a phone screen empty underneath.
 
 The logo is a seven-arm asterisk: the eighth arm is detached and carried by
 the violet capsule off the lower right. That gap is the mark — closing it
