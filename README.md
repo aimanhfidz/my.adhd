@@ -121,8 +121,10 @@ Manual deploys, if you need one:
 npx vercel --prod
 ```
 
-`ANTHROPIC_API_KEY` lives in that project's Environment Variables. It is only
-ever read server-side in `api/triage.js` — it never reaches the browser.
+`ANTHROPIC_API_KEY` and `GEMINI_API_KEY` live in that project's Environment
+Variables. Each is only ever read server-side — `ANTHROPIC_API_KEY` in
+`api/triage.js`, `GEMINI_API_KEY` in `api/transcribe.js` — and neither reaches
+the browser.
 
 **Env vars are per-project and do not survive being moved to a new one, and
 their absence is silent**: `api/triage.js` returns 500, the client swallows it,
@@ -130,6 +132,14 @@ and the app falls back to the local heuristic parser. You get worse titles and
 guessed times with no error — only the small "sorted offline" banner says so.
 After any project change, dump something real and check that banner is absent
 before trusting the deployment.
+
+`GEMINI_API_KEY` fails the same quiet way and is easier to miss, because voice
+has a fallback too: `api/transcribe.js` returns 500, and `voice.js` hands back
+whatever the browser's own speech engine heard instead. On Chrome that is a
+plausible-looking transcript of the wrong words, so the check is the same —
+hold the mic, say a proper noun, and make sure the toast about not reaching the
+transcriber does not appear. On an iPhone there is no fallback engine at all
+and the hold simply comes back empty.
 
 `@anthropic-ai/sdk` is pinned to an exact version (`0.120.0`), not a range —
 `api/triage.js` depends on beta request parameters (`betas`, `fallbacks`,
@@ -411,7 +421,9 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `app.js` | State, triage call, ordering, rendering, the composer, the calendar, the profile, the calendar sync |
 | `gcal.js` | Google Calendar: the OAuth token dance and the three verbs. Loads before `app.js`, which only ever asks it whether the feature is available |
 | `config.js` | Public front-end config — currently just the Google OAuth client ID. Empty means the calendar feature stays hidden |
+| `voice.js` | Hold to talk. Records 16 kHz mono WAV in the browser and posts it to `/api/transcribe`; runs the browser's own speech engine alongside it purely for rough live text |
 | `api/triage.js` | Claude call — triage + breakdown modes |
+| `api/transcribe.js` | Gemini call — audio in, transcript out. The only place a recording is ever sent |
 | `api/feedback.js` | The note sent from the feedback screen. One per device per UTC day |
 | `install.html` / `install.css` | The "add to home screen" walkthrough |
 | `privacy.html` / `terms.html` | The legal pages. Written against the code -- if they disagree with it, one of the two is a bug |

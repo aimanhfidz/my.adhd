@@ -94,6 +94,52 @@ Rules:
 - Timing is captured, never invented. A day only becomes a date when the dump gives you one, and a time only becomes a clock time when the dump gives you one. "Sometime this week" is not a date. When something is genuinely tied to a day, the urgency should reflect how close that day is.
 - If the dump contains no actionable items at all, return an empty tasks array.`;
 
+/* Bolted on only when the dump was spoken, and different depending on who
+   did the listening.
+
+   /api/transcribe hands the audio to Gemini, which hears the recording:
+   it code-switches inside a sentence and it is given the names this
+   person already uses, so what comes back is close to what was said. The
+   note below tells Claude to leave it alone.
+
+   The browser engine is the fallback, and it is the old problem — one
+   language, no vocabulary, everything else phonetic. That transcript
+   needs reading back rather than reading.
+
+   Kept off typed dumps deliberately, both of them. Inviting repairs on
+   text someone actually typed means their own words get rewritten under
+   them. */
+function spokenNote({ spoken, lang, vocab }) {
+  const known = Array.isArray(vocab) ? vocab.filter((w) => typeof w === 'string').slice(0, 40) : [];
+  const names = known.length
+    ? `\n- Names already in their lists, spelled the way they accept them. Where the dump has one of these, use this spelling:\n${known.map((w) => `  - ${w}`).join('\n')}`
+    : '';
+
+  const shared = `
+- Spoken dumps arrive in no order and without connecting words. Two neighbouring sentences are usually two unrelated tasks, not one with a clause hanging off it.
+- Keep the words the person actually uses. Do not translate the dump into English, and do not translate it out of English. A task said in Malay stays in Malay.
+- The recording stops when they let go of a button, so the last sentence may be cut off. Extract what is there. Do not finish their thought for them.
+- Times and dates were transcribed as spoken — "half nine", "next Friday", "hujung bulan". Resolve those against the current date above. A vague one is still not a date.${names}`;
+
+  if (spoken === 'browser') {
+    return `
+
+This dump was SPOKEN, and the transcript you have is a poor one — the recording could not be sent to the transcriber, so it came from the browser's own speech engine set to ${lang || 'English'}. Before you extract anything, repair it:
+
+- That engine only listens in one language. Code-switching is normal and expected — a Malay speaker will drop English words in mid-sentence, and an English speaker will do the reverse. Whichever language it was set to, the other one came out phonetically. Read it back as it was said, not as it was spelled.
+- Proper nouns are what it gets wrong most: apartment blocks, roads, clinics, banks, shops, people. Where a run of words is clearly a mangled name, restore the name. "vista come on well" is a place, not a sentence.
+- There is no punctuation and there will be filler — "uh", "lah", "macam", "like", "you know". Drop the filler. Do not drop meaning.
+- Repair, do not invent. If a fragment is genuinely unrecoverable, leave it out rather than guessing a task that was never said.${shared}`;
+  }
+
+  return `
+
+This dump was SPOKEN and transcribed from the recording by an audio model${lang ? `, which heard it as ${lang}` : ''}. The transcript is accurate: filler is already gone, names are already spelled, and code-switching is already written down in the language each word was said in.
+
+- Trust it. Do not "fix" a word that looks odd — if it reads as a name, a place or a borrowed word, that is what was said.
+- What it is not is tidy. It is talking: run-ons, restarts, things trailing off, worries mixed in with errands. That part is yours.${shared}`;
+}
+
 const BREAKDOWN_SYSTEM = `You break one overwhelming task into steps for someone with ADHD.
 
 Rules:
@@ -174,7 +220,7 @@ export default async function handler(req, res) {
       : describeDay(new Date().toISOString().slice(0, 10));
 
     const out = await ask({
-      system: SYSTEM,
+      system: body.spoken ? SYSTEM + spokenNote(body) : SYSTEM,
       prompt:
         `Today is ${today}.\n` +
         `Their energy right now: ${energy}.\n\n` +

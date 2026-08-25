@@ -54,7 +54,10 @@
         appear on your phone and your laptop. Do not sign in and there is no
         account, no login, and no copy of your lists anywhere but here.</li>
       <li><strong>What you type into the dump box is sent to an AI</strong> to
-        be turned into tasks, and is not stored afterwards.</li>
+        be turned into tasks, and is not stored afterwards. <strong>If you hold
+        the mic and talk instead, the recording is sent to be transcribed</strong>
+        — also not stored, and the microphone is only ever open while you are
+        holding the button.</li>
       <li><strong>Google Calendar is off unless you turn it on</strong>, and
         when it is on, the app can only touch a calendar it made itself.</li>
       <li><strong>There is no tracking of any kind.</strong> No analytics, no
@@ -114,6 +117,42 @@
     Practically: treat the dump box the way you would treat any AI chat. It is
     a good place for "chase the landlord about the boiler" and a bad place for
     your passwords.
+  </p>
+
+  <h2>Hold to talk</h2>
+  <p>
+    The microphone is only ever open while your finger is on the button. There
+    is no wake word, nothing listens in the background, and letting go stops
+    the recording and releases the microphone — which is what puts out your
+    device's recording indicator.
+  </p>
+  <p>
+    When you let go, the recording is sent to our server and passed straight to
+    <a href="https://ai.google.dev/" rel="noopener">Google</a>'s Gemini API,
+    which listens to it and returns the text. That is the feature: an engine
+    that hears the audio is the only kind that can follow a sentence which
+    starts in Malay and ends in English, or get a road name right. Along with
+    the audio we send the names already on your own lists, so that the things
+    you have written down before are spelled the way you spell them.
+  </p>
+  <p>
+    We do not keep the recording. It is held in memory for the length of the
+    request and never written to disk or to any database of ours. Google
+    processes it as our service provider on the paid API, which is not used to
+    improve their models. The text that comes back goes into the dump box for
+    you to read and edit — nothing is added to your lists until you press the
+    button yourself.
+  </p>
+  <p>
+    If the transcriber cannot be reached, the app falls back to your browser's
+    own speech engine and tells you that is what you are looking at. Note that
+    in Chrome that engine also sends audio to Google; in Safari it runs on your
+    device. Neither is as accurate, which is why it is the fallback.
+  </p>
+  <p class="legal-note">
+    The same rule as the dump box applies, with more force because talking is
+    easier than typing: it is a good place for "chase the landlord about the
+    boiler", and a bad place for anything you would not want transcribed.
   </p>
 
   <h2>Google Calendar</h2>

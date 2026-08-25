@@ -537,12 +537,13 @@
 
     <!-- Hold to talk. Outside .composer-body on purpose: the body scrolls
          and this must not scroll away with it. Hidden by app.js when the
-         browser has no SpeechRecognition, so it is never a button that
-         does nothing. -->
+         browser cannot open a microphone at all, so it is never a button
+         that does nothing. -->
     <div class="composer-voice is-hidden" id="composer-voice">
       <button class="composer-mic" id="composer-mic" type="button"
               aria-describedby="composer-mic-hint">
         <span class="composer-mic-ring" aria-hidden="true"></span>
+        <span class="composer-mic-level" aria-hidden="true"></span>
         <svg class="composer-mic-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/>
           <path d="M5 11a7 7 0 0 0 14 0M12 18v3" fill="none"

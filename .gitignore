@@ -2,7 +2,7 @@
 node_modules/
 
 # secrets — every key this project uses lives in Vercel env vars, never here.
-# ANTHROPIC_API_KEY, SUPABASE_SERVICE_ROLE_KEY, GOOGLE_CLIENT_SECRET.
+# ANTHROPIC_API_KEY, GEMINI_API_KEY, SUPABASE_SERVICE_ROLE_KEY, GOOGLE_CLIENT_SECRET.
 .env
 .env.*
 !.env.example

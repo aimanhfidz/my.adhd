@@ -1278,6 +1278,44 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
   to{opacity:0; transform:scale(1.9)}
 }
 
+/* The second ring is the one that is actually listening: voice.js sets
+   --mic-level from the microphone about twenty-five times a second, so
+   this one moves with the room rather than on a timer. On a phone with no
+   live text it is the only evidence the app can hear anything, which is
+   why it is driven by sound and not by a keyframe.
+
+   Transform and opacity only, and no transition on scale — a level meter
+   that eases is a level meter half a beat behind what you just said. */
+.composer-mic-level{
+  position:absolute; inset:-6px; border-radius:999px;
+  border:2.5px solid currentColor;
+  opacity:0; transform:scale(1);
+  pointer-events:none;
+}
+.composer-mic.is-live .composer-mic-level{
+  opacity:calc(.25 + var(--mic-level, 0) * .55);
+  transform:scale(calc(1 + var(--mic-level, 0) * .22));
+  transition:opacity .08s linear;
+}
+
+/* Let go, and it stops listening but is not finished — the recording is
+   on its way to be transcribed. Shrunk back below resting size and turned
+   down, so it reads as busy rather than as live. */
+.composer-mic.is-working{
+  transform:scale(.94);
+  box-shadow:0 6px 18px -8px rgba(16,16,24,.45);
+  cursor:progress;
+}
+.composer-mic.is-working .composer-mic-ring{
+  opacity:.32;
+  animation:micThinking 1.1s var(--ease) infinite;
+}
+@keyframes micThinking{
+  0%,100%{opacity:.14; transform:scale(1)}
+  50%    {opacity:.42; transform:scale(1.16)}
+}
+.composer-voice.is-working .composer-mic-hint{color:var(--ink)}
+
 .composer-mic-hint{
   margin:0; font-size:13.5px; font-weight:600; color:var(--faint);
   letter-spacing:-.01em; text-align:center;
@@ -1286,6 +1324,9 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
 
 @media (prefers-reduced-motion:reduce){
   .composer-mic.is-live .composer-mic-ring{animation:none; opacity:.28}
+  .composer-mic.is-working .composer-mic-ring{animation:none; opacity:.28}
+  /* The level ring stays. It is not decoration — without it there is no
+     sign the microphone is picking anything up, and it does not loop. */
 }
 
 /* Clears the mic so a long dump never ends up underneath it. */

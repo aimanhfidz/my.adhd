@@ -343,6 +343,17 @@ function stopLoadingCopy() {
 
 /* ---------------- triage ---------------- */
 
+/* Set by the mic when a transcript lands, read once by triage() and then
+   thrown away. It is what tells the extractor that these are somebody's
+   spoken words rather than their typed ones, which changes how much
+   liberty it is allowed to take with them — see api/triage.js.
+
+   Null means typed, and typing is the assumption. Anything that puts new
+   text in front of the user without the mic having produced it clears
+   this, because inviting repairs on words someone chose themselves means
+   watching their own sentences get rewritten under them. */
+let spokenDump = null;
+
 async function triage() {
   const text = el.input.value.trim();
   if (!text) { el.input.focus(); toast('Give me something to work with.'); return; }
@@ -350,9 +361,12 @@ async function triage() {
   show(el.screenLoad);
   startLoadingCopy();
 
+  const spoken = spokenDump;
+  spokenDump = null;
+
   let tasks;
   try {
-    tasks = await parseWithAI(text, state.energy);
+    tasks = await parseWithAI(text, state.energy, spoken);
   } catch (err) {
     console.warn('AI triage unavailable, using local parser:', err.message);
     tasks = parseLocally(text);
@@ -390,11 +404,18 @@ async function triage() {
 }
 
 /** Ask Claude (via the serverless function) to turn a raw dump into structured tasks. */
-async function parseWithAI(text, energy) {
+async function parseWithAI(text, energy, spoken = null) {
   const res = await fetch('/api/triage', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ mode: 'triage', text, energy, today: dayKey() }),
+    body: JSON.stringify({
+      mode: 'triage', text, energy, today: dayKey(),
+      /* Only sent for a dump that was actually spoken. `source` matters as
+         much as the flag: a transcript from the audio model is already
+         repaired and wants leaving alone, and one from the browser engine
+         is the mangled kind that needs reading back phonetically. */
+      ...(spoken ? { spoken: spoken.source, lang: spoken.lang, vocab: knownNames() } : {}),
+    }),
   });
   if (!res.ok) throw new Error('triage endpoint returned ' + res.status);
   const data = await res.json();
@@ -1376,8 +1397,10 @@ function closeComposer(slide = false) {
 /** Cancel keeps the text — in the dump box, where the dump screen will find it. */
 function cancelComposer() {
   /* A hold that is still running when the sheet goes would keep the mic
-     open on a screen that no longer exists. */
-  if (Voice.live()) { Voice.stop(); restMic(); }
+     open on a screen that no longer exists, and one already on its way to
+     be transcribed is a round trip nobody is waiting for the answer to. */
+  Voice.abandon();
+  restMic();
   el.input.value = el.compInput.value;
   previewDates();
   refreshListsButton();
@@ -2818,54 +2841,157 @@ el.compInput.addEventListener('blur', () => {
    Press and hold, not tap-to-toggle. A toggle leaves the app listening
    after you have walked away from it, and needs you to remember it is
    on; a hold cannot be left running, and letting go is the same gesture
-   as being finished. */
-let micBase = '';      // what was in the box before this hold
-let micHeld = 0;       // when the finger landed
+   as being finished.
+
+   Letting go is no longer the end of it. The recording goes off to be
+   transcribed and comes back a second or two later, so there is a third
+   state between listening and resting — see micWorking. What is in the
+   box during that second is the browser engine's rough guess, where the
+   browser has one; the good version lands on top of it. */
+let micBase = '';       // what was in the box before this hold
+let micHeld = 0;        // when the finger landed
+let micBusy = false;    // a transcript is in the air
 
 function restMic() {
-  el.compMic.classList.remove('is-live');
-  el.compVoice.classList.remove('is-live');
+  micBusy = false;
+  el.compMic.classList.remove('is-live', 'is-working');
+  el.compVoice.classList.remove('is-live', 'is-working');
+  el.compMic.style.removeProperty('--mic-level');
   el.compMicHint.textContent = 'hold to talk';
 }
 
-function micDown(e) {
-  if (!Voice.available() || Voice.live()) return;
+/* The names this person already uses. A transcriber that has seen how
+   they spell their own road, their landlord or their clinic will pick
+   that over whatever the sound rhymed with, and everything in here came
+   out of a task they kept.
+
+   Capitalised runs only, and never the first word of a title — those are
+   verbs, because every title starts with one. */
+function knownNames() {
+  const seen = new Set();
+  for (const t of state.tasks) {
+    const words = String(t.title || '').split(/[^\p{L}\p{N}'’-]+/u).filter(Boolean);
+    let run = [];
+    words.forEach((w, i) => {
+      const proper = i > 0 && /^\p{Lu}/u.test(w) && w.length > 2;
+      if (proper) { run.push(w); return; }
+      if (run.length) { seen.add(run.join(' ')); run = []; }
+    });
+    if (run.length) seen.add(run.join(' '));
+    if (seen.size >= 40) break;
+  }
+  return [...seen].slice(0, 40);
+}
+
+async function micDown(e) {
+  if (!Voice.available() || Voice.live() || micBusy) return;
   e.preventDefault();              // no long-press menu, no text selection
   micHeld = performance.now();
   micBase = el.compInput.value.trim();
 
   el.compMic.classList.add('is-live');
   el.compVoice.classList.add('is-live');
-  el.compMicHint.textContent = 'listening… let go when done';
+  /* Not "listening" yet. The first hold of all goes through a permission
+     dialog, and telling someone the app is listening while the browser is
+     still asking whether it may is a lie about two seconds long — which
+     is exactly long enough to say the thing into. */
+  el.compMicHint.textContent = 'opening the mic…';
 
   Voice.start({
-    /* Straight into the box as it is heard. Waiting until release to
-       show anything makes the first hold feel like nothing happened. */
+    vocab: knownNames(),
+
+    /* Now it is true. On every hold after the first this arrives within a
+       few milliseconds and the line above is never really read. */
+    onLive() {
+      if (Voice.live()) el.compMicHint.textContent = 'listening… let go when done';
+    },
+
+    /* The rough live text, where the browser has an engine for it.
+       Waiting until release to show anything makes the first hold feel
+       like nothing happened. */
     onText(text) {
+      if (!Voice.live()) return;
       el.compInput.value = micBase ? micBase + ' ' + text : text;
       syncComposer();
     },
+
+    /* Drives the ring. Without a preview this is the only sign the app
+       can hear anything at all, so it is not decoration. */
+    onLevel(level) {
+      el.compMic.style.setProperty('--mic-level', level.toFixed(2));
+    },
+
+    onWarn() {
+      if (Voice.live()) el.compMicHint.textContent = 'nearly at the limit — wrap it up';
+    },
+
+    /* The cap. Ending it here rather than throwing it away means the 90
+       seconds someone just said still becomes tasks. */
+    onCap() {
+      micUp();
+      toast('That was the 90 second limit — got what you said so far.');
+    },
+
     onError(why) {
       restMic();
       toast(why === 'mic-denied'
         ? 'no mic access — allow it in your browser settings'
-        : "couldn't hear that, try again");
+        : "couldn't start the mic, try again");
     },
   });
 }
 
-function micUp() {
-  if (!Voice.live()) { restMic(); return; }
-  const said = Voice.stop();
+async function micUp() {
+  if (!Voice.live()) { if (!micBusy) restMic(); return; }
   const quick = performance.now() - micHeld < 400;
+
+  /* Tapped it rather than held it. Nothing was said, so nothing is sent —
+     say what the button wants instead of spinning for a second first. */
+  if (quick) {
+    Voice.abandon();
+    restMic();
+    el.compInput.value = micBase;
+    syncComposer();
+    el.compMicHint.textContent = 'hold it down while you talk';
+    return;
+  }
+
+  micBusy = true;
+  el.compMic.classList.remove('is-live');
+  el.compMic.classList.add('is-working');
+  el.compVoice.classList.remove('is-live');
+  el.compVoice.classList.add('is-working');
+  el.compMic.style.removeProperty('--mic-level');
+  el.compMicHint.textContent = 'writing it down…';
+
+  const { text, source, lang } = await Voice.stop();
+
+  /* The sheet was closed, or another hold started, while that was in the
+     air. Whatever came back belongs to a moment that has gone. */
+  if (!micBusy) return;
   restMic();
 
-  el.compInput.value = said ? (micBase ? micBase + ' ' + said : said) : micBase;
+  el.compInput.value = text ? (micBase ? micBase + ' ' + text : text) : micBase;
   syncComposer();
 
-  /* Tapped it rather than held it — say so, rather than leaving a
-     button that appears to have done nothing. */
-  if (!said && quick) el.compMicHint.textContent = 'hold it down while you talk';
+  if (!text) {
+    if (source === 'no-mic') {
+      el.compMicHint.textContent = 'the mic never opened';
+      toast('Your browser did not let us open the mic — check its site permissions.');
+    } else {
+      el.compMicHint.textContent = "didn't catch anything that time";
+    }
+    return;
+  }
+
+  /* Which model heard it decides what triage is told about the text —
+     see spokenDump. A browser transcript needs the repair pass; a
+     Gemini one has already had it. */
+  spokenDump = { source, lang };
+
+  if (source === 'browser') {
+    toast("Couldn't reach the transcriber — that's the rough version.");
+  }
 }
 
 el.compMic.addEventListener('pointerdown', micDown);
@@ -2881,7 +3007,6 @@ el.compMic.addEventListener('keydown', (e) => {
   e.preventDefault();
   if (Voice.live()) micUp(); else micDown(e);
 });
-
 el.compCancel.addEventListener('click', cancelComposer);
 el.compScrim.addEventListener('click', cancelComposer);
 el.compPost.addEventListener('click', sendComposer);
@@ -2978,7 +3103,7 @@ document.addEventListener('visibilitychange', () => {
 });
 window.addEventListener('online', syncSoon);
 
-el.input.addEventListener('input', previewDates);
+el.input.addEventListener('input', () => { spokenDump = null; previewDates(); });
 
 el.input.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); triage(); }
