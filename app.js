@@ -1104,12 +1104,13 @@ async function resortLocal() {
 
   try {
     const fresh = await parseWithAI(stale.map(dumpLine).join('\n'), state.energy);
-    if (!fresh.length) throw new Error('nothing came back');
-    /* Fewer back than went in means the model swallowed one. Re-sorting is a
-       tidy-up, never a delete — so drop the whole result rather than write a
-       list that is quietly missing a task the person never removed. */
-    if (fresh.length < stale.length) throw new Error('came back short');
 
+    /* Fewer back than went in means one was swallowed, and there is no
+       telling which. Re-sorting is a tidy-up, never a delete, so rather than
+       write a list quietly missing a task nobody removed, settle for the
+       reading already on it. More back than went in is a line split in two —
+       nothing is lost there, so take it; only the day cannot be paired up. */
+    if (fresh.length < stale.length) return settleForOffline(stale);
     if (fresh.length === stale.length) fresh.forEach((t, i) => keepDate(t, stale[i]));
 
     const staleIds = new Set(stale.map(t => t.id));
@@ -1118,11 +1119,34 @@ async function resortLocal() {
     goToNext();
     toast('Sorted properly.');
   } catch (err) {
+    /* An empty list is the sorter's considered answer, not a fault on the
+       way there: a bare name or a half-written fragment is a line it will
+       not turn into a task, however many times it is asked. */
+    if (err.message === 'no tasks in response') return settleForOffline(stale);
     console.warn('re-sort failed:', err.message);
+    toast(resortProblem(err));
+  } finally {
+    /* Put the button back however this went. It used to be reset only on the
+       way out of a failure, so a re-sort that worked left it disabled and
+       still reading "Sorting…" — invisible while the notice is hidden, and
+       then dead on arrival the next time an offline dump brings the notice
+       back. */
     el.btnResort.disabled = false;
     el.btnResort.textContent = 'Sort these properly';
-    toast(resortProblem(err));
   }
+}
+
+/* Keep the offline reading and stop calling it provisional. Nothing is
+   deleted and nothing is rewritten — the one change is that the list stops
+   offering to re-sort what the sorter has already declined to touch, which
+   is what left the notice sitting there with a button that could not work. */
+function settleForOffline(stale) {
+  stale.forEach((t) => { t.local = false; });
+  save();
+  goToNext();
+  toast(stale.length === 1
+    ? 'Kept as it was — the sorter had nothing to add.'
+    : 'Kept as they were — the sorter had nothing to add.');
 }
 
 /* A stale task written back out as a line of dump text, date and all.
@@ -1158,7 +1182,6 @@ function resortProblem(err) {
   const status = /returned (\d+)/.exec(err.message);
   if (status) return `The sorter answered ${status[1]}. Try again in a moment.`;
   if (err.name === 'TypeError') return 'Cannot reach the backend from here.';
-  if (err.message === 'came back short') return 'The sorter lost one. Nothing was changed.';
   return 'The sorter sent nothing back. Try again.';
 }
 
