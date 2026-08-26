@@ -787,8 +787,6 @@ const catKey = (t) => String(t.category || 'general').toLowerCase();
    tasks, and it should not follow you onto another device. */
 let catFilter = 'all';
 
-const isLate = (t) => !!t.when && t.when < dayKey();
-
 /* A deadline as one sortable number. No day means no deadline, which sorts
    last and not first — an undated task is not due now, it is undated. A day
    with no time on it is treated as the end of that day, so it falls in
@@ -798,16 +796,45 @@ function dueAt(t) {
   return Number(t.when.replace(/-/g, '') + (t.at ? t.at.replace(':', '') : '2359'));
 }
 
-/* Urgency first, then the clock. A day that has already gone outranks all
-   of it: being late is the one thing that only gets worse for being further
-   down the page. Then what the model called urgent, then what runs out
-   soonest, and between two of equal standing the quicker one — a list you
-   can put a dent in beats one you can only stare at. */
-function byUrgencyThenDeadline(a, b) {
-  const la = isLate(a), lb = isLate(b);
-  if (la !== lb) return la ? -1 : 1;
-  if (la && lb) return dueAt(a) - dueAt(b);
-  return b.urgency - a.urgency || dueAt(a) - dueAt(b) || a.minutes - b.minutes;
+/* Four headings, in the order the day presses on you. What puts a task
+   under one of them is its deadline and nothing else: that is the one thing
+   a heading can say at a glance which a chip on a card cannot, and mixing
+   urgency into it would leave a line that says "Today" holding something
+   that is not. Urgency still orders what sits underneath. */
+const BUCKETS = [
+  ['late',    'Late'],
+  ['today',   'Today'],
+  ['soon',    'Coming up'],
+  ['someday', 'No date yet'],
+];
+
+function bucketOf(t, today) {
+  if (!t.when) return 'someday';
+  if (t.when < today) return 'late';
+  if (t.when === today) return 'today';
+  return 'soon';
+}
+
+/* Under a dated heading the clock leads. The heading has already said these
+   are all late, or all today, so what is left to know is which comes first.
+   Undated has no clock to lead with, so urgency does, and between two of
+   equal standing the quicker one — a list you can put a dent in beats one
+   you can only stare at. */
+function sortBucket(key, items) {
+  return items.slice().sort(key === 'someday'
+    ? (a, b) => b.urgency - a.urgency || a.minutes - b.minutes
+    : (a, b) => dueAt(a) - dueAt(b) || b.urgency - a.urgency || a.minutes - b.minutes);
+}
+
+/* Only the headings that have something under them. An empty "Late" is a
+   worse thing to read than no heading at all. */
+function bucketize(tasks) {
+  const today = dayKey();
+  const by = new Map(BUCKETS.map(([k]) => [k, []]));
+  tasks.forEach(t => by.get(bucketOf(t, today)).push(t));
+  return BUCKETS
+    .filter(([k]) => by.get(k).length)
+    .map(([k, label]) => [k, label, sortBucket(k, by.get(k))]);
 }
 
 function groupByCategory(tasks) {
@@ -876,19 +903,40 @@ function goToNext() {
   if (catFilter !== 'all' && !groups.some(([cat]) => cat === catFilter)) catFilter = 'all';
   renderCatBar(groups);
 
-  const shown = (catFilter === 'all' ? open : open.filter(t => catKey(t) === catFilter))
-    .slice()
-    .sort(byUrgencyThenDeadline);
+  const shown = catFilter === 'all' ? open : open.filter(t => catKey(t) === catFilter);
 
   el.lists.innerHTML = '';
-  const ul = document.createElement('ul');
-  ul.className = 'list-items';
-  shown.forEach(t => ul.appendChild(renderTask(t)));
-  el.lists.appendChild(ul);
+  bucketize(shown).forEach(([key, label, items]) =>
+    el.lists.appendChild(renderBucket(key, label, items)));
 
   renderDone(done);
   el.dangerZone.classList.toggle('is-hidden', state.tasks.length === 0);
   resetClear();
+}
+
+function renderBucket(key, label, items) {
+  const section = document.createElement('section');
+  section.className = `bucket bucket--${key}`;
+
+  const head = document.createElement('div');
+  head.className = 'bucket-head';
+
+  const name = document.createElement('h2');
+  name.className = 'bucket-name';
+  name.textContent = label;
+
+  const count = document.createElement('span');
+  count.className = 'bucket-count';
+  count.textContent = items.length;
+
+  head.append(name, count);
+
+  const ul = document.createElement('ul');
+  ul.className = 'list-items';
+  items.forEach(t => ul.appendChild(renderTask(t)));
+
+  section.append(head, ul);
+  return section;
 }
 
 /* The lists, as one line you can run your thumb along. One list is no

@@ -373,6 +373,25 @@ body{
 }
 .cat-pill.is-on .cat-pill-n{background:rgba(255,255,255,.22); color:var(--on-accent)}
 
+/* Headings by deadline. Each card already carries its exact day; the
+   heading is there so the shape of what is coming reads without having to
+   read any of them. Late is the only one that shouts, and it earns it. */
+.bucket{display:flex; flex-direction:column; gap:10px}
+
+.bucket-head{display:flex; align-items:center; gap:9px}
+.bucket-name{
+  font-family:var(--display); font-size:15px; font-weight:700;
+  letter-spacing:-.01em; color:var(--muted);
+}
+.bucket-count{
+  font-size:11px; font-weight:700; color:var(--faint);
+  background:var(--wash); border-radius:999px;
+  min-width:18px; padding:1px 6px; text-align:center;
+}
+.bucket--today .bucket-name{color:var(--ink)}
+.bucket--late .bucket-name,
+.bucket--late .bucket-count{color:var(--orange)}
+
 .list-items{
   list-style:none; display:flex; flex-direction:column; gap:8px;
   animation:rise .18s var(--ease) both;
