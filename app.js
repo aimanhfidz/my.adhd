@@ -1103,8 +1103,14 @@ async function resortLocal() {
   el.btnResort.textContent = 'Sorting…';
 
   try {
-    const fresh = await parseWithAI(stale.map(t => t.title).join('\n'), state.energy);
+    const fresh = await parseWithAI(stale.map(dumpLine).join('\n'), state.energy);
     if (!fresh.length) throw new Error('nothing came back');
+    /* Fewer back than went in means the model swallowed one. Re-sorting is a
+       tidy-up, never a delete — so drop the whole result rather than write a
+       list that is quietly missing a task the person never removed. */
+    if (fresh.length < stale.length) throw new Error('came back short');
+
+    if (fresh.length === stale.length) fresh.forEach((t, i) => keepDate(t, stale[i]));
 
     const staleIds = new Set(stale.map(t => t.id));
     state.tasks = state.tasks.filter(t => !staleIds.has(t.id)).concat(fresh);
@@ -1115,8 +1121,45 @@ async function resortLocal() {
     console.warn('re-sort failed:', err.message);
     el.btnResort.disabled = false;
     el.btnResort.textContent = 'Sort these properly';
-    toast('Still cannot reach the backend.');
+    toast(resortProblem(err));
   }
+}
+
+/* A stale task written back out as a line of dump text, date and all.
+   The offline reader already resolved the day and time from the original
+   wording, and that wording is gone by now. Re-sorting on the bare title
+   hands the model a line with no date in it and gets a task with no date
+   back, quietly unpicking the one thing the offline pass got right. */
+function dumpLine(t) {
+  /* A day that has already gone is the one thing not to write down. The
+     schema forbids the model to return a past date, and handed a line that
+     asks for one it resolves the contradiction by dropping the task
+     outright — so an overdue task goes in bare and gets its day back from
+     keepDate afterwards. */
+  if (!t.when || t.when < dayKey()) return t.title;
+  const at = timeLabel(t.at);
+  return `${t.title} \u2014 ${dayPhrase(t.when)}${at ? ` at ${at}` : ''}`;
+}
+
+/* Put back a day the model was never shown. Only ever fills a blank: if the
+   re-sort found a day of its own, that reading is the better one. */
+function keepDate(fresh, was) {
+  if (fresh.when || !was.when) return;
+  fresh.when = was.when;
+  fresh.at = was.at;
+}
+
+/* Say which way it failed. Every failure used to report the same thing —
+   that the backend was unreachable — including the ones where the backend
+   answered and said no, which is the case you most need to tell apart from
+   a dead connection. */
+function resortProblem(err) {
+  if (!navigator.onLine) return 'Still offline — no connection.';
+  const status = /returned (\d+)/.exec(err.message);
+  if (status) return `The sorter answered ${status[1]}. Try again in a moment.`;
+  if (err.name === 'TypeError') return 'Cannot reach the backend from here.';
+  if (err.message === 'came back short') return 'The sorter lost one. Nothing was changed.';
+  return 'The sorter sent nothing back. Try again.';
 }
 
 /* Edit the title in place rather than re-rendering the lists: a full
