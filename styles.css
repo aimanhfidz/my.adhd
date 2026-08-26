@@ -335,26 +335,48 @@ body{
 .offline-note strong{color:var(--orange); font-weight:700}
 .offline-note .btn-soft{width:100%; min-width:0}
 
-.list-group{animation:rise .18s var(--ease) both}
 @keyframes rise{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
 
-.list-head{
-  display:flex; align-items:center; gap:9px;
-  padding-bottom:10px; margin-bottom:10px;
-  border-bottom:1.5px solid var(--line);
+/* The lists as one scrolling line, in place of a stack of headings. It
+   scrolls sideways on its own — overscroll-behavior keeps a swipe that runs
+   off the end from being handed up to the page, which on a phone reads as
+   the whole screen lurching. The last pill is meant to be clipped: a pill
+   cut by the edge is what says there is more along there. */
+.cat-bar{
+  display:flex; gap:8px; align-items:center;
+  overflow-x:auto; overflow-y:hidden;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+  scroll-snap-type:x proximity;
+  padding-bottom:2px; margin-bottom:18px;
 }
-.list-name{
-  font-family:var(--display); font-size:17px; font-weight:700;
-  letter-spacing:-.02em; color:var(--ink);
-}
-.list-count{
-  font-size:12px; font-weight:700; color:var(--muted);
-  background:var(--wash); border-radius:999px;
-  min-width:22px; height:22px; padding:0 7px;
-  display:grid; place-items:center;
-}
+.cat-bar::-webkit-scrollbar{display:none}
 
-.list-items{list-style:none; display:flex; flex-direction:column; gap:8px}
+.cat-pill{
+  flex:none; scroll-snap-align:start;
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:inherit; font-size:13px; font-weight:600;
+  background:var(--surface); border:1.5px solid var(--line-strong);
+  color:var(--muted); padding:8px 14px; border-radius:999px;
+  white-space:nowrap; cursor:pointer;
+  transition:border-color .18s var(--ease), background .18s var(--ease), color .18s var(--ease);
+}
+.cat-pill:hover{border-color:var(--accent); color:var(--ink)}
+.cat-pill:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--focus)}
+.cat-pill.is-on{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+
+.cat-pill-n{
+  font-size:11px; font-weight:700; color:var(--faint);
+  background:var(--wash); border-radius:999px;
+  min-width:18px; padding:1px 6px; text-align:center;
+}
+.cat-pill.is-on .cat-pill-n{background:rgba(255,255,255,.22); color:var(--on-accent)}
+
+.list-items{
+  list-style:none; display:flex; flex-direction:column; gap:8px;
+  animation:rise .18s var(--ease) both;
+}
 
 .task{
   display:flex; gap:13px; align-items:flex-start;

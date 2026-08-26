@@ -27,6 +27,7 @@ const el = {
   doneList:     $('done-list'),
   btnViewLists: $('btn-view-lists'),
   listsBadge:   $('lists-badge'),
+  catBar:       $('cat-bar'),
   offlineNote:  $('offline-note'),
   offlineCount: $('offline-count'),
   offlineWord:  $('offline-word'),
@@ -779,10 +780,40 @@ function minutesLabel(m) {
  * Between groups: the list holding the most urgent thing goes on top, so
  * the pressing pile is the one you see first.
  */
+const catKey = (t) => String(t.category || 'general').toLowerCase();
+
+/* Which list is showing. 'all' or a category key. Held outside the state
+   that gets saved: it is where you are looking, not something about the
+   tasks, and it should not follow you onto another device. */
+let catFilter = 'all';
+
+const isLate = (t) => !!t.when && t.when < dayKey();
+
+/* A deadline as one sortable number. No day means no deadline, which sorts
+   last and not first — an undated task is not due now, it is undated. A day
+   with no time on it is treated as the end of that day, so it falls in
+   behind everything actually booked into it. */
+function dueAt(t) {
+  if (!t.when) return Infinity;
+  return Number(t.when.replace(/-/g, '') + (t.at ? t.at.replace(':', '') : '2359'));
+}
+
+/* Urgency first, then the clock. A day that has already gone outranks all
+   of it: being late is the one thing that only gets worse for being further
+   down the page. Then what the model called urgent, then what runs out
+   soonest, and between two of equal standing the quicker one — a list you
+   can put a dent in beats one you can only stare at. */
+function byUrgencyThenDeadline(a, b) {
+  const la = isLate(a), lb = isLate(b);
+  if (la !== lb) return la ? -1 : 1;
+  if (la && lb) return dueAt(a) - dueAt(b);
+  return b.urgency - a.urgency || dueAt(a) - dueAt(b) || a.minutes - b.minutes;
+}
+
 function groupByCategory(tasks) {
   const groups = new Map();
   tasks.forEach(t => {
-    const key = String(t.category || 'general').toLowerCase();
+    const key = catKey(t);
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(t);
   });
@@ -839,37 +870,69 @@ function goToNext() {
     `${groups.length} ${groups.length === 1 ? 'list' : 'lists'} · ` +
     `about ${minutesLabel(totalMin)} all in`;
 
+  /* A filter has to survive a re-render but not the list it was filtering:
+     tick the last thing off Money and the page must not sit there showing
+     an empty Money. */
+  if (catFilter !== 'all' && !groups.some(([cat]) => cat === catFilter)) catFilter = 'all';
+  renderCatBar(groups);
+
+  const shown = (catFilter === 'all' ? open : open.filter(t => catKey(t) === catFilter))
+    .slice()
+    .sort(byUrgencyThenDeadline);
+
   el.lists.innerHTML = '';
-  groups.forEach(([cat, items]) => el.lists.appendChild(renderGroup(cat, items)));
+  const ul = document.createElement('ul');
+  ul.className = 'list-items';
+  shown.forEach(t => ul.appendChild(renderTask(t)));
+  el.lists.appendChild(ul);
 
   renderDone(done);
   el.dangerZone.classList.toggle('is-hidden', state.tasks.length === 0);
   resetClear();
 }
 
-function renderGroup(cat, items) {
-  const section = document.createElement('section');
-  section.className = 'list-group';
+/* The lists, as one line you can run your thumb along. One list is no
+   choice at all, so the row only appears once there are two. */
+function renderCatBar(groups) {
+  el.catBar.classList.toggle('is-hidden', groups.length < 2);
+  if (groups.length < 2) { el.catBar.innerHTML = ''; return; }
 
-  const head = document.createElement('div');
-  head.className = 'list-head';
+  /* Rebuilding throws the row back to the left. Nothing about the pills has
+     moved — only which one is filled — so put the scroll back where the
+     thumb left it. */
+  const left = el.catBar.scrollLeft;
+  el.catBar.innerHTML = '';
 
-  const name = document.createElement('h2');
-  name.className = 'list-name';
-  name.textContent = categoryLabel(cat);
+  const all = groups.reduce((n, [, items]) => n + items.length, 0);
+  [['all', 'All', all], ...groups.map(([cat, items]) => [cat, categoryLabel(cat), items.length])]
+    .forEach(([key, label, count]) => el.catBar.appendChild(catPill(key, label, count)));
 
-  const count = document.createElement('span');
-  count.className = 'list-count';
-  count.textContent = items.length;
+  el.catBar.scrollLeft = left;
+}
 
-  head.append(name, count);
+function catPill(key, label, count) {
+  const on = key === catFilter;
 
-  const ul = document.createElement('ul');
-  ul.className = 'list-items';
-  items.forEach(t => ul.appendChild(renderTask(t)));
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'cat-pill' + (on ? ' is-on' : '');
+  b.setAttribute('role', 'tab');
+  b.setAttribute('aria-selected', String(on));
 
-  section.append(head, ul);
-  return section;
+  const name = document.createElement('span');
+  name.textContent = label;
+
+  const n = document.createElement('span');
+  n.className = 'cat-pill-n';
+  n.textContent = count;
+
+  b.append(name, n);
+  b.addEventListener('click', () => {
+    if (catFilter === key) return;
+    catFilter = key;
+    goToNext();
+  });
+  return b;
 }
 
 function renderTask(task) {
