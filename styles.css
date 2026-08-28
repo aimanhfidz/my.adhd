@@ -133,13 +133,137 @@ body{
 
 /* the toggle button itself is styled in theme.css */
 
+/* ---------- the loud surface (screen 1 only) ----------
+   After loudsrl.com: the viewport is one glossy sheet that drifts on its
+   own, and everything on top of it is unfilled glass — hairline edges, no
+   panel fills, no second colour. Only surfaces move here. Every font,
+   size, weight and letter-spacing on the screen is left exactly as it
+   was; the concept is the ground, not the voice. */
+:root{
+  --loud-ground:#EFEDFA;
+  --loud-sheen-1:rgba(71,55,255,.20);
+  --loud-sheen-2:rgba(123,63,228,.16);
+  --loud-sheen-3:rgba(255,255,255,.85);
+  --loud-glass:rgba(255,255,255,.62);
+  --loud-glass-strong:rgba(255,255,255,.86);
+  --loud-edge:rgba(16,16,24,.10);
+  --loud-top:rgba(255,255,255,.75);
+  --loud-cast:0 26px 70px -34px rgba(16,16,40,.45);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --loud-ground:#08080C;
+    --loud-sheen-1:rgba(63,48,232,.34);
+    --loud-sheen-2:rgba(123,63,228,.26);
+    --loud-sheen-3:rgba(172,165,255,.14);
+    --loud-glass:rgba(255,255,255,.045);
+    --loud-glass-strong:rgba(255,255,255,.085);
+    --loud-edge:rgba(255,255,255,.14);
+    --loud-top:rgba(255,255,255,.16);
+    --loud-cast:0 26px 70px -30px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --loud-ground:#08080C;
+  --loud-sheen-1:rgba(63,48,232,.34);
+  --loud-sheen-2:rgba(123,63,228,.26);
+  --loud-sheen-3:rgba(172,165,255,.14);
+  --loud-glass:rgba(255,255,255,.045);
+  --loud-glass-strong:rgba(255,255,255,.085);
+  --loud-edge:rgba(255,255,255,.14);
+  --loud-top:rgba(255,255,255,.16);
+  --loud-cast:0 26px 70px -30px rgba(0,0,0,.9);
+}
+
+/* isolate, so the sheet below can sit at z-index -1 and still land in
+   front of the screen's own ground instead of behind it */
+#screen-dump{background:var(--loud-ground); isolation:isolate}
+
+/* The sheet. Fixed and oversized, so the drift never walks an edge into
+   view, and blurred rather than drawn — three soft lobes passing over one
+   another is what reads as poured light. */
+#screen-dump::before{
+  content:""; position:fixed; inset:-25%; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(58% 42% at 22% 24%, var(--loud-sheen-1) 0%, transparent 62%),
+    radial-gradient(52% 38% at 80% 16%, var(--loud-sheen-2) 0%, transparent 60%),
+    radial-gradient(72% 52% at 62% 92%, var(--loud-sheen-3) 0%, transparent 66%);
+  filter:blur(34px);
+  animation:loud-drift 64s linear infinite alternate;
+}
+@keyframes loud-drift{
+  0%  {transform:translate3d(-3%,-2%,0) scale(1.06) rotate(0deg)}
+  50% {transform:translate3d(3%,2%,0)   scale(1.14) rotate(4deg)}
+  100%{transform:translate3d(-2%,3%,0)  scale(1.08) rotate(-3deg)}
+}
+@media (prefers-reduced-motion:reduce){
+  #screen-dump::before{animation:none}
+}
+
+/* the header stops being an opaquepanel  and becomes glass over the sheet */
+#screen-dump .brand::before{
+  background:none;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  mask-image:linear-gradient(to bottom, #000 68%, transparent);
+  -webkit-mask-image:linear-gradient(to bottom, #000 68%, transparent);
+}
+
+#screen-dump .dump-welcome{
+  background:var(--loud-glass);
+  border-color:var(--loud-edge);
+  box-shadow:var(--loud-cast);
+}
+#screen-dump .dump-input{
+  background:var(--loud-glass);
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  border-color:var(--loud-edge);
+  box-shadow:inset 0 1px 0 var(--loud-top), var(--loud-cast);
+}
+#screen-dump .dump-input:focus{
+  background:var(--loud-glass-strong);
+  border-color:var(--accent);
+  box-shadow:inset 0 1px 0 var(--loud-top), 0 0 0 4px var(--focus);
+}
+/* the one coloured object left on the screen, as on the reference where a
+   single element carries the brand and the rest is surface */
+#screen-dump .btn-primary{box-shadow:var(--loud-cast)}
+#screen-dump .btn-lists{
+  background:var(--loud-glass);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-color:var(--loud-edge);
+}
+
 /* ---------- screen 1: dump ---------- */
 .dump-wrap{margin:auto 0; padding:26px 0 0}
 
+/* The welcome meme. Rounded to the same radius as the composer below it so
+   the two read as one stack, and it keeps its own aspect box (width/height on
+   the <img>) so nothing jumps while it loads. On short windows it steps out of
+   the way — the composer matters more than the joke. */
+.dump-welcome{
+  margin:0 auto 20px;
+  max-width:400px;
+  border:1.5px solid var(--line);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  background:var(--wash);
+  line-height:0;
+}
+.dump-welcome img{display:block; width:100%; height:auto}
+@media (max-height:720px){
+  .dump-welcome{display:none}
+}
+
 .headline{
   font-family:var(--display);
-  font-size:clamp(30px,7vw,40px); font-weight:800;
-  letter-spacing:-.04em; line-height:1.06;
+  /* one line, so it has to survive a 320px phone: the lower bound and the
+     vw term both shrink, and the wrap is left off rather than forced. */
+  font-size:clamp(23px,6vw,38px); font-weight:800;
+  letter-spacing:-.04em; line-height:1.15;
+  text-wrap:nowrap;
   text-align:center; margin-bottom:12px;
 }
 
