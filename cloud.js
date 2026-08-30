@@ -130,10 +130,17 @@
      written anything since we last looked and there is nothing to come
      down.
 
+     Held as milliseconds, never as the string. The two sources of that
+     string do not agree on how to write an instant — PostgREST renders
+     the column with an offset and microseconds, and our own pushes are
+     Date#toISOString, which is milliseconds and a Z. Compared as text
+     those never match, so every push made the next probe cry news and
+     drag the whole list down behind it.
+
      dirty is the other half of the question: whether there is anything to
      go up. It starts true because a page that has just loaded cannot know
      — a task edited offline yesterday is still owed a push. */
-  let newestSeen = '';
+  let newestSeen = 0;
   let dirty = true;
 
   function setPhase(next, err) {
@@ -379,7 +386,7 @@
       /* What the cheap poll compares against from here on. Taken before
          the merge, because the merge is allowed to change our copy but
          not what the server currently holds. */
-      for (const r of rows) if (r.updated_at > newestSeen) newestSeen = r.updated_at;
+      for (const r of rows) newestSeen = Math.max(newestSeen, Date.parse(r.updated_at) || 0);
 
       const touched = merge(rows);
       if (touched) {
@@ -399,7 +406,7 @@
         /* Our own writes are now the newest thing on the account. Saying
            so here is what stops the next probe seeing them as somebody
            else's news and pulling the whole list back down. */
-        for (const r of out) if (r.updated_at > newestSeen) newestSeen = r.updated_at;
+        for (const r of out) newestSeen = Math.max(newestSeen, Date.parse(r.updated_at) || 0);
       }
 
       /* Everything owed is now sent. Anything written from here on goes
@@ -470,7 +477,7 @@
       a phone is somebody's data allowance. */
   async function anythingNew() {
     const rows = await rest('tasks?select=updated_at&order=updated_at.desc&limit=1');
-    const newest = (rows && rows[0] && rows[0].updated_at) || '';
+    const newest = Date.parse(rows && rows[0] && rows[0].updated_at) || 0;
     return newest !== newestSeen;
   }
 
