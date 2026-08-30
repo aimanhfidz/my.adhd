@@ -891,6 +891,27 @@ body.has-tabbar .toast{
 }
 .fb-note strong{color:var(--ink); font-weight:700}
 
+/* the quiet half of the ask. A real button so it is obviously tappable,
+   but outlined rather than filled — it reads as available, not urged. The
+   filled one lives on the thanks card, where it has been earned. */
+.fb-give-quiet{margin-top:12px}
+.fb-give-quiet-text{
+  font-size:13px; color:var(--faint); line-height:1.6; margin-bottom:10px;
+}
+.fb-give-quiet-btn{
+  display:inline-block; text-decoration:none;
+  padding:10px 20px; min-height:40px; line-height:20px;
+  border-radius:999px;
+  background:transparent; border:1.5px solid var(--line);
+  color:var(--muted); font-size:14px; font-weight:700; letter-spacing:-.01em;
+  transition:border-color .12s ease, color .12s ease, background .12s ease;
+}
+.fb-give-quiet-btn:hover{
+  border-color:var(--accent); color:var(--accent); background:var(--wash);
+}
+.fb-give-quiet-btn:active{transform:translateY(1px)}
+.fb-give-quiet-btn:focus-visible{outline:none; box-shadow:0 0 0 4px var(--focus)}
+
 .fb-thanks{
   text-align:center; padding:34px 16px;
   background:var(--wash); border:1.5px solid var(--line);

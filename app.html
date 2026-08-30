@@ -35,7 +35,7 @@
 <link rel="preload" href="fonts/Baloo2-Variable.ttf" as="font" type="font/ttf" crossorigin />
 <link rel="stylesheet" href="theme.css" />
 <script src="theme.js"></script>
-<link rel="stylesheet" href="styles.css?v=5" />
+<link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body>
 
@@ -298,6 +298,17 @@
           that land are the ones someone actually thought about. Nothing you send
           is tied to you &mdash; no name, no account, no email.
         </p>
+
+        <!-- The quiet half of the ask. A button, so it is plainly tappable,
+             but outlined rather than filled: available, not urged. The filled
+             one is on the thanks card, and only after you have given
+             something already. -->
+        <div class="fb-give-quiet is-hidden" id="fb-give-quiet">
+          <p class="fb-give-quiet-text">Free, and staying free. If it has
+            earned it, the tin is here.</p>
+          <a class="fb-give-quiet-btn" id="fb-give-quiet-link"
+             href="#" target="_blank" rel="noopener noreferrer">Chip in</a>
+        </div>
       </div>
 
       <div class="fb-thanks is-hidden" id="fb-thanks">
