@@ -639,10 +639,14 @@ function guessCategory(line) {
    urgency ends up attached to a fragment with no action in it. */
 const QUALIFIER = /^(?:deadline|due|by\b|before|after|takes|taking|about|approx|around|roughly|asap|today|tonight|tomorrow|this\s|next\s|maybe|probably|ideally|urgent|i think|apparently|\d)/i;
 
-/** Strip a trailing duration clause once it has been read into `minutes`. */
+/* Strip a trailing duration clause once it has been read into `minutes`.
+
+   The connective goes with it. Without that group the clause is peeled off
+   its own preposition and the word is left hanging on the end — "review doc
+   in 2 hours" came back as "Review doc in". */
 function tidyTitle(line) {
   return line
-    .replace(/[,\s—-]*\b(?:takes?|taking)?\s*(?:about|approx(?:imately)?|around|roughly)?\s*(?:\d+(?:\.\d+)?|a|an|one|two|three|four|five|six|couple|few|half)\s*(?:of\s+)?(?:hours?|hrs?|min(?:ute)?s?|m|h)\b\.?$/i, '')
+    .replace(/[,\s—-]*\b(?:takes?|taking)?\s*(?:in|for|over)?\s*(?:about|approx(?:imately)?|around|roughly)?\s*(?:\d+(?:\.\d+)?|a|an|one|two|three|four|five|six|couple|few|half)\s*(?:of\s+)?(?:hours?|hrs?|min(?:ute)?s?|m|h)\b\.?$/i, '')
     .replace(/[,;\s]+$/, '')
     .trim();
 }
