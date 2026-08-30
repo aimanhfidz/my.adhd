@@ -30,9 +30,20 @@ const SHELL = [
   '/favicon.svg?v=3',
   '/fonts/Baloo2-Variable.ttf',
   '/icons/apple-touch-icon.png?v=3',
+  '/icons/favicon-16.png?v=3',
+  '/icons/favicon-32.png?v=3',
   '/icons/icon-192.png?v=3',
   '/icons/icon-512.png?v=3',
   '/site.webmanifest?v=3',
+
+  /* The pictures the two waits are made of. Runtime caching picks these up
+     after one online visit, which is no use to the install that goes onto
+     the home screen and straight onto a train: the dump opened on a broken
+     image and the loading screen on nothing at all. Both morphs, because
+     which one is asked for depends on the theme at the time. */
+  '/welcome-meme.jpg',
+  '/animation/app/morph-light.mp4',
+  '/animation/app/morph-dark.mp4',
 ];
 
 self.addEventListener('install', (e) => {
