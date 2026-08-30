@@ -123,15 +123,19 @@
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
       scope: SCOPE,
+      /* The token is banked before anyone is told about it, on purpose.
+         A silent request that answers after its twelve-second timeout has
+         no waiter left to resolve — and dropping a good hour-long token
+         because nobody was still holding the line only means asking for
+         another one. Keep it; the next call finds it live. */
       callback: (resp) => {
         const settle = pending; pending = null;
-        if (!settle) return;
-        if (resp.error) { settle.reject(new Error(resp.error)); return; }
+        if (resp.error) { settle && settle.reject(new Error(resp.error)); return; }
         setToken({
           value: resp.access_token,
           expiresAt: Date.now() + (Number(resp.expires_in) || 3600) * 1000,
         });
-        settle.resolve(token.value);
+        settle && settle.resolve(token.value);
       },
       error_callback: (err) => {
         const settle = pending; pending = null;
