@@ -2028,11 +2028,20 @@ async function sendFeedback() {
   el.fbSend.querySelector('.btn-text').textContent = 'Sending…';
 
   try {
+    /* The reason goes to the console and no further. A fetch that rejects
+       has not been refused by anything — the request never left, so the
+       only words on offer are the engine's own, and they are "Failed to
+       fetch" on Chrome and "Load failed" on Safari. Neither is a sentence
+       to put in front of someone who has just written you a note. */
     const res = await fetch('/api/feedback', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ body }),
-    });
+    }).catch((err) => { console.warn('feedback, in full:', err.message); return null; });
+
+    /* Offline is an ordinary state in this app, not a fault, and the box
+       still holds what they typed — so the copy says both. */
+    if (!res) throw new Error('no signal. Your note is still here');
 
     if (res.ok || res.status === 429) {
       // 429 means the server already has one from today. Either way this
