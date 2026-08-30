@@ -59,6 +59,8 @@ const el = {
   fbSend:       $('fb-send'),
   fbThanks:     $('fb-thanks'),
   fbThanksText: $('fb-thanks-text'),
+  fbGive:       $('fb-give'),
+  fbGiveBtn:    $('fb-give-btn'),
   screenMe:     $('screen-profile'),
   tabbar:       $('tabbar'),
   tabLists:     $('tab-lists'),
@@ -1999,6 +2001,12 @@ function paintFeedback() {
   const spent = feedbackSentToday();
   el.fbForm.classList.toggle('is-hidden', spent);
   el.fbThanks.classList.toggle('is-hidden', !spent);
+
+  /* The tin only exists if a link was set. No link, no ask — and the
+     thanks card is exactly what it was before. */
+  const give = (window.MYADHD_DONATE_URL || '').trim();
+  if (give) el.fbGiveBtn.href = give;
+  el.fbGive.classList.toggle('is-hidden', !give);
   if (!spent) {
     el.fbCount.textContent = `${el.fbInput.value.trim().length} / 2000`;
     el.fbSend.disabled = el.fbInput.value.trim().length < 4;

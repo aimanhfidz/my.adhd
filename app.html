@@ -35,7 +35,7 @@
 <link rel="preload" href="fonts/Baloo2-Variable.ttf" as="font" type="font/ttf" crossorigin />
 <link rel="stylesheet" href="theme.css" />
 <script src="theme.js"></script>
-<link rel="stylesheet" href="styles.css?v=4" />
+<link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
 
@@ -304,6 +304,19 @@
         <p class="fb-thanks-title">Got it. Thank you.</p>
         <p class="fb-thanks-text" id="fb-thanks-text">That is your one for today
           &mdash; the box opens again tomorrow.</p>
+
+        <!-- The ask, and only here: you have already given something, so this
+             is the one moment it is not a toll. Hidden unless a link is set
+             in config.js. Nothing is bought, nothing unlocks. -->
+        <div class="fb-give is-hidden" id="fb-give">
+          <p class="fb-give-text">my.adhd is free, and stays free. If it has
+            saved you from a morning, you can put something in the tin.</p>
+          <a class="fb-give-btn" id="fb-give-btn" href="#" target="_blank" rel="noopener noreferrer">
+            Chip in
+          </a>
+          <p class="fb-give-note">One-off, any amount, handled by Stripe.
+            It unlocks nothing &mdash; there is nothing locked.</p>
+        </div>
       </div>
     </div>
   </section>
