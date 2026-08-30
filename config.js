@@ -39,4 +39,4 @@ window.MYADHD_SUPABASE_KEY = 'sb_publishable_KCCs2u3DJ5pnZ6veM6TySw_eO8GHA9m';
    Leave it empty and the ask never renders. The Love tab works exactly
    as it did before. */
 
-window.MYADHD_DONATE_URL = '';
+window.MYADHD_DONATE_URL = 'https://donate.stripe.com/00w9ATcWR3EGaOugv718c00';
