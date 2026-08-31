@@ -38,11 +38,21 @@
      a long way from that ground leaves a hole where the pool erases it.
      Running to --blue-deep put a luminance excursion of .94 on a white
      page — measured, a .205 gap between the middle and the ring outside it,
-     which is a halo you can see. Night's excursion is .03. This brings the
-     two ramps into the same register. */
+     which is a halo you can see. Night's excursion is .03.
+
+     The register that matters is luminance, not saturation. Night reads as
+     strongly as it does on almost no luminance range at all — #4737FF and
+     #101018 are worlds apart in colour and a hair apart in brightness — so
+     the pool, which moves brightness, barely disturbs it. Day had no such
+     luck: its ground is white, so every filament was a long fall in
+     luminance and the pool put a bright hole where it erased them. Day now
+     runs pale-to-pale for the same reason, carrying its colour in chroma
+     the way night does. #E9E7FB is the light --backdrop, written out
+     because these six are unthemed and a themed token would answer for
+     whichever theme happened to be up when waves.js read it. */
   --wave-paper-ground:#FFFFFF;
-  --wave-paper-mid:var(--pale);
-  --wave-paper-hi:var(--blue-pale);
+  --wave-paper-mid:#E9E7FB;
+  --wave-paper-hi:var(--pale);
   /* the one gap between the nav and the first line of copy — every page
      starts its content here, so the titles line up across the site */
   --top-gap:clamp(14px,3.4vh,34px);
