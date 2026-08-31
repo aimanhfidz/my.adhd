@@ -17,6 +17,7 @@
      into the page this way rather than into a grey of its own. */
   --wave-rgb:255 255 255;
   --wave-veil-a:.30;
+  --wave-reader-h:24rem;
   /* the one gap between the nav and the first line of copy — every page
      starts its content here, so the titles line up across the site */
   --top-gap:clamp(14px,3.4vh,34px);
@@ -151,7 +152,7 @@ body{
        the ridges are the dark ones, a bigger pool wiped the marbling out of
        the middle of the page and left a flat white hole. Same extent, same
        plateau, different curve between them. */
-    radial-gradient(ellipse 30rem 24rem at 50% 50%,
+    radial-gradient(ellipse 30rem var(--wave-reader-h) at 50% 50%,
       rgb(var(--wave-rgb) / .94) 0%,
       rgb(var(--wave-rgb) / .94) 46%,
       rgb(var(--wave-rgb) / .84) 57%,
@@ -166,11 +167,41 @@ body{
     linear-gradient(to bottom,
       rgb(var(--wave-rgb) / 1) 0%,
       rgb(var(--wave-rgb) / 0) 18%,
-      rgb(var(--wave-rgb) / 0) 70%,
-      rgb(var(--wave-rgb) / 1) 90%),
+      rgb(var(--wave-rgb) / 0) 78%,
+      rgb(var(--wave-rgb) / 1) 88%),
     /* and a flat wash over everything, so even the loud corners read as
        weather behind the page rather than as a picture competing with it */
     rgb(var(--wave-rgb) / var(--wave-veil-a));
+}
+
+/* ---------- the waves, on a phone ----------
+   The heavier night veil exists to close the gap between the pool and a
+   blown-out surround, and a phone has no surround to close: the reader's
+   plateau is 221px where the half-window is 187, so it already spans the
+   full width and there is no side of it to be brighter. All the veil does
+   here is dim the two strips above and below the copy, which on a phone is
+   the only field there is. So night goes back to the daytime wash, and the
+   reader loses the height it was not using — it was reaching 384px up and
+   down a hero only 406px tall, swallowing the whole screen to cover a copy
+   block 135px from its own middle.
+
+   Only on a phone, though. The copy spreads as the window gets taller —
+   the gaps between the headline, the sub and the button are all vh — so on
+   a 1024-tall tablet the note's own corners walk out past a shortened
+   plateau and land in the falloff, and 4.45:1 is not AA. A rem cannot
+   follow that, so the full height stays everywhere the phone rule does not
+   reach — and that rule stops at 480px, the width below which .hero-copy is
+   still narrow enough that the shortened plateau covers its corners. At
+   700px it does not: the copy has no max-width until 820px, so it runs the
+   full gutter-to-gutter measure, and the note's ends walked out to 4.38:1.
+   This is a phone rule, not a small-screen rule. */
+@media (max-width:480px){
+  :root[data-theme="dark"]{--wave-veil-a:.30}
+  /* Tracks the window rather than sitting at a fixed height: the copy
+     spreads as the hero gets taller, so a flat 17rem that cleared the note
+     on an 812pt phone left its ends at 4.42:1 on a 900pt one. The rem is
+     the floor for short windows, the vh takes over on tall ones. */
+  :root{--wave-reader-h:max(18rem, 34vh)}
 }
 
 /* The bar holds the top of the window while the page runs under it. */
