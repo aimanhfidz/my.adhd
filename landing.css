@@ -371,9 +371,16 @@ body{
   padding:0 clamp(20px,5vw,40px);
 }
 .hero-copy{display:flex; flex-direction:column; align-items:center; min-height:0}
+/* One word, one line. The two-line title was bounded by height, so the vh
+   term led and the vw term was the safety net; a single long word inverts
+   that — width is what it can overrun, and the vh term is only there to
+   stop a wide short window eating the sub. The ceiling is the 36rem the
+   copy column is held to above 820px — the word sets at 4.75em, so 116px
+   is the largest that stays inside it without the column widening for a
+   measure only the sub needs. */
 .hero-title{
-  font-size:clamp(28px,min(6vh,8.4vw),54px); font-weight:800;
-  letter-spacing:-.04em; line-height:1.04;
+  font-size:clamp(44px,min(16vw,13vh),116px); font-weight:800;
+  letter-spacing:-.045em; line-height:1;
   margin-bottom:clamp(8px,1.5vh,15px);
 }
 .hero-sub{
