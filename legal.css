@@ -12,8 +12,16 @@
 
 .legal-nav{position:static; margin-bottom:clamp(18px,4vh,36px)}
 
+/* The reading measure, written once because the footer under the column has
+   to land on the same edge. In rem and not in ch: `ch` resolves against each
+   element's own font-size, and the footer's bottom row sets 12.5px — 68ch
+   there came out 139px narrower than 68ch in the column above it, so the
+   rule under the links started well inside them. 39.64rem is what 68ch of
+   Baloo 2 measured at 16px, to a tenth of a pixel. */
+:root{--legal-measure:39.64rem}
+
 .legal{
-  max-width:68ch;
+  max-width:var(--legal-measure);
   margin:0 auto;
   padding:0 clamp(20px,5vw,40px) clamp(60px,12vh,120px);
   padding-left:max(clamp(20px,5vw,40px), env(safe-area-inset-left, 0px));
@@ -96,6 +104,14 @@
   background:var(--wash); border-radius:0 12px 12px 0;
   font-size:15px; color:var(--muted);
 }
+
+/* The footer's band runs the full width like everywhere else; what sits
+   inside it lines up with the column above rather than with the landing
+   page's 1080. */
+.site-foot{--foot-measure:var(--legal-measure)}
+/* and the brand sits above the columns rather than beside them: side by side
+   leaves the links about 290px to share, which is two columns and an orphan */
+.site-foot .foot-inner{grid-template-columns:1fr}
 
 .legal-back{
   margin-top:clamp(40px,8vh,72px); padding-top:24px;

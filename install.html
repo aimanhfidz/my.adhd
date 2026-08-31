@@ -52,19 +52,29 @@ try{
 </head>
 <body>
 
+<!-- The mark, written once: the bar wears it at the top and the footer wears
+     it again at the bottom. Same sprite as index.html and the app. -->
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Seven orange arms: the eighth (lower-right) is detached and carried
+         by the violet capsule sitting just off the centre. -->
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+</svg>
+
 <main class="page">
 
   <nav class="nav wrap">
     <a class="brand-lockup" href="/" aria-label="my.adhd home">
-      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true">
-        <g class="lg-star">
-          <rect x="46.5" y="18" width="7" height="64"/>
-          <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
-          <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
-          <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
-        </g>
-        <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
-      </svg>
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
       <span class="wordmark">my<span class="accent">.adhd</span></span>
     </a>
     <a class="back" href="/app" id="skip-top">Skip &amp; open</a>
@@ -126,6 +136,67 @@ try{
   </div>
 
 </main>
+
+<!-- ============ the footer ============
+     The same band as the landing page, off the same stylesheet. Its measure
+     follows the page it sits under — see --foot-measure in landing.css. -->
+<footer class="site-foot">
+
+  <div class="foot-inner">
+
+    <div class="foot-brand">
+      <a class="brand-lockup" href="/" aria-label="my.adhd home">
+        <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+        <span class="wordmark">my<span class="accent">.adhd</span></span>
+      </a>
+      <p class="foot-blurb">
+        A brain dump that answers back. No account, nothing to set up, and
+        your lists stay on your device.
+      </p>
+    </div>
+
+    <nav class="foot-cols" aria-label="Footer">
+      <div class="foot-col">
+        <h2>The app</h2>
+        <ul>
+          <li><a href="/app">Open my.adhd</a></li>
+          <li><a href="/install" aria-current="page">Add to home screen</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>The small print</h2>
+        <ul>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>Say hello</h2>
+        <ul>
+          <li><a href="mailto:hello@myadhd.my">hello@myadhd.my</a></li>
+        </ul>
+      </div>
+    </nav>
+
+  </div>
+
+  <div class="foot-base">
+    <p class="foot-note">
+      A tool for getting started — not treatment, therapy, or medical advice.
+    </p>
+    <p class="foot-copy">&copy; <span data-year>2026</span> my.adhd</p>
+  </div>
+
+</footer>
+
+<script>
+/* The copyright year, so the foot of the page does not go stale on its own.
+   The markup carries a real year already — this only corrects it. */
+(function(){
+  var y = String(new Date().getFullYear());
+  document.querySelectorAll('[data-year]').forEach(function(el){ el.textContent = y; });
+})();
+</script>
 
 <script>
 (function(){
