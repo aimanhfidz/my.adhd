@@ -65,13 +65,27 @@
      pads itself down by this plus the bar — and they used to hold the same
      sum in two places that could drift apart. */
   --bar-top:calc(var(--nav-gap) + var(--safe-top));
+  /* The room under the bar's content. The top gutter is --bar-top, but most
+     of that is the notch — the part you actually see above the lockup is
+     --nav-gap, so the same value underneath makes the bar read as evenly
+     packed. Without it the box ended flush with the toggle, and once the
+     ground faded in on scroll its border-bottom was drawn straight across
+     the bottom of the button. */
+  --bar-bottom:var(--nav-gap);
   /* The bar's content row. .theme-toggle is a fixed 34px circle in
      theme.css and is the tallest thing in the bar; CSS cannot measure a
      box, so the number has to be written down here. If that circle
      changes size, this changes with it. */
   --nav-row:34px;
+  /* The quiet stroke, one step firmer, for the fourth figure only — see
+     .fig .r. Paper takes the field's own highlight, which is what the
+     figures are drawn out of; night has no palette member near the number,
+     so it carries a measured one. Both land at 2.1:1 on their own ground,
+     against the 1.57 and 1.72 the plain quiet stroke was giving. */
+  --fig-run:var(--blue-pale);
 }
 :root[data-theme="dark"]{
+  --fig-run:#48466A;
   --hero-glow-a:rgba(71,55,255,.32);
   --hero-glow-b:rgba(53,41,191,.34);
   --wave-rgb:16 16 24;
@@ -130,7 +144,7 @@ body{
   padding:var(--nav-gap) 0 clamp(14px,2.4vh,22px);
   /* the gutters below are relative to these, so the notch never crops the
      copy in landscape or under a home-screen launch */
-  padding-top:calc(var(--bar-top) + var(--nav-row));
+  padding-top:calc(var(--bar-top) + var(--nav-row) + var(--bar-bottom));
   padding-bottom:calc(clamp(14px,2.4vh,22px) + env(safe-area-inset-bottom, 0px));
   padding-left:env(safe-area-inset-left, 0px);
   padding-right:env(safe-area-inset-right, 0px);
@@ -275,6 +289,7 @@ body{
   position:fixed; top:0; left:0; right:0; z-index:20;
   display:flex; align-items:center; gap:10px;
   padding-top:var(--bar-top);
+  padding-bottom:var(--bar-bottom);
   padding-left:calc(clamp(20px,5vw,40px) + env(safe-area-inset-left, 0px));
   padding-right:calc(clamp(20px,5vw,40px) + env(safe-area-inset-right, 0px));
 }
@@ -391,6 +406,12 @@ body{
 /* the one heavier stroke on the page: the first move, which is the whole
    point of the fourth panel and has to out-weigh the run it starts */
 .fig .s{fill:none; stroke:var(--accent); stroke-width:2.9; stroke-linecap:round}
+/* The run behind that first move. It is the only quiet stroke on the page
+   that IS its figure rather than scenery around one — three-quarters of the
+   fourth drawing — and at .q's weight it read as an afterthought beside the
+   2.9px step, worst of all on paper. Colour only: widening it would have
+   taken it out of the quiet register the other three figures share. */
+.fig .r{fill:none; stroke:var(--fig-run); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 
 /* ---------- one column ---------- */
 .panel{padding:clamp(24px,4vw,30px) 0; border-top:1px solid var(--line)}
