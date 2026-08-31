@@ -97,6 +97,15 @@
     --line:#262636;
     --line-strong:#3B3A52;
     --accent:#8B7DFF;
+
+    /* The capsule's purple lifts at night, and the word lifts with it because
+       it is the same token — #7B3FE4 is drawn for paper and gives only 3.3:1
+       on #101018, under AA for the 16px the wordmark is set at. It was failing
+       before the hero had a shader behind it; the field only took it from 3.3
+       to 3.0. Lifting --violet rather than --wordmark-accent is the point: the
+       lockup reads as one object only while the two purples are the same
+       purple, and .lg-pill drinks from this token too. */
+    --violet:#A97BFF;
     --focus:rgba(139,125,255,.26);
 
     --on-accent:#101018;
@@ -134,6 +143,15 @@
   --line:#262636;
   --line-strong:#3B3A52;
   --accent:#8B7DFF;
+
+  /* The capsule's purple lifts at night, and the word lifts with it because
+     it is the same token — #7B3FE4 is drawn for paper and gives only 3.3:1
+     on #101018, under AA for the 16px the wordmark is set at. It was failing
+     before the hero had a shader behind it; the field only took it from 3.3
+     to 3.0. Lifting --violet rather than --wordmark-accent is the point: the
+     lockup reads as one object only while the two purples are the same
+     purple, and .lg-pill drinks from this token too. */
+  --violet:#A97BFF;
   --focus:rgba(139,125,255,.26);
 
   --on-accent:#101018;
