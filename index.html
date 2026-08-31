@@ -90,6 +90,114 @@
   </p>
 </header>
 
+<!-- ============ WHY — four findings, under the fold ============ -->
+<main class="why">
+
+  <div class="why-head">
+    <h2 class="why-title">Why a box helps</h2>
+    <p class="why-lede">Four things that are true about a head with too much in it.</p>
+  </div>
+
+  <ul class="panels">
+
+    <li class="panel">
+      <!-- the agitation settles into three ruled lines -->
+      <svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
+        <path class="w" d="M4 30C7 12 11 44 15 22S22 46 26 20S33 42 37 24S43 34 47 26"/>
+        <path class="q" d="M54 26h8"/>
+        <path class="w" d="M70 15h58M70 24h44M70 33h52"/>
+      </svg>
+      <h3>A written plan quiets it as well as finishing does</h3>
+      <p>
+        Interrupt someone mid-task and the task keeps interrupting back,
+        crowding whatever they turned to instead. Writing a specific plan for
+        it stopped that completely — while the task itself stayed undone.
+      </p>
+      <p class="cite">Masicampo &amp; Baumeister, 2011</p>
+    </li>
+
+    <li class="panel">
+      <!-- four crests at full height, and the ones after them collapsing -->
+      <svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
+        <path class="q" d="M4 34h124"/>
+        <path class="w" d="M6 34q9-19 18 0M28 34q9-19 18 0M50 34q9-19 18 0M72 34q9-19 18 0"/>
+        <path class="q" d="M94 34q9-12 18 0" opacity=".85"/>
+        <path class="q" d="M116 34q8-6 16 0" opacity=".55"/>
+      </svg>
+      <h3>Your head holds about four things</h3>
+      <p>
+        That is the working limit of short-term memory once you stop
+        rehearsing it. A Tuesday has more than four things in it, so the list
+        has to live somewhere that isn't you.
+      </p>
+      <p class="cite">Cowan, 2001</p>
+    </li>
+
+    <li class="panel">
+      <!-- a ruler whose marks run out well before the distance does -->
+      <svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
+        <path class="q" d="M4 36h124"/>
+        <g class="w">
+          <path d="M6 36V18"/>
+          <path d="M23 36V25" opacity=".82"/>
+          <path d="M40 36V18" opacity=".6"/>
+          <path d="M57 36V25" opacity=".42"/>
+          <path d="M74 36V18" opacity=".28"/>
+          <path d="M91 36V25" opacity=".17"/>
+          <path d="M108 36V18" opacity=".09"/>
+          <path d="M125 36V25" opacity=".04"/>
+        </g>
+      </svg>
+      <h3>Time is the part that isn't visible</h3>
+      <p>
+        Across 55 studies, people with ADHD were consistently off when judging
+        how long something takes. So the minutes get written down like
+        everything else — an estimate on every task, not a guess.
+      </p>
+      <p class="cite">Marx et al., 55-study meta-analysis</p>
+    </li>
+
+    <li class="panel">
+      <!-- a long run, with only its first inch drawn in -->
+      <svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
+        <path class="q" d="M9 30C23 8 37 8 51 30S81 48 95 30S123 12 129 20"/>
+        <path class="s" d="M9 30c4-6 8-10 13-12.5"/>
+        <circle class="d" cx="9" cy="30" r="3.4"/>
+      </svg>
+      <h3>One first step, small enough to start</h3>
+      <p>
+        Plans do the most work when they say when, where and how. So every
+        task comes back with one move on the front of it: the smallest thing
+        that counts as having started.
+      </p>
+      <p class="cite">Gollwitzer &amp; Sheeran, 2006</p>
+    </li>
+
+  </ul>
+
+  <div class="why-foot">
+    <p>
+      None of this is treatment. It is what the research says about getting a
+      thing out of your head and into a plan.
+    </p>
+    <a class="cta" href="/install" data-app-link>Clear my head</a>
+  </div>
+
+</main>
+
+<script>
+/* The bar has a page under it now, and its ground is painted only once
+   something has moved — at the top of the hero there is nothing to cover
+   and a band there would cut across the glow. There is no CSS selector for
+   "the page has scrolled" that Safari also ships, so the flag is set here. */
+(function(){
+  var root = document.documentElement;
+  var mark = function(){ root.toggleAttribute('data-scrolled', window.scrollY > 8); };
+  mark();
+  window.addEventListener('scroll', mark, { passive:true });
+})();
+</script>
+
 <script>
 /* The install guide is a one-time stop. Anyone already running from the
    home screen — or who has been shown it once — goes straight to the app. */

@@ -56,10 +56,20 @@
   /* the one gap between the nav and the first line of copy — every page
      starts its content here, so the titles line up across the site */
   --top-gap:clamp(14px,3.4vh,34px);
-  /* read by both the hero's padding and the sticky nav's offset, so the bar
+  /* read by both the hero's padding and the nav's offset, so the bar
      stops exactly where the status bar ends — same pair as the app */
   --safe-top:env(safe-area-inset-top, 0px);
   --nav-gap:clamp(10px,2vh,18px);
+  /* Where the bar's first pixel goes. Written once because two boxes have
+     to agree on it — the bar pads itself down by this much, and the hero
+     pads itself down by this plus the bar — and they used to hold the same
+     sum in two places that could drift apart. */
+  --bar-top:calc(var(--nav-gap) + var(--safe-top));
+  /* The bar's content row. .theme-toggle is a fixed 34px circle in
+     theme.css and is the tallest thing in the bar; CSS cannot measure a
+     box, so the number has to be written down here. If that circle
+     changes size, this changes with it. */
+  --nav-row:34px;
 }
 :root[data-theme="dark"]{
   --hero-glow-a:rgba(71,55,255,.32);
@@ -112,11 +122,15 @@ body{
 .hero{
   position:relative;
   min-height:100dvh;
-  display:grid; grid-template-rows:auto 1fr auto;
+  /* Two rows, not three: the bar is fixed to the window now and out of the
+     flow entirely, so the hero holds its space with padding instead of
+     with a grid row. The box stays exactly one viewport either way — what
+     used to be the nav's row is the top of this padding. */
+  display:grid; grid-template-rows:1fr auto;
   padding:var(--nav-gap) 0 clamp(14px,2.4vh,22px);
   /* the gutters below are relative to these, so the notch never crops the
-     nav in landscape or under a home-screen launch */
-  padding-top:calc(var(--nav-gap) + var(--safe-top));
+     copy in landscape or under a home-screen launch */
+  padding-top:calc(var(--bar-top) + var(--nav-row));
   padding-bottom:calc(clamp(14px,2.4vh,22px) + env(safe-area-inset-bottom, 0px));
   padding-left:env(safe-area-inset-left, 0px);
   padding-right:env(safe-area-inset-right, 0px);
@@ -239,18 +253,47 @@ body{
   :root{--wave-reader-h:max(18rem, 34vh)}
 }
 
-/* The bar holds the top of the window while the page runs under it. */
+/* The bar holds the top of the window while the page runs under it.
+
+   No measure of its own: the mark sits on the window's left gutter and the
+   toggle on its right, at every width. It used to be capped at 1080 like a
+   column of text, which on a wide screen left both of them adrift in the
+   middle of the top of the screen with a hand's width of empty page outside
+   each — a bar reads as the frame of the window, so it has to touch the
+   window. The 1080 measure moved down to .why, which is the only thing on
+   the page that is actually a column. */
 .nav{
-  position:sticky; top:var(--safe-top); z-index:20;
+  /* Fixed, not sticky. Sticky is bounded by the box it sits in, and this
+     one sits in the hero — so the bar pinned across the first screen and
+     then rode away the moment .why started, taking the only control on the
+     page with it. Fixed leaves the flow instead, which is also what lets
+     the hero keep its full 100dvh above.
+
+     It carries its own safe-area gutters now. They used to come from the
+     hero's padding, and a bar fixed to the window no longer sits inside
+     that. */
+  position:fixed; top:0; left:0; right:0; z-index:20;
   display:flex; align-items:center; gap:10px;
-  width:100%; max-width:1080px; margin:0 auto; padding:0 clamp(20px,5vw,40px);
+  padding-top:var(--bar-top);
+  padding-left:calc(clamp(20px,5vw,40px) + env(safe-area-inset-left, 0px));
+  padding-right:calc(clamp(20px,5vw,40px) + env(safe-area-inset-right, 0px));
 }
-/* No ground behind it, unlike the app's bar. This page is exactly one
-   viewport — the hero is the whole document and never scrolls — so nothing
-   ever passes behind the nav, and a band painted across the top would only
-   cut a seam through the hero glow. Add content below the hero and this
-   bar needs one: copy .brand::before from styles.css, which bleeds past
-   the 1080px cap to the window edges. */
+/* There is a page under the bar now, so it needs a ground — but only once
+   something has actually scrolled. At rest the hero's own veil already
+   keeps the field from running behind the nav, and a band painted there
+   would cut a seam across the glow, which is why there never was one. So
+   it fades in on the scroll flag instead. Same idea as .brand::before in
+   styles.css, minus that one's 100vw bleed — the bar is already the width
+   of the window, so its own padding box is the whole band. z-index -1
+   inside the bar's stacking context: behind the lockup, in front of the
+   page. */
+.nav::before{
+  content:""; position:absolute; z-index:-1; inset:0;
+  background:var(--surface);
+  border-bottom:1px solid var(--line);
+  opacity:0; transition:opacity .18s var(--ease);
+}
+:root[data-scrolled] .nav::before{opacity:1}
 /* the mark on the left, the toggle on the right, nothing between */
 .nav .theme-toggle{margin-left:auto}
 
@@ -285,15 +328,114 @@ body{
   color:var(--faint); max-width:60ch; margin:clamp(14px,2.2vh,24px) auto 0;
 }
 
-/* steps */
+/* ============ WHY — the research, under the fold ============
+   The hero is still exactly one viewport. This is what the page scrolls to.
 
-/* pull quote */
+   No cards. The landing's whole premise is that the page IS the surface —
+   no gutter, no panel, nothing floating on anything — so the four findings
+   are divided by hairlines and nothing else. Boxing them would have made
+   this the only screen on the site with furniture on it.
 
-/* the not-list */
+   The 1080 measure is the one the nav used to carry. It belongs here: this
+   is the only part of the page that is a column of text. */
+.why{
+  position:relative; z-index:1;
+  background:var(--surface);
+  max-width:1080px; margin:0 auto;
+  padding:clamp(48px,9vw,104px) clamp(20px,5vw,40px) clamp(44px,7vw,80px);
+}
 
-/* closing */
+.why-head{
+  text-align:center; max-width:36rem;
+  margin:0 auto clamp(32px,5vw,56px);
+}
+.why-title{
+  font-size:clamp(24px,4.2vw,38px); font-weight:800;
+  letter-spacing:-.035em; line-height:1.08;
+}
+.why-lede{
+  margin-top:clamp(8px,1.4vw,12px);
+  font-size:clamp(14px,1.9vw,17px); color:var(--muted);
+}
 
-/* footer */
+.panels{display:grid; gap:0; list-style:none}
+.panel{
+  display:flex; flex-direction:column; align-items:flex-start;
+  gap:clamp(8px,1.2vw,11px);
+}
+.panel h3{
+  font-size:clamp(16px,1.9vw,18px); font-weight:700;
+  letter-spacing:-.02em; line-height:1.22;
+}
+.panel p{font-size:clamp(13.5px,1.6vw,15px); color:var(--muted); line-height:1.55}
+/* Pushed to the floor of the cell rather than left under the paragraph, so
+   the four attributions line up as a row of their own across the columns —
+   the paragraphs are different lengths and never will. */
+.panel .cite{
+  margin-top:auto; padding-top:clamp(6px,1vw,10px);
+  font-size:12px; color:var(--faint); letter-spacing:.015em;
+}
+
+/* The figures are drawn out of the same two marks the hero's field is made
+   of — a travelling wave and a straight rule. Nothing here is an icon: a
+   set of little glyphs would have read as stock the moment it sat under
+   that shader. Strokes only, one accent and one quiet, no fills but the
+   two dots that mark a beginning. */
+.fig{
+  display:block; width:100%; max-width:132px; height:auto;
+  overflow:visible; margin-bottom:clamp(4px,1vw,8px);
+}
+.fig .w{fill:none; stroke:var(--accent); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+.fig .q{fill:none; stroke:var(--line-strong); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+.fig .d{fill:var(--accent)}
+/* the one heavier stroke on the page: the first move, which is the whole
+   point of the fourth panel and has to out-weigh the run it starts */
+.fig .s{fill:none; stroke:var(--accent); stroke-width:2.9; stroke-linecap:round}
+
+/* ---------- one column ---------- */
+.panel{padding:clamp(24px,4vw,30px) 0; border-top:1px solid var(--line)}
+.panel:first-child{border-top:0}
+
+/* ---------- two columns ----------
+   Bounded at both ends on purpose. Every one of these blocks sets all three
+   of padding, border-top and border-left for every cell it touches, so the
+   breakpoints never have to reach across each other to undo one another's
+   edges — the outer cells drop their outer padding instead, which is what
+   keeps the grid flush with the section head above it. */
+@media (min-width:640px) and (max-width:979.98px){
+  .panels{grid-template-columns:repeat(2,1fr)}
+  .panel{padding:clamp(24px,3vw,32px) clamp(20px,3vw,28px)}
+  .panel:nth-child(odd){padding-left:0}
+  .panel:nth-child(even){padding-right:0; border-left:1px solid var(--line)}
+  .panel:nth-child(-n+2){border-top:0}
+  .panel:nth-child(n+3){border-top:1px solid var(--line)}
+}
+
+/* ---------- four columns ---------- */
+@media (min-width:980px){
+  .panels{grid-template-columns:repeat(4,1fr)}
+  .panel{
+    padding:0 clamp(18px,2.4vw,28px);
+    border-top:0; border-left:1px solid var(--line);
+  }
+  .panel:first-child{padding-left:0; border-left:0}
+  .panel:last-child{padding-right:0}
+}
+
+/* The page has to end on the button, not on a paragraph — someone who read
+   this far is at the bottom of the document with the hero's CTA a screen
+   and a half behind them. */
+.why-foot{
+  display:flex; flex-direction:column; align-items:center;
+  gap:clamp(16px,2.6vw,22px); text-align:center;
+  margin-top:clamp(38px,6vw,66px);
+  padding-top:clamp(28px,4vw,42px);
+  border-top:1px solid var(--line);
+}
+.why-foot p{
+  font-size:clamp(13px,1.7vw,15px); color:var(--faint);
+  line-height:1.6; max-width:46ch;
+}
 
 /* ---------- tall phones: let the hero grow into the slack ----------
    Top-aligning the hero left a dead band above the footer on a big
@@ -324,7 +466,9 @@ body{
 }
 
 /* Launched from the home screen there is no browser chrome to hold the
-   status bar off, and iOS does not always report an inset — so floor it. */
+   status bar off, and iOS does not always report an inset — so floor it.
+   On the token rather than on the hero, so the bar comes down with it
+   instead of the two of them parting company under the status bar. */
 @media (display-mode:standalone){
-  .hero{padding-top:calc(clamp(16px,3.2vh,28px) + max(env(safe-area-inset-top, 0px), 34px))}
+  :root{--bar-top:calc(clamp(16px,3.2vh,28px) + max(env(safe-area-inset-top, 0px), 34px))}
 }
