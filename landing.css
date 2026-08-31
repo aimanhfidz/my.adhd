@@ -324,8 +324,38 @@ body{
   opacity:0; transition:opacity .18s var(--ease);
 }
 :root[data-scrolled] .nav::before{opacity:1}
-/* the mark on the left, the toggle on the right, nothing between */
+/* the mark on the left, the clock and the toggle on the right */
 .nav .theme-toggle{margin-left:auto}
+
+/* ---------- the clock ----------
+   The visitor's own city and the time it is there. Ambient, not a control:
+   it sits at --faint and never at the ink of something you can press, and
+   it carries the bar's one piece of information that is different for
+   every person who loads the page.
+
+   Small caps and wide tracking are what keep it reading as a label rather
+   than as a second wordmark — at 12px the face's own rounding is already
+   doing enough. Tabular figures so the minute ticking over does not walk
+   the city name sideways.
+
+   Hidden until clock.js fills it: an empty gap in the bar is worse than no
+   clock, and a browser that will not name its zone gets none at all. */
+.nav-clock{
+  display:flex; align-items:baseline; gap:.9em;
+  margin:0 8px 0 auto;
+  font-size:12px; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; white-space:nowrap;
+  color:var(--faint); font-variant-numeric:tabular-nums;
+}
+.nav-clock[hidden]{display:none}
+/* the toggle keeps its own auto margin for whenever there is no clock */
+.nav-clock:not([hidden]) ~ .theme-toggle{margin-left:0}
+
+/* On a phone the city is the half that goes: the time is the part that is
+   actually about you, and the mark still needs its own room. */
+@media (max-width:520px){
+  .nav-clock .nc-place{display:none}
+}
 
 /* Centred in its row. This was top-aligned, on the reasoning that the
    headline should claim the upper screen rather than sit dead-centre with

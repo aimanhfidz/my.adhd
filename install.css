@@ -52,6 +52,10 @@ body{
 }
 .nav .back:hover{color:var(--ink); border-color:var(--accent)}
 .nav .theme-toggle{margin-left:10px}
+/* This bar already carries the skip pill, so the clock is the first thing
+   to go when the two would crowd the mark. The landing keeps its own down
+   to the smallest phone — there is nothing else in that bar. */
+@media (max-width:560px){ .nav-clock{display:none} }
 
 /* ---------- body ---------- */
 /* top-aligned, like the rest of the site: the title sits right under the

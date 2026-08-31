@@ -34,6 +34,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <link rel="preload" href="fonts/Baloo2-Variable.ttf" as="font" type="font/ttf" crossorigin />
 <script src="theme.js"></script>
+<script src="clock.js" defer></script>
 <!-- deferred: it wants the hero in the DOM, and nothing about the first
      paint waits on it -->
 <script src="waves.js" defer></script>
@@ -73,6 +74,8 @@
       <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
       <span class="wordmark">my<span class="accent">.adhd</span></span>
     </a>
+    <!-- filled in by clock.js, and hidden until it is -->
+    <p class="nav-clock" hidden><span class="nc-place"></span><span class="nc-time"></span></p>
     <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
       <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.9 8.9 0 1 0 11.1 11.1z"/></svg>
       <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
