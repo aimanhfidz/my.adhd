@@ -12,13 +12,11 @@
 :root{
   --hero-glow-a:rgba(71,55,255,.13);
   --hero-glow-b:rgba(53,41,191,.11);
-  /* The veil over the wave field, and the solid ground it reaches at the
-     top and bottom edges. Both are the page's own surface, so the field
-     fades into the page rather than into a grey of its own. */
-  --wave-veil:rgba(255,255,255,.30);
-  --wave-read:rgba(255,255,255,.94);
-  --wave-clear:rgba(255,255,255,0);
-  --wave-edge:#FFFFFF;
+  /* The page's own surface as a bare channel triple, so the scrim over the
+     wave field can be written once and mix its own alphas. The field fades
+     into the page this way rather than into a grey of its own. */
+  --wave-rgb:255 255 255;
+  --wave-veil-a:.30;
   /* the one gap between the nav and the first line of copy — every page
      starts its content here, so the titles line up across the site */
   --top-gap:clamp(14px,3.4vh,34px);
@@ -30,10 +28,19 @@
 :root[data-theme="dark"]{
   --hero-glow-a:rgba(71,55,255,.32);
   --hero-glow-b:rgba(53,41,191,.34);
-  --wave-veil:rgba(16,16,24,.30);
-  --wave-read:rgba(16,16,24,.94);
-  --wave-clear:rgba(16,16,24,0);
-  --wave-edge:#101018;
+  --wave-rgb:16 16 24;
+  /* Heavier on ink than on paper, and the reason is the ink, not taste.
+     The pool under the copy has to reach near-black to keep --faint legible
+     where a blown-out ridge runs behind it — that floor is fixed by the
+     type. On paper the pool is white and the field's own ground is white,
+     so nothing shows. On ink the pool is black while the ridges around it
+     are blown to full white, and a 0.94 difference across a boundary is a
+     dark oval sitting on the page however gently it is faded — no falloff
+     shape can hide a gap that size. So the surround comes down to meet the
+     pool instead. The field is dimmer at night for it; it is also the only
+     move here that does not either flatten the shader's highlights or take
+     the quiet out of the small type. */
+  --wave-veil-a:.50;
 }
 
 body{
@@ -128,23 +135,42 @@ body{
        headline with the field still running either side of it, and on a
        phone the same 30rem is wider than the whole window — which is the
        right answer there, because on a phone the copy IS the whole window
-       and there is no room left over to be dramatic in. */
+       and there is no room left over to be dramatic in.
+
+       The stops walk a smoothstep rather than a straight line. A flat
+       plateau running into a linear ramp is continuous in value but not in
+       slope, and the eye finds that break and draws an edge on it: on ink,
+       where the field's ridges are blown out white, they hit the pool and
+       dimmed all at once, and the whole ellipse read as a dark oval sitting
+       on the page. Easing the alpha off with zero slope at both the plateau
+       and the rim leaves no corner to find, so a ridge crossing the
+       boundary dims over an inch instead of at a line.
+
+       The ellipse keeps its old size while doing it. Widening it also
+       buries the edge, but it buries the field with it — on paper, where
+       the ridges are the dark ones, a bigger pool wiped the marbling out of
+       the middle of the page and left a flat white hole. Same extent, same
+       plateau, different curve between them. */
     radial-gradient(ellipse 30rem 24rem at 50% 50%,
-      var(--wave-read) 0%,
-      var(--wave-read) 46%,
-      var(--wave-clear) 100%),
+      rgb(var(--wave-rgb) / .94) 0%,
+      rgb(var(--wave-rgb) / .94) 46%,
+      rgb(var(--wave-rgb) / .84) 57%,
+      rgb(var(--wave-rgb) / .61) 68%,
+      rgb(var(--wave-rgb) / .33) 78%,
+      rgb(var(--wave-rgb) / .10) 89%,
+      rgb(var(--wave-rgb) / 0)  100%),
     /* The nav at one end and the disclaimer at the other, both in type far
        too quiet to hold its own over a blown-out ridge. --faint is drawn
        for 5.2:1 on the page's own white and has nothing spare, so the field
        does not get to go behind it at all. */
     linear-gradient(to bottom,
-      var(--wave-edge) 0%,
-      var(--wave-clear) 18%,
-      var(--wave-clear) 70%,
-      var(--wave-edge) 90%),
+      rgb(var(--wave-rgb) / 1) 0%,
+      rgb(var(--wave-rgb) / 0) 18%,
+      rgb(var(--wave-rgb) / 0) 70%,
+      rgb(var(--wave-rgb) / 1) 90%),
     /* and a flat wash over everything, so even the loud corners read as
        weather behind the page rather than as a picture competing with it */
-    var(--wave-veil);
+    rgb(var(--wave-rgb) / var(--wave-veil-a));
 }
 
 /* The bar holds the top of the window while the page runs under it. */
