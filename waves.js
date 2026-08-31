@@ -11,12 +11,22 @@
    Two departures from the original, both because this hero is not a black
    page:
 
-   1) invert. The original paints white filaments on near-black, which is
-      right on ink and unreadable on paper — this page is light by default
-      and the toggle sits in the nav. So the field is flipped for light:
-      dark ridges on white. It is done last, after the centre dim, so the
-      dim keeps meaning "push this area towards the page's own ground"
-      in both themes rather than always "darken".
+   1) A ramp instead of a colour. The original divides a colour by
+      abs(sin(...)) and lets the channels clip where the divisor nears zero,
+      which is why its filaments blow out white. That works for one fixed
+      look on a black page. This one has to carry the brand on both a white
+      page and a near-black one, so the shader computes a single scalar
+      intensity and each theme maps it through its own three-stop ramp:
+      ground, brand, highlight. The page's own surface is stop one, so the
+      field emerges out of the page rather than sitting on it.
+
+      This replaces an earlier trick that flipped the field for light with
+      1.0 - colour. That is a per-channel inversion: it is fine for grey,
+      but it takes a hue to its complement, and the complement of the brand
+      blue is orange — which on this site belongs to the logo mark and
+      nothing else. The ramp keeps the hue and moves only the value, and
+      the centre dim now pulls intensity toward stop one, which means the
+      same thing in both themes without any special-casing.
 
    2) iMouse is gone. The original declared it, listened on window, and
       never read it in the shader — a mousemove handler that computed
@@ -43,13 +53,18 @@
     precision mediump float;
     uniform vec2 iResolution;
     uniform float iTime;
-    uniform bool hasActiveReminders;
-    uniform bool hasUpcomingReminders;
     uniform bool disableCenterDimming;
     uniform float invert;
+    uniform vec3 inkGround, inkMid, inkHi;
+    uniform vec3 paperGround, paperMid, paperHi;
     varying vec2 vTextureCoord;
 
-    void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    vec3 ramp(float v, vec3 g, vec3 m, vec3 h) {
+      return v < 0.5 ? mix(g, m, v * 2.0) : mix(m, h, (v - 0.5) * 2.0);
+    }
+
+    void main() {
+      vec2 fragCoord = vTextureCoord * iResolution;
       vec2 uv = (2.0 * fragCoord - iResolution.xy) / min(iResolution.x, iResolution.y);
 
       vec2 center = iResolution.xy * 0.5;
@@ -63,30 +78,30 @@
         uv.y += 0.6 / i * cos(i * 1.5 * uv.x + iTime);
       }
 
-      if (hasActiveReminders) {
-        fragColor = vec4(vec3(0.1, 0.3, 0.6) / abs(sin(iTime - uv.y - uv.x)), 1.0);
-      } else if (hasUpcomingReminders) {
-        fragColor = vec4(vec3(0.1, 0.5, 0.2) / abs(sin(iTime - uv.y - uv.x)), 1.0);
-      } else {
-        fragColor = vec4(vec3(0.1) / abs(sin(iTime - uv.y - uv.x)), 1.0);
-      }
+      /* The original's numerator, kept as a scalar. It runs away wherever
+         the sine passes zero — that overshoot is the filament, and clamping
+         it here is what the framebuffer used to do on its own. */
+      float v = clamp(0.1 / abs(sin(iTime - uv.y - uv.x)), 0.0, 1.0);
 
-      if (!disableCenterDimming) {
-        fragColor.rgb = mix(fragColor.rgb * 0.3, fragColor.rgb, centerDim);
-      }
-    }
+      /* The intensity never falls below 0.1 — 0.1/abs(sin) bottoms out where
+         the sine is at full height — and two thirds of the screen sits under
+         0.2. Run straight into a linear ramp that puts most of the page 40%
+         of the way to full brand, which lifts the whole field and hands the
+         near-black reader pool a bright surround to be an oval against. The
+         curve pushes that bulk back down onto the ground and leaves the
+         colour where the filaments are, which is where the old white-hot
+         version carried it too. */
+      v = pow(v, 1.6);
 
-    void main() {
-      vec4 color;
-      mainImage(color, vTextureCoord * iResolution);
-      /* The division blows past 1.0 wherever sin approaches zero — that
-         overshoot is the glow, and the framebuffer clamps it anyway. It has
-         to be clamped here too, before the flip, or 1.0 - 8.0 would take a
-         bright ridge to a *more* negative black than a dim one and the
-         cross-fade between themes would pass through nonsense. */
-      color.rgb = clamp(color.rgb, 0.0, 1.0);
-      color.rgb = mix(color.rgb, 1.0 - color.rgb, invert);
-      gl_FragColor = color;
+      /* Shapes the field first, attenuates second. The other way round the
+         curve compounds the dim — 0.3 becomes 0.3^1.6, near enough half
+         again — and the centre pulls away from its surround hard enough to
+         draw a ring. Left off by default here anyway: see waves.js's own
+         note on why the stylesheet owns this now. */
+      if (!disableCenterDimming) v = mix(v * 0.3, v, centerDim);
+
+      gl_FragColor = vec4(mix(ramp(v, inkGround, inkMid, inkHi),
+                              ramp(v, paperGround, paperMid, paperHi), invert), 1.0);
     }
   `;
 
@@ -136,16 +151,82 @@
   const u = {
     iResolution: gl.getUniformLocation(program, 'iResolution'),
     iTime: gl.getUniformLocation(program, 'iTime'),
-    hasActiveReminders: gl.getUniformLocation(program, 'hasActiveReminders'),
-    hasUpcomingReminders: gl.getUniformLocation(program, 'hasUpcomingReminders'),
     disableCenterDimming: gl.getUniformLocation(program, 'disableCenterDimming'),
     invert: gl.getUniformLocation(program, 'invert'),
+    inkGround: gl.getUniformLocation(program, 'inkGround'),
+    inkMid: gl.getUniformLocation(program, 'inkMid'),
+    inkHi: gl.getUniformLocation(program, 'inkHi'),
+    paperGround: gl.getUniformLocation(program, 'paperGround'),
+    paperMid: gl.getUniformLocation(program, 'paperMid'),
+    paperHi: gl.getUniformLocation(program, 'paperHi'),
   };
+
+  /* ---------- the palette ----------
+     Read out of the stylesheet rather than written here, so the brand lives
+     in exactly one place. The six tokens are declared unthemed on purpose:
+     the shader cross-fades between both ramps to turn the field over, so it
+     needs the ink colours while the page is on paper and the other way
+     round, and a themed token only ever answers for the theme in force. */
+  const css = getComputedStyle(document.documentElement);
+
+  function colour(token, fallback) {
+    const raw = (css.getPropertyValue(token) || '').trim() || fallback;
+    let hex = raw.replace('#', '');
+    if (hex.length === 3) hex = hex.replace(/./g, (c) => c + c);
+    if (/^[0-9a-f]{6}$/i.test(hex)) {
+      const n = parseInt(hex, 16);
+      return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+    }
+    const p = raw.match(/[\d.]+/g);
+    return p && p.length >= 3 ? [p[0] / 255, p[1] / 255, p[2] / 255] : [0, 0, 0];
+  }
+
+  const brand = {
+    inkGround: colour('--wave-ink-ground', '#101018'),
+    inkMid: colour('--wave-ink-mid', '#4737FF'),
+    inkHi: colour('--wave-ink-hi', '#ACA5FF'),
+    paperGround: colour('--wave-paper-ground', '#FFFFFF'),
+    paperMid: colour('--wave-paper-mid', '#D1CDFF'),
+    paperHi: colour('--wave-paper-hi', '#3529BF'),
+  };
+
+  /* The two reminder states the component arrived with. Nothing on this site
+     sets them — the landing page is always the neutral brand — but the props
+     are part of its API, so they still mean something. Blue is the brand and
+     already the resting state, so active reads as a colder, harder blue and
+     upcoming keeps the original's green. */
+  const STATES = {
+    active: { mid: '#3E7BFF', hi: '#A9C6FF', paperMid: '#C6D8FF', paperHi: '#1C3AA8' },
+    upcoming: { mid: '#2FB86B', hi: '#9BE8BE', paperMid: '#BFEBD3', paperHi: '#12603A' },
+  };
+
+  function palette() {
+    const s = settings.hasActiveReminders
+      ? STATES.active
+      : settings.hasUpcomingReminders
+      ? STATES.upcoming
+      : null;
+    if (!s) return brand;
+    return {
+      inkGround: brand.inkGround,
+      inkMid: colour('', s.mid),
+      inkHi: colour('', s.hi),
+      paperGround: brand.paperGround,
+      paperMid: colour('', s.paperMid),
+      paperHi: colour('', s.paperHi),
+    };
+  }
 
   const settings = {
     hasActiveReminders: false,
     hasUpcomingReminders: false,
-    disableCenterDimming: false,
+    /* On by default here, where the component had it off. Its centre dim is
+       a circle struck from the middle of the viewport, and this hero's copy
+       is not a circle — .hero-waves::after already lays an ellipse over the
+       column, sized to the text and measured against it. Running both put a
+       second, tighter, rounder edge inside the first, which on paper read
+       as a bright ring around the headline. One mechanism, the tuned one. */
+    disableCenterDimming: true,
   };
 
   host.appendChild(canvas);
@@ -246,11 +327,16 @@
        to paint before the hero has been laid out, it would divide by zero
        and flood the canvas with NaN-white. */
     if (!w || !h) return;
+    const p = palette();
     gl.uniform1f(u.iTime, t % LOOP);
-    gl.uniform1i(u.hasActiveReminders, settings.hasActiveReminders ? 1 : 0);
-    gl.uniform1i(u.hasUpcomingReminders, settings.hasUpcomingReminders ? 1 : 0);
     gl.uniform1i(u.disableCenterDimming, settings.disableCenterDimming ? 1 : 0);
     gl.uniform1f(u.invert, invert);
+    gl.uniform3fv(u.inkGround, p.inkGround);
+    gl.uniform3fv(u.inkMid, p.inkMid);
+    gl.uniform3fv(u.inkHi, p.inkHi);
+    gl.uniform3fv(u.paperGround, p.paperGround);
+    gl.uniform3fv(u.paperMid, p.paperMid);
+    gl.uniform3fv(u.paperHi, p.paperHi);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 

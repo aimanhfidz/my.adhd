@@ -18,6 +18,31 @@
   --wave-rgb:255 255 255;
   --wave-veil-a:.30;
   --wave-reader-h:24rem;
+  /* The field's two ramps — ground, brand, highlight — one per theme.
+     Deliberately not themed: waves.js holds both at once and cross-fades
+     between them to turn the field over, so it needs the ink colours while
+     the page is still on paper, and a themed token only ever answers for
+     the theme in force. Values are the brand's, so theme.css stays the one
+     place the palette is written. Orange is not among them on purpose — it
+     belongs to the logo mark and is not a surface. */
+  /* Night runs deep — deep blue up to the brand, not up to the pale one.
+     The pale highlight made a bright field for the near-black reader pool
+     to sit in, and a pool that dark against a surround that light is an
+     oval again whatever the falloff does. It also matches the night --grad,
+     which starts at #2A1FA6 rather than at the daylight blue. */
+  --wave-ink-ground:var(--black);
+  --wave-ink-mid:var(--blue-deep);
+  --wave-ink-hi:var(--blue);
+  /* Day stays in the pale end for the same reason night stays in the deep
+     one: the reader pool is the page's own ground, and a field that swings
+     a long way from that ground leaves a hole where the pool erases it.
+     Running to --blue-deep put a luminance excursion of .94 on a white
+     page — measured, a .205 gap between the middle and the ring outside it,
+     which is a halo you can see. Night's excursion is .03. This brings the
+     two ramps into the same register. */
+  --wave-paper-ground:#FFFFFF;
+  --wave-paper-mid:var(--pale);
+  --wave-paper-hi:var(--blue-pale);
   /* the one gap between the nav and the first line of copy — every page
      starts its content here, so the titles line up across the site */
   --top-gap:clamp(14px,3.4vh,34px);
