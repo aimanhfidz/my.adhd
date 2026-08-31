@@ -42,6 +42,25 @@
 </head>
 <body>
 
+<!-- The mark, written once. The bar wears it at the top of the page and the
+     footer wears it again at the bottom, and two copies of the geometry in
+     one file is two things to keep in step. Same sprite the app uses. -->
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Seven orange arms: the eighth (lower-right) is detached and carried
+         by the violet capsule sitting just off the centre. -->
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+</svg>
+
 <!-- ============ HERO — one viewport, full bleed ============ -->
 <header class="hero">
   <!-- the wave field, first so the glows land on top of it -->
@@ -51,15 +70,7 @@
   <div class="hero-glow" aria-hidden="true"></div>
   <nav class="nav">
     <a class="brand-lockup" href="/" aria-label="my.adhd home">
-      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true">
-        <g class="lg-star">
-          <rect x="46.5" y="18" width="7" height="64"/>
-          <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
-          <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
-          <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
-        </g>
-        <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
-      </svg>
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
       <span class="wordmark">my<span class="accent">.adhd</span></span>
     </a>
     <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
@@ -91,7 +102,107 @@
 </header>
 
 <!-- ============ WHY — four findings, under the fold ============ -->
-<main class="why">
+<main>
+
+<!-- ============ HOW — the loop itself, in three cards ============
+     The one part of the page with furniture on it. .why below is a column
+     of reading and is divided by hairlines; these are three parallel
+     things, and three parallel things only read as three if each one is
+     bounded. Each card carries a drawing in a band of its own, so the row
+     keeps one picture height however long the text under it runs. -->
+<section class="how">
+
+  <div class="how-head">
+    <h2 class="how-title">What actually happens</h2>
+    <p class="how-lede">From a head with too much in it to one thing you can start.</p>
+  </div>
+
+  <ul class="cards">
+
+    <li class="card">
+      <div class="card-art">
+        <!-- the mess falling through a funnel into one box -->
+        <svg class="cfig" viewBox="0 0 240 132" aria-hidden="true">
+          <g class="w">
+            <path d="M20 20c10-13 17 10 27-3s16 9 26-4"/>
+            <path d="M96 16c9-11 15 9 24-3"/>
+            <path d="M148 22c10-13 17 10 27-3s16 8 25-5"/>
+            <path d="M40 44c10-11 16 9 26-2s16 8 25-3" opacity=".72"/>
+            <path d="M126 46c9-10 15 8 24-2s15 7 24-3" opacity=".72"/>
+            <path d="M66 66c9-9 15 7 24-2s15 7 23-3" opacity=".46"/>
+          </g>
+          <path class="q" d="M26 58L100 92M214 58L140 92"/>
+          <rect class="q" x="86" y="92" width="68" height="30" rx="13"/>
+          <path class="w" d="M100 107h26"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <p class="card-step">One</p>
+        <h3>Everything goes in one box</h3>
+        <p>
+          One field. No category to pick, no order to get right — type it,
+          or hold the mic and say it. The mess is the correct input.
+        </p>
+      </div>
+    </li>
+
+    <li class="card">
+      <div class="card-art">
+        <!-- three lists, each a heading, a row, and the minutes on the end —
+             the chips are different widths because the estimates are -->
+        <svg class="cfig" viewBox="0 0 240 132" aria-hidden="true">
+          <path class="h" d="M14 10h34"/>
+          <path class="q" d="M14 28h120"/>
+          <rect class="q" x="182" y="21" width="44" height="14" rx="7"/>
+          <path class="h" d="M14 54h26"/>
+          <path class="q" d="M14 72h140"/>
+          <rect class="q" x="196" y="65" width="30" height="14" rx="7"/>
+          <path class="h" d="M14 98h40"/>
+          <path class="q" d="M14 116h104"/>
+          <rect class="q" x="188" y="109" width="38" height="14" rx="7"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <p class="card-step">Two</p>
+        <h3>It comes back grouped and timed</h3>
+        <p>
+          Work, admin, money, health, home, social, errands. Most urgent
+          first, then the shortest — momentum beats optimality — and every
+          task carries an estimate in minutes.
+        </p>
+      </div>
+    </li>
+
+    <li class="card">
+      <div class="card-art">
+        <!-- one move pulled off the front of a task, in the one colour on
+             the site that means act now -->
+        <svg class="cfig" viewBox="0 0 240 132" aria-hidden="true">
+          <path class="q" d="M26 20h190"/>
+          <path class="q" d="M26 30v24" opacity=".55"/>
+          <circle class="o" cx="26" cy="62" r="5.5"/>
+          <path class="os" d="M46 62h140"/>
+          <path class="q" d="M46 90h150" opacity=".62"/>
+          <path class="q" d="M46 110h112" opacity=".38"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <p class="card-step">Three</p>
+        <h3>Each task opens on a first step</h3>
+        <p>
+          One move, small enough that refusing it feels silly. It arrives
+          in orange — the one colour the app keeps for a single meaning,
+          which is: start here.
+        </p>
+      </div>
+    </li>
+
+  </ul>
+
+</section>
+
+<!-- ============ WHY — four findings, under the fold ============ -->
+<section class="why">
 
   <div class="why-head">
     <h2 class="why-title">Why a box helps</h2>
@@ -183,7 +294,93 @@
     <a class="cta" href="/install" data-app-link>Clear my head</a>
   </div>
 
+</section>
+
 </main>
+
+<!-- ============ the footer ============
+     The page's one filled band. Everything above it is the page's own
+     ground, so the foot reads as the end of the document by changing
+     ground rather than by piling on another rule. -->
+<footer class="site-foot">
+
+  <div class="foot-inner">
+
+    <div class="foot-brand">
+      <a class="brand-lockup" href="/" aria-label="my.adhd home">
+        <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+        <span class="wordmark">my<span class="accent">.adhd</span></span>
+      </a>
+      <p class="foot-blurb">
+        A brain dump that answers back. No account, nothing to set up, and
+        your lists stay on your device.
+      </p>
+    </div>
+
+    <nav class="foot-cols" aria-label="Footer">
+      <div class="foot-col">
+        <h2>The app</h2>
+        <ul>
+          <li><a href="/app">Open my.adhd</a></li>
+          <li><a href="/install">Add to home screen</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>The small print</h2>
+        <ul>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h2>Say hello</h2>
+        <ul>
+          <li><a href="mailto:hello@myadhd.my">hello@myadhd.my</a></li>
+        </ul>
+
+        <!-- ============ Connect ============
+             Ready, and deliberately not live: my.adhd has no accounts
+             anywhere in the repo to point these at, and an icon linking to
+             nothing is worse than no icon. The three here are the ones on
+             the wireframe. To turn the row on: put the real profile URLs in
+             the three hrefs, drop any platform there is no account for, and
+             delete these two comment markers. Styling is already in
+             landing.css under .foot-social.
+
+        <ul class="foot-social">
+          <li><a href="TODO" aria-label="my.adhd on Facebook" rel="me noopener" target="_blank">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+              <path d="M13.4 21v-8.2h2.8l.42-3.2h-3.22V7.55c0-.93.26-1.56 1.6-1.56h1.7V3.13c-.3-.04-1.3-.13-2.47-.13-2.45 0-4.13 1.5-4.13 4.24v2.36H7.3v3.2h2.8V21h3.3z"/>
+            </svg>
+          </a></li>
+          <li><a href="TODO" aria-label="my.adhd on Instagram" rel="me noopener" target="_blank">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9">
+              <rect x="3.6" y="3.6" width="16.8" height="16.8" rx="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.1" cy="6.9" r="1.15" fill="currentColor" stroke="none"/>
+            </svg>
+          </a></li>
+          <li><a href="TODO" aria-label="my.adhd on X" rel="me noopener" target="_blank">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+              <path d="M3 3h5.1l4.3 5.9L17.9 3h2.6l-6.7 7.4L21.4 21h-5.1l-4.7-6.4L5.8 21H3.2l7.1-7.9L3 3zm3.3 1.6l9.9 14.8h1.6L7.9 4.6H6.3z"/>
+            </svg>
+          </a></li>
+        </ul>
+
+             ============ end Connect ============ -->
+      </div>
+    </nav>
+
+  </div>
+
+  <div class="foot-base">
+    <p class="foot-note">
+      A tool for getting started — not treatment, therapy, or medical advice.
+    </p>
+    <p class="foot-copy">&copy; <span data-year>2026</span> my.adhd</p>
+  </div>
+
+</footer>
 
 <script>
 /* The bar has a page under it now, and its ground is painted only once
@@ -195,6 +392,15 @@
   var mark = function(){ root.toggleAttribute('data-scrolled', window.scrollY > 8); };
   mark();
   window.addEventListener('scroll', mark, { passive:true });
+})();
+</script>
+
+<script>
+/* The copyright year, so the foot of the page does not go stale on its
+   own. The markup carries a real year already — this only corrects it. */
+(function(){
+  var y = String(new Date().getFullYear());
+  document.querySelectorAll('[data-year]').forEach(function(el){ el.textContent = y; });
 })();
 </script>
 

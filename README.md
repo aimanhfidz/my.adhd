@@ -655,17 +655,44 @@ now deliberately kept in step across both, at 4s.
 
 ## Pages
 
-`index.html` is the landing page; every CTA on it points at `app.html`.
+`index.html` is the landing page. Its CTAs point at `/install` and carry
+`data-app-link`; an inline script rewrites them to `/app` for anyone already
+running from the home screen, or who has been shown the guide once — the
+install stop happens exactly one time.
 
-It is **one viewport and nothing more** — `100dvh`, sized in `vh`/`dvh`
-clamps, with `overflow:hidden` on the body so it never scrolls. Hero, CTA,
-and a one-line disclaimer; no sections below. If you add anything, re-check
-it at 320x568 and in landscape, because there is no scrollbar to absorb
-overflow — content will simply be cut off.
+**The hero is one viewport. The page is not.** The hero is `100dvh` and sized
+in `vh`/`dvh` clamps, so the first screen is always whole — headline, CTA and
+a one-line disclaimer, with nothing cut off on a phone. Below it the document
+scrolls, through three things:
+
+1. `.how` — three cards, the loop itself: everything into one box, back
+   grouped and timed, each task opening on a first step. The one section on
+   the site with furniture on it, because three parallel steps only read as
+   three if each one is bounded. The drawings are the same two marks as the
+   figures below them — a travelling wave and a straight rule — and the third
+   is the only drawing on the site allowed orange, which means what it always
+   means here: start here.
+2. `.why` — four research findings, divided by hairlines and nothing else,
+   ending on the closing CTA. Deliberately not cards: it is a column of
+   reading, and boxing it would put furniture on the page twice.
+3. `footer.site-foot` — the site's one filled band, on the same 1080 measure
+   as `.why`: the lockup, the app and legal links, the contact address, and
+   the disclaimer again above the copyright.
+
+The body clips sideways only (`overflow-x:hidden`) and scrolls vertically —
+the hero scrolls with it when a notch and browser chrome push it past a
+viewport. Re-check the hero at 320x568 and in landscape all the same: it is
+the one box on the site that still aims to fit exactly.
+
+The logo geometry is a hidden `<svg class="sprite">` at the top of the body,
+and both lockups — the bar and the footer — pull it with
+`<use href="#logo-mark">`, the same pattern `app.html` uses. Two copies of the
+asterisk in one file is two things to keep in step.
 
 The copy makes no clinical claims. It describes what starting a task feels
 like and what the app does about it — nothing about causes, diagnosis, or
-treatment. The footer says so outright. Keep it that way.
+treatment. The disclaimer says so outright, under the hero and again in the
+footer. Keep it that way.
 
 ## Design system
 
@@ -682,9 +709,18 @@ overscroll band in step with the page, and `paintTheme()` in `app.js` rewrites
 scheme.
 
 The app is a page, not a phone mock: no card, no shadow, no tinted backdrop.
-Content is centred and capped at `--measure`. The landing page is the
-exception — it is deliberately dark, and hardcodes its own colours rather
-than relying on theme tokens.
+Content is centred and capped at `--measure`. The one place that breaks it is
+the landing page's `.how` row, where three steps are compared side by side and
+each needs an edge — a hairline border and a tinted band for the drawing, still
+no shadow.
+
+The landing page used to be the other exception: deliberately dark, with its
+own hardcoded colours. It is not any more. `landing.css` reads the same tokens
+as everything else and follows the same toggle, light by default. What it does
+keep for itself is the hero's glow alphas, the wave field's veil and reader
+pool, and the field's two colour ramps — values no other page consumes, and in
+the ramps' case values left unthemed on purpose, because `waves.js` holds both
+at once to cross-fade between them.
 
 Palette lives in `theme.css` `:root` as brand tokens (`--blue`, `--navy`, `--stone`,
 `--orange`, `--pale`, `--grad`); the semantic tokens (`--ink`, `--accent`,

@@ -493,3 +493,205 @@ body{
 @media (display-mode:standalone){
   :root{--bar-top:calc(clamp(16px,3.2vh,28px) + max(env(safe-area-inset-top, 0px), 34px))}
 }
+
+/* The sprite the two lockups read from. index.html has no stylesheet of the
+   app's, and an <svg> left inline draws a line box under the body's
+   line-height — a few pixels of nothing above a hero measured in dvh. */
+.sprite{position:absolute; width:0; height:0; overflow:hidden}
+
+/* ============ HOW — the loop, in three cards ============
+   Between the hero and the research: the hero says what it does, .why says
+   why that works, and nothing in between showed the thing itself.
+
+   This is the only section on the page with furniture on it, which is a
+   departure and a deliberate one. .why is a column of reading, so hairlines
+   are enough to divide it. Three parallel steps are not reading — they are
+   compared, side by side, and a comparison needs each side bounded. Each
+   card's drawing sits in a band of a different ground, so the row keeps one
+   picture height whatever the paragraphs under it do. */
+.how{
+  position:relative; z-index:1;
+  background:var(--surface);
+  max-width:1080px; margin:0 auto;
+  padding:clamp(48px,9vw,104px) clamp(20px,5vw,40px) clamp(6px,1.6vw,16px);
+}
+
+/* the section head, shared with .why — same size, same measure, so the two
+   titles read as two of a kind rather than as a big one and a small one */
+.how-head{
+  text-align:center; max-width:36rem;
+  margin:0 auto clamp(32px,5vw,56px);
+}
+.how-title{
+  font-size:clamp(24px,4.2vw,38px); font-weight:800;
+  letter-spacing:-.035em; line-height:1.08;
+}
+.how-lede{
+  margin-top:clamp(8px,1.4vw,12px);
+  font-size:clamp(14px,1.9vw,17px); color:var(--muted);
+}
+
+/* One column until there is room for all three at once. Two columns is not
+   an option with three cards — it leaves one of them alone on a row, and a
+   step that sits apart from the other two reads as the odd one out rather
+   than as the third. */
+.cards{display:grid; gap:clamp(16px,2.4vw,22px); list-style:none}
+/* Stacked, the cards get a measure of their own rather than the section's.
+   The art band is a fixed height whatever the card's width, so a 780-wide
+   card on a tablet is a long letterbox with a small drawing adrift in the
+   middle of it. Capped, the stack reads as three of the same thing. */
+@media (max-width:819.98px){
+  .cards{max-width:600px; margin-inline:auto}
+}
+@media (min-width:820px){
+  .cards{grid-template-columns:repeat(3,1fr)}
+}
+
+.card{
+  display:flex; flex-direction:column;
+  background:var(--surface);
+  border:1.5px solid var(--line);
+  border-radius:var(--radius-lg);
+  overflow:hidden;   /* so the art band clips to the corner rather than through it */
+}
+.card-art{
+  display:grid; place-items:center;
+  padding:clamp(16px,2.4vw,24px);
+  min-height:clamp(120px,15vw,152px);
+  background:var(--wash);
+  border-bottom:1.5px solid var(--line);
+}
+.card-body{
+  display:flex; flex-direction:column; gap:clamp(5px,.9vw,8px);
+  padding:clamp(18px,2.4vw,24px);
+}
+/* more specific than `.card p` on purpose — the label is not body copy, and
+   an equal match would hand it the muted colour and the reading size */
+.card .card-step{
+  font-size:12px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--faint);
+}
+.card h3{
+  font-size:clamp(16px,1.9vw,18.5px); font-weight:700;
+  letter-spacing:-.02em; line-height:1.22;
+}
+.card p{font-size:clamp(13.5px,1.6vw,15px); color:var(--muted); line-height:1.55}
+
+/* The card drawings, out of the same two marks as .fig — a travelling wave
+   and a straight rule — one step wider, because they are read across a
+   240-unit box rather than a 132-unit one and 1.8 would thin out. Capped in
+   width so a single-column card on a wide phone does not blow the drawing up
+   to the full measure. */
+.cfig{display:block; width:100%; max-width:262px; height:auto; overflow:visible}
+.cfig .w{fill:none; stroke:var(--accent); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.cfig .q{fill:none; stroke:var(--line-strong); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+/* a list's heading: short, and the only loud horizontal in the drawing */
+.cfig .h{fill:none; stroke:var(--accent); stroke-width:3.2; stroke-linecap:round}
+/* Orange, and nowhere else in the drawings. Outside the lockup, which owns
+   the colour as a mark rather than as a signal, orange means one thing on
+   this site — start now — so the only figure allowed it is the one drawing
+   the first step. */
+.cfig .o{fill:var(--orange)}
+.cfig .os{fill:none; stroke:var(--orange); stroke-width:3.4; stroke-linecap:round}
+
+/* ============ the footer ============
+   Full-bleed like everything else, with the content inside held to the same
+   1080 measure as .why — so the columns line up under the findings rather
+   than starting a new grid of their own.
+
+   Its ground is --wash rather than --surface. The page has spent two screens
+   establishing that it has no furniture, so the end of the document is
+   marked by the ground changing, not by another hairline on top of the one
+   .why-foot already draws. */
+.site-foot{
+  /* The measure the footer's content sits on. 1080 is the landing page's,
+     matching .why directly above it — but the legal pages read narrower and
+     the install guide at 640, and a footer wider than the page it ends looks
+     like it belongs to a different site. Each stylesheet sets its own — in
+     px or rem, never in `ch`: the two boxes that read this token set
+     different font-sizes, and `ch` resolves to a different width in each. */
+  --foot-measure:1080px;
+  /* The same gutter every section on the site pads itself with. Named here
+     because the line below has to subtract it: --foot-measure is the width
+     of the *box* the page's content sits in, gutter included, and the band
+     has already spent that gutter on itself. Without the subtraction the
+     footer's content ran a gutter wider than the section above it at both
+     ends — 40px of overhang on each side of a desktop page. */
+  --foot-gutter:clamp(20px,5vw,40px);
+  --foot-inner-measure:calc(var(--foot-measure) - var(--foot-gutter) * 2);
+  position:relative; z-index:1;
+  background:var(--wash);
+  border-top:1px solid var(--line);
+  padding:clamp(38px,5.5vw,60px) 0 clamp(20px,2.6vw,28px);
+  padding-left:max(var(--foot-gutter), env(safe-area-inset-left,0px));
+  padding-right:max(var(--foot-gutter), env(safe-area-inset-right,0px));
+  /* after the shorthand, and with the home indicator's inset folded in —
+     this is the last thing on the page, so nothing else will hold it clear */
+  padding-bottom:calc(clamp(20px,2.6vw,28px) + env(safe-area-inset-bottom,0px));
+}
+.foot-inner{max-width:var(--foot-inner-measure); margin:0 auto; display:grid; gap:clamp(28px,4vw,40px)}
+@media (min-width:760px){
+  .foot-inner{
+    grid-template-columns:minmax(0,1.35fr) minmax(0,2fr);
+    align-items:start; gap:clamp(32px,5vw,72px);
+  }
+}
+
+.foot-brand{display:flex; flex-direction:column; align-items:flex-start; gap:12px}
+.foot-blurb{font-size:14px; line-height:1.6; color:var(--muted); max-width:34ch}
+
+/* auto-fit rather than a fixed three: on a narrow phone the columns fall to
+   two and then to one on their own, and the labels are short enough that
+   140px is a real column rather than a wrapped word. 140 and not 150 because
+   the legal pages read at 68ch — three 150s and their gaps came to 506 in a
+   497-wide foot, and "Say hello" dropped to a row of its own by nine pixels. */
+.foot-cols{
+  display:grid; gap:clamp(20px,3vw,28px);
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+}
+.foot-col h2{
+  font-size:12px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--faint);
+}
+.foot-col ul{list-style:none; margin-top:12px; display:grid; gap:9px}
+.foot-col a{
+  font-size:14.5px; font-weight:600; letter-spacing:-.01em;
+  color:var(--ink-soft); text-decoration:none;
+  border-bottom:1.5px solid transparent; padding-bottom:1px;
+  transition:color .16s var(--ease), border-color .16s var(--ease);
+}
+.foot-col a:hover{color:var(--accent); border-bottom-color:var(--accent)}
+.foot-col a:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+/* the address is the one link that can outrun its column */
+.foot-col a[href^="mailto:"]{overflow-wrap:anywhere}
+
+/* The bottom rule sits on --wash, where --line is nearly invisible — the
+   step up to --line-strong is what --line would have looked like on the
+   white above it. */
+.foot-base{
+  max-width:var(--foot-inner-measure); margin:clamp(30px,4vw,44px) auto 0;
+  padding-top:clamp(16px,2.2vw,22px);
+  border-top:1px solid var(--line-strong);
+  display:flex; flex-wrap:wrap; align-items:baseline;
+  justify-content:space-between; gap:8px 20px;
+  font-size:12.5px; line-height:1.55; color:var(--faint);
+}
+.foot-note{max-width:52ch}
+.foot-copy{white-space:nowrap}
+
+/* The Connect row, sized and coloured like .theme-toggle — the site's only
+   other round icon button — so a row of them reads as house furniture rather
+   than as a widget bolted on from somewhere else. The markup is in
+   index.html, commented out until there are real accounts to point it at:
+   an icon linking to nothing is worse than no icon. */
+.foot-social{display:flex; gap:10px; margin-top:14px}
+.foot-social a{
+  width:34px; height:34px; padding:0;
+  display:grid; place-items:center;
+  border:1.5px solid var(--line-strong); border-radius:999px;
+  color:var(--muted);
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+.foot-social a:hover{color:var(--accent); border-color:var(--accent); background:var(--surface)}
+.foot-social a:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.foot-social svg{width:17px; height:17px; display:block}
