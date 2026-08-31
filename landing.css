@@ -136,11 +136,12 @@ body{
 .hero{
   position:relative;
   min-height:100dvh;
-  /* Two rows, not three: the bar is fixed to the window now and out of the
-     flow entirely, so the hero holds its space with padding instead of
-     with a grid row. The box stays exactly one viewport either way — what
-     used to be the nav's row is the top of this padding. */
-  display:grid; grid-template-rows:1fr auto;
+  /* One row now. The bar is fixed to the window and out of the flow
+     entirely, so the hero holds its space with padding instead of with a
+     grid row, and the disclaimer that used to sit in a row of its own is
+     the footer's to carry. The box stays exactly one viewport either way —
+     what used to be the nav's row is the top of this padding. */
+  display:grid; grid-template-rows:1fr;
   padding:var(--nav-gap) 0 clamp(14px,2.4vh,22px);
   /* the gutters below are relative to these, so the notch never crops the
      copy in landscape or under a home-screen launch */
@@ -181,10 +182,9 @@ body{
 
    The veil is the legibility. Undressed the field is white filaments on
    near-black, and while the shader dims its own centre for the headline,
-   the nav and the disclaimer sit well outside that circle — 11px of --faint
-   on a blown-out ridge is not text. So: a flat wash of the page's own
-   ground across the whole field, going to full ground at the two edges
-   where the small type lives. */
+   the nav sits well outside that circle — 11px of --faint on a blown-out
+   ridge is not text. So: a flat wash of the page's own ground across the
+   whole field, going to full ground at the two edges. */
 .hero-waves{
   position:absolute; inset:0; z-index:0;
   overflow:hidden; pointer-events:none;
@@ -336,12 +336,6 @@ body{
   max-width:44ch; margin-bottom:clamp(14px,2.6vh,26px);
 }
 .hero-note{margin-top:clamp(8px,1.4vh,13px); font-size:clamp(12px,1.4vh,13.5px); color:var(--faint)}
-
-.hero-foot{
-  text-align:center; padding:0 clamp(20px,5vw,40px);
-  font-size:clamp(11px,1.3vh,12.5px); line-height:1.55;
-  color:var(--faint); max-width:60ch; margin:clamp(14px,2.2vh,24px) auto 0;
-}
 
 /* ============ WHY — the research, under the fold ============
    The hero is still exactly one viewport. This is what the page scrolls to.
