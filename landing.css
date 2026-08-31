@@ -12,6 +12,13 @@
 :root{
   --hero-glow-a:rgba(71,55,255,.13);
   --hero-glow-b:rgba(53,41,191,.11);
+  /* The veil over the wave field, and the solid ground it reaches at the
+     top and bottom edges. Both are the page's own surface, so the field
+     fades into the page rather than into a grey of its own. */
+  --wave-veil:rgba(255,255,255,.30);
+  --wave-read:rgba(255,255,255,.94);
+  --wave-clear:rgba(255,255,255,0);
+  --wave-edge:#FFFFFF;
   /* the one gap between the nav and the first line of copy — every page
      starts its content here, so the titles line up across the site */
   --top-gap:clamp(14px,3.4vh,34px);
@@ -23,6 +30,10 @@
 :root[data-theme="dark"]{
   --hero-glow-a:rgba(71,55,255,.32);
   --hero-glow-b:rgba(53,41,191,.34);
+  --wave-veil:rgba(16,16,24,.30);
+  --wave-read:rgba(16,16,24,.94);
+  --wave-clear:rgba(16,16,24,0);
+  --wave-edge:#101018;
 }
 
 body{
@@ -87,6 +98,53 @@ body{
 .hero-glow{
   position:absolute; inset:0; z-index:0;
   overflow:hidden; pointer-events:none;
+}
+
+/* ---------- the waves ----------
+   The shader field, under the glows — which now read as brand-coloured
+   weather over it rather than as the backdrop themselves. Here for the same
+   reason .hero-glow is here: .hero > * would otherwise make it relative.
+
+   Painted only once waves.js has put a canvas in it. No WebGL, no veil, and
+   the hero falls back to exactly the page it was.
+
+   The veil is the legibility. Undressed the field is white filaments on
+   near-black, and while the shader dims its own centre for the headline,
+   the nav and the disclaimer sit well outside that circle — 11px of --faint
+   on a blown-out ridge is not text. So: a flat wash of the page's own
+   ground across the whole field, going to full ground at the two edges
+   where the small type lives. */
+.hero-waves{
+  position:absolute; inset:0; z-index:0;
+  overflow:hidden; pointer-events:none;
+}
+.hero-waves canvas{display:block; width:100%; height:100%}
+.hero-waves[data-ready]::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:
+    /* The reader. The copy column is centred in the hero at every width, so
+       an ellipse pinned to the middle always lands on it. Sized in rem and
+       not in per-cent on purpose: on this screen it is a pool around the
+       headline with the field still running either side of it, and on a
+       phone the same 30rem is wider than the whole window — which is the
+       right answer there, because on a phone the copy IS the whole window
+       and there is no room left over to be dramatic in. */
+    radial-gradient(ellipse 30rem 24rem at 50% 50%,
+      var(--wave-read) 0%,
+      var(--wave-read) 46%,
+      var(--wave-clear) 100%),
+    /* The nav at one end and the disclaimer at the other, both in type far
+       too quiet to hold its own over a blown-out ridge. --faint is drawn
+       for 5.2:1 on the page's own white and has nothing spare, so the field
+       does not get to go behind it at all. */
+    linear-gradient(to bottom,
+      var(--wave-edge) 0%,
+      var(--wave-clear) 18%,
+      var(--wave-clear) 70%,
+      var(--wave-edge) 90%),
+    /* and a flat wash over everything, so even the loud corners read as
+       weather behind the page rather than as a picture competing with it */
+    var(--wave-veil);
 }
 
 /* The bar holds the top of the window while the page runs under it. */

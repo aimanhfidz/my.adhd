@@ -34,6 +34,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <link rel="preload" href="fonts/Baloo2-Variable.ttf" as="font" type="font/ttf" crossorigin />
 <script src="theme.js"></script>
+<!-- deferred: it wants the hero in the DOM, and nothing about the first
+     paint waits on it -->
+<script src="waves.js" defer></script>
 <link rel="stylesheet" href="theme.css" />
 <link rel="stylesheet" href="landing.css" />
 </head>
@@ -41,6 +44,8 @@
 
 <!-- ============ HERO — one viewport, full bleed ============ -->
 <header class="hero">
+  <!-- the wave field, first so the glows land on top of it -->
+  <div class="hero-waves" aria-hidden="true"></div>
   <!-- the two glows, in a layer that clips itself — the hero cannot do the
        clipping any more, or it would trap the sticky nav inside it -->
   <div class="hero-glow" aria-hidden="true"></div>
