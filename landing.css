@@ -184,7 +184,9 @@ body{
    near-black, and while the shader dims its own centre for the headline,
    the nav sits well outside that circle — 11px of --faint on a blown-out
    ridge is not text. So: a flat wash of the page's own ground across the
-   whole field, going to full ground at the two edges. */
+   whole field, going to full ground under the bar, and again in the last
+   strip at the foot — that one to end the field rather than to cover
+   anything. */
 .hero-waves{
   position:absolute; inset:0; z-index:0;
   overflow:hidden; pointer-events:none;
@@ -223,15 +225,28 @@ body{
       rgb(var(--wave-rgb) / .33) 78%,
       rgb(var(--wave-rgb) / .10) 89%,
       rgb(var(--wave-rgb) / 0)  100%),
-    /* The nav at one end and the disclaimer at the other, both in type far
-       too quiet to hold its own over a blown-out ridge. --faint is drawn
-       for 5.2:1 on the page's own white and has nothing spare, so the field
-       does not get to go behind it at all. */
+    /* The nav, in type far too quiet to hold its own over a blown-out
+       ridge. --faint is drawn for 5.2:1 on the page's own white and has
+       nothing spare, so the field does not get to go behind it at all.
+
+       The bottom is a different job now. It used to be the same one — a
+       disclaimer sat down there and the wash came up to 78% to cover it,
+       which flattened the last fifth of the field. With that paragraph
+       moved to the footer there is no type left to hide, and the only
+       thing the bottom still owes the page is an ending: the hero stops at
+       its own edge, and without a fade the ridges are cut off at a line.
+       So the stops stay, pushed down and eased — the same alpha ladder the
+       reader uses, for the same reason, a plateau running into a straight
+       ramp leaves a corner the eye finds. */
     linear-gradient(to bottom,
       rgb(var(--wave-rgb) / 1) 0%,
       rgb(var(--wave-rgb) / 0) 18%,
-      rgb(var(--wave-rgb) / 0) 78%,
-      rgb(var(--wave-rgb) / 1) 88%),
+      rgb(var(--wave-rgb) / 0) 82%,
+      rgb(var(--wave-rgb) / .10) 87%,
+      rgb(var(--wave-rgb) / .33) 91.5%,
+      rgb(var(--wave-rgb) / .61) 95%,
+      rgb(var(--wave-rgb) / .84) 97.5%,
+      rgb(var(--wave-rgb) / 1) 100%),
     /* and a flat wash over everything, so even the loud corners read as
        weather behind the page rather than as a picture competing with it */
     rgb(var(--wave-rgb) / var(--wave-veil-a));
