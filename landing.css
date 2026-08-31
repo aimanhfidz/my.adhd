@@ -684,14 +684,17 @@ body{
    than as a widget bolted on from somewhere else. The markup is in
    index.html, commented out until there are real accounts to point it at:
    an icon linking to nothing is worse than no icon. */
-.foot-social{display:flex; gap:10px; margin-top:14px}
-.foot-social a{
+/* Bound to .foot-col on purpose: `.foot-col ul` above sets display:grid for
+   the link lists, and an equal match would leave the icons stacked in a
+   column no matter which way round the two rules were written. */
+.foot-col .foot-social{display:flex; gap:10px; margin-top:14px}
+.foot-col .foot-social a{
   width:34px; height:34px; padding:0;
   display:grid; place-items:center;
   border:1.5px solid var(--line-strong); border-radius:999px;
   color:var(--muted);
   transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
 }
-.foot-social a:hover{color:var(--accent); border-color:var(--accent); background:var(--surface)}
-.foot-social a:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
-.foot-social svg{width:17px; height:17px; display:block}
+.foot-col .foot-social a:hover{color:var(--accent); border-color:var(--accent); background:var(--surface)}
+.foot-col .foot-social a:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.foot-col .foot-social svg{width:17px; height:17px; display:block}
