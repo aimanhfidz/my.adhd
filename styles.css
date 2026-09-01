@@ -981,8 +981,10 @@ body.has-tabbar .toast{
    pixels of a gesture and gives a sideways one to this scroller and an
    upward one to the page, which is the behaviour a hand expects.
 
-   The day names sit outside it — Monday is Monday in every month, so there
-   is nothing there to scroll.
+   The day names ride inside the panes, so the letters are part of the same
+   surface as the days. Monday is Monday in every month, so three identical
+   headers sliding past each other read as one that never moves — and a
+   swipe that starts on them works, which it did not when they sat above.
 
    The block padding and margin cancel each other out. The padding is there
    only so a focus ring on the top or bottom row is not shaved off by the
@@ -991,6 +993,7 @@ body.has-tabbar .toast{
   display:grid; grid-auto-flow:column; grid-auto-columns:100%;
   align-items:start;
   overflow-x:auto; overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;   /* as .cat-bar does, for older iOS */
   overscroll-behavior-x:contain;
   scroll-snap-type:x mandatory;
   scrollbar-width:none; -ms-overflow-style:none;
@@ -1003,7 +1006,8 @@ body.has-tabbar .toast{
 }
 @media (prefers-reduced-motion:reduce){ .cal-months{transition:none} }
 .cal-months::-webkit-scrollbar{display:none}
-.cal-months > .cal-grid{scroll-snap-align:start}
+/* A pane is the day names and the month under them, moving as one thing. */
+.cal-pane{scroll-snap-align:start; min-width:0}
 
 .cal-day{
   position:relative;
