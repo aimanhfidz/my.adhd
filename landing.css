@@ -12,6 +12,12 @@
 :root{
   --hero-glow-a:rgba(71,55,255,.13);
   --hero-glow-b:rgba(53,41,191,.11);
+  /* The light the word lands in — see .hero-title::before. Here for the
+     same reason the glows are: it is brand blue on both themes and a
+     whisper on only one of them. It swells and dies inside the entrance
+     and is never on the page at rest, so it is the one colour here that
+     answers to nothing else. */
+  --hero-bloom:rgba(71,55,255,.20);
   /* The page's own surface as a bare channel triple, so the scrim over the
      wave field can be written once and mix its own alphas. The field fades
      into the page this way rather than into a grey of its own. */
@@ -88,6 +94,7 @@
   --fig-run:#48466A;
   --hero-glow-a:rgba(71,55,255,.32);
   --hero-glow-b:rgba(53,41,191,.34);
+  --hero-bloom:rgba(71,55,255,.50);
   --wave-rgb:16 16 24;
   /* Heavier on ink than on paper, and the reason is the ink, not taste.
      The pool under the copy has to reach near-black to keep --faint legible
@@ -387,6 +394,132 @@ body{
   font-size:clamp(13.5px,min(1.85vh,3.9vw),18px); color:var(--muted);
   max-width:44ch; margin-bottom:clamp(14px,2.6vh,26px);
 }
+
+/* ---------- the arrival ----------
+   The hero performs the sentence underneath it. Eleven letters come in
+   from everywhere at once, at the same volume, with nothing marked first,
+   and settle into one word — which is the whole claim of the page, made
+   before it is read. The full stop is the one thing that is marked: it
+   lands last, after the mess has resolved, because closing it is the
+   point. Then the copy, the button and the note come up behind it in that
+   order, so the eye is walked down to the one thing there is to press.
+
+   Nothing here changes the hero at rest, and that is what the backwards
+   fill is for. It holds the 0% state through the delay — so there is no
+   flash of a finished hero a beat before it starts — and releases at the
+   end rather than pinning the finished values on for good: an animation
+   filling forwards would have left transform:none sitting over the top of
+   .cta:hover's lift, and the button would never move again.
+
+   The scatter is written in em, so it is a proportion of the word at every
+   width. A flat 40px is a shrug at 116px and a catastrophe at 44. Blur
+   goes in em for the same reason. Splitting a word into inline-blocks
+   costs the kerning between the letters — checked against the font, which
+   kerns no pair in this one, so the word sets to the pixel it always did.
+
+   All of it is CSS. The word is in the markup, not built by a script, so
+   with the stylesheet gone or the animation refused the hero is exactly
+   the hero it was. */
+.hero-copy{
+  /* the settle: most of the distance early, then a long quiet tail */
+  --in-ease:cubic-bezier(.16,1,.3,1);
+  /* the stop, which is allowed to overshoot because it is a full stop */
+  --in-pop:cubic-bezier(.2,1.55,.4,1);
+}
+/* nowrap because the split invented a break the word never had: one word
+   has nowhere to break, eleven inline-blocks have ten places, and on a
+   narrow window the letters went over two lines. relative because the
+   bloom hangs off it. */
+.hero-title{position:relative; white-space:nowrap}
+.hero-title span{
+  display:inline-block;
+  animation:hero-letter .92s var(--in-ease) 90ms backwards;
+}
+/* Five from the left and five from the right, five from above and five
+   from below, five oversized and five under. Read as a set they are a
+   scatter; totalled they lean nowhere, which is what stops the word from
+   looking like it was thrown in from one side. */
+.hero-title span:nth-child(1){--lx:-.46em; --ly:-.60em; --lr:-14deg; --ls:1.35; --lb:.16em}
+.hero-title span:nth-child(2){--lx: .52em; --ly: .64em; --lr: 12deg; --ls: .55; --lb:.12em}
+.hero-title span:nth-child(3){--lx:-.74em; --ly: .34em; --lr:  9deg; --ls:1.22; --lb:.15em}
+.hero-title span:nth-child(4){--lx: .30em; --ly:-.72em; --lr:-10deg; --ls: .66; --lb:.11em}
+.hero-title span:nth-child(5){--lx:-.26em; --ly: .80em; --lr: 15deg; --ls:1.28; --lb:.14em}
+.hero-title span:nth-child(6){--lx: .70em; --ly:-.30em; --lr:-13deg; --ls: .60; --lb:.13em}
+.hero-title span:nth-child(7){--lx:-.62em; --ly:-.46em; --lr:  7deg; --ls:1.16; --lb:.12em}
+.hero-title span:nth-child(8){--lx: .22em; --ly: .74em; --lr:-16deg; --ls: .70; --lb:.15em}
+.hero-title span:nth-child(9){--lx:-.34em; --ly:-.68em; --lr: 11deg; --ls:1.30; --lb:.13em}
+.hero-title span:nth-child(10){--lx:.60em; --ly: .44em; --lr: -8deg; --ls: .72; --lb:.11em}
+/* Not one of the ten. It does not travel, it is not blurred, and it does
+   not arrive until they have all stopped moving. */
+.hero-title .stop{animation:hero-stop .46s var(--in-pop) 640ms backwards}
+
+@keyframes hero-letter{
+  0%{
+    opacity:0;
+    transform:translate3d(var(--lx),var(--ly),0) rotate(var(--lr)) scale(var(--ls));
+    filter:blur(var(--lb));
+  }
+  /* opaque before it is still: the last third of the travel is the part
+     worth watching, and a letter that is still fading in during it reads
+     as a smudge rather than as a thing coming to rest */
+  60%{opacity:1}
+  100%{opacity:1; transform:none; filter:blur(0)}
+}
+@keyframes hero-stop{
+  from{opacity:0; transform:scale(.15)}
+  to{opacity:1; transform:none}
+}
+
+/* The light the word lands in. Under the type on a negative layer, inside
+   .hero-body's stacking context — so it is over the wave field and under
+   every letter — and it ends at nothing. The hero at rest is the hero
+   that was there before this rule existed, to the pixel. */
+.hero-title::before{
+  content:""; position:absolute; z-index:-1; pointer-events:none;
+  left:50%; top:50%; width:170%; height:260%;
+  /* Collapsed to a point at rest, not merely centred. The fill is
+     backwards, so once the entrance is over the box goes back to whatever
+     it says here — and a box wider than the word, invisible at opacity 0,
+     is still counted in the page's scroll width. Scaled to nothing it
+     measures nothing. The snap back from 1.55 happens at zero opacity. */
+  transform:translate(-50%,-50%) scale(0);
+  opacity:0;
+  background:radial-gradient(closest-side,var(--hero-bloom),transparent 72%);
+  animation:hero-bloom 1.5s var(--in-ease) 60ms backwards;
+}
+@keyframes hero-bloom{
+  0%{opacity:0; transform:translate(-50%,-50%) scale(.4)}
+  34%{opacity:1}
+  100%{opacity:0; transform:translate(-50%,-50%) scale(1.55)}
+}
+
+/* Behind the word, in reading order. Each one starts while the thing
+   above it is still settling — a queue of three that waited its turn
+   properly would run past two seconds, and nobody waits that long to be
+   shown a button. */
+.hero-sub{animation:hero-rise .8s var(--in-ease) 540ms backwards}
+.hero-copy .cta{animation:hero-rise .8s var(--in-ease) 690ms backwards}
+.hero-note{animation:hero-rise .8s var(--in-ease) 830ms backwards}
+
+@keyframes hero-rise{
+  from{opacity:0; transform:translate3d(0,14px,0); filter:blur(6px)}
+  to{opacity:1; transform:none; filter:blur(0)}
+}
+
+/* Asked for no motion, the entrance is not slowed down, it is not run.
+   The global rule below compresses every duration to nothing but leaves
+   the delays standing, which would hold the hero blank for most of a
+   second and then produce it — the one outcome worse than the animation.
+   Every element here is visible and in place with no animation on it at
+   all, so taking the animation away is the whole fix. */
+@media (prefers-reduced-motion:reduce){
+  .hero-title span,
+  .hero-title::before,
+  .hero-sub,
+  .hero-copy .cta,
+  .hero-note{animation:none !important}
+}
+
 .hero-note{margin-top:clamp(8px,1.4vh,13px); font-size:clamp(12px,1.4vh,13.5px); color:var(--faint)}
 
 /* ============ WHY — the research, under the fold ============
