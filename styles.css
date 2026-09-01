@@ -614,17 +614,19 @@ body{
 }
 .swipe-rail{
   position:absolute; inset:0;
-  display:flex; align-items:center; gap:9px; padding:0 20px;
+  display:flex; align-items:center; gap:8px; padding:0 16px;
   font-family:var(--display); font-size:14px; font-weight:700;
   letter-spacing:-.01em;
   opacity:0;
   transition:background .16s var(--ease), color .16s var(--ease);
 }
 .swipe-rail svg{width:19px; height:19px; flex:none; transition:transform .16s var(--ease)}
-/* The icon sits against the edge and is always whole. The word waits for
-   a gap wide enough to hold it, rather than being served up chopped in
-   half by the card that is covering it. */
-.swipe-rail span{opacity:clamp(0, calc((var(--gap) - 64) / 34), 1)}
+/* The icon sits against the edge and is always whole. The word comes up
+   behind it as the gap widens — soft where the card is still lying across
+   it, full once the row has moved far enough to hold the whole word. It
+   is the fill that says the mark has been passed; the word is only there
+   to teach the gesture, and it does not have to be finished to do that. */
+.swipe-rail span{opacity:clamp(0, calc((var(--gap) - 56) / 40), 1)}
 
 /* Remove reads from the left edge, because a card pushed right is what
    uncovers it. Done is the mirror of that. */

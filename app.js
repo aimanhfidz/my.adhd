@@ -2487,7 +2487,8 @@ document.addEventListener('pointercancel', () => { dropPress(); endDrag(false); 
    row's own rounded edge instead of painting a band across the list. */
 
 const SWIPE_SLOP  = 12;    // across, before this is a swipe and not a scroll
-const SWIPE_ARM   = .34;   // of the row's width — past this, letting go acts
+const SWIPE_ARM   = .22;   // of the row's width — past this, letting go acts
+const SWIPE_ARM_MAX = 96;  // and never further than this, whatever the row's width
 const SWIPE_LIMIT = .58;   // and this is as far as the card will travel
 const SWIPE_FLICK = .55;   // px/ms — a flick this fast counts, short of the mark
 const SWIPE_OUT   = 180;   // the card leaves in this, then the list redraws
@@ -2627,7 +2628,10 @@ function paintSwipe(raw) {
   const dx = Math.sign(raw) * (past > 0 ? limit + past * .3 : Math.abs(raw));
   swipe.dx = dx;
 
-  const p = Math.min(1, Math.abs(dx) / (w * SWIPE_ARM));
+  /* A share of the row, capped. A share on its own reads right on a phone
+     and turns into a haul on anything wider — the column runs to 720px,
+     where a fifth of it is most of a thumb's reach. */
+  const p = Math.min(1, Math.abs(dx) / Math.min(w * SWIPE_ARM, SWIPE_ARM_MAX));
   card.style.transform = `translate3d(${dx.toFixed(1)}px,0,0)`;
   track.style.setProperty('--p', (.35 + p * .65).toFixed(3));
   /* How much of the row is actually uncovered. The rail's word waits on
