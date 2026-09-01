@@ -2058,8 +2058,39 @@ function stepMonth(n) {
    to be re-invented badly. */
 const CAL_SETTLE_MS = 110;
 
+/* The arrows travel the same distance a swipe does, so they move the same
+   way: one pane, in the time and on the curve the motion spec gives a
+   swipe — 200-250ms, decelerating. A jump cut between two months reads as
+   a redraw; a glide reads as the same calendar moving, which is the whole
+   point of the scroller. */
+const CAL_GLIDE_MS = 220;
+
+/* cubic-bezier(0, 0, .2, 1) — the decelerate curve, as a progress function.
+   Newton on x, which settles in a couple of passes on a curve this shallow.
+   The CSS height transition below uses the same numbers, so the frame and
+   the month arrive together instead of on two different eases. */
+function bezier(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const atX = t => ((ax * t + bx) * t + cx) * t;
+  const slope = t => (3 * ax * t + 2 * bx) * t + cx;
+  return (x) => {
+    let t = x;
+    for (let i = 0; i < 5; i++) {
+      const d = slope(t);
+      if (!d) break;
+      t -= (atX(t) - x) / d;
+    }
+    return ((ay * t + by) * t + cy) * t;
+  };
+}
+const decelerate = bezier(0, 0, .2, 1);
+
+const stillness = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+
 let calSettle = null;   // the "scrolling has stopped" timer
 let calHeld = false;    // a finger is still on the scroller
+let calGlide = null;    // the frame request of an arrow's glide, while one runs
 
 function centreMonths() {
   const pane = el.calMonths.clientWidth;
@@ -2127,7 +2158,7 @@ function nearestPane() {
    another route; landing back in the middle is a swipe that changed its
    mind, and only needs tidying up after. */
 function settleMonths() {
-  if (calHeld) return;
+  if (calHeld || calGlide) return;   // still moving, on a finger or on the clock
   const i = nearestPane();
   if (i < 0) return;
   if (i !== 1) stepMonth(i - 1);
@@ -2141,6 +2172,35 @@ function waitForStop() {
   calSettle = setTimeout(settleMonths, CAL_SETTLE_MS);
 }
 
+/* An arrow, moving the way a swipe does. The snap has to come off for the
+   duration: mandatory snapping rounds every scrollLeft written to it back
+   to a pane edge, so a tween under it lands on nothing but the two ends.
+
+   The month is not stepped until the glide arrives. Up to then the pane
+   being pulled in is the neighbour that was already drawn, exactly as it
+   would be under a finger, and the commit at the end swaps it into the
+   middle and re-centres in one frame — so nothing moves at the join. */
+function slideMonth(n) {
+  const pane = el.calMonths.clientWidth;
+  if (!pane || stillness?.matches) { stepMonth(n); return; }
+
+  cancelAnimationFrame(calGlide);
+  const from = el.calMonths.scrollLeft;
+  const to = pane * (1 + n);
+  const t0 = performance.now();
+  el.calMonths.style.scrollSnapType = 'none';
+
+  const tick = (now) => {
+    const p = Math.min(1, (now - t0) / CAL_GLIDE_MS);
+    el.calMonths.scrollLeft = from + (to - from) * decelerate(p);
+    if (p < 1) { calGlide = requestAnimationFrame(tick); return; }
+    calGlide = null;
+    el.calMonths.style.scrollSnapType = '';
+    stepMonth(n);
+  };
+  calGlide = requestAnimationFrame(tick);
+}
+
 /* A finger resting mid-swipe stops the scroll events, and settling then
    would haul the month back out from under it. Touch events rather than
    pointer events because the browser cancels the pointer the instant it
@@ -2151,6 +2211,17 @@ el.calMonths.addEventListener('touchstart',  () => { calHeld = true; }, { passiv
 el.calMonths.addEventListener('touchend',    () => { calHeld = false; waitForStop(); }, { passive: true });
 el.calMonths.addEventListener('touchcancel', () => { calHeld = false; waitForStop(); }, { passive: true });
 el.calMonths.addEventListener('scroll', waitForStop, { passive: true });
+
+/* The browser saying "the scroll is over" beats guessing at it with a timer:
+   the month commits as the snap lands rather than a tenth of a second after,
+   which is the pause that made a swipe feel like it finished twice. The
+   timer above stays for the browsers that do not fire this yet. */
+if ('onscrollend' in el.calMonths) {
+  el.calMonths.addEventListener('scrollend', () => {
+    clearTimeout(calSettle);
+    settleMonths();
+  });
+}
 
 /* A pane is a viewport wide and a row is a fraction of one, so a rotation
    leaves both the resting offset and the measured heights stale. */
@@ -3213,8 +3284,8 @@ el.btnDumpAgain.addEventListener('click', openComposer);
    not cost you the page you were on. */
 el.tabLists.addEventListener('click', goToNext);
 el.tabCal.addEventListener('click', showCalendar);
-el.calPrev.addEventListener('click', () => stepMonth(-1));
-el.calNext.addEventListener('click', () => stepMonth(1));
+el.calPrev.addEventListener('click', () => slideMonth(-1));
+el.calNext.addEventListener('click', () => slideMonth(1));
 el.calToday.addEventListener('click', () => {
   calPicked = dayKey();
   calCursor = keyToDate(calPicked.slice(0, 8) + '01');
