@@ -1145,16 +1145,30 @@ main{
    the sheet by its bottom edge rather than its top: it scrolls until its
    last line is on screen and pins there, so nothing of it is ever out of
    reach. Past a quarter of a window the flag is refused outright and this
-   is the page it was. */
-:root[data-cover-how] .how{position:sticky; top:var(--park-top,0px)}
+   is the page it was.
 
-/* The cast the findings throw back onto the cards, and only where there
-   is something pinned behind them to catch it. Same shadow main casts on
-   the hero — the sheet is the same sheet. */
-:root[data-cover-how] .why{
-  box-shadow:0 -30px 56px -22px var(--cover-cast);
-  /* and the same corner, for the same reason — one gesture twice */
-  border-radius:var(--sheet-radius) var(--sheet-radius) 0 0;
+   And behind the motion query as well as the flag, which is what the hero
+   handoff already did. Pinning one box while the page travels over it is
+   parallax however little it moves — two things on screen going different
+   speeds — so a reader who has asked for less of that should not be given
+   it twice on the way down the page. Under `reduce` this is a section
+   that follows the one above it, which is what the rest of the page
+   becomes too. */
+@media (prefers-reduced-motion:no-preference){
+  :root[data-cover-how] .how{position:sticky; top:var(--park-top,0px)}
+
+  /* The cast the findings throw back onto the cards, and only where there
+     is something pinned behind them to catch it — and the same corner,
+     for the same reason. Same shadow main casts on the hero, same radius:
+     the sheet is the same sheet. Both belong inside this query rather than
+     outside it because both are claims about a box in front of another
+     one, and with nothing pinned there is no behind for them to describe:
+     the cast would fall on the section's own ground and the corner would
+     be a notch cut out of it. */
+  :root[data-cover-how] .why{
+    box-shadow:0 -30px 56px -22px var(--cover-cast);
+    border-radius:var(--sheet-radius) var(--sheet-radius) 0 0;
+  }
 }
 
 /* ---------- the recede ----------
