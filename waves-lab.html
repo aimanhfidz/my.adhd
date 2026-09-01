@@ -153,12 +153,24 @@
 
   <div class="hero-body">
     <div class="hero-copy">
-      <h1 class="hero-title">Everything out.<br />Sorted into lists.</h1>
+      <!-- Copied from index.html and only worth having if it stays copied:
+           a field judged against copy the site no longer sets is a field
+           judged against nothing. The eleven spans are load-bearing —
+           landing.css scatters the ten letters by :nth-child and lands the
+           stop on its own timing — so changing the word here means changing
+           that table too, which is the sort of thing a workbench should
+           not be the reason for. Sync it, do not edit it. -->
+      <h1 class="hero-title" aria-label="Everything."><span>E</span><span>v</span><span>e</span><span>r</span><span>y</span><span>t</span><span>h</span><span>i</span><span>n</span><span>g</span><span class="stop">.</span></h1>
       <p class="hero-sub">
-        A brain dump that answers back. Empty your head into one box and get
-        it back as real tasks — grouped, timed, and each with a first step
-        small enough to actually start.
+        It all arrives at once, at the same volume, with nothing marked
+        first. Put the whole lot in one box and get it back as real tasks
+        — grouped, timed, and each with a first step small enough to
+        actually start.
       </p>
+      <!-- No data-app-link: the attribute is a hook for the inline script
+           on index.html that points installed visitors at /app, and there
+           is no such script here. A hook with nothing on the other end is
+           worse than no hook. -->
       <a class="cta" href="/install">Clear my head</a>
       <p class="hero-note">No account. Opens offline. About ten seconds.</p>
     </div>
