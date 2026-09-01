@@ -78,6 +78,10 @@
      ground faded in on scroll its border-bottom was drawn straight across
      the bottom of the button. */
   --bar-bottom:var(--nav-gap);
+  /* The whole bar, top gutter to bottom gutter. Two boxes clear it now —
+     the hero pads itself down by it, and .how centres its content under
+     it — and the sum was already written out longhand in one of them. */
+  --bar-h:calc(var(--bar-top) + var(--nav-row) + var(--bar-bottom));
   /* The bar's content row. .theme-toggle is a fixed 34px circle in
      theme.css and is the tallest thing in the bar; CSS cannot measure a
      box, so the number has to be written down here. If that circle
@@ -152,7 +156,7 @@ body{
   padding:var(--nav-gap) 0 clamp(14px,2.4vh,22px);
   /* the gutters below are relative to these, so the notch never crops the
      copy in landscape or under a home-screen launch */
-  padding-top:calc(var(--bar-top) + var(--nav-row) + var(--bar-bottom));
+  padding-top:var(--bar-h);
   padding-bottom:calc(clamp(14px,2.4vh,22px) + env(safe-area-inset-bottom, 0px));
   padding-left:env(safe-area-inset-left, 0px);
   padding-right:env(safe-area-inset-right, 0px);
@@ -533,11 +537,38 @@ body{
    The 1080 measure is the one the nav used to carry. It belongs here: this
    is the only part of the page that is a column of text. */
 .why{
-  position:relative; z-index:1;
+  /* The measure, and the gutter that holds it off the window's edges.
+     Written as tokens because this box no longer carries the measure
+     itself — its three children do. Same pair, and the same subtraction,
+     the footer keeps: --why-measure is the width of the box the content
+     used to sit in, gutter included, so the inner cap has to spend it
+     back or the findings would run a gutter wider than the foot below
+     them at both ends. */
+  --why-measure:1080px;
+  --why-gutter:clamp(20px,5vw,40px);
+  --why-inner:calc(var(--why-measure) - var(--why-gutter) * 2);
+  position:relative;
+  /* above .how, which is pinned behind it — see THE SECOND HANDOFF */
+  z-index:2;
   background:var(--surface);
-  max-width:1080px; margin:0 auto;
-  padding:clamp(48px,9vw,104px) clamp(20px,5vw,40px) clamp(44px,7vw,80px);
+  /* A screen of its own, like .how above it, and for the same reason one
+     step stronger: this is the sheet that climbs over .how, and a sheet
+     is opaque edge to edge or it is not a sheet. That is what moved the
+     measure off this box — at 1080 wide its ground stopped at the measure
+     and the pinned cards ran on down both margins.
+
+     The padding is a floor, not a gutter: the moment the findings are
+     taller than the window — a phone, always — the box grows past 100dvh
+     and justify-content stops deciding anything. */
+  min-height:100dvh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:clamp(56px,9vh,110px) var(--why-gutter);
 }
+/* The measure, now that the band no longer carries it. First, so the head
+   below can still take a narrower one of its own. */
+.why-head,
+.panels,
+.why-foot{width:100%; max-width:var(--why-inner); margin-inline:auto}
 
 .why-head{
   text-align:center; max-width:36rem;
@@ -692,7 +723,22 @@ body{
   position:relative; z-index:1;
   background:var(--surface);
   max-width:1080px; margin:0 auto;
-  padding:clamp(48px,9vw,104px) clamp(20px,5vw,40px) clamp(6px,1.6vw,16px);
+  /* A screen of its own, because it is what climbs over the hero — see
+     THE HANDOFF at the foot of this file. A sheet that arrived half-full
+     would read as the top of a long page rather than as the next thing,
+     so it takes the whole window and centres the three cards in it.
+
+     The padding is a floor, not a gutter: the moment the cards are taller
+     than the window — a phone, always — the box grows past 100dvh and
+     justify-content stops deciding anything. */
+  min-height:100dvh;
+  display:flex; flex-direction:column; justify-content:center;
+  /* The bar is fixed and this section is now parked at a fixed place
+     rather than scrolled to, so a head that lands under the bar lands
+     under it for good. The top gutter carries the bar's height; the two
+     ends being unequal is what centres the content in the space below the
+     bar rather than in the window. */
+  padding:calc(var(--bar-h) + clamp(28px,4.5vh,64px)) clamp(20px,5vw,40px) clamp(52px,8vh,100px);
 }
 
 /* the section head, shared with .why — same size, same measure, so the two
@@ -877,3 +923,351 @@ body{
 .foot-col .foot-social a:hover{color:var(--accent); border-color:var(--accent); background:var(--surface)}
 .foot-col .foot-social a:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
 .foot-col .foot-social svg{width:17px; height:17px; display:block}
+
+/* ============ THE HANDOFF — the hero, and the page over it ============
+   Two screens that used to be one scroll are now a change of state: the
+   field stops moving with the page and holds, "What actually happens"
+   rises over it as a sheet, and the hero recedes behind that sheet rather
+   than sliding off the top of it. Then the three cards land and draw
+   themselves in.
+
+   None of it is a scroll listener. The cover is position:sticky, the
+   recede is a scroll-driven animation the compositor owns, and the only
+   JavaScript is one IntersectionObserver that says "the section has
+   arrived" — see the scripts at the foot of index.html. */
+
+/* The cast the rising sheet throws back onto the field. Ink needs a real
+   shadow — the sheet and the hero are the same near-black and there would
+   otherwise be no edge at all; paper only needs a hint, since white on a
+   pale field already has one. */
+:root{--cover-cast:rgba(28,22,74,.16)}
+:root[data-theme="dark"]{--cover-cast:rgba(0,0,0,.55)}
+
+/* Pinned, so the page slides over the hero instead of past it.
+
+   Behind a flag, and the flag is measured rather than guessed. The page
+   covers this box, so anything of the hero's below the fold can never be
+   scrolled down to — and the hero is one viewport by min-height only. Let
+   its content grow past that, which a large text setting and a short
+   landscape window both do, and pinning would hold the last line
+   permanently off-screen. So index.html measures whether the hero actually
+   fits the window, on load and on every resize, and sets the flag when it
+   does; when it does not, this is exactly the page it was. A media query
+   cannot stand in for that — the overflow is content against window, and
+   text size is not in the query.
+
+   top:0 and not bottom:0. bottom pins a box while it is still BELOW the
+   fold and lets go once it rises past — a footer that comes up to meet
+   you, which is the opposite job. */
+@media (prefers-reduced-motion:no-preference){
+  :root[data-cover] .hero{position:sticky; top:0}
+}
+
+/* The thing that does the covering, and the reason it has to be <main>
+   rather than the sections inside it: .how and .why are 1080 wide and the
+   window is not, so their ground stops at the measure and the pinned field
+   ran on down both margins. */
+main{
+  position:relative; z-index:1;
+  background:var(--surface);
+}
+/* Only where there is something pinned behind it to catch the cast. */
+@media (prefers-reduced-motion:no-preference){
+  :root[data-cover] main{box-shadow:0 -30px 56px -22px var(--cover-cast)}
+}
+
+/* ---------- the recede ----------
+   Behind glass: the copy falls back and blurs out, the field dims to
+   almost nothing. Both are driven by the scroll position itself rather
+   than by a transition, so scrubbing back up runs it backwards and a
+   half-scroll holds it half-way — a transition would snap.
+
+   Guarded twice. @supports because a browser without scroll timelines
+   should get the cover and no recede, which is a perfectly good page; and
+   prefers-reduced-motion because the blanket .01ms rule further up does
+   not help here — a progress timeline reads animation-duration as the
+   length of the range it maps, so .01ms would collapse the whole recede
+   into the first pixel of scroll and blink the hero out. */
+@media (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline:scroll()){
+    :root[data-cover] .hero-body{
+      animation:hero-sink linear both;
+      animation-timeline:scroll(root block);
+      /* done a little before the sheet is fully up, so the copy has left
+         rather than been caught half-way under the edge */
+      animation-range:0 84dvh;
+    }
+    :root[data-cover] .hero-waves,
+    :root[data-cover] .hero-glow{
+      animation:hero-dim linear both;
+      animation-timeline:scroll(root block);
+      animation-range:0 100dvh;
+    }
+  }
+}
+@keyframes hero-sink{
+  from{opacity:1; filter:blur(0px); transform:none}
+  to{opacity:0; filter:blur(9px); transform:translateY(-6vh) scale(.9)}
+}
+/* Not to zero. A trace of the field left under the sheet's edge is what
+   stops the last inch of the transition reading as a plain white gap. */
+@keyframes hero-dim{
+  from{opacity:1}
+  to{opacity:.1}
+}
+
+/* ---------- the arrival ----------
+   The head rises, the three cards land on a stagger, and then each drawing
+   draws itself: the strokes are dashed out and their offset runs back to
+   zero, the closed shapes — the box, the minute chips, the orange dot —
+   pop in where the stroke that leads to them finishes.
+
+   Order is DOM order, which in all three drawings is already the order the
+   thing is read in: the mess, then the funnel, then the box it lands in;
+   each list heading, then its row, then the minutes on the end; the task,
+   then the dot, then the step pulled off the front of it.
+
+   Everything here hangs off [data-anim], which only JavaScript sets. The
+   resting state of this block is "invisible", and a page whose script
+   never ran must not be a page with a hole in it. */
+@media (prefers-reduced-motion:no-preference){
+
+  .how[data-anim] .how-title,
+  .how[data-anim] .how-lede,
+  .how[data-anim] .card{opacity:0}
+
+  /* Strokes hide by being dashed away rather than by going transparent —
+     three of these paths carry an opacity attribute of their own, which is
+     the depth in the drawing, and a keyframe animating opacity back to 1
+     would flatten all three to full strength. The closed shapes carry no
+     such attribute, so those do fade. */
+  .how[data-anim] .cfig > *:not(rect):not(circle){
+    stroke-dasharray:1; stroke-dashoffset:1;
+  }
+  .how[data-anim] .cfig rect,
+  .how[data-anim] .cfig circle{opacity:0}
+
+  .how[data-anim][data-in] .how-title{animation:how-rise .66s var(--ease) both}
+  .how[data-anim][data-in] .how-lede{animation:how-rise .66s var(--ease) .09s both}
+
+  /* the two counters the delays are built out of: --i is which card, and
+     inherits down into that card's drawing; --j is which mark within it */
+  .cards .card:nth-child(1){--i:0}
+  .cards .card:nth-child(2){--i:1}
+  .cards .card:nth-child(3){--i:2}
+  .cfig > *:nth-child(1){--j:0}
+  .cfig > *:nth-child(2){--j:1}
+  .cfig > *:nth-child(3){--j:2}
+  .cfig > *:nth-child(4){--j:3}
+  .cfig > *:nth-child(5){--j:4}
+  .cfig > *:nth-child(6){--j:5}
+  .cfig > *:nth-child(7){--j:6}
+  .cfig > *:nth-child(8){--j:7}
+  .cfig > *:nth-child(9){--j:8}
+  .cfig > *:nth-child(10){--j:9}
+
+  .how[data-anim][data-in] .card{
+    animation:card-in .8s var(--ease) both;
+    animation-delay:calc(200ms + var(--i,0) * 120ms);
+  }
+  .how[data-anim][data-in] .cfig > *{
+    animation:fig-draw .75s var(--ease) both;
+    /* after the card it is drawn on has landed */
+    animation-delay:calc(460ms + var(--i,0) * 120ms + var(--j,0) * 75ms);
+  }
+  /* after the rule above, and heavier than it, so the shorthand's
+     animation-name is the one being overridden rather than the reverse */
+  .how[data-anim][data-in] .cfig rect,
+  .how[data-anim][data-in] .cfig circle{
+    animation-name:fig-pop; animation-duration:.46s;
+    transform-box:fill-box; transform-origin:50% 50%;
+  }
+}
+
+@keyframes how-rise{
+  from{opacity:0; transform:translateY(18px)}
+  to{opacity:1; transform:none}
+}
+@keyframes card-in{
+  from{opacity:0; transform:translateY(30px) scale(.975)}
+  to{opacity:1; transform:none}
+}
+@keyframes fig-draw{
+  from{stroke-dashoffset:1}
+  to{stroke-dashoffset:0}
+}
+/* Overshoots on purpose. The chips and the dot are the only closed shapes
+   in three drawings otherwise made of travelling lines, and landing them
+   flat put them a beat behind the strokes that arrive at them. */
+@keyframes fig-pop{
+  from{opacity:0; transform:scale(.5)}
+  62%{opacity:1; transform:scale(1.07)}
+  to{opacity:1; transform:scale(1)}
+}
+
+/* ============ THE SECOND HANDOFF — .how, and the findings over it =======
+   The same gesture again, one screen down. The hero holds and the loop
+   rises over it; the loop holds and the research rises over that. Three
+   screens, two handoffs, one move — a page that changes state twice
+   rather than a page that scrolls three times.
+
+   Everything here is the first handoff's machinery pointed at the next
+   pair of boxes, so the two read as one idea rather than as two effects
+   that happen to look alike. */
+
+/* Pinned, behind a flag measured the same way the hero's is: .how is one
+   viewport by min-height only, and a stack of three cards on a phone is
+   two viewports tall. Pin that and its bottom card can never be scrolled
+   down to. index.html measures the box against the window instead of
+   assuming, on load and on every resize.
+
+   --park-top comes from that same measurement and is 0 whenever the sheet
+   fits. When it overruns by a little — a 720-tall window costs it nine
+   pixels — the offset goes negative by exactly the overrun, which parks
+   the sheet by its bottom edge rather than its top: it scrolls until its
+   last line is on screen and pins there, so nothing of it is ever out of
+   reach. Past a quarter of a window the flag is refused outright and this
+   is the page it was. */
+:root[data-cover-how] .how{position:sticky; top:var(--park-top,0px)}
+
+/* The cast the findings throw back onto the cards, and only where there
+   is something pinned behind them to catch it. Same shadow main casts on
+   the hero — the sheet is the same sheet. */
+:root[data-cover-how] .why{box-shadow:0 -30px 56px -22px var(--cover-cast)}
+
+/* ---------- the recede ----------
+   Behind glass, like the hero: the cards fall back and blur out as the
+   research climbs over them. Driven by the scroll position rather than by
+   a transition, so scrubbing back up runs it backwards.
+
+   On .how itself rather than on its contents, which is only safe because
+   main's ground is directly behind it and is the same --surface: what
+   fades out here is a sheet against an identical sheet, so the recede
+   reads as the cards leaving and not as a hole opening.
+
+   view() and not scroll(root): the range wanted is exactly the stretch
+   where .how is parked at the top of the window and the sheet slides up
+   over it, which is what `exit` means — the box's own height of scroll,
+   however close to a viewport that happens to be. Written as scroll
+   offsets it would have to assume the hero above it is exactly one
+   viewport, which is the other flag's business, not this one's. A view
+   timeline ignores its own subject's sticky offset by definition, so
+   neither the pin nor --park-top disturbs it. */
+@media (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline:view()){
+    :root[data-cover-how] .how{
+      animation:how-sink linear both;
+      animation-timeline:view(block);
+      /* done a little before the sheet is fully up, so the cards have
+         left rather than been caught half-way under its edge */
+      animation-range:exit 0% exit 86%;
+    }
+  }
+}
+@keyframes how-sink{
+  from{opacity:1; filter:blur(0px); transform:none}
+  to{opacity:0; filter:blur(10px); transform:translateY(-5vh) scale(.94)}
+}
+
+/* ---------- the arrival ----------
+   The head rises, then the four findings wipe in left to right, then each
+   drawing draws itself.
+
+   The wipe is one property doing two jobs. .panel carries the hairline
+   that divides it from the one before — border-left in four columns,
+   border-top in one — and a clip-path inset run off the bottom edge takes
+   the border box with it, so the hairline draws itself down the column
+   and the finding appears behind it in the same move. No second line, no
+   pseudo-element to keep in step with three breakpoints' worth of edges.
+
+   The clip is finished well before the fade is, so the reveal ends on
+   copy settling rather than on a hard edge crossing the last line.
+
+   Order inside each drawing is DOM order, which is already the order the
+   thing is read in: the agitation, then the arrow, then the ruled lines
+   it settles into; the baseline, then the crests standing on it; the run,
+   then the first move, then the dot that starts it.
+
+   Everything hangs off [data-anim], which only JavaScript sets — the
+   resting state of this block is "invisible", and a page whose script
+   never ran must not be a page with a hole in it. */
+@media (prefers-reduced-motion:no-preference){
+
+  .why[data-anim] .why-title,
+  .why[data-anim] .why-lede,
+  .why[data-anim] .panel,
+  .why[data-anim] .why-foot{opacity:0}
+
+  /* Strokes hide by being dashed away rather than by going transparent:
+     most of these paths carry an opacity attribute of their own, which is
+     the depth in the drawing, and a keyframe animating opacity back to 1
+     would flatten the whole ruler to full strength. The one closed shape
+     — the dot the fourth run starts from — carries no such attribute, so
+     that one does fade. */
+  .why[data-anim] .fig path{stroke-dasharray:1; stroke-dashoffset:1}
+  .why[data-anim] .fig circle{opacity:0}
+
+  /* the same rise the loop's head takes, so the two heads arrive as two
+     of a kind rather than as two different ideas */
+  .why[data-anim][data-in] .why-title{animation:how-rise .66s var(--ease) both}
+  .why[data-anim][data-in] .why-lede{animation:how-rise .66s var(--ease) .09s both}
+
+  /* the two counters the delays are built out of: --k is which finding,
+     and inherits down into that finding's drawing; --j is which mark */
+  .panels .panel:nth-child(1){--k:0}
+  .panels .panel:nth-child(2){--k:1}
+  .panels .panel:nth-child(3){--k:2}
+  .panels .panel:nth-child(4){--k:3}
+  .fig > *:nth-child(1){--j:0}
+  .fig > *:nth-child(2){--j:1}
+  .fig > *:nth-child(3){--j:2}
+  .fig > *:nth-child(4){--j:3}
+  /* The ruler's ticks are a group rather than four loose marks, so they
+     are numbered on from the baseline they stand on — the group's own --j
+     would have drawn all eight at once, which is a ruler appearing rather
+     than a ruler running out. */
+  .fig g > *:nth-child(1){--j:1}
+  .fig g > *:nth-child(2){--j:2}
+  .fig g > *:nth-child(3){--j:3}
+  .fig g > *:nth-child(4){--j:4}
+  .fig g > *:nth-child(5){--j:5}
+  .fig g > *:nth-child(6){--j:6}
+  .fig g > *:nth-child(7){--j:7}
+  .fig g > *:nth-child(8){--j:8}
+
+  .why[data-anim][data-in] .panel{
+    animation:panel-in .84s var(--ease) both;
+    animation-delay:calc(170ms + var(--k,0) * 130ms);
+  }
+  .why[data-anim][data-in] .fig path{
+    animation:fig-draw .8s var(--ease) both;
+    /* after the finding it is drawn on has wiped in */
+    animation-delay:calc(470ms + var(--k,0) * 130ms + var(--j,0) * 62ms);
+  }
+  .why[data-anim][data-in] .fig circle{
+    animation:fig-pop .48s var(--ease) both;
+    animation-delay:calc(470ms + var(--k,0) * 130ms + var(--j,0) * 62ms);
+    transform-box:fill-box; transform-origin:50% 50%;
+  }
+
+  /* Last, and after the findings rather than with them — this is the end
+     of the document and it has to read as the thing you arrive at. */
+  .why[data-anim][data-in] .why-foot{animation:how-rise .72s var(--ease) 780ms both}
+  /* Scale rather than transform, and the reason is .cta:hover. An
+     animation filling forwards pins its final values over the specified
+     style, and a keyframe ending at transform:none would sit on top of
+     the hover lift for good — the same trap the hero's entrance sidesteps
+     with a backwards fill. The scale property is a different one, so the
+     button keeps its lift and the pop still fills. */
+  .why[data-anim][data-in] .why-foot .cta{animation:cta-pop .58s var(--ease) 920ms both}
+}
+
+@keyframes panel-in{
+  0%{opacity:0; clip-path:inset(0 0 100% 0); transform:translateY(18px)}
+  70%{clip-path:inset(0 0 0 0)}
+  100%{opacity:1; clip-path:inset(0 0 0 0); transform:none}
+}
+@keyframes cta-pop{
+  from{opacity:0; scale:.88}
+  to{opacity:1; scale:1}
+}
