@@ -1429,7 +1429,7 @@ function markDone(id, after = goToNext) {
   t.done = true;
   t.doneAt = Date.now();   // what pruneDone() ages it out on
   save();
-  toast('Done. That one is gone.', {
+  toast('Done.', {
     label: 'Undo',
     fn: () => {
       t.done = false;
