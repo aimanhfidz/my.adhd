@@ -126,7 +126,6 @@ const el = {
 
 let state = {
   tasks: [],          // {id,title,minutes,energy,urgency,firstStep,category,steps,done,skipped}
-  energy: 'medium',   // how the user feels right now
   profile: { name: '', avatar: '\u{1F642}' },   // this device only — no account behind it
   sentFeedbackOn: null,   // the UTC day of the last note sent from this device
 
@@ -149,6 +148,11 @@ function load() {
       // A store written before the profile existed has no profile key, and
       // one written by a half-finished edit may be missing a field.
       state.profile = Object.assign({ name: '', avatar: '\u{1F642}' }, saved.profile || {});
+
+      /* The fuel selector is gone, but a store written while it existed still
+         carries the choice — and the assign above would copy it straight back
+         in and write it out again on the next save. It comes off once, here. */
+      delete state.energy;
     }
   } catch (_) { /* corrupt store — start fresh rather than crash */ }
 }
@@ -371,7 +375,7 @@ async function triage() {
 
   let tasks;
   try {
-    tasks = await parseWithAI(text, state.energy, spoken);
+    tasks = await parseWithAI(text, spoken);
   } catch (err) {
     console.warn('AI triage unavailable, using local parser:', err.message);
     tasks = parseLocally(text);
@@ -409,12 +413,12 @@ async function triage() {
 }
 
 /** Ask Claude (via the serverless function) to turn a raw dump into structured tasks. */
-async function parseWithAI(text, energy, spoken = null) {
+async function parseWithAI(text, spoken = null) {
   const res = await fetch('/api/triage', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      mode: 'triage', text, energy, today: dayKey(),
+      mode: 'triage', text, today: dayKey(),
       /* Only sent for a dump that was actually spoken. `source` matters as
          much as the flag: a transcript from the audio model is already
          repaired and wants leaving alone, and one from the browser engine
@@ -1222,7 +1226,7 @@ async function resortLocal() {
   el.btnResort.textContent = 'Sorting…';
 
   try {
-    const fresh = await parseWithAI(stale.map(dumpLine).join('\n'), state.energy);
+    const fresh = await parseWithAI(stale.map(dumpLine).join('\n'));
 
     /* Fewer back than went in means one was swallowed, and there is no
        telling which. Re-sorting is a tidy-up, never a delete, so rather than
@@ -1391,7 +1395,7 @@ async function breakDown(task, ui) {
     const res = await fetch('/api/triage', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: 'breakdown', task: task.title, energy: state.energy }),
+      body: JSON.stringify({ mode: 'breakdown', task: task.title }),
     });
     if (!res.ok) throw new Error('status ' + res.status);
     const data = await res.json();
@@ -3369,19 +3373,6 @@ el.input.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); triage(); }
 });
 
-document.querySelectorAll('.energy-opt').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.energy-opt').forEach(b => {
-      b.classList.remove('is-on');
-      b.setAttribute('aria-checked', 'false');
-    });
-    btn.classList.add('is-on');
-    btn.setAttribute('aria-checked', 'true');
-    state.energy = btn.dataset.energy;
-    save();
-  });
-});
-
 el.doneToggle.addEventListener('click', () => {
   const open = el.doneToggle.getAttribute('aria-expanded') === 'true';
   el.doneToggle.setAttribute('aria-expanded', String(!open));
@@ -3448,12 +3439,6 @@ if (window.cloud) {
 
 pruneDone();
 paintMorph();
-
-document.querySelectorAll('.energy-opt').forEach(b => {
-  const on = b.dataset.energy === state.energy;
-  b.classList.toggle('is-on', on);
-  b.setAttribute('aria-checked', String(on));
-});
 
 // Opening the app always lands on the dump box — that is the thing you came
 // to do. The lists are one tap away when you want them.

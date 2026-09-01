@@ -43,17 +43,15 @@ lists, whichever holds the most urgent item leads.
 task `low` / `medium` / `high` and the chip on the row shows it, but nothing
 sorts on it.
 
-That is a gap, not a design decision, and it has a second half. The *fuel*
-selector (running on fumes / okay-ish / wired) that fed it **no longer exists
-in `app.html`** — the markup and CSS are gone, while the wiring for
-`.energy-opt` is still in `app.js` (twice) and matches nothing. So
-`state.energy` is pinned at `'medium'` for everyone and is sent to
-`/api/triage` on every triage and breakdown call as a constant.
+The *fuel* selector (running on fumes / okay-ish / wired) that once fed it is
+gone, and so is `state.energy` — the markup went first, the wiring followed.
+Nothing in the app now says how the user feels; `/api/triage` still asks for
+it and falls back to `'medium'`, which is what every call was already sending.
 
-The dead wiring is left in deliberately: it is the hook a "just one thing"
-focus screen would pick up, which is where the missing `score()` — urgency,
-then a penalty on tasks needing more fuel than the user has — belongs. Delete
-it only if that idea is dropped for good.
+Bringing it back means a fresh selector, not a reconnection: new markup, new
+CSS, and `energy` back in the two `/api/triage` bodies. Sorting on it needs
+the missing `score()` — urgency, then a penalty on tasks needing more fuel
+than the user has — which belongs to a "just one thing" focus screen.
 
 ## Screens
 
@@ -175,8 +173,8 @@ Its own bookkeeping lives under `myadhd.cloud.v1`: a signature per task, which
 is what makes a `save()` that changed nothing send nothing, and the ids this
 device has deleted.
 
-The profile name and face, the energy setting and the calendar link do not
-sync. They are per device deliberately.
+The profile name and face and the calendar link do not sync. They are per
+device deliberately.
 
 A pass runs on a write, on `visibilitychange` / `pageshow` / `focus` /
 `online`, and on a timer. `POLL` is 12s, so a change made on one device shows
