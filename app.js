@@ -2487,7 +2487,7 @@ document.addEventListener('pointercancel', () => { dropPress(); endDrag(false); 
    row's own rounded edge instead of painting a band across the list. */
 
 const SWIPE_SLOP  = 12;    // across, before this is a swipe and not a scroll
-const SWIPE_ARM   = .22;   // of the row's width — past this, letting go acts
+const SWIPE_ARM   = .20;   // of the row's width — past this, letting go acts
 const SWIPE_ARM_MAX = 96;  // and never further than this, whatever the row's width
 const SWIPE_LIMIT = .58;   // and this is as far as the card will travel
 const SWIPE_FLICK = .55;   // px/ms — a flick this fast counts, short of the mark
