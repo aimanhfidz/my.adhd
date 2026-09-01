@@ -129,7 +129,7 @@ const el = {
 
 let state = {
   tasks: [],          // {id,title,minutes,energy,urgency,firstStep,category,steps,done,skipped}
-  profile: { name: '', avatar: '\u{1F642}' },   // this device only — no account behind it
+  profile: { name: '', avatar: '🧔🏻' },   // this device only — no account behind it
   sentFeedbackOn: null,   // the UTC day of the last note sent from this device
 
   /* The onboarding offer, once turned down, stays turned down. */
@@ -150,7 +150,7 @@ function load() {
       state = Object.assign(state, saved);
       // A store written before the profile existed has no profile key, and
       // one written by a half-finished edit may be missing a field.
-      state.profile = Object.assign({ name: '', avatar: '\u{1F642}' }, saved.profile || {});
+      state.profile = Object.assign({ name: '', avatar: '🧔🏻' }, saved.profile || {});
 
       /* The fuel selector is gone, but a store written while it existed still
          carries the choice — and the assign above would copy it straight back
@@ -3390,8 +3390,8 @@ async function wakeAccount() {
    in the same localStorage record as the tasks, so clearing the site
    clears all of it together. */
 
-const AVATARS = ['\u{1F642}', '\u{1F60E}', '\u{1F984}', '\u{1F431}', '\u{1F436}',
-                 '\u{1F338}', '\u{1F680}', '\u{1F9E0}', '\u{2B50}', '\u{1F525}'];
+const AVATARS = ['🧔🏻', '🧔🏻‍♂️', '👨🏻', '👱🏻‍♂️', '👨🏻‍🦲', '👨🏼‍🦱',
+                 '👩🏻', '🧑🏻', '👩🏻‍🦱', '👱🏻‍♀️', '👩🏻‍🦳', '🧑🏻‍🦰'];
 
 /* The one place a stored avatar becomes something to draw.
 
