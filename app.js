@@ -1419,13 +1419,27 @@ function removeTask(id, after = goToNext) {
   });
 }
 
+/* The undo is the same one the done pile carries, brought forward to the
+   moment it is needed. The pile is only on the lists screen and only holds
+   the last DONE_SHOWN, so a tick from the calendar — or now a swipe, which
+   is easy to make by accident — had nothing to take it back with. */
 function markDone(id, after = goToNext) {
   const t = state.tasks.find(x => x.id === id);
   if (!t) return;
   t.done = true;
   t.doneAt = Date.now();   // what pruneDone() ages it out on
   save();
-  toast('Done. That one is gone.');
+  toast('Done. That one is gone.', {
+    label: 'Undo',
+    fn: () => {
+      t.done = false;
+      t.doneAt = null;   // back on the lists, and no longer ageing out
+      save();
+      /* Not after(): six seconds is long enough to have walked to another
+         screen, and the task has to come back on the one being looked at. */
+      keepPlace(repaintLists);
+    },
+  });
   after();
 }
 
