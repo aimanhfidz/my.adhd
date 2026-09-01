@@ -244,7 +244,15 @@
       <div class="cal-dow" aria-hidden="true">
         <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
       </div>
-      <div class="cal-grid" id="cal-grid"></div>
+      <!-- Three months abreast in a snapping scroller: swipe sideways and
+           the neighbour you are pulling in is already drawn. Only the middle
+           pane is live — whichever one you land on is repainted as the middle
+           once the scroll settles. -->
+      <div class="cal-months" id="cal-months">
+        <div class="cal-grid" id="cal-grid-prev" aria-hidden="true"></div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-grid" id="cal-grid-next" aria-hidden="true"></div>
+      </div>
 
       <button class="cal-today is-hidden" id="cal-today" type="button">Back to today</button>
 

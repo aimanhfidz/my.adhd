@@ -973,6 +973,38 @@ body.has-tabbar .toast{
   color:var(--faint); letter-spacing:.06em;
 }
 
+/* Three months side by side, one pane wide each, snapping. Swiping sideways
+   is the arrows without the aim, and the month you are pulling in is drawn
+   before it arrives rather than appearing once it lands.
+
+   touch-action is left alone on purpose: the browser reads the first few
+   pixels of a gesture and gives a sideways one to this scroller and an
+   upward one to the page, which is the behaviour a hand expects.
+
+   The day names sit outside it — Monday is Monday in every month, so there
+   is nothing there to scroll.
+
+   The block padding and margin cancel each other out. The padding is there
+   only so a focus ring on the top or bottom row is not shaved off by the
+   scroller's own edge. */
+.cal-months{
+  display:grid; grid-auto-flow:column; grid-auto-columns:100%;
+  align-items:start;
+  overflow-x:auto; overflow-y:hidden;
+  overscroll-behavior-x:contain;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none; -ms-overflow-style:none;
+  padding-block:4px; margin-block:-4px;
+  /* Cut to the month on screen, so a five-week month is five rows and not
+     six with a gap. The height is set in script, from the pane it is on;
+     the ease is so a month that needs the extra row opens into it rather
+     than snapping, and it runs while you are still swiping. */
+  transition:height .22s var(--ease);
+}
+@media (prefers-reduced-motion:reduce){ .cal-months{transition:none} }
+.cal-months::-webkit-scrollbar{display:none}
+.cal-months > .cal-grid{scroll-snap-align:start}
+
 .cal-day{
   position:relative;
   aspect-ratio:1; width:100%; max-height:48px;

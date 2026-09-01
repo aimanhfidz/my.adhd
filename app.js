@@ -47,7 +47,10 @@ const el = {
   calMonth:     $('cal-month'),
   calPrev:      $('cal-prev'),
   calNext:      $('cal-next'),
+  calMonths:    $('cal-months'),
+  calGridBack:  $('cal-grid-prev'),
   calGrid:      $('cal-grid'),
+  calGridFwd:   $('cal-grid-next'),
   calToday:     $('cal-today'),
   calAgenda:    $('cal-agenda'),
   calTip:       $('cal-tip'),
@@ -1854,47 +1857,55 @@ function showCalendar() {
   const today = dayKey();
   if (!calPicked) calPicked = today;
   if (!calCursor) calCursor = keyToDate(calPicked.slice(0, 8) + '01');
-  renderCalendar();
+  /* Up first, then painted. Centring the month scroller needs a width to
+     measure, and a hidden screen is display:none — it has none. */
   show(el.screenCal);
+  renderCalendar();
 }
 
-function renderCalendar() {
-  const today = dayKey();
-  el.calMonth.textContent =
-    `${MONTH_NAMES[calCursor.getMonth()]} ${calCursor.getFullYear()}`;
+/* One month of cells, painted into one pane of the scroller.
 
+   The middle pane is live: real buttons, a click that picks the day, and
+   the data-day that a dragged row aims at. The two either side exist so a
+   sideways swipe pulls a drawn month in rather than a blank space, so they
+   are inert spans — nothing to tab into, and no way to drop a task onto a
+   month that is half off the edge of the screen. Whichever one you land on
+   is repainted as the live middle the moment the scroll settles. */
+function paintMonth(grid, cursor, today, live) {
   /* Weeks start on Monday. getDay() counts from Sunday, so the leading
      blanks are (day + 6) % 7 rather than day. */
-  const first = new Date(calCursor.getFullYear(), calCursor.getMonth(), 1);
+  const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
   const blanks = (first.getDay() + 6) % 7;
-  const days = new Date(calCursor.getFullYear(), calCursor.getMonth() + 1, 0).getDate();
+  const days = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
 
-  el.calGrid.innerHTML = '';
+  grid.innerHTML = '';
   for (let i = 0; i < blanks; i++) {
     const gap = document.createElement('span');
     gap.className = 'cal-day is-blank';
-    el.calGrid.appendChild(gap);
+    grid.appendChild(gap);
   }
 
   for (let d = 1; d <= days; d++) {
-    const key = dayKey(new Date(calCursor.getFullYear(), calCursor.getMonth(), d));
+    const key = dayKey(new Date(cursor.getFullYear(), cursor.getMonth(), d));
     const items = tasksOn(key);
 
-    const cell = document.createElement('button');
-    cell.type = 'button';
+    const cell = document.createElement(live ? 'button' : 'span');
     cell.className = 'cal-day';
-    cell.dataset.day = key;      // the drop target reads this
     cell.textContent = d;
     cell.classList.toggle('is-today', key === today);
     cell.classList.toggle('is-picked', key === calPicked);
-    cell.setAttribute('aria-pressed', String(key === calPicked));
     /* tasksOn sorts timed things ahead of loose ones, so the first with a
        clock on it is the earliest of the day. */
     const firstTimed = items.find(t => t.at);
 
-    cell.setAttribute('aria-label',
-      `${dayLabel(key, today)}${items.length ? `, ${items.length} ${items.length === 1 ? 'thing' : 'things'}` : ', nothing'}` +
-      (firstTimed ? `, from ${timeLabel(firstTimed.at)}` : ''));
+    if (live) {
+      cell.type = 'button';
+      cell.dataset.day = key;      // the drop target reads this
+      cell.setAttribute('aria-pressed', String(key === calPicked));
+      cell.setAttribute('aria-label',
+        `${dayLabel(key, today)}${items.length ? `, ${items.length} ${items.length === 1 ? 'thing' : 'things'}` : ', nothing'}` +
+        (firstTimed ? `, from ${timeLabel(firstTimed.at)}` : ''));
+    }
 
     if (items.length) {
       cell.classList.add('has-items');
@@ -1914,12 +1925,28 @@ function renderCalendar() {
       cell.appendChild(mark);
     }
 
-    cell.addEventListener('click', () => {
-      calPicked = key;
-      renderCalendar();
-    });
-    el.calGrid.appendChild(cell);
+    if (live) {
+      cell.addEventListener('click', () => {
+        calPicked = key;
+        renderCalendar();
+      });
+    }
+    grid.appendChild(cell);
   }
+}
+
+function renderCalendar() {
+  const today = dayKey();
+  el.calMonth.textContent =
+    `${MONTH_NAMES[calCursor.getMonth()]} ${calCursor.getFullYear()}`;
+
+  paintMonth(el.calGridBack,
+    new Date(calCursor.getFullYear(), calCursor.getMonth() - 1, 1), today, false);
+  paintMonth(el.calGrid, calCursor, today, true);
+  paintMonth(el.calGridFwd,
+    new Date(calCursor.getFullYear(), calCursor.getMonth() + 1, 1), today, false);
+  centreMonths();
+  measureMonths();
 
   el.calToday.classList.toggle('is-hidden',
     calPicked === today && calCursor.getMonth() === keyToDate(today).getMonth()
@@ -2017,6 +2044,112 @@ function stepMonth(n) {
   calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth() + n, 1);
   renderCalendar();
 }
+
+/* ---- swiping between months ----
+   The scroller holds last month, this month and next month, and rests one
+   pane in. Swipe to a neighbour and the settle handler steps the month,
+   which repaints all three with the month you landed on in the middle and
+   puts the scroller back where it started. Both happen before the next
+   paint, so the two cancel out: the month you pulled in does not move.
+
+   That is also why this is a real scroller rather than a swipe gesture.
+   The finger-following, the rubber band at the ends, the momentum, the
+   snap and the trackpad all come from the browser, and none of them have
+   to be re-invented badly. */
+const CAL_SETTLE_MS = 110;
+
+let calSettle = null;   // the "scrolling has stopped" timer
+let calHeld = false;    // a finger is still on the scroller
+
+function centreMonths() {
+  const pane = el.calMonths.clientWidth;
+  if (!pane) return;    // screen still hidden; showCalendar paints once it is up
+  clearTimeout(calSettle);
+  el.calMonths.scrollLeft = pane;
+  /* A clipped neighbour leaves the scroller overflowing downwards, which is
+     an offset find-in-page can move even though a finger cannot. */
+  el.calMonths.scrollTop = 0;
+}
+
+/* ---- the scroller is as tall as the month you are on ----
+   Not as tall as the tallest of the three. Left to size itself the frame
+   would be six rows all the way through August, and a five-week September
+   would carry a row of white space it has no use for, just because the
+   month next door needs one.
+
+   So the height is pinned to one pane and the other two are clipped, and
+   it moves a row earlier than you might expect: the fit follows whichever
+   pane is nearest, so a taller month has grown into its sixth row by the
+   time you are halfway across to it, rather than snapping open once it
+   lands.
+
+   Measured rather than counted off the calendar, because a row is however
+   tall the cells work out at this width. */
+let calPaneH = [];   // the natural height of each pane, this width, this month
+let calChrome = 0;   // the scroller's own block padding, which a pinned height eats
+let calFit = -1;     // the pane the height is currently set from
+
+function measureMonths() {
+  el.calMonths.style.height = '';        // back to sizing itself, to be read
+  calPaneH = Array.from(el.calMonths.children, p => p.offsetHeight);
+  /* Sizing itself, the scroller is the tallest pane plus its own padding —
+     which is how much has to be added back once the height is pinned. The
+     box is border-box, so a bare pane height would swallow the few pixels
+     that keep a focus ring on the top row off the clipped edge. */
+  calChrome = el.calMonths.offsetHeight - Math.max(...calPaneH, 0);
+  calFit = -1;
+  fitMonths(1);
+}
+
+function fitMonths(i) {
+  if (i === calFit || !calPaneH[i]) return;
+  calFit = i;
+  el.calMonths.style.height = `${calPaneH[i] + calChrome}px`;
+}
+
+/* Which pane is nearest right now — the one the height should be cut to,
+   and the one a scroll that stopped here has landed on. */
+function nearestPane() {
+  const pane = el.calMonths.clientWidth;
+  return pane ? Math.min(2, Math.max(0, Math.round(el.calMonths.scrollLeft / pane))) : -1;
+}
+
+/* Which pane it came to rest on. Landing on a neighbour is the arrows by
+   another route; landing back in the middle is a swipe that changed its
+   mind, and only needs tidying up after. */
+function settleMonths() {
+  if (calHeld) return;
+  const i = nearestPane();
+  if (i < 0) return;
+  if (i !== 1) stepMonth(i - 1);
+  else centreMonths();
+}
+
+function waitForStop() {
+  const i = nearestPane();
+  if (i >= 0) fitMonths(i);      // grow into the month before it arrives
+  clearTimeout(calSettle);
+  calSettle = setTimeout(settleMonths, CAL_SETTLE_MS);
+}
+
+/* A finger resting mid-swipe stops the scroll events, and settling then
+   would haul the month back out from under it. Touch events rather than
+   pointer events because the browser cancels the pointer the instant it
+   decides the gesture is a scroll — which is exactly the stretch that has
+   to be waited out. A mouse or trackpad never sets this, and falls through
+   to the timer on its own. */
+el.calMonths.addEventListener('touchstart',  () => { calHeld = true; }, { passive: true });
+el.calMonths.addEventListener('touchend',    () => { calHeld = false; waitForStop(); }, { passive: true });
+el.calMonths.addEventListener('touchcancel', () => { calHeld = false; waitForStop(); }, { passive: true });
+el.calMonths.addEventListener('scroll', waitForStop, { passive: true });
+
+/* A pane is a viewport wide and a row is a fraction of one, so a rotation
+   leaves both the resting offset and the measured heights stale. */
+window.addEventListener('resize', () => {
+  if (el.screenCal.classList.contains('is-hidden')) return;
+  centreMonths();
+  measureMonths();
+});
 
 /* ---------------- feedback ----------------
    Anonymous, and one a day. The limit is enforced twice on purpose: this
