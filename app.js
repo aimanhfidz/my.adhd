@@ -1033,9 +1033,11 @@ function catPill(key, label, count) {
 }
 
 function renderTask(task) {
-  const li = document.createElement('li');
-  li.className = 'task';
-  if (task.urgency >= 5) li.classList.add('task--urgent');
+  /* The row itself is a div now. The <li> around it is the swipe track —
+     see swipeRow(), at the foot of the drag section. */
+  const card = document.createElement('div');
+  card.className = 'task';
+  if (task.urgency >= 5) card.classList.add('task--urgent');
 
   /* tick it off */
   const check = document.createElement('button');
@@ -1124,7 +1126,7 @@ function renderTask(task) {
   editBtn.className = 'task-fix-btn';
   editBtn.type = 'button';
   editBtn.textContent = 'Edit';
-  editBtn.addEventListener('click', (e) => { e.stopPropagation(); editTitle(task, title, li); });
+  editBtn.addEventListener('click', (e) => { e.stopPropagation(); editTitle(task, title, card); });
 
   const delBtn = document.createElement('button');
   delBtn.className = 'task-fix-btn task-fix-btn--danger';
@@ -1139,13 +1141,14 @@ function renderTask(task) {
 
   body.appendChild(detail);
 
-  li.append(check, body);
-  li.addEventListener('click', () => {
+  card.append(check, body);
+  card.addEventListener('click', () => {
+    if (swiped(card)) return;   // the click a swipe ends with, not a tap
     const open = detail.classList.toggle('is-hidden');
-    li.classList.toggle('is-open', !open);
+    card.classList.toggle('is-open', !open);
   });
 
-  return li;
+  return swipeRow(card, task, () => keepPlace(goToNext));
 }
 
 function paintSteps(steps, stepsBlock, stepsList) {
@@ -1392,13 +1395,13 @@ function editTitle(task, titleEl, li) {
    done count; this is for the ones the model invented or split wrongly,
    and it leaves no trace. Undo is the whole safety net, so the task is
    put back at the index it left rather than appended. */
-function removeTask(id) {
+function removeTask(id, after = goToNext) {
   const i = state.tasks.findIndex(t => t.id === id);
   if (i === -1) return;
   const [gone] = state.tasks.splice(i, 1);
   orphanEvent(gone);
   save();
-  goToNext();
+  after();
   toast('Removed.', {
     label: 'Undo',
     fn: () => {
@@ -1409,7 +1412,9 @@ function removeTask(id) {
       unorphanEvent(gone);
       state.tasks.splice(Math.min(i, state.tasks.length), 0, gone);
       save();
-      goToNext();
+      /* Not after(): six seconds is long enough to have walked to another
+         screen, and the task has to come back on the one being looked at. */
+      keepPlace(repaintLists);
     },
   });
 }
@@ -2004,8 +2009,8 @@ function agendaGroup(heading, items, today, late) {
   list.className = 'cal-items';
 
   items.forEach(task => {
-    const li = document.createElement('li');
-    li.className = 'cal-item';
+    const card = document.createElement('div');
+    card.className = 'cal-item';
 
     const check = document.createElement('button');
     check.className = 'task-check';
@@ -2031,9 +2036,9 @@ function agendaGroup(heading, items, today, late) {
       : `${minutesLabel(task.minutes)} · ${task.energy} energy`;
     body.append(title, meta);
 
-    li.append(check, slot, body);
-    li.addEventListener('pointerdown', (e) => watchPress(e, task, li));
-    list.appendChild(li);
+    card.append(check, slot, body);
+    card.addEventListener('pointerdown', (e) => watchPress(e, task, card));
+    list.appendChild(swipeRow(card, task, renderCalendar));
   });
 
   section.appendChild(list);
@@ -2449,6 +2454,261 @@ function endDrag(commit) {
 
 document.addEventListener('pointerup',     () => { dropPress(); endDrag(true); });
 document.addEventListener('pointercancel', () => { dropPress(); endDrag(false); });
+
+/* ---------------- swipe a row ----------------
+
+   Two exits, moved under the thumb. Left is the tick the row already had.
+   Right is Remove, which until now was two taps down inside the detail —
+   nowhere near where you notice the sorter has invented something.
+
+   Nothing commits without saying so first. The rail behind the row names
+   what letting go would do, and it only fills — colour, and a tick of
+   haptic — once the row is far enough over that letting go acts. Short of
+   that it springs back and the rail fades with it. Remove lands in a toast
+   holding an undo; done lands in the pile at the foot of the lists, which
+   is what that pile is for.
+
+   The row rides on a track: the <li> holds the two rails and clips them,
+   the card slides over the top. That is what keeps the colour inside the
+   row's own rounded edge instead of painting a band across the list. */
+
+const SWIPE_SLOP  = 12;    // across, before this is a swipe and not a scroll
+const SWIPE_ARM   = .34;   // of the row's width — past this, letting go acts
+const SWIPE_LIMIT = .58;   // and this is as far as the card will travel
+const SWIPE_FLICK = .55;   // px/ms — a flick this fast counts, short of the mark
+const SWIPE_OUT   = 180;   // the card leaves in this, then the list redraws
+
+let swipe = null;         // a finger on a row, not yet certainly a swipe
+let swipeLeaving = false; // a row on its way out; no second one until it lands
+let swipeGuard = null;    // {card, until} — the click a finished swipe leaves
+
+/* A swipe ends in a click on the row it just moved. Rows ask this before
+   acting on one — without it, everything you swiped and let go of would
+   open its detail on the way back. Held against the one row, so a tap on
+   a different one in the same half second is still a tap. */
+function swiped(card) {
+  return !!swipeGuard && swipeGuard.card === card && Date.now() < swipeGuard.until;
+}
+
+const RAIL_REMOVE = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 7h15M10 7V5.6A1.6 1.6 0 0 1 11.6 4h.8A1.6 1.6 0 0 1 14 5.6V7m3 0v12.4A1.6 1.6 0 0 1 15.4 21H8.6A1.6 1.6 0 0 1 7 19.4V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const RAIL_DONE   = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l5 5L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* Both rails lie across the whole row and only the one the gap has
+   uncovered is ever shown. Sizing a rail to the gap instead would be a
+   second thing to keep in step with the card, for a band nobody can see
+   past it. Hidden from the reader: they double for buttons that are still
+   on the row and still reachable. */
+function swipeRails() {
+  const rails = document.createElement('div');
+  rails.className = 'swipe-rails';
+  rails.setAttribute('aria-hidden', 'true');
+
+  const remove = document.createElement('span');
+  remove.className = 'swipe-rail swipe-rail--remove';
+  remove.innerHTML = `${RAIL_REMOVE}<span>Remove</span>`;
+
+  const done = document.createElement('span');
+  done.className = 'swipe-rail swipe-rail--done';
+  done.innerHTML = `<span>Done</span>${RAIL_DONE}`;
+
+  rails.append(remove, done);
+  return rails;
+}
+
+/** Puts a rendered card on a track and arms the gesture. Hands back the
+    <li> that goes in the list. */
+function swipeRow(card, task, after) {
+  const track = document.createElement('li');
+  track.className = 'swipe';
+  card.classList.add('swipe-card');
+  track.append(swipeRails(), card);
+
+  card.addEventListener('pointerdown', (e) => swipeStart(e, track, card, task, after));
+  card.addEventListener('pointermove', swipeMove);
+  return track;
+}
+
+/* The end of a swipe is watched from the document, not from the row. The
+   up can land anywhere — the capture can be taken off us, the finger can
+   leave over the tab bar — and a gesture that never hears the end of
+   itself leaves its row parked half open and deaf to the next touch.
+   One pair of listeners for every row there will ever be, and they fire
+   once a gesture, so this costs nothing per move. */
+document.addEventListener('pointerup', swipeEnd);
+document.addEventListener('pointercancel', swipeCancel);
+
+function swipeStart(e, track, card, task, after) {
+  if (e.button > 0) return;                   // right-click and friends
+  if (swipe || drag || swipeLeaving) return;
+  /* Anything you can press is not a handle: the tick, Edit and Remove in
+     the detail, the title while it is being reworded. */
+  if (e.target.closest('button, input, a')) return;
+
+  clearTimeout(track._swipeSettle);           // swiped again mid-spring-back
+  track.classList.remove('is-settling');
+
+  swipe = {
+    track, card, task, after,
+    id: e.pointerId,
+    x: e.clientX, y: e.clientY,
+    lastX: e.clientX, lastT: e.timeStamp,
+    dx: 0, vx: 0, live: false, armed: false,
+    w: card.getBoundingClientRect().width || 1,
+  };
+}
+
+function swipeMove(e) {
+  if (!swipe || e.pointerId !== swipe.id) return;
+  if (drag) {                           // the long press got there first
+    const { track, card, live } = swipe;
+    swipe = null;
+    if (live) { track.classList.remove('is-swiping'); settleSwipe(track, card); }
+    return;
+  }
+
+  const dy = e.clientY - swipe.y;
+  let dx = e.clientX - swipe.x;
+
+  if (!swipe.live) {
+    /* Down the page belongs to the list and stays there: only a move that
+       is plainly sideways takes the row. */
+    if (Math.abs(dy) >= Math.abs(dx)) {
+      if (Math.abs(dy) > SWIPE_SLOP) swipe = null;
+      return;
+    }
+    if (Math.abs(dx) < SWIPE_SLOP) return;
+
+    swipe.live = true;
+    swipe.x += Math.sign(dx) * SWIPE_SLOP;    // carry on from here, not from a jump
+    dx -= Math.sign(dx) * SWIPE_SLOP;
+    dropPress();                              // a swipe is not a hold
+    /* A touch captures to the row on its own; a mouse does not, and
+       without this a fast drag leaves the card and the row stops
+       following the pointer. Not worth a gesture if the pointer has
+       already gone — hence the catch. */
+    try { swipe.card.setPointerCapture(swipe.id); } catch (_) {}
+    swipe.track.classList.add('is-swiping');
+  }
+
+  /* Speed off the last few frames rather than the last pair of them. Two
+     moves can arrive inside the same millisecond, and a pair that close
+     is either a divide by zero or a number with no information in it. */
+  const dt = e.timeStamp - swipe.lastT;
+  if (dt >= 8) {
+    swipe.vx = (e.clientX - swipe.lastX) / dt;
+    swipe.lastX = e.clientX;
+    swipe.lastT = e.timeStamp;
+  }
+
+  paintSwipe(dx);
+}
+
+/* Follows the finger to the limit and then resists, so the row cannot be
+   thrown off the side and left there. The gesture stays reversible right
+   up to the moment it is not. */
+function paintSwipe(raw) {
+  const { track, card, w } = swipe;
+  const limit = w * SWIPE_LIMIT;
+  const past = Math.abs(raw) - limit;
+  const dx = Math.sign(raw) * (past > 0 ? limit + past * .3 : Math.abs(raw));
+  swipe.dx = dx;
+
+  const p = Math.min(1, Math.abs(dx) / (w * SWIPE_ARM));
+  card.style.transform = `translate3d(${dx.toFixed(1)}px,0,0)`;
+  track.style.setProperty('--p', (.35 + p * .65).toFixed(3));
+  /* How much of the row is actually uncovered. The rail's word waits on
+     this: a narrow gap gets the icon and nothing cut in half. */
+  track.style.setProperty('--gap', Math.round(Math.abs(dx)));
+  track.classList.toggle('is-right', dx > 0);
+  track.classList.toggle('is-left',  dx < 0);
+
+  const armed = p >= 1;
+  if (armed !== swipe.armed) {
+    swipe.armed = armed;
+    track.classList.toggle('is-armed', armed);
+    if (armed) navigator.vibrate?.(8);   // the mark, felt rather than read
+  }
+}
+
+function swipeEnd(e) {
+  if (!swipe || e.pointerId !== swipe.id) return;
+  const { track, card, task, after, dx, vx, armed, live, lastT } = swipe;
+  swipe = null;
+  if (!live) return;                    // never claimed — that was a tap
+
+  releaseSwipe(card, e.pointerId);
+  track.classList.remove('is-swiping');
+  swipeGuard = { card, until: Date.now() + 350 };   // for the click on its way
+
+  /* A short, fast flick reads as decided; it is the slow short push that
+     is a change of mind. A row held still before the finger came off is
+     neither, whatever it was doing on the way there. */
+  const flick = e.timeStamp - lastT < 90
+             && Math.abs(vx) > SWIPE_FLICK
+             && Math.sign(vx) === Math.sign(dx)
+             && Math.abs(dx) > SWIPE_SLOP * 3;
+
+  if (armed || flick) leaveSwipe(track, card, task, after, dx < 0);
+  else settleSwipe(track, card);
+}
+
+/* A cancel is the browser taking the gesture back — the page scrolled
+   under it, or a call came in. Nothing was decided, so nothing happens. */
+function swipeCancel(e) {
+  if (!swipe || e.pointerId !== swipe.id) return;
+  const { track, card, live } = swipe;
+  swipe = null;
+  if (!live) return;
+  releaseSwipe(card, e.pointerId);
+  track.classList.remove('is-swiping');
+  settleSwipe(track, card);
+}
+
+function releaseSwipe(card, id) {
+  try { if (card.hasPointerCapture(id)) card.releasePointerCapture(id); } catch (_) {}
+}
+
+/* Short of the mark: back where it was, and the rail goes out with it.
+   The direction classes are held until the spring has landed, or the
+   colour would vanish a frame after you let go and the row would slide
+   home over nothing. */
+function settleSwipe(track, card) {
+  track.classList.add('is-settling');
+  track.classList.remove('is-armed');
+  card.style.transform = '';
+  track.style.setProperty('--p', '0');
+  track._swipeSettle = setTimeout(() => {
+    track.classList.remove('is-settling', 'is-left', 'is-right');
+  }, 240);
+}
+
+/* Past it: the card leaves the way it was pushed, and the list redraws
+   without it. The row is off the screen before the store is touched — the
+   wait is the movement, not a spinner over a finished decision. */
+function leaveSwipe(track, card, task, after, done) {
+  swipeLeaving = true;
+  track.classList.add('is-leaving', 'is-armed');
+  track.style.setProperty('--p', '1');
+  track.style.setProperty('--gap', '999');   // it is all gap from here
+  card.style.transform =
+    `translate3d(${done ? '-' : ''}${Math.round(track.offsetWidth + 40)}px,0,0)`;
+
+  setTimeout(() => {
+    swipeLeaving = false;
+    if (done) markDone(task.id, after);
+    else removeTask(task.id, after);
+  }, stillMotion() ? 0 : SWIPE_OUT);
+}
+
+/* goToNext() goes through show(), which rewinds the scroller: right when
+   you have just arrived from another screen, wrong when a row four lists
+   down has gone and the next one should be under the thumb that swiped
+   it. */
+function keepPlace(render) {
+  const y = el.scroller.scrollTop;
+  render();
+  el.scroller.scrollTop = y;
+}
 
 /* ---------------- Google Calendar ----------------
    One direction only: the app is the source of truth and the calendar is

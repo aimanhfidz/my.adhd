@@ -589,6 +589,74 @@ body{
   outline:none;
 }
 
+/* ---- swipe a row: left finishes it, right removes it ----
+   Both lists use this — the buckets here and the agenda on the calendar.
+   The card rides on a track that holds the rails and clips them, so the
+   colour only shows in the gap the card has opened and the row keeps its
+   own rounded edge the whole way across.
+
+   --p is how far the gesture has come, 0 to 1, written every frame from
+   paintSwipe(). Everything the rail does with it is opacity: a colour that
+   arrives with the movement rather than switching on at some invisible
+   line. The line itself is .is-armed, and it fills. */
+.swipe{
+  --p:0;
+  --gap:0;               /* px of row uncovered, as a plain number */
+  --swipe-radius:16px;   /* the card's own, so the rail sits inside its edge */
+  position:relative;
+  touch-action:pan-y;    /* down the page is the browser's; across is ours */
+}
+
+.swipe-rails{
+  position:absolute; inset:0;
+  border-radius:var(--swipe-radius); overflow:hidden;
+  pointer-events:none;
+}
+.swipe-rail{
+  position:absolute; inset:0;
+  display:flex; align-items:center; gap:9px; padding:0 20px;
+  font-family:var(--display); font-size:14px; font-weight:700;
+  letter-spacing:-.01em;
+  opacity:0;
+  transition:background .16s var(--ease), color .16s var(--ease);
+}
+.swipe-rail svg{width:19px; height:19px; flex:none; transition:transform .16s var(--ease)}
+/* The icon sits against the edge and is always whole. The word waits for
+   a gap wide enough to hold it, rather than being served up chopped in
+   half by the card that is covering it. */
+.swipe-rail span{opacity:clamp(0, calc((var(--gap) - 64) / 34), 1)}
+
+/* Remove reads from the left edge, because a card pushed right is what
+   uncovers it. Done is the mirror of that. */
+.swipe-rail--remove{
+  justify-content:flex-start;
+  background:var(--danger-wash); color:var(--danger-ink);
+}
+.swipe-rail--done{
+  justify-content:flex-end;
+  background:var(--wash-2); color:var(--accent);
+}
+.swipe.is-right .swipe-rail--remove,
+.swipe.is-left  .swipe-rail--done{opacity:var(--p)}
+
+/* Past the mark: the rail fills, which is the promise that letting go
+   now does it. */
+.swipe.is-armed.is-right .swipe-rail--remove{background:var(--danger); color:#fff}
+.swipe.is-armed.is-left  .swipe-rail--done{background:var(--accent); color:var(--on-accent)}
+.swipe.is-armed .swipe-rail svg{transform:scale(1.14)}
+
+.swipe-card{position:relative}   /* over the rails, and opaque, so they only show in the gap */
+.swipe.is-swiping .swipe-card{
+  will-change:transform;
+  user-select:none; -webkit-user-select:none;
+}
+/* short of the mark — back home, rail fading with it */
+.swipe.is-settling .swipe-card{transition:transform .22s var(--ease)}
+.swipe.is-settling .swipe-rail{transition:opacity .22s var(--ease)}
+/* past it — out the side it was pushed, accelerating, because it is not
+   coming back */
+.swipe.is-leaving .swipe-card{transition:transform .18s cubic-bezier(.4,0,1,1)}
+
 /* done pile */
 .done-block{margin-top:30px; padding-top:6px}
 .done-list{list-style:none; margin-top:10px; display:flex; flex-direction:column; gap:7px}
@@ -1106,8 +1174,12 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
 .cal-group--late .cal-group-head{color:var(--orange); border-bottom-color:var(--orange)}
 
 .cal-items{list-style:none; display:flex; flex-direction:column; gap:8px}
+.cal-items .swipe{--swipe-radius:var(--radius-lg)}
 .cal-item{
   display:flex; align-items:flex-start; gap:11px;
+  /* --surface is what the page is already: the row looks untouched, and a
+     swipe rail cannot show through it. */
+  background:var(--surface);
   border:1.5px solid var(--line); border-radius:var(--radius-lg);
   padding:13px 15px;
 }
