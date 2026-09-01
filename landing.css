@@ -721,7 +721,11 @@ body{
    picture height whatever the paragraphs under it do. */
 .how{
   position:relative; z-index:1;
-  background:var(--surface);
+  /* No ground of its own. main's is directly behind it and is the same
+     --surface, so this only ever repainted what was already there — and
+     once main turns a corner it stops being harmless: this box runs the
+     full width below 1080 and its square top would fill the corner in
+     exactly the case where it shows, which is a phone. */
   max-width:1080px; margin:0 auto;
   /* A screen of its own, because it is what climbs over the hero — see
      THE HANDOFF at the foot of this file. A sheet that arrived half-full
@@ -943,6 +947,13 @@ body{
 :root{--cover-cast:rgba(28,22,74,.16)}
 :root[data-theme="dark"]{--cover-cast:rgba(0,0,0,.55)}
 
+/* The corner the rising sheet turns. Not --radius-lg: that one is a card's,
+   read across a 340px box, and the same number spanning the whole window
+   reads as a nick rather than as an edge lifting. Scales with the window
+   for the same reason — it is the width of the sheet that sets how big a
+   corner has to be to register on it. */
+:root{--sheet-radius:clamp(20px,2.6vw,36px)}
+
 /* Pinned, so the page slides over the hero instead of past it.
 
    Behind a flag, and the flag is measured rather than guessed. The page
@@ -971,9 +982,16 @@ main{
   position:relative; z-index:1;
   background:var(--surface);
 }
-/* Only where there is something pinned behind it to catch the cast. */
+/* Only where there is something pinned behind it to catch the cast — and
+   to turn a corner. Both are the same claim, that this is a sheet in front
+   of something rather than the next thing down the page, so both are
+   behind the same flag: with nothing pinned, a rounded corner is a notch
+   with the page's own ground showing through it. */
 @media (prefers-reduced-motion:no-preference){
-  :root[data-cover] main{box-shadow:0 -30px 56px -22px var(--cover-cast)}
+  :root[data-cover] main{
+    box-shadow:0 -30px 56px -22px var(--cover-cast);
+    border-radius:var(--sheet-radius) var(--sheet-radius) 0 0;
+  }
 }
 
 /* ---------- the recede ----------
@@ -1133,7 +1151,11 @@ main{
 /* The cast the findings throw back onto the cards, and only where there
    is something pinned behind them to catch it. Same shadow main casts on
    the hero — the sheet is the same sheet. */
-:root[data-cover-how] .why{box-shadow:0 -30px 56px -22px var(--cover-cast)}
+:root[data-cover-how] .why{
+  box-shadow:0 -30px 56px -22px var(--cover-cast);
+  /* and the same corner, for the same reason — one gesture twice */
+  border-radius:var(--sheet-radius) var(--sheet-radius) 0 0;
+}
 
 /* ---------- the recede ----------
    Behind glass, like the hero: the cards fall back and blur out as the
