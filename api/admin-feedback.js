@@ -1,9 +1,16 @@
 /**
- * GET /api/admin-feedback   ->   { notes: [...] }
+ * GET /api/admin-feedback           ->   { notes: [...] }
+ * GET /api/admin-feedback?probe=1   ->   { ok: true }
  *
  * Reads the feedback table. The only route in this project that hands one
  * person another person's writing, so it is the only one that needs to
  * care who is asking.
+ *
+ * The probe is the same gate with the payload left off. waves-lab needs
+ * the verdict and has no use for the notes, and a shader workbench that
+ * pulled 500 people's writing into memory to check a boolean would be
+ * holding something it has no business holding. It answers after every
+ * check below, so it can tell you nothing a plain call would not.
  *
  * The gate is here and nowhere else. admin.html hides itself from anyone
  * who is not signed in, but that is courtesy, not security — a hidden
@@ -61,6 +68,13 @@ export default async function handler(req, res) {
   if (!email || !allowed.includes(email)) {
     /* Deliberately says nothing about why, or who would be allowed. */
     return res.status(403).json({ error: 'not for you' });
+  }
+
+  /* Past every check, so a probe is only ever answered for someone who
+     would have been handed the notes anyway. Nothing is read from the
+     database on this path. */
+  if (req.query.probe) {
+    return res.status(200).json({ ok: true });
   }
 
   try {

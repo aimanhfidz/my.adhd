@@ -55,6 +55,26 @@
 }
 .btn-danger-quiet:hover{color:var(--danger-ink)}
 
+/* ---------- the way through to the workbench ----------
+   Borrows the landing bar's clock wholesale — same auto margin, same
+   hand-off of the toggle's auto margin — because these are the same bar
+   with different things in it, and two rules that look alike drift less
+   than two that do not. Ambient weight, at --faint: it is a way out of
+   this page, not the thing this page is for.
+
+   Hidden in the markup rather than by a class, so a stylesheet that never
+   arrives cannot leave it standing. */
+.admin-nav-link{
+  margin:0 8px 0 auto;
+  font-size:12px; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; white-space:nowrap; text-decoration:none;
+  color:var(--faint);
+  transition:color .18s var(--ease);
+}
+.admin-nav-link:hover{color:var(--ink)}
+.admin-nav-link[hidden]{display:none}
+.admin-nav-link:not([hidden]) ~ .theme-toggle{margin-left:0}
+
 .admin-gate{
   margin-top:28px; padding:28px 22px; text-align:center;
   background:var(--wash); border:1.5px solid var(--line);

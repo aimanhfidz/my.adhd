@@ -21,10 +21,17 @@
   const list     = $('admin-list');
   const who      = $('admin-who');
   const sub      = $('admin-sub');
+  const waves    = $('admin-waves');
 
   function show(view) {
     gate.classList.toggle('is-hidden', view !== 'gate');
     body.classList.toggle('is-hidden', view !== 'body');
+    /* Every route out of the body view takes the workbench link with it —
+       signing out, a 403, a session that expired while the tab sat open.
+       Turning it back on is a single deliberate line further down, after
+       the API has answered, rather than the default this would become if
+       it were tied to the view. */
+    if (view !== 'body') waves.hidden = true;
   }
 
   /* Local time, and spelled out. A list of notes is read by one person
@@ -119,6 +126,12 @@
       list.appendChild(p);
       return;
     }
+
+    /* The one place this is turned on. Not on `show('body')`, which an
+       unreachable server and an unconfigured one both reach as well — and
+       a link offered on the strength of a failure is a link that does not
+       work. Only a 200 is a yes. */
+    waves.hidden = false;
 
     const data = await res.json().catch(() => ({ notes: [] }));
     paintNotes(data.notes || []);

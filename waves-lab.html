@@ -10,12 +10,29 @@
 <!-- Not a page of the site. It is the hero, exactly as landing.css builds
      it — same veil, same copy, same type — with the shader's knobs on a
      panel beside it, because the only question worth asking about a wave
-     is whether the words still read over it. Nothing links here, and it is
-     not in the service worker's shell.
+     is whether the words still read over it. The one way in is the bar on
+     /admin, and it is not in the service worker's shell.
 
      Dial in a look, then paste the row it writes at the bottom of the
      panel into the PRESETS table in waves.js. That is the only step that
-     makes a change survive a reload. -->
+     makes a change survive a reload.
+
+     ---- who gets the knobs ----
+
+     The panel asks /api/admin-feedback?probe=1 before it builds itself,
+     which is the same gate the notes page stands behind, decided on the
+     server against ADMIN_EMAILS. Be clear about what that is worth: this
+     is a static file, so anyone who knows the URL can still fetch the
+     markup and read the source. What the check buys is that the tool does
+     not work for them, and that the hero underneath is the hero anybody
+     can already see at /. A door, not a lock — the same thing admin.html
+     says about itself.
+
+     Signing in happens on /admin and not here, deliberately. auth.signIn()
+     returns to whichever page called it, so offering it here would mean a
+     second redirect URL on Supabase's allow-list, and the sign-in fragment
+     coming back would land on top of the settings hash and be scrubbed
+     away with it. One door is enough. -->
 
 <script src="theme.js"></script>
 <link rel="stylesheet" href="theme.css" />
@@ -69,6 +86,11 @@
 
   .check{display:flex; align-items:center; gap:7px; margin:0 0 6px; color:var(--lab-dim); cursor:pointer}
   .check input{accent-color:var(--lab-accent)}
+
+  /* The panel with nothing in it but a reason. Same card, so a refusal
+     looks like part of the instrument rather than like a page that broke. */
+  .lab p{margin:0 0 9px; color:var(--lab-dim)}
+  .lab a{color:var(--lab-accent)}
 
   .lab pre{
     margin:8px 0 0; padding:8px; border-radius:8px;
@@ -193,14 +215,101 @@
 
 <!-- Not deferred, and after the hero: an inline script runs while the page
      is still parsing, so a deferred waves.js would not have booted yet and
-     the panel would have nothing to talk to. -->
+     the panel would have nothing to talk to. config.js and auth.js are the
+     same pair admin.html loads, in the same order — auth.js reads its
+     Supabase settings off the globals config.js declares. -->
+<script src="config.js"></script>
+<script src="auth.js"></script>
 <script src="waves.js"></script>
 <script>
-(function () {
+(async function () {
   const W = window.myadhdWaves;
   const panel = document.querySelector('.lab');
+
+  /* Hidden from the first frame and turned on at the bottom of this
+     function, once there is either a panel or a reason. The gate below
+     goes to the network, and an instrument sitting there with empty
+     sections while it waits looks like a page that failed rather than one
+     that is asking a question. */
+  panel.hidden = true;
+
+  /* ---------- the card that is not the panel ----------
+     Everything that stops the workbench opening ends up here — no WebGL,
+     not signed in, signed in as someone else. It keeps the panel's chrome,
+     because a refusal that looks like damage sends you to the devtools to
+     find out which it was. */
+  function instead(text, link) {
+    panel.innerHTML = '<h2>waves</h2>';
+    const p = document.createElement('p');
+    p.textContent = text;
+    panel.appendChild(p);
+    if (link) {
+      const a = document.createElement('a');
+      a.href = '/admin';
+      a.textContent = link;
+      panel.appendChild(a);
+    }
+    panel.hidden = false;
+  }
+
   if (!W) {
-    panel.innerHTML = '<h2>waves</h2><p>No WebGL in this browser — the hero falls back to the two glows and there is nothing here to tune.</p>';
+    instead('No WebGL in this browser — the hero falls back to the two glows and there is nothing here to tune.');
+    return;
+  }
+
+  /* ---------- the gate ----------
+     The verdict is the server's, against ADMIN_EMAILS, and it is the same
+     one the notes page stands behind. Everything before the fetch is there
+     to avoid asking a question whose answer is already known — an
+     unconfigured build, a signed-out browser, a session that went stale in
+     a tab left open overnight.
+
+     The hero keeps rendering through all of it. It is the hero anyone can
+     already see at /, so there is nothing here to withhold; what is behind
+     the door is the ability to take it apart. */
+  if (!window.auth || !auth.configured()) {
+    instead('Sign-in is not configured on this build, so there is no way to establish whose these are.');
+    return;
+  }
+
+  if (!auth.signedIn()) {
+    instead('The knobs are behind the same door as the notes.', 'sign in there →');
+    return;
+  }
+
+  const token = await auth.token();
+  if (!token) {
+    instead('That session has expired.', 'sign in again →');
+    return;
+  }
+
+  let verdict;
+  try {
+    verdict = await fetch('/api/admin-feedback?probe=1', {
+      headers: { Authorization: 'Bearer ' + token },
+    });
+  } catch (_) {
+    instead('Could not reach the server to ask whose these are.');
+    return;
+  }
+
+  if (verdict.status === 403) {
+    /* Says who you are, because on this page the useful failure is
+       realising you are signed in as the wrong one of your own accounts.
+       The server said nothing about why; this is the browser filling in
+       what it already knew. */
+    instead(
+      'Signed in as ' + ((auth.user() && auth.user().email) || 'someone else')
+        + ', which is not an account these belong to.',
+      'sign in as someone else →'
+    );
+    return;
+  }
+
+  if (!verdict.ok) {
+    instead(verdict.status === 503
+      ? 'Not configured — ADMIN_EMAILS is not set on the server.'
+      : 'Could not establish whose these are.');
     return;
   }
 
@@ -396,6 +505,11 @@
 
   readHash();
   sync();
+
+  /* Built, wired and pointed at whatever the URL asked for — so now it can
+     be looked at. This is the one place the panel is revealed on the way
+     through; every other exit above went out through instead(). */
+  show(true);
 })();
 </script>
 </body>
