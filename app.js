@@ -2090,6 +2090,15 @@ let calChrome = 0;   // the scroller's own block padding, which a pinned height 
 let calFit = -1;     // the pane the height is currently set from
 
 function measureMonths() {
+  /* Nothing can be measured while the screen is display:none — the panes
+     are all zero — and clearing the height to find that out is what does
+     the damage: it leaves the scroller sizing itself to the TALLEST of the
+     three panes, which is a five-week month carrying an empty sixth row
+     because the month next door needs one. That is the whole bug this
+     pinning exists to prevent, so a render that cannot measure keeps the
+     height it already has and waits for one that can. */
+  if (!el.calMonths.clientWidth) return;
+
   el.calMonths.style.height = '';        // back to sizing itself, to be read
   calPaneH = Array.from(el.calMonths.children, p => p.offsetHeight);
   /* Sizing itself, the scroller is the tallest pane plus its own padding —
