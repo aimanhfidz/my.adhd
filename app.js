@@ -642,8 +642,15 @@ function guessCategory(line) {
 
 /* Fragments that are qualifiers, not new tasks. A comma-split dump like
    "file the tax return, deadline is tomorrow" must stay one task, or the
-   urgency ends up attached to a fragment with no action in it. */
-const QUALIFIER = /^(?:deadline|due|by\b|before|after|takes|taking|about|approx|around|roughly|asap|today|tonight|tomorrow|this\s|next\s|maybe|probably|ideally|urgent|i think|apparently|\d)/i;
+   urgency ends up attached to a fragment with no action in it.
+
+   Bare days belong here too. "pay rent, friday" used to come back as two
+   things, the second of them a task called Friday that nobody wrote and
+   nothing removes — a list with something invented on it is worse than a
+   list with two errands on one line. When the reading is uncertain the
+   fold-back is the safe way to be wrong: the words stay, and re-sorting
+   hands the whole line to the model, which splits it properly. */
+const QUALIFIER = /^(?:deadline|due|by\b|before|after|at\b|on\b|takes|taking|about|approx|around|roughly|asap|today|tonight|tomorrow|this\s|next\s|maybe|probably|ideally|urgent|i think|apparently|sometime|whenever|no rush|morning|afternoon|evening|(?:mon|tues?|wed(?:nes)?|thur?s?|fri|sat(?:ur)?|sun)(?:day)?\b|\d)/i;
 
 /* Strip a trailing duration clause once it has been read into `minutes`.
 
@@ -682,13 +689,40 @@ function tidyWhen(line) {
   return out;
 }
 
+/* The 2- and 3-letter verbs a dumped line is allowed to start with. The
+   comma rule counts letters to tell an item from a trailing clause, and on
+   its own that test threw out the shortest instructions people give
+   themselves — "buy milk, pay rent, get petrol" arrived as one task.
+   Naming the verbs buys back the split without also splitting off "her
+   birthday is on the 12th", which is a note on the task before it. */
+const SHORT_VERB = 'do|go|buy|pay|get|ask|fix|see|put|run|cut|add|try|eat|use|dry|mow|bin|top|log|set|pop|tag';
+
+const SPLIT_ON = new RegExp(
+  '\\n' +
+  '|(?:,\\s+(?:and\\s+then|and|then)\\s+(?=\\w))' +
+  '|(?:,\\s(?=(?:\\w{4,}|(?:' + SHORT_VERB + ')\\b)))' +
+  '|(?:\\s+•\\s+)' +
+  '|(?:;\\s*)'
+);
+
 /* Where one thing ends and the next begins. Pulled out of parseLocally so
    the typing preview splits the dump exactly the way the parser will —
    otherwise the chips would promise dates against lines that never end up
-   being lines. */
+   being lines.
+
+   Two things the comma rule has to survive. "and" and "then" ride along
+   with the comma in most people's lists, and they are the join, not the
+   start of the next item, so they are eaten rather than left to head a
+   title. And the lookahead counts letters, which quietly required every
+   item to open with a long word: "buy milk, pay rent, get petrol" came
+   back as one task, because pay and get are three. SHORT_VERB is the way
+   back in for those, and it is a named list rather than a lower letter
+   count so that "her birthday is on the 12th" still reads as the note it
+   is. Anything that does slip through as a fragment — "due friday", "at
+   4pm" — is folded back by QUALIFIER on the next pass. */
 function splitDump(text) {
   return text
-    .split(/\n|(?:,\s(?=\w{4,}))|(?:\s+•\s+)|(?:;\s*)/)
+    .split(SPLIT_ON)
     .map(s => s.replace(/^[\s\-–—*•\d.)]+/, '').trim())
     .filter(s => s.length > 2)
     // fold qualifier fragments back into the task they describe
