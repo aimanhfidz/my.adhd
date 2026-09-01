@@ -69,6 +69,13 @@ Same screen on the dark theme, via the header toggle:
 Note the single orange **urgent** pill on the rent task. Vivid Orange is
 reserved for *act now* — one thing at a time, or it stops meaning anything.
 
+**Every screen and every route between them:**
+[screen map](https://claude.ai/code/artifact/447d9c4a-f7f2-4249-8434-f640bc49a25b)
+— the site's six routes, the app shell, and the dump, lists, calendar and
+profile screens drawn one at a time, with what each control actually does.
+The page is private to the account that published it; it needs sharing from
+its own menu before anyone else can open it.
+
 ## Running it
 
 **No build step**, but the pages link to `/app` and `/install` rather than the
