@@ -18,3 +18,7 @@ client_secret*.json
 
 # macOS
 .DS_Store
+
+# Claude Code. launch.json describes how to preview this repo and is worth
+# keeping; settings.local.json is one machine's permission grants and is not.
+.claude/settings.local.json

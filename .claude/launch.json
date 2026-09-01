@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "//": "There is no node on this machine and no build step — the site is static files, served by serve.py, which resolves the same cleanUrls rule Vercel applies (/app, not /app.html). Start it yourself with `python3 serve.py 8765`; this entry has no command, so it only attaches to that.",
+      "name": "my.adhd",
+      "url": "http://localhost:8765",
+      "port": 8765
+    }
+  ]
+}
