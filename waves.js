@@ -8,8 +8,8 @@
    a dependency would have had to arrive from a CDN — which the service
    worker skips, and the offline copy is the whole point of the install.
 
-   Two departures from the original, both because this hero is not a black
-   page:
+   Three departures from the original, the first two because this hero is
+   not a black page:
 
    1) A ramp instead of a colour. The original divides a colour by
       abs(sin(...)) and lets the channels clip where the divisor nears zero,
@@ -32,8 +32,22 @@
       never read it in the shader — a mousemove handler that computed
       nothing.
 
+   3) The field is one of four, and its shape is eight numbers rather than
+      eight literals. The original's constants were spread through the
+      shader — 9 turns, 0.6 of push, 2.5 and 1.5 for the two frequencies,
+      0.1 over the sine, a 1.6 curve — so the only way to ask what a
+      different wave looked like was to edit GLSL and reload. They are
+      uniforms now, the loop's readout is shared, and a form is the dozen
+      lines that compute one scalar. See the patterns block below; the
+      landing page still runs the first one on the original numbers, so
+      nothing about the shipping hero moved.
+
    The legibility work proper is CSS: .hero-waves::after in landing.css
-   veils the field and hides it entirely under the nav and the footnote. */
+   veils the field and hides it entirely under the nav and the footnote.
+
+   waves-lab.html drives all of it with sliders. It is a workbench, not a
+   page of the site: nothing links to it and it is not in the service
+   worker's shell. */
 (function () {
   const host = document.querySelector('.hero-waves');
   if (!host) return;
@@ -49,6 +63,42 @@
     }
   `;
 
+  /* ---------- the patterns ----------
+     Four fields, one readout. Every branch below computes a single scalar
+     d that passes through zero along the crest of each filament, and
+     everything after it — the overshoot at the crossing, the curve, the
+     centre dim, the two ramps — is shared. That is what makes a new form
+     cheap: a dozen lines of GLSL, not a second shader and a second canvas.
+
+     The seven numbers in the shader mean the same thing in all four, which
+     is what makes the sliders worth having — you can carry a look from one
+     form to the next:
+
+       layers  how many harmonics of the loop get folded in
+       warp    how far each harmonic pushes the space around
+       freqX   the first axis's wavelength (x — or, in ripple, the angle)
+       freqY   the second's                (y — or, in ripple, the spiral)
+       bands   how many crests the field is cut into
+       sharp   the filament's thickness: the numerator over |d|
+       gamma   how hard the bulk of the page is pushed back to the ground
+
+     The eighth, speed, never reaches the GPU — see the loop, which owns
+     the clock for reasons of precision.
+
+       flow    the original. A diagonal running through space that has been
+               kneaded by its own harmonics: marbling, filaments, no grain
+               to it in either axis.
+       swell   ordered horizontal ridges, each one a travelling sum of
+               sines, with a slow cross-swell so the stack is not one
+               profile extruded sideways. The calm one, and the one that
+               leaves the middle of the screen quietest.
+       ripple  rings leaving the centre, their radius pushed about by a few
+               angular harmonics so they arrive as weather rather than as a
+               target. Watch this one against the reader pool: the pool is
+               centred too, and rings and an ellipse can end up agreeing.
+       silk    two crossed sets of crests, multiplied. A woven net, and the
+               only one of the four with a mesh you can read as a mesh —
+               fewer bands and more warp is where it stops being a grid. */
   const FRAG = `
     precision mediump float;
     uniform vec2 iResolution;
@@ -57,6 +107,8 @@
     uniform float invert;
     uniform vec3 inkGround, inkMid, inkHi;
     uniform vec3 paperGround, paperMid, paperHi;
+    uniform int pattern;
+    uniform float layers, warp, freqX, freqY, bands, sharp, gamma;
     varying vec2 vTextureCoord;
 
     vec3 ramp(float v, vec3 g, vec3 m, vec3 h) {
@@ -73,25 +125,75 @@
 
       float centerDim = disableCenterDimming ? 1.0 : smoothstep(radius * 0.3, radius * 0.5, dist);
 
-      for (float i = 1.0; i < 10.0; i++) {
-        uv.x += 0.6 / i * cos(i * 2.5 * uv.y + iTime);
-        uv.y += 0.6 / i * cos(i * 1.5 * uv.x + iTime);
+      float t = iTime;
+      float d = 0.0;
+
+      /* The loop bound is a constant because ES 2.0 insists on one; the
+         count is a uniform, so it leaves early instead. */
+      if (pattern == 0) {
+        for (float i = 1.0; i < 10.0; i++) {
+          if (i > layers) break;
+          uv.x += warp / i * cos(i * freqX * uv.y + t);
+          uv.y += warp / i * cos(i * freqY * uv.x + t);
+        }
+        d = sin(t - (uv.y + uv.x) * bands);
+      } else if (pattern == 1) {
+        float h = 0.0;
+        for (float i = 1.0; i < 10.0; i++) {
+          if (i > layers) break;
+          h += warp / i * sin(i * freqX * uv.x + t);
+          h += warp / i * sin(i * freqY * uv.y - t) * 0.35;
+        }
+        d = sin((uv.y + h) * bands);
+      } else if (pattern == 2) {
+        float r = length(uv);
+        float a = atan(uv.y, uv.x);
+        float w = 0.0;
+        /* The angular multiple has to be a whole number or the harmonic
+           does not close on itself: atan jumps from PI to -PI along the
+           negative x axis, and any fraction of a turn leaves a hard seam
+           running out of the centre to the left edge — visible as a step
+           through every ring it crosses. So freqX is rounded here, and
+           what it counts in this form is petals. Half a petal is not a
+           thing, which is why the slider looks like it sticks. */
+        float k = max(1.0, floor(freqX + 0.5));
+        for (float i = 1.0; i < 10.0; i++) {
+          if (i > layers) break;
+          w += warp / i * cos(i * k * a + i * freqY * r + t);
+        }
+        /* Every angular harmonic meets itself at r = 0 — atan has nothing
+           to tell them apart there — and the pinch that leaves is a
+           starburst behind the headline, which is not weather. Fading the
+           warp in over the first two thirds of the way out keeps the rings
+           round where the copy sits and lets them break up at the corners,
+           which is where you want a ripple to stop looking drawn. */
+        d = sin((r + w * smoothstep(0.0, 0.66, r)) * bands - t);
+      } else {
+        vec2 p = uv;
+        for (float i = 1.0; i < 10.0; i++) {
+          if (i > layers) break;
+          p.x += warp / i * sin(i * freqY * p.y + t);
+          p.y += warp / i * sin(i * freqX * p.x - t);
+        }
+        d = sin(p.x * bands + t) * sin(p.y * bands - t);
       }
 
       /* The original's numerator, kept as a scalar. It runs away wherever
-         the sine passes zero — that overshoot is the filament, and clamping
-         it here is what the framebuffer used to do on its own. */
-      float v = clamp(0.1 / abs(sin(iTime - uv.y - uv.x)), 0.0, 1.0);
+         the field passes zero — that overshoot is the filament, and
+         clamping it here is what the framebuffer used to do on its own.
+         The floor under |d| is not the clamp's job: it keeps a sharp of
+         zero from asking for 0/0 and painting NaN across the hero. */
+      float v = clamp(sharp / max(abs(d), 1e-4), 0.0, 1.0);
 
-      /* The intensity never falls below 0.1 — 0.1/abs(sin) bottoms out where
-         the sine is at full height — and two thirds of the screen sits under
-         0.2. Run straight into a linear ramp that puts most of the page 40%
-         of the way to full brand, which lifts the whole field and hands the
-         near-black reader pool a bright surround to be an oval against. The
-         curve pushes that bulk back down onto the ground and leaves the
-         colour where the filaments are, which is where the old white-hot
-         version carried it too. */
-      v = pow(v, 1.6);
+      /* The intensity never falls below sharp — sharp/|d| bottoms out where
+         the field is at full height — and on the original's numbers two
+         thirds of the screen sits under 0.2. Run straight into a linear
+         ramp that puts most of the page 40% of the way to full brand, which
+         lifts the whole field and hands the near-black reader pool a bright
+         surround to be an oval against. The curve pushes that bulk back
+         down onto the ground and leaves the colour where the filaments are,
+         which is where the old white-hot version carried it too. */
+      v = pow(v, gamma);
 
       /* Shapes the field first, attenuates second. The other way round the
          curve compounds the dim — 0.3 becomes 0.3^1.6, near enough half
@@ -159,6 +261,14 @@
     paperGround: gl.getUniformLocation(program, 'paperGround'),
     paperMid: gl.getUniformLocation(program, 'paperMid'),
     paperHi: gl.getUniformLocation(program, 'paperHi'),
+    pattern: gl.getUniformLocation(program, 'pattern'),
+    layers: gl.getUniformLocation(program, 'layers'),
+    warp: gl.getUniformLocation(program, 'warp'),
+    freqX: gl.getUniformLocation(program, 'freqX'),
+    freqY: gl.getUniformLocation(program, 'freqY'),
+    bands: gl.getUniformLocation(program, 'bands'),
+    sharp: gl.getUniformLocation(program, 'sharp'),
+    gamma: gl.getUniformLocation(program, 'gamma'),
   };
 
   /* ---------- the palette ----------
@@ -217,17 +327,42 @@
     };
   }
 
-  const settings = {
-    hasActiveReminders: false,
-    hasUpcomingReminders: false,
-    /* On by default here, where the component had it off. Its centre dim is
-       a circle struck from the middle of the viewport, and this hero's copy
-       is not a circle — .hero-waves::after already lays an ellipse over the
-       column, sized to the text and measured against it. Running both put a
-       second, tighter, rounder edge inside the first, which on paper read
-       as a bright ring around the headline. One mechanism, the tuned one. */
-    disableCenterDimming: true,
+  /* ---------- the forms ----------
+     A pattern is its index in this list — the shader branches on the
+     number — and a set of numbers that suit it. Switching form adopts
+     those numbers, because the same eight that make flow read as marbling
+     make ripple read as a dartboard; passing knobs alongside the switch
+     overrides them one at a time.
+
+     flow's row is the original's literals to the last decimal, and it is
+     the default, so index.html paints exactly the hero it painted before
+     any of this existed. bands is the one number the original did not
+     have: at 1.0 it is the plain uv.y + uv.x it used to add up. */
+  const PATTERNS = ['flow', 'swell', 'ripple', 'silk'];
+
+  const PRESETS = {
+    flow:   { layers: 9, warp: 0.60, freqX: 2.5, freqY: 1.5, bands: 1.0, sharp: 0.10, gamma: 1.6, speed: 1.0 },
+    swell:  { layers: 4, warp: 0.28, freqX: 2.0, freqY: 1.2, bands: 6.0, sharp: 0.09, gamma: 1.5, speed: 0.8 },
+    ripple: { layers: 3, warp: 0.16, freqX: 3.0, freqY: 0.8, bands: 9.0, sharp: 0.09, gamma: 1.6, speed: 0.9 },
+    silk:   { layers: 2, warp: 0.20, freqX: 2.0, freqY: 1.4, bands: 5.0, sharp: 0.05, gamma: 1.7, speed: 0.7 },
   };
+
+  const settings = Object.assign(
+    {
+      hasActiveReminders: false,
+      hasUpcomingReminders: false,
+      /* On by default here, where the component had it off. Its centre dim
+         is a circle struck from the middle of the viewport, and this hero's
+         copy is not a circle — .hero-waves::after already lays an ellipse
+         over the column, sized to the text and measured against it. Running
+         both put a second, tighter, rounder edge inside the first, which on
+         paper read as a bright ring around the headline. One mechanism, the
+         tuned one. */
+      disableCenterDimming: true,
+      pattern: 'flow',
+    },
+    PRESETS.flow
+  );
 
   host.appendChild(canvas);
   host.setAttribute('data-ready', '');
@@ -236,8 +371,8 @@
      iResolution stays in CSS pixels, as it was in the component: the shader
      reasons about the viewport, and the device ratio only decides how finely
      it is sampled. Capped at 2 — this is a full-screen fragment shader with
-     nine turns of the loop per pixel, and a phone's third multiplier costs
-     2.25x the work for a difference nobody can see through the veil. */
+     up to nine turns of the loop per pixel, and a phone's third multiplier
+     costs 2.25x the work for a difference nobody can see through the veil. */
   let w = 0;
   let h = 0;
 
@@ -263,11 +398,11 @@
      not. */
   if (typeof ResizeObserver === 'function') {
     new ResizeObserver(() => {
-      if (resize()) draw(time);
+      if (resize()) draw();
     }).observe(host);
   } else {
     window.addEventListener('resize', () => {
-      if (resize()) draw(time);
+      if (resize()) draw();
     });
   }
 
@@ -291,44 +426,54 @@
   if (window.myadhdTheme && window.myadhdTheme.onChange) {
     window.myadhdTheme.onChange(() => {
       readTheme();
-      if (stillness.matches) {
+      /* The cross-fade is a step per frame, so it only happens if frames
+         are happening. With the loop stopped — reduced motion, or a caller
+         that has paused us — the turn has to be taken here or the field
+         keeps the old theme's ramp under the new theme's page. */
+      if (!raf) {
         invert = invertTo;
-        draw(time);
+        draw();
       }
     });
   }
 
   /* ---------- the loop ----------
      Held at a frame that reads well rather than run, when the reader has
-     asked for less movement. t=0 is not that frame: sin(-uv.y - uv.x) goes
-     to zero right through the middle of the screen, and the division puts a
-     white cross behind the headline. */
+     asked for less movement. Phase 0 is not that frame: in flow,
+     sin(-uv.y - uv.x) goes to zero right through the middle of the screen,
+     and the division puts a white cross behind the headline. */
   const STILL_FRAME = 2.4;
 
-  /* Every appearance of iTime in the shader is a plain `+ iTime` inside a
-     sin or a cos, so the whole field is 2*PI-periodic in it and the clock
-     can be wrapped there with no visible seam — it is the same frame.
+  /* Every appearance of t in the shader is a plain + or - t inside a sin or
+     a cos, and every coefficient on it is a whole number, so the whole
+     field is 2*PI-periodic in it and the clock can be wrapped there with no
+     visible seam — it is the same frame.
 
      Which is not a nicety. The fragment shader is declared mediump, and
      that follows iTime in as a uniform: by t=1000 the gap between two
      representable mediump values is about 1.0, so a page left open for a
      quarter of an hour would quantise and then stop moving altogether.
      Wrapped, the clock never leaves [0, 2*PI) and keeps full precision for
-     as long as the tab is open. */
+     as long as the tab is open.
+
+     It is also why speed is not a uniform and the phase is accumulated
+     here rather than read off the wall clock. A shader that multiplied
+     iTime by 0.8 would take the wrap with it, and 2*PI * 0.8 is not a whole
+     turn of anything — the field would jump every few seconds. Scaling the
+     step before the wrap keeps the seam where the sines put it. */
   const LOOP = Math.PI * 2;
 
-  let start = 0;
   let last = 0;
-  let time = STILL_FRAME;
+  let phase = STILL_FRAME;
   let raf = 0;
 
-  function draw(t) {
+  function draw() {
     /* iResolution is a divisor in the very first line of the shader. Asked
        to paint before the hero has been laid out, it would divide by zero
        and flood the canvas with NaN-white. */
     if (!w || !h) return;
     const p = palette();
-    gl.uniform1f(u.iTime, t % LOOP);
+    gl.uniform1f(u.iTime, phase);
     gl.uniform1i(u.disableCenterDimming, settings.disableCenterDimming ? 1 : 0);
     gl.uniform1f(u.invert, invert);
     gl.uniform3fv(u.inkGround, p.inkGround);
@@ -337,30 +482,44 @@
     gl.uniform3fv(u.paperGround, p.paperGround);
     gl.uniform3fv(u.paperMid, p.paperMid);
     gl.uniform3fv(u.paperHi, p.paperHi);
+    gl.uniform1i(u.pattern, Math.max(0, PATTERNS.indexOf(settings.pattern)));
+    gl.uniform1f(u.layers, settings.layers);
+    gl.uniform1f(u.warp, settings.warp);
+    gl.uniform1f(u.freqX, settings.freqX);
+    gl.uniform1f(u.freqY, settings.freqY);
+    gl.uniform1f(u.bands, settings.bands);
+    gl.uniform1f(u.sharp, settings.sharp);
+    gl.uniform1f(u.gamma, settings.gamma);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
   function frame(now) {
     raf = requestAnimationFrame(frame);
-    if (!start) start = last = now;
+    if (!last) last = now;
     /* Off the wall clock rather than a frame count, so the turn takes 0.35s
        on a 120Hz phone and on a 60Hz monitor alike. Capped, because a tab
        that has been asleep hands back one enormous first delta. */
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
-    time = (now - start) / 1000;
+
+    phase = (phase + dt * settings.speed) % LOOP;
+    if (phase < 0) phase += LOOP;
 
     if (invert !== invertTo) {
       const step = dt / 0.35;
       invert = Math.abs(invertTo - invert) <= step ? invertTo : invert + Math.sign(invertTo - invert) * step;
     }
 
-    draw(time);
+    draw();
   }
 
   function play() {
     if (raf || stillness.matches) return;
-    start = 0;
+    /* Not zero-ing the phase: it is the field's position, and picking the
+       loop back up after a hidden tab or a scrub should carry on from where
+       the field was, not snap it back to the held frame. Only the delta's
+       origin resets, or the first step would be the whole gap. */
+    last = 0;
     raf = requestAnimationFrame(frame);
   }
 
@@ -380,23 +539,50 @@
     stillness.addEventListener('change', () => {
       if (stillness.matches) {
         pause();
-        time = STILL_FRAME;
+        phase = STILL_FRAME;
         invert = invertTo;
-        draw(time);
+        draw();
       } else {
         play();
       }
     });
   }
 
-  /* The switches the component took as props, for whoever wants them next. */
+  /* The switches the component took as props, and the eight the shader
+     grew — for the lab, and for whoever wants them next. */
   window.myadhdWaves = {
+    patterns: PATTERNS.slice(),
+    presets() {
+      const out = {};
+      PATTERNS.forEach((name) => (out[name] = Object.assign({}, PRESETS[name])));
+      return out;
+    },
+    get() {
+      return Object.assign({}, settings);
+    },
+    /* A form arrives with its own numbers; anything passed alongside it
+       wins over them, so set({pattern:'silk', bands:4}) means what it
+       looks like it means. */
     set(next) {
+      if (next && next.pattern && next.pattern !== settings.pattern && PRESETS[next.pattern]) {
+        Object.assign(settings, PRESETS[next.pattern]);
+      }
       Object.assign(settings, next);
       /* Re-measured, not just repainted: a caller reaching for this may well
          be doing so because something about the page just moved. */
       resize();
-      draw(time);
+      draw();
+    },
+    /* One frame at one phase. The reduced-motion hold is this with the
+       still frame; the lab's scrubber is this with a slider. */
+    seek(t) {
+      phase = ((t % LOOP) + LOOP) % LOOP;
+      draw();
+    },
+    play,
+    pause,
+    phase() {
+      return phase;
     },
   };
 
@@ -404,6 +590,6 @@
   /* Painted once before the first frame is asked for, so the hero never
      shows an empty canvas — and so the held frame is there at all when the
      reader has asked for stillness. */
-  draw(time);
+  draw();
   play();
 })();

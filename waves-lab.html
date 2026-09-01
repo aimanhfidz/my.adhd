@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>waves — the workbench</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#FFFFFF" />
+
+<!-- Not a page of the site. It is the hero, exactly as landing.css builds
+     it — same veil, same copy, same type — with the shader's knobs on a
+     panel beside it, because the only question worth asking about a wave
+     is whether the words still read over it. Nothing links here, and it is
+     not in the service worker's shell.
+
+     Dial in a look, then paste the row it writes at the bottom of the
+     panel into the PRESETS table in waves.js. That is the only step that
+     makes a change survive a reload. -->
+
+<script src="theme.js"></script>
+<link rel="stylesheet" href="theme.css" />
+<link rel="stylesheet" href="landing.css" />
+<style>
+  /* ---------- the panel ----------
+     Deliberately not on the brand. It is instrument chrome sitting over the
+     work, and if it shared the page's palette it would be one more thing to
+     read the field through. One dark card, one accent, monospace numbers. */
+  :root{
+    --lab-bg:rgba(18,18,24,.92);
+    --lab-line:rgba(255,255,255,.14);
+    --lab-ink:#EDEDF2;
+    --lab-dim:#9A9AAD;
+    --lab-accent:#8F86FF;
+  }
+  .lab{
+    position:fixed; z-index:50; top:12px; right:12px; width:300px;
+    max-height:calc(100dvh - 24px); overflow:auto;
+    background:var(--lab-bg); color:var(--lab-ink);
+    border:1px solid var(--lab-line); border-radius:14px;
+    padding:12px 13px 13px;
+    font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 18px 50px rgba(0,0,0,.36);
+  }
+  .lab h2{
+    font:inherit; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--lab-dim); margin:0 0 10px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .lab section{border-top:1px solid var(--lab-line); padding:10px 0 2px}
+  .lab section:first-of-type{border-top:0; padding-top:0}
+  .lab .legend{color:var(--lab-dim); letter-spacing:.06em; text-transform:uppercase; font-size:10px; margin-bottom:7px}
+
+  .lab button{
+    font:inherit; color:var(--lab-ink); background:rgba(255,255,255,.06);
+    border:1px solid var(--lab-line); border-radius:8px;
+    padding:5px 9px; cursor:pointer;
+  }
+  .lab button:hover{background:rgba(255,255,255,.12)}
+  .lab button[aria-pressed="true"]{
+    background:var(--lab-accent); border-color:var(--lab-accent); color:#14121F; font-weight:600;
+  }
+  .row{display:flex; gap:6px; flex-wrap:wrap}
+
+  .knob{display:grid; grid-template-columns:1fr auto; align-items:baseline; margin:0 0 7px}
+  .knob label{color:var(--lab-dim)}
+  .knob output{font-variant-numeric:tabular-nums}
+  .knob input{grid-column:1 / -1; width:100%; margin:2px 0 0; accent-color:var(--lab-accent)}
+
+  .check{display:flex; align-items:center; gap:7px; margin:0 0 6px; color:var(--lab-dim); cursor:pointer}
+  .check input{accent-color:var(--lab-accent)}
+
+  .lab pre{
+    margin:8px 0 0; padding:8px; border-radius:8px;
+    background:rgba(0,0,0,.4); border:1px solid var(--lab-line);
+    color:var(--lab-ink); font:11px/1.5 inherit;
+    white-space:pre-wrap; word-break:break-word; user-select:all;
+  }
+  .lab .note{color:var(--lab-dim); margin-top:8px}
+
+  /* Collapsed, the panel is a tab in the corner — the hero has to be
+     lookable at without an instrument sitting on a third of it. */
+  .lab[hidden]{display:none}
+  /* Bottom right, where the panel is not: top right is the theme toggle's
+     corner, and a button that hides the control you most want to reach
+     while judging a field on both grounds is a poor trade. */
+  .lab-open{
+    position:fixed; z-index:50; bottom:calc(12px + env(safe-area-inset-bottom,0px)); right:12px;
+    font:12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+    color:var(--lab-ink); background:var(--lab-bg);
+    border:1px solid var(--lab-line); border-radius:10px;
+    padding:8px 11px; cursor:pointer;
+  }
+
+  /* Two things to strip, because both hide the field while you are judging
+     it: the veil that makes the words legible, and the words. */
+  body.no-veil .hero-waves[data-ready]::after{display:none}
+  body.no-copy .hero-copy,body.no-copy .nav{opacity:0}
+</style>
+</head>
+<body>
+
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+</svg>
+
+<!-- the hero, as shipped -->
+<header class="hero">
+  <div class="hero-waves" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <nav class="nav">
+    <a class="brand-lockup" href="/" aria-label="my.adhd home">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="wordmark">my<span class="accent">.adhd</span></span>
+    </a>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+      <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.9 8.9 0 1 0 11.1 11.1z"/></svg>
+      <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+    </button>
+  </nav>
+
+  <div class="hero-body">
+    <div class="hero-copy">
+      <h1 class="hero-title">Everything out.<br />Sorted into lists.</h1>
+      <p class="hero-sub">
+        A brain dump that answers back. Empty your head into one box and get
+        it back as real tasks — grouped, timed, and each with a first step
+        small enough to actually start.
+      </p>
+      <a class="cta" href="/install">Clear my head</a>
+      <p class="hero-note">No account. Opens offline. About ten seconds.</p>
+    </div>
+  </div>
+</header>
+
+<button class="lab-open" type="button" hidden>waves</button>
+
+<aside class="lab" aria-label="wave controls">
+  <h2>waves <button class="lab-hide" type="button" title="hide the panel">hide</button></h2>
+
+  <section>
+    <p class="legend">form</p>
+    <div class="row" data-forms></div>
+  </section>
+
+  <section>
+    <p class="legend">shape</p>
+    <div data-knobs></div>
+    <div class="row">
+      <button type="button" data-reset>reset this form</button>
+    </div>
+  </section>
+
+  <section>
+    <p class="legend">state</p>
+    <div class="row" data-states></div>
+    <label class="check"><input type="checkbox" data-dim /> shader centre dim</label>
+    <label class="check"><input type="checkbox" data-veil checked /> the veil</label>
+    <label class="check"><input type="checkbox" data-copy checked /> the copy</label>
+  </section>
+
+  <section>
+    <p class="legend">motion</p>
+    <div class="knob">
+      <label for="lab-phase">phase</label><output data-out="phase">0</output>
+      <input id="lab-phase" type="range" min="0" max="6.283" step="0.001" data-phase />
+    </div>
+    <div class="row">
+      <button type="button" data-play>pause</button>
+    </div>
+  </section>
+
+  <section>
+    <p class="legend">the row for waves.js</p>
+    <pre data-snippet></pre>
+    <div class="row" style="margin-top:8px">
+      <button type="button" data-copy-row>copy the row</button>
+    </div>
+    <p class="note">Paste it into PRESETS in waves.js. The URL carries the
+      same settings — bookmark it or send it on.</p>
+  </section>
+</aside>
+
+<!-- Not deferred, and after the hero: an inline script runs while the page
+     is still parsing, so a deferred waves.js would not have booted yet and
+     the panel would have nothing to talk to. -->
+<script src="waves.js"></script>
+<script>
+(function () {
+  const W = window.myadhdWaves;
+  const panel = document.querySelector('.lab');
+  if (!W) {
+    panel.innerHTML = '<h2>waves</h2><p>No WebGL in this browser — the hero falls back to the two glows and there is nothing here to tune.</p>';
+    return;
+  }
+
+  /* Ranges are wide enough to break each form on purpose. A slider that
+     only spans the tasteful part of the space cannot show you where the
+     edge of it is. */
+  const KNOBS = [
+    { k: 'layers', min: 1,    max: 9,   step: 1,     hint: 'harmonics folded in' },
+    { k: 'warp',   min: 0,    max: 1.5, step: 0.01,  hint: 'how far each one pushes' },
+    { k: 'freqX',  min: 0,    max: 8,   step: 0.05,  hint: 'x — angle, in ripple' },
+    { k: 'freqY',  min: 0,    max: 8,   step: 0.05,  hint: 'y — spiral, in ripple' },
+    { k: 'bands',  min: 0.2,  max: 12,  step: 0.05,  hint: 'crests across the field' },
+    { k: 'sharp',  min: 0.01, max: 0.6, step: 0.005, hint: 'filament thickness' },
+    { k: 'gamma',  min: 0.3,  max: 4,   step: 0.05,  hint: 'bulk pushed to ground' },
+    { k: 'speed',  min: -2,   max: 3,   step: 0.05,  hint: 'and which way round' },
+  ];
+
+  const PRESETS = W.presets();
+  const num = (v) => String(Math.round(v * 1000) / 1000);
+
+  /* ---------- the controls ---------- */
+  const forms = panel.querySelector('[data-forms]');
+  W.patterns.forEach((name) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = name;
+    b.dataset.form = name;
+    b.addEventListener('click', () => { W.set({ pattern: name }); sync(); });
+    forms.appendChild(b);
+  });
+
+  const knobs = panel.querySelector('[data-knobs]');
+  KNOBS.forEach((n) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'knob';
+    wrap.innerHTML =
+      '<label for="lab-' + n.k + '" title="' + n.hint + '">' + n.k + '</label>' +
+      '<output data-out="' + n.k + '"></output>' +
+      '<input id="lab-' + n.k + '" type="range" min="' + n.min + '" max="' + n.max + '" step="' + n.step + '" data-knob="' + n.k + '" />';
+    knobs.appendChild(wrap);
+  });
+
+  panel.addEventListener('input', (e) => {
+    const k = e.target.dataset.knob;
+    if (!k) return;
+    W.set({ [k]: parseFloat(e.target.value) });
+    sync();
+  });
+
+  const STATES = [
+    ['brand',    { hasActiveReminders: false, hasUpcomingReminders: false }],
+    ['active',   { hasActiveReminders: true,  hasUpcomingReminders: false }],
+    ['upcoming', { hasActiveReminders: false, hasUpcomingReminders: true }],
+  ];
+  const states = panel.querySelector('[data-states]');
+  STATES.forEach(([name, flags]) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = name;
+    b.dataset.state = name;
+    b.addEventListener('click', () => { W.set(flags); sync(); });
+    states.appendChild(b);
+  });
+
+  panel.querySelector('[data-reset]').addEventListener('click', () => {
+    const p = W.get().pattern;
+    W.set(Object.assign({ pattern: p }, PRESETS[p]));
+    sync();
+  });
+
+  panel.querySelector('[data-dim]').addEventListener('change', (e) => {
+    W.set({ disableCenterDimming: !e.target.checked });
+  });
+  panel.querySelector('[data-veil]').addEventListener('change', (e) => {
+    document.body.classList.toggle('no-veil', !e.target.checked);
+  });
+  panel.querySelector('[data-copy]').addEventListener('change', (e) => {
+    document.body.classList.toggle('no-copy', !e.target.checked);
+  });
+
+  /* ---------- motion ----------
+     Scrubbing is the only way to judge a form honestly: a wave that reads
+     beautifully at one phase can put a bright seam straight through the
+     headline half a turn later, and watching for it to come round is not a
+     method. Touching the slider stops the clock; the button starts it
+     again from wherever it was left. */
+  const phaseIn = panel.querySelector('[data-phase]');
+  const phaseOut = panel.querySelector('[data-out="phase"]');
+  const playBtn = panel.querySelector('[data-play]');
+  let running = true;
+
+  function setRunning(on) {
+    running = on;
+    playBtn.textContent = on ? 'pause' : 'play';
+    if (on) W.play(); else W.pause();
+  }
+
+  phaseIn.addEventListener('input', () => {
+    if (running) setRunning(false);
+    W.seek(parseFloat(phaseIn.value));
+    phaseOut.textContent = num(W.phase());
+  });
+  playBtn.addEventListener('click', () => setRunning(!running));
+
+  /* While it runs, the slider follows the field rather than driving it. */
+  (function follow() {
+    requestAnimationFrame(follow);
+    if (!running) return;
+    phaseIn.value = W.phase();
+    phaseOut.textContent = num(W.phase());
+  })();
+
+  /* ---------- hide ---------- */
+  const opener = document.querySelector('.lab-open');
+  function show(on) {
+    panel.hidden = !on;
+    opener.hidden = on;
+  }
+  panel.querySelector('.lab-hide').addEventListener('click', () => show(false));
+  opener.addEventListener('click', () => show(true));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') show(panel.hidden);
+  });
+
+  /* ---------- what you take away ----------
+     The panel writes the line it would take to make this permanent, in the
+     shape the PRESETS table already has, so making a look real is a paste
+     and not a transcription. */
+  const snippet = panel.querySelector('[data-snippet]');
+  panel.querySelector('[data-copy-row]').addEventListener('click', (e) => {
+    navigator.clipboard.writeText(snippet.textContent).then(() => {
+      e.target.textContent = 'copied';
+      setTimeout(() => (e.target.textContent = 'copy the row'), 1200);
+    });
+  });
+
+  function row(s) {
+    return '  ' + (s.pattern + ':').padEnd(8) +
+      '{ ' + KNOBS.map((n) => n.k + ': ' + num(s[n.k])).join(', ') + ' },';
+  }
+
+  /* ---------- the URL ----------
+     replaceState rather than a hash assignment: a slider fires on every
+     pixel of its travel, and each one would otherwise be a back-button
+     stop of its own. */
+  function writeHash(s) {
+    const q = ['pattern=' + s.pattern].concat(KNOBS.map((n) => n.k + '=' + num(s[n.k])));
+    history.replaceState(null, '', '#' + q.join('&'));
+  }
+
+  function readHash() {
+    const h = location.hash.slice(1);
+    if (!h) return;
+    const next = {};
+    h.split('&').forEach((pair) => {
+      const [k, v] = pair.split('=');
+      if (k === 'pattern' && W.patterns.indexOf(v) !== -1) next.pattern = v;
+      else if (KNOBS.some((n) => n.k === k) && isFinite(parseFloat(v))) next[k] = parseFloat(v);
+    });
+    /* The form first and on its own, so its preset lands before the numbers
+       that were meant to override it. */
+    if (next.pattern) W.set({ pattern: next.pattern });
+    W.set(next);
+  }
+
+  /* ---------- one refresh for all of it ----------
+     Every control reads the shader's own settings back rather than
+     remembering what it last sent, so switching form — which adopts a whole
+     row of numbers at once — moves the sliders too. */
+  function sync() {
+    const s = W.get();
+    panel.querySelectorAll('[data-form]').forEach((b) => {
+      b.setAttribute('aria-pressed', String(b.dataset.form === s.pattern));
+    });
+    const state = s.hasActiveReminders ? 'active' : s.hasUpcomingReminders ? 'upcoming' : 'brand';
+    panel.querySelectorAll('[data-state]').forEach((b) => {
+      b.setAttribute('aria-pressed', String(b.dataset.state === state));
+    });
+    KNOBS.forEach((n) => {
+      panel.querySelector('[data-knob="' + n.k + '"]').value = s[n.k];
+      panel.querySelector('[data-out="' + n.k + '"]').textContent = num(s[n.k]);
+    });
+    panel.querySelector('[data-dim]').checked = !s.disableCenterDimming;
+    snippet.textContent = row(s);
+    writeHash(s);
+  }
+
+  /* A hash typed into the bar, or a link followed from a note, changes the
+     URL without reloading the page — so the panel has to be told. Our own
+     writes go through replaceState, which does not fire this, so there is
+     no loop to break. */
+  window.addEventListener('hashchange', () => { readHash(); sync(); });
+
+  readHash();
+  sync();
+})();
+</script>
+</body>
+</html>
