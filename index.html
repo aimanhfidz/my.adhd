@@ -85,22 +85,20 @@
   <div class="hero-body">
 
     <div class="hero-copy">
-      <!-- One word, split so the page can play its own argument before
-           anyone reads it: the letters arrive from everywhere at once, at
-           the same volume, with nothing marked first — and land as one
-           thing. The spans are choreography and carry no meaning, so the
-           heading is named outright rather than left to be spelled out.
-           They sit on one line because a newline between two inline boxes
-           is a space, and a space is a gap in the middle of the word. -->
-      <h1 class="hero-title" aria-label="Everything."><span>E</span><span>v</span><span>e</span><span>r</span><span>y</span><span>t</span><span>h</span><span>i</span><span>n</span><span>g</span><span class="stop">.</span></h1>
-      <p class="hero-sub">
-        It all arrives at once, at the same volume, with nothing marked
-        first. Put the whole lot in one box and get it back as real tasks
-        — grouped, timed, and each with a first step small enough to
-        actually start.
-      </p>
-      <a class="cta" href="/install" data-app-link>Clear my head</a>
-      <p class="hero-note">No account. Opens offline. About ten seconds.</p>
+      <!-- The tagline, split by word rather than by letter, and grouped
+           into three fixed rows rather than left to wrap wherever the
+           viewport happens to break it. Each row reads as a step up in
+           volume — the setup said quietly, the subject stated plainly,
+           the payoff said loudest — so the type size itself performs the
+           sentence: it gets louder exactly where the sentence does. The
+           last row carries the brand gradient, because it's the one claim
+           in the hero. Spans are choreography and carry no meaning, so the
+           heading is named outright via aria-label. -->
+      <h1 class="hero-title" aria-label="We make sure what's on your mind never slips away.">
+        <span class="htl htl-1"><span class="htw">We</span><span class="htw">make</span><span class="htw">sure</span></span>
+        <span class="htl htl-2"><span class="htw">what's</span><span class="htw">on</span><span class="htw">your</span><span class="htw">mind</span></span>
+        <span class="htl htl-3"><span class="htw">never</span><span class="htw">slips</span><span class="htw">away.</span></span>
+      </h1>
     </div>
   </div>
 </header>
@@ -209,30 +207,52 @@
 <!-- ============ WHY — four findings, under the fold ============ -->
 <section class="why">
 
+  <!-- A screen of its own, like the four it introduces. It used to be a
+       band of text on bare ground between the cards above and the first
+       field below — the one thing in this stretch of the page with
+       neither furniture nor weather behind it, which read as a strip
+       left over rather than as the opening of a section.
+
+       Its field is `flow`, the form the hero opens on. Point four ends
+       the section on the same one, so the argument is framed by the
+       field the page began with. Slower than anywhere else on the page:
+       this is a title card, and it should feel like the section drawing
+       breath before it starts. -->
   <div class="why-head">
+    <div class="panel-wave" data-wave="flow" data-wave-speed="0.55" aria-hidden="true"></div>
     <h2 class="why-title">Why a box helps</h2>
     <p class="why-lede">Four things that are true about a head with too much in it.</p>
   </div>
 
+  <!-- Four points, four screens, not four grid cells. Each one gets a wave
+       field of its own kind behind it — see waves.js's "one field, many
+       hosts" and the mount script at the foot of the page — so the point
+       being made and the pattern behind it agree with each other: a calm
+       one for "quiets it", a woven one for "holds four things", rings for
+       time passing, and the hero's own running form back again for
+       "start", because starting is where the page began. -->
   <ul class="panels">
 
     <li class="panel">
+      <div class="panel-wave" data-wave="swell" aria-hidden="true"></div>
       <!-- the agitation settles into three ruled lines -->
       <svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
         <path pathLength="1" class="w" d="M4 30C7 12 11 44 15 22S22 46 26 20S33 42 37 24S43 34 47 26"/>
         <path pathLength="1" class="q" d="M54 26h8"/>
         <path pathLength="1" class="w" d="M70 15h58M70 24h44M70 33h52"/>
       </svg>
-      <h3>A written plan quiets it as well as finishing does</h3>
+      <h3>Writing it down calms your head — even before you finish</h3>
       <p>
-        Interrupt someone mid-task and the task keeps interrupting back,
-        crowding whatever they turned to instead. Writing a specific plan for
-        it stopped that completely — while the task itself stayed undone.
+        An unfinished task keeps tapping on your shoulder, crowding out
+        whatever you turned to instead. Write down exactly what you'll do
+        next and the tapping stops there — while the task itself is still
+        waiting.
       </p>
       <p class="cite">Masicampo &amp; Baumeister, 2011</p>
     </li>
 
     <li class="panel">
+      <div class="panel-wave" data-wave="silk" aria-hidden="true"></div>
       <!-- four crests at full height, and the ones after them collapsing -->
       <svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
         <path pathLength="1" class="q" d="M4 34h124"/>
@@ -240,16 +260,17 @@
         <path pathLength="1" class="q" d="M94 34q9-12 18 0" opacity=".85"/>
         <path pathLength="1" class="q" d="M116 34q8-6 16 0" opacity=".55"/>
       </svg>
-      <h3>Your head holds about four things</h3>
+      <h3>Your head can only hold about four things at once</h3>
       <p>
-        That is the working limit of short-term memory once you stop
-        rehearsing it. A Tuesday has more than four things in it, so the list
-        has to live somewhere that isn't you.
+        That's the limit of short-term memory once you stop rehearsing it.
+        A busy day has more than four things in it, so the list needs a
+        home that isn't you.
       </p>
       <p class="cite">Cowan, 2001</p>
     </li>
 
     <li class="panel">
+      <div class="panel-wave" data-wave="ripple" aria-hidden="true"></div>
       <!-- a ruler whose marks run out well before the distance does -->
       <svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
         <path pathLength="1" class="q" d="M4 36h124"/>
@@ -264,27 +285,28 @@
           <path pathLength="1" d="M125 36V25" opacity=".04"/>
         </g>
       </svg>
-      <h3>Time is the part that isn't visible</h3>
+      <h3>You can't see time passing — so you guess wrong</h3>
       <p>
-        Across 55 studies, people with ADHD were consistently off when judging
-        how long something takes. So the minutes get written down like
-        everything else — an estimate on every task, not a guess.
+        People with ADHD are consistently off when judging how long
+        something takes — not lazy, just blind to the clock. So every task
+        gets its minutes written down, not guessed.
       </p>
       <p class="cite">Marx et al., 55-study meta-analysis</p>
     </li>
 
     <li class="panel">
+      <div class="panel-wave" data-wave="flow" aria-hidden="true"></div>
       <!-- a long run, with only its first inch drawn in -->
       <svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
         <path pathLength="1" class="r" d="M9 30C23 8 37 8 51 30S81 48 95 30S123 12 129 20"/>
         <path pathLength="1" class="s" d="M9 30c4-6 8-10 13-12.5"/>
         <circle class="d" cx="9" cy="30" r="3.4"/>
       </svg>
-      <h3>One first step, small enough to start</h3>
+      <h3>One tiny step is enough to start</h3>
       <p>
-        Plans do the most work when they say when, where and how. So every
-        task comes back with one move on the front of it: the smallest thing
-        that counts as having started.
+        A plan works best when it says exactly what to do first. So every
+        task comes with one small move already picked out — small enough
+        that starting feels easy.
       </p>
       <p class="cite">Gollwitzer &amp; Sheeran, 2006</p>
     </li>
@@ -407,86 +429,171 @@
 </script>
 
 <script>
-/* Whether each sheet is allowed to slide over the one behind it — see
-   THE HANDOFF and THE SECOND HANDOFF in landing.css. Both turn on the box
-   being pinned being exactly one window: the next sheet covers it, so
-   anything of it past the fold can never be scrolled down to.
-   min-height:100dvh makes that true for every ordinary window and false
-   for the ones it isn't — a big text setting, a short landscape phone, a
-   stack of cards on a narrow one — so it is measured rather than assumed,
-   here and again whenever the window changes size.
+/* Every screen's arrival, and its departure.
 
-   The margin is for the sub-pixel: a hero measured at 900.4 in a 900
-   window is not overflowing, it is rounding. */
+   Nothing on this page slides or pins any more — each section keeps its
+   own place in the document and changes hands by fading. So every box
+   below is watched the same way: an observer that TOGGLES rather than
+   latches, adding the flag as the box reaches the middle of the window
+   and taking it off again as it leaves. That is what makes scrolling
+   back up run the transition in reverse instead of replaying an
+   entrance, and it is why none of these reveals disconnect once they
+   have fired.
+
+   data-anim is set from JavaScript rather than written into the markup
+   on purpose: it is what switches a section's resting state to
+   "invisible", and a page whose script never ran must not be a page with
+   a hole in it. */
 (function(){
-  var root = document.documentElement;
-  var hero = document.querySelector('.hero');
-  var how  = document.querySelector('.how');
-  if (!hero) return;
-  var fits = function(el){
-    return !!el && el.scrollHeight <= window.innerHeight + 2;
-  };
-  /* The same question one screen down, with one allowance the hero cannot
-     have. .how is one viewport by min-height only and three cards stacked
-     on a phone are two of them, so it has to be asked — pinned at the top
-     of the window, a box taller than the window keeps its bottom card
-     permanently out of reach.
+  var watching = [];
+  var observerRan = false;
+  var show = function(el){ el.setAttribute('data-in', ''); };
 
-     But it overruns by nine pixels on an ordinary 720-tall window, and
-     nine pixels is not a page, it is a rounding error that would cost the
-     whole handoff. So a small overrun parks the sheet by its bottom edge
-     instead of its top: it scrolls normally until its last line is on the
-     screen and pins there, which leaves every pixel of it reachable on the
-     way in. Past a quarter of a window it stops being a screen with a
-     little too much on it and starts being a page, and then nothing is
-     pinned at all. */
-  var park = function(el){
-    if (!el) return false;
-    var over = el.scrollHeight - window.innerHeight;
-    if (over > window.innerHeight * .25){ el.style.removeProperty('--park-top'); return false; }
-    el.style.setProperty('--park-top', (over > 2 ? -Math.ceil(over) : 0) + 'px');
-    return true;
+  /* `margin` is the band the box has to reach to count as arrived, and
+     the only thing that really differs between the three kinds of box.
+     A point is a whole screen, so its band is a strip across the middle
+     of the window — reveal it the moment its top edge cleared the fold
+     and the whole cascade would play while it was still a sliver at the
+     bottom. A heading or a footer is short, and waits far less.
+
+     Because the points are a screen tall and the band is a strip, the
+     seam between two of them sits inside that band for a moment: the one
+     going out is still fading down while the one coming in is fading up.
+     That overlap IS the crossfade. Widen the band and the two overlap
+     for longer; close it up and the dissolve tightens towards a cut.
+
+     `flag` is which attribute the box carries. Everything uses data-in —
+     absent means hidden — except the hero, which is the one box on the
+     page that starts visible and has to fade OUT as the reader leaves
+     it. Inverting it there keeps the safe state the same as everywhere
+     else: attribute absent, box on screen. */
+  var watch = function(el, margin, opts){
+    if (!el) return;
+    opts = opts || {};
+    var flag = opts.flag || 'data-in';
+    var invert = !!opts.invert;
+    if (opts.ownFlag) el.setAttribute('data-anim', '');
+    if (!('IntersectionObserver' in window)) { if (!invert) show(el); return; }
+    /* Only the boxes that start hidden need the floor below — the hero
+       is inverted, so "never heard from" already leaves it on screen. */
+    if (!invert) watching.push(el);
+    var io = new IntersectionObserver(function(entries){
+      observerRan = true;
+      entries.forEach(function(e){
+        var on = invert ? !e.isIntersecting : e.isIntersecting;
+        if (on) el.setAttribute(flag, '');
+        else el.removeAttribute(flag);
+      });
+    }, { threshold:0, rootMargin:margin });
+    io.observe(el);
   };
-  var fit = function(){
-    root.toggleAttribute('data-cover', fits(hero));
-    root.toggleAttribute('data-cover-how', park(how));
-  };
-  fit();
-  window.addEventListener('resize', fit, { passive:true });
-  /* the fonts land after first paint and the copy is set in one of them */
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+
+  /* The hero: visible at rest, faded once the page has left it, back
+     again on the way up. Its band is generous — the copy should be gone
+     by the time the next screen owns the window, not still dimming. */
+  watch(document.querySelector('.hero'), '-30% 0px -30% 0px',
+        { ownFlag:true, flag:'data-out', invert:true });
+
+  document.querySelectorAll('.how, .why').forEach(function(sheet){
+    watch(sheet, '0px 0px -40% 0px', { ownFlag:true });
+  });
+  /* The title card and the four points are all screens, so they share a
+     band and a toggle — each fades in as it takes the window and back
+     out as it gives it up. */
+  document.querySelectorAll('.why .why-head, .why .panel').forEach(function(el){
+    watch(el, '-35% 0px -35% 0px');
+  });
+  watch(document.querySelector('.why-foot'), '0px 0px -45% 0px');
+  /* The footer owns its own flag, being neither a sheet nor inside .why. */
+  watch(document.querySelector('.site-foot'), '0px 0px -25% 0px', { ownFlag:true });
+
+  /* The floor under all of it.
+
+     Every rule these flags drive opens at opacity 0, so a reveal that
+     never arrives is not a missing flourish — it is the middle of the
+     page left blank. Feature-detecting the constructor does not cover
+     that: an IntersectionObserver can exist, accept an observe(), and
+     never call back, which is exactly what happens in a browser that is
+     not running its rendering pipeline. Measured, on this page, on an
+     element filling the viewport.
+
+     So the test is not "does the API exist" but "has it ever spoken".
+     A working browser fires one callback per observed element almost
+     immediately — intersecting or not — so a single tick is proof
+     enough, and three seconds is far longer than that takes. If nothing
+     has been heard by then, the observers are not going to speak, and
+     everything still waiting is shown outright. Worst case a reader on
+     a broken engine gets the page without its entrances, which is the
+     page. */
+  setTimeout(function(){
+    if (observerRan) return;
+    watching.forEach(show);
+  }, 3000);
 })();
 </script>
 
 <script>
-/* Each sheet's own arrival — the three cards, and then the four findings.
-   Everything the reveals do is in landing.css under THE HANDOFF and THE
-   SECOND HANDOFF; all that happens here is the two flags they hang off,
-   and both sheets hang off the same pair, because they are the same
-   gesture happening twice.
+/* One wave field per point below — see waves.js's "one field, many hosts".
+   Deferred to DOMContentLoaded rather than run inline here: waves.js is
+   itself deferred, so at the moment this script is parsed
+   window.myadhdWaves.mount does not exist yet, and DOMContentLoaded is the
+   first point guaranteed to run after every deferred script has. */
+document.addEventListener('DOMContentLoaded', function(){
+  var W = window.myadhdWaves;
+  if (!W || !W.mount) return;
 
-   data-anim is set from JavaScript rather than written into the markup on
-   purpose: it is what switches the section's resting state to "invisible",
-   and a page whose script never ran must not be a page with a hole in it.
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-   The bottom margin is what makes each reveal part of its transition
-   rather than a thing that happens after it — the content starts landing
-   a little under half a screen in, so it is arriving while the sheet is
-   still coming up rather than waiting for it to stop. Once each, then
-   they let go. */
-(function(){
-  document.querySelectorAll('.how, .why').forEach(function(sheet){
-    sheet.setAttribute('data-anim', '');
-    var show = function(){ sheet.setAttribute('data-in', ''); };
-    if (!('IntersectionObserver' in window)) { show(); return; }
-    var io = new IntersectionObserver(function(entries){
-      if (!entries.some(function(e){ return e.isIntersecting; })) return;
-      show();
-      io.disconnect();
-    }, { threshold:0, rootMargin:'0px 0px -40% 0px' });
-    io.observe(sheet);
+  /* A small, tasteful jitter so four reloads don't paint the exact same
+     four fields — the shape stays the one tuned for the pattern, only its
+     particulars drift. Skipped under reduced motion: STILL_FRAME in
+     waves.js was tuned against each preset's own numbers, and a shifted
+     warp is a shifted set of zero-crossings — not a risk worth taking for
+     a reader who asked for the calm, exact version. */
+  function jitter(base, amount){
+    return base * (1 - amount + Math.random() * amount * 2);
+  }
+
+  var presets = W.presets ? W.presets() : {};
+
+  document.querySelectorAll('.panel-wave').forEach(function(host){
+    var pattern = host.getAttribute('data-wave') || 'flow';
+    var base = presets[pattern] || {};
+    var opts = { pattern: pattern };
+    /* An optional per-host override of the preset's pace, which the
+       section's title card uses to run the hero's own form slower than
+       the hero does — same weather, held back. Read before the jitter so
+       a written speed is taken as given rather than wobbled. */
+    var speed = parseFloat(host.getAttribute('data-wave-speed'));
+    if (!isNaN(speed) && speed > 0) opts.speed = speed;
+    if (!reduceMotion) {
+      if (typeof base.warp === 'number') opts.warp = jitter(base.warp, 0.12);
+      if (typeof base.freqX === 'number') opts.freqX = jitter(base.freqX, 0.08);
+      if (typeof base.freqY === 'number') opts.freqY = jitter(base.freqY, 0.08);
+    }
+
+    var field = W.mount(host, opts);
+    if (!field) return;
+
+    /* A random point in the loop rather than always frame zero, for the
+       same reason as the jitter above — and the same reduced-motion
+       exception, so a still reader always gets the one frame it was
+       chosen for. */
+    if (!reduceMotion) field.seek(Math.random() * Math.PI * 2);
+
+    /* Off the GPU when nowhere near the viewport — the crossfade above
+       already fades the canvas out well before this, so a generous
+       margin here never catches a field mid fade-in. */
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting) field.play(); else field.pause();
+        });
+      }, { rootMargin: '60% 0px' });
+      io.observe(host);
+    }
   });
-})();
+});
 </script>
 
 <script>

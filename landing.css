@@ -146,6 +146,24 @@ body{
 /* ============ HERO — one viewport ============ */
 .hero{
   position:relative;
+  /* Above the footer, and opaque, for the same reason <main> is both —
+     the footer holds at the bottom of the window and everything that
+     scrolls over it has to be a solid sheet stacked in front of it. The
+     hero is a sibling of main rather than part of it, so main's own
+     z-index does not cover this box, and left at `auto` against the
+     footer's 0 the later element in the DOM wins: the footer painted
+     straight over the hero and sat there from the top of the page.
+
+     The ground matters as much as the order. This box was transparent —
+     it had nothing of its own to paint and let the page's ground show
+     through, which with a sticky footer behind it means showing the
+     footer. --surface is what was showing through anyway, so nothing
+     about the hero at rest changes; it is simply painted here now rather
+     than borrowed from below. The wave field and the glows sit on top of
+     it exactly as before, and it is also what shows if WebGL never
+     starts and there is no canvas at all. */
+  z-index:1;
+  background:var(--surface);
   min-height:100dvh;
   /* One row now. The bar is fixed to the window and out of the flow
      entirely, so the hero holds its space with padding instead of with a
@@ -389,101 +407,115 @@ body{
    copy column is held to above 820px — the word sets at 4.75em, so 116px
    is the largest that stays inside it without the column widening for a
    measure only the sub needs. */
+/* Sized for a sentence, not a single word — the 116px ceiling "Everything."
+   used would set nine words across three screens. Still the biggest thing
+   in the hero: bold, tight leading, held to a measure that wraps it onto
+   two or three lines rather than one long ragged one.
+
+   Sized up a step from its first pass, now that the explainer paragraph
+   under it is gone — the sentence is the only thing above the fold that
+   argues the app's case, so it gets the room the paragraph used to hold. */
+/* Base weight and spacing for all three rows; each row overrides its own
+   font-size below. line-height is per-row too (a 74px line and a 32px
+   line don't want the same leading), so it isn't set here. */
 .hero-title{
-  font-size:clamp(44px,min(16vw,13vh),116px); font-weight:800;
-  letter-spacing:-.045em; line-height:1;
-  margin-bottom:clamp(8px,1.5vh,15px);
-}
-.hero-sub{
-  font-size:clamp(13.5px,min(1.85vh,3.9vw),18px); color:var(--muted);
-  max-width:44ch; margin-bottom:clamp(14px,2.6vh,26px);
+  font-weight:800; letter-spacing:-.02em;
 }
 
 /* ---------- the arrival ----------
-   The hero performs the sentence underneath it. Eleven letters come in
-   from everywhere at once, at the same volume, with nothing marked first,
-   and settle into one word — which is the whole claim of the page, made
-   before it is read. The full stop is the one thing that is marked: it
-   lands last, after the mess has resolved, because closing it is the
-   point. Then the copy, the button and the note come up behind it in that
-   order, so the eye is walked down to the one thing there is to press.
+   "Everything." played chaos resolving into order — eleven letters thrown
+   in from every side, settling into one word, because that's what the app
+   does to a dump. This sentence is not a mess to resolve. It's a promise,
+   and a promise doesn't arrive scattered — it arrives the way it's said,
+   one word after the next, in reading order.
 
-   Nothing here changes the hero at rest, and that is what the backwards
-   fill is for. It holds the 0% state through the delay — so there is no
-   flash of a finished hero a beat before it starts — and releases at the
-   end rather than pinning the finished values on for good: an animation
-   filling forwards would have left transform:none sitting over the top of
-   .cta:hover's lift, and the button would never move again.
+   It's also said the way a sentence like this is actually said out loud:
+   quiet on the setup, plain on the subject, and loud on the payoff. Three
+   rows, three sizes, each one bigger than the last — "We make sure" is
+   barely half the size of "never slips away." So the type is doing the
+   same job twice: the words carry the meaning and the scale carries the
+   emphasis, landing on the one line that's the actual point.
 
-   The scatter is written in em, so it is a proportion of the word at every
-   width. A flat 40px is a shrug at 116px and a catastrophe at 44. Blur
-   goes in em for the same reason. Splitting a word into inline-blocks
-   costs the kerning between the letters — checked against the font, which
-   kerns no pair in this one, so the word sets to the pixel it always did.
+   The last row holds back a beat longer than the stagger predicts, so the
+   sentence visibly takes a breath before it says the thing it's actually
+   about — then lands in the brand gradient, the one colour in the hero.
 
-   All of it is CSS. The word is in the markup, not built by a script, so
-   with the stylesheet gone or the animation refused the hero is exactly
-   the hero it was. */
+   Nothing here changes the hero at rest: the backwards fill holds the 0%
+   state through each word's delay, so there's no flash of a finished hero
+   a beat before it starts, and the fill releases once the entrance ends
+   rather than pinning transform:none over the top of .cta:hover's lift.
+
+   All of it is CSS, driven off the words already in the markup — with the
+   stylesheet gone or the animation refused, the hero is exactly the hero
+   it was. */
 .hero-copy{
   /* the settle: most of the distance early, then a long quiet tail */
   --in-ease:cubic-bezier(.16,1,.3,1);
-  /* the stop, which is allowed to overshoot because it is a full stop */
-  --in-pop:cubic-bezier(.2,1.55,.4,1);
+  /* the payoff's landing, allowed to overshoot slightly because it's the point */
+  --in-pop:cubic-bezier(.2,1.4,.4,1);
 }
-/* nowrap because the split invented a break the word never had: one word
-   has nowhere to break, eleven inline-blocks have ten places, and on a
-   narrow window the letters went over two lines. relative because the
-   bloom hangs off it. */
-.hero-title{position:relative; white-space:nowrap}
-.hero-title span{
-  display:inline-block;
-  animation:hero-letter .92s var(--in-ease) 90ms backwards;
+/* A column of three rows, not a single wrapped block — the line breaks
+   are the design, not wherever the viewport happens to put them. relative
+   because the bloom hangs off it. */
+.hero-title{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center;
+  margin-bottom:clamp(20px,3.4vh,34px);
 }
-/* Five from the left and five from the right, five from above and five
-   from below, five oversized and five under. Read as a set they are a
-   scatter; totalled they lean nowhere, which is what stops the word from
-   looking like it was thrown in from one side. */
-.hero-title span:nth-child(1){--lx:-.46em; --ly:-.60em; --lr:-14deg; --ls:1.35; --lb:.16em}
-.hero-title span:nth-child(2){--lx: .52em; --ly: .64em; --lr: 12deg; --ls: .55; --lb:.12em}
-.hero-title span:nth-child(3){--lx:-.74em; --ly: .34em; --lr:  9deg; --ls:1.22; --lb:.15em}
-.hero-title span:nth-child(4){--lx: .30em; --ly:-.72em; --lr:-10deg; --ls: .66; --lb:.11em}
-.hero-title span:nth-child(5){--lx:-.26em; --ly: .80em; --lr: 15deg; --ls:1.28; --lb:.14em}
-.hero-title span:nth-child(6){--lx: .70em; --ly:-.30em; --lr:-13deg; --ls: .60; --lb:.13em}
-.hero-title span:nth-child(7){--lx:-.62em; --ly:-.46em; --lr:  7deg; --ls:1.16; --lb:.12em}
-.hero-title span:nth-child(8){--lx: .22em; --ly: .74em; --lr:-16deg; --ls: .70; --lb:.15em}
-.hero-title span:nth-child(9){--lx:-.34em; --ly:-.68em; --lr: 11deg; --ls:1.30; --lb:.13em}
-.hero-title span:nth-child(10){--lx:.60em; --ly: .44em; --lr: -8deg; --ls: .72; --lb:.11em}
-/* Not one of the ten. It does not travel, it is not blurred, and it does
-   not arrive until they have all stopped moving. */
-.hero-title .stop{animation:hero-stop .46s var(--in-pop) 640ms backwards}
+/* Each row is its own flex line so a narrow phone can still wrap a row
+   internally as a last resort, without disturbing the row above or
+   below it. column-gap is the word-spacing the split spans lost. */
+.htl{display:flex; flex-wrap:wrap; justify-content:center; column-gap:.32em}
+.htl-1{font-size:clamp(18px,min(4.4vw,5vh),34px); line-height:1.25; margin-bottom:.1em}
+.htl-2{font-size:clamp(26px,min(6.4vw,7.2vh),50px); line-height:1.18; margin-bottom:.06em}
+.htl-3{font-size:clamp(42px,min(10.4vw,11.6vh),88px); line-height:1.1}
 
-@keyframes hero-letter{
-  0%{
-    opacity:0;
-    transform:translate3d(var(--lx),var(--ly),0) rotate(var(--lr)) scale(var(--ls));
-    filter:blur(var(--lb));
-  }
-  /* opaque before it is still: the last third of the travel is the part
-     worth watching, and a letter that is still fading in during it reads
-     as a smudge rather than as a thing coming to rest */
-  60%{opacity:1}
+.hero-title .htw{
+  display:inline-block;
+  animation:hero-word .68s var(--in-ease) both;
+}
+/* Reading order, not a scatter: row 1 first, row 3 last, each word
+   starting while the one before it is still settling. */
+.htl-1 .htw:nth-child(1){animation-delay:70ms}
+.htl-1 .htw:nth-child(2){animation-delay:150ms}
+.htl-1 .htw:nth-child(3){animation-delay:230ms}
+.htl-2 .htw:nth-child(1){animation-delay:310ms}
+.htl-2 .htw:nth-child(2){animation-delay:390ms}
+.htl-2 .htw:nth-child(3){animation-delay:460ms}
+.htl-2 .htw:nth-child(4){animation-delay:530ms}
+/* The payoff row. Brand-gradient text via a clipped background, so "never
+   slips away" is the one place in the hero carrying colour — and the one
+   row sized to actually be the hero. */
+.htl-3 .htw{
+  background:var(--grad); -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+  animation-name:hero-word-accent;
+  animation-timing-function:var(--in-pop);
+}
+.htl-3 .htw:nth-child(1){animation-delay:660ms}
+.htl-3 .htw:nth-child(2){animation-delay:730ms}
+.htl-3 .htw:nth-child(3){animation-delay:800ms}
+
+@keyframes hero-word{
+  0%{opacity:0; transform:translate3d(0,.5em,0); filter:blur(.1em)}
   100%{opacity:1; transform:none; filter:blur(0)}
 }
-@keyframes hero-stop{
-  from{opacity:0; transform:scale(.15)}
-  to{opacity:1; transform:none}
+@keyframes hero-word-accent{
+  0%{opacity:0; transform:translate3d(0,.5em,0) scale(.9); filter:blur(.1em)}
+  70%{opacity:1}
+  100%{opacity:1; transform:none; filter:blur(0)}
 }
 
-/* The light the word lands in. Under the type on a negative layer, inside
-   .hero-body's stacking context — so it is over the wave field and under
-   every letter — and it ends at nothing. The hero at rest is the hero
+/* The light the sentence lands in. Under the type on a negative layer,
+   inside .hero-body's stacking context — so it's over the wave field and
+   under every word — and it ends at nothing. The hero at rest is the hero
    that was there before this rule existed, to the pixel. */
 .hero-title::before{
   content:""; position:absolute; z-index:-1; pointer-events:none;
-  left:50%; top:50%; width:170%; height:260%;
+  left:50%; top:50%; width:170%; height:200%;
   /* Collapsed to a point at rest, not merely centred. The fill is
      backwards, so once the entrance is over the box goes back to whatever
-     it says here — and a box wider than the word, invisible at opacity 0,
+     it says here — and a box wider than the text, invisible at opacity 0,
      is still counted in the page's scroll width. Scaled to nothing it
      measures nothing. The snap back from 1.55 happens at zero opacity. */
   transform:translate(-50%,-50%) scale(0);
@@ -497,19 +529,6 @@ body{
   100%{opacity:0; transform:translate(-50%,-50%) scale(1.55)}
 }
 
-/* Behind the word, in reading order. Each one starts while the thing
-   above it is still settling — a queue of three that waited its turn
-   properly would run past two seconds, and nobody waits that long to be
-   shown a button. */
-.hero-sub{animation:hero-rise .8s var(--in-ease) 540ms backwards}
-.hero-copy .cta{animation:hero-rise .8s var(--in-ease) 690ms backwards}
-.hero-note{animation:hero-rise .8s var(--in-ease) 830ms backwards}
-
-@keyframes hero-rise{
-  from{opacity:0; transform:translate3d(0,14px,0); filter:blur(6px)}
-  to{opacity:1; transform:none; filter:blur(0)}
-}
-
 /* Asked for no motion, the entrance is not slowed down, it is not run.
    The global rule below compresses every duration to nothing but leaves
    the delays standing, which would hold the hero blank for most of a
@@ -517,14 +536,9 @@ body{
    Every element here is visible and in place with no animation on it at
    all, so taking the animation away is the whole fix. */
 @media (prefers-reduced-motion:reduce){
-  .hero-title span,
-  .hero-title::before,
-  .hero-sub,
-  .hero-copy .cta,
-  .hero-note{animation:none !important}
+  .hero-title .htw,
+  .hero-title::before{animation:none !important}
 }
-
-.hero-note{margin-top:clamp(8px,1.4vh,13px); font-size:clamp(12px,1.4vh,13.5px); color:var(--faint)}
 
 /* ============ WHY — the research, under the fold ============
    The hero is still exactly one viewport. This is what the page scrolls to.
@@ -539,11 +553,11 @@ body{
 .why{
   /* The measure, and the gutter that holds it off the window's edges.
      Written as tokens because this box no longer carries the measure
-     itself — its three children do. Same pair, and the same subtraction,
-     the footer keeps: --why-measure is the width of the box the content
-     used to sit in, gutter included, so the inner cap has to spend it
-     back or the findings would run a gutter wider than the foot below
-     them at both ends. */
+     itself — .why-head and .why-foot carry their own. Same pair, and the
+     same subtraction, the footer keeps: --why-measure is the width of the
+     box the content used to sit in, gutter included, so the inner cap has
+     to spend it back or the findings would run a gutter wider than the
+     foot below them at both ends. */
   --why-measure:1080px;
   --why-gutter:clamp(20px,5vw,40px);
   --why-inner:calc(var(--why-measure) - var(--why-gutter) * 2);
@@ -557,47 +571,84 @@ body{
      measure off this box — at 1080 wide its ground stopped at the measure
      and the pinned cards ran on down both margins.
 
-     The padding is a floor, not a gutter: the moment the findings are
-     taller than the window — a phone, always — the box grows past 100dvh
-     and justify-content stops deciding anything. */
+     No padding here any more, and no centring: .panels wants the whole
+     box, edge to edge and top to bottom, the way the hero has it — a
+     wave that stops short of the window on every side reads as a picture
+     in a frame, not as weather. .why-head and .why-foot carry their own
+     padding instead, so the text at either end still sits off the glass. */
   min-height:100dvh;
-  display:flex; flex-direction:column; justify-content:center;
-  padding:clamp(56px,9vh,110px) var(--why-gutter);
+  display:flex; flex-direction:column;
 }
-/* The measure, now that the band no longer carries it. First, so the head
-   below can still take a narrower one of its own. */
-.why-head,
-.panels,
+/* The measure, now that the band no longer carries it — .why-head and
+   .why-foot only. .panels stays full-bleed; see its own rule below. */
 .why-foot{width:100%; max-width:var(--why-inner); margin-inline:auto}
 
+/* The section's title card — a screen of its own, built exactly like the
+   four points it introduces so it reads as one of them rather than as a
+   band of text stranded above them. Same full-bleed box, same centring,
+   same isolation so its own field can sit behind its own words; only the
+   type is bigger, because this one is a title and they are findings.
+
+   No measure on the box, which is why it is out of the shared rule
+   above: the field has to reach the window's edges the way every other
+   screen's does. The measure moves onto the two lines of type instead. */
 .why-head{
-  text-align:center; max-width:36rem;
-  margin:0 auto clamp(32px,5vw,56px);
+  position:relative;
+  min-height:100dvh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+  gap:clamp(6px,1.2vw,10px);
+  padding:clamp(28px,5vh,48px) clamp(20px,5vw,40px);
+  overflow:hidden;
+  isolation:isolate;
 }
+/* the words over the field, the same way a point's are */
+.why-head > *{position:relative; z-index:1}
 .why-title{
-  font-size:clamp(24px,4.2vw,38px); font-weight:800;
+  max-width:18ch;
+  font-size:clamp(30px,5.6vw,52px); font-weight:800;
   letter-spacing:-.035em; line-height:1.08;
 }
 .why-lede{
-  margin-top:clamp(8px,1.4vw,12px);
-  font-size:clamp(14px,1.9vw,17px); color:var(--muted);
+  max-width:38ch;
+  font-size:clamp(15px,2.1vw,19px); color:var(--muted); line-height:1.5;
 }
 
-.panels{display:grid; gap:0; list-style:none}
+/* Four screens, stacked — not four grid cells any more. Each .panel is its
+   own near-full-height segment with a wave field of its own running behind
+   it (.panel-wave, mounted in the script at the foot of the page), so the
+   four findings read as four short scenes rather than four entries in a
+   list. list-style is still here because the element is still a ul>li:
+   the DOM shape that used to make four columns now makes four scenes,
+   without the markup caring which. */
+.panels{display:flex; flex-direction:column; list-style:none}
 .panel{
-  display:flex; flex-direction:column; align-items:flex-start;
-  gap:clamp(8px,1.2vw,11px);
+  position:relative;
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center;
+  gap:clamp(10px,1.6vw,14px);
+  /* Full-bleed, the same measure the hero uses — a wave that fills the
+     whole window, not a box with one running inside it. */
+  min-height:100dvh;
+  justify-content:center;
+  overflow:hidden;
+  isolation:isolate;
 }
+/* Text and figure sit above the wave and its veil. z-index needs the
+   isolation above to mean anything — .panel-wave and its ::after both
+   want to stack under everything else in the same box. */
+.panel > *{position:relative; z-index:1}
 .panel h3{
-  font-size:clamp(16px,1.9vw,18px); font-weight:700;
-  letter-spacing:-.02em; line-height:1.22;
+  max-width:26ch;
+  font-size:clamp(19px,2.6vw,26px); font-weight:800;
+  letter-spacing:-.025em; line-height:1.2;
 }
-.panel p{font-size:clamp(13.5px,1.6vw,15px); color:var(--muted); line-height:1.55}
-/* Pushed to the floor of the cell rather than left under the paragraph, so
-   the four attributions line up as a row of their own across the columns —
-   the paragraphs are different lengths and never will. */
+.panel p{
+  max-width:46ch;
+  font-size:clamp(14px,1.7vw,16px); color:var(--muted); line-height:1.6;
+}
 .panel .cite{
-  margin-top:auto; padding-top:clamp(6px,1vw,10px);
+  margin-top:clamp(4px,.8vw,8px);
   font-size:12px; color:var(--faint); letter-spacing:.015em;
 }
 
@@ -623,35 +674,137 @@ body{
    taken it out of the quiet register the other three figures share. */
 .fig .r{fill:none; stroke:var(--fig-run); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 
-/* ---------- one column ---------- */
-.panel{padding:clamp(24px,4vw,30px) 0; border-top:1px solid var(--line)}
-.panel:first-child{border-top:0}
+/* ---------- one screen, not one column ----------
+   Four columns used to mean four widths to keep in step, and a hairline
+   between them. A stack of full screens doesn't want either: no border
+   to draw a seam across a wave that's crossfading into the next one, no
+   side padding fighting the full-bleed field behind the text. What a
+   hairline used to buy — four things reading as four things rather than
+   one long scroll — is bought instead by each one being its own screen,
+   with its own field, its own colour of motion. */
+.panel{padding:clamp(28px,5vh,48px) clamp(20px,5vw,40px)}
 
-/* ---------- two columns ----------
-   Bounded at both ends on purpose. Every one of these blocks sets all three
-   of padding, border-top and border-left for every cell it touches, so the
-   breakpoints never have to reach across each other to undo one another's
-   edges — the outer cells drop their outer padding instead, which is what
-   keeps the grid flush with the section head above it. */
-@media (min-width:640px) and (max-width:979.98px){
-  .panels{grid-template-columns:repeat(2,1fr)}
-  .panel{padding:clamp(24px,3vw,32px) clamp(20px,3vw,28px)}
-  .panel:nth-child(odd){padding-left:0}
-  .panel:nth-child(even){padding-right:0; border-left:1px solid var(--line)}
-  .panel:nth-child(-n+2){border-top:0}
-  .panel:nth-child(n+3){border-top:1px solid var(--line)}
+/* ---------- the field behind each point ----------
+   One mounted wave per panel (see the script at the foot of the page),
+   absolutely filled and pulled out of the flex flow so it never adds to
+   the gap between the figure and the copy. Held at opacity 0 until
+   waves.js has appended a canvas — data-ready is its own signal that
+   there is something under the veil worth fading in — and then washed in
+   with its point; see "each field arriving with its point" below. */
+/* ---------- the feathered edge ----------
+   Each screen runs its own field on its own canvas, and two independent
+   fields meeting at a shared edge do not agree about anything — not the
+   phase, not the pattern, often not the brightness. Butted together at
+   full strength that disagreement is a ruled line across the page, which
+   is the one thing a stack of dissolving screens cannot have.
+
+   So every field is masked to nothing at its own top and bottom. Where
+   two screens meet, both are already gone: what actually touches is the
+   page's own --surface on either side of the join, which is the same
+   colour, so there is nothing left to draw a line with.
+
+   This reverses a decision made when these panels went full-bleed. The
+   veil's top-and-bottom fade was taken off then, on the reasoning that a
+   band of flat ground between two fields would itself read as a seam.
+   It reads as far less of one than the hard cut that replaced it: a
+   feathered edge has no position for the eye to find, and an abrupt one
+   is nothing but position. The fade belongs here, and this is the better
+   place for it than the veil — a mask takes the canvas AND the wash over
+   it together, where a gradient painted into the veil could only ever
+   lighten the field and left the canvas itself running to the edge.
+
+   The stops walk an ease rather than a straight ramp, for the same
+   reason the reader pool's do: a linear fade is continuous in value but
+   not in slope, and the eye finds the break where the slope changes and
+   draws an edge on it. Eased at both ends there is no corner to find.
+
+   15% is about a sixth of a screen at each end and is deliberately
+   generous — measured against the seam, anything under about a tenth
+   still resolved as a line rather than as weather running out. */
+.panel-wave{
+  position:absolute; inset:0; z-index:0;
+  overflow:hidden; pointer-events:none;
+  opacity:0;
+  -webkit-mask-image:linear-gradient(to bottom,
+    rgba(0,0,0,0) 0%,
+    rgba(0,0,0,.09) 3%,
+    rgba(0,0,0,.32) 6.5%,
+    rgba(0,0,0,.65) 10%,
+    rgba(0,0,0,.9) 13%,
+    rgba(0,0,0,1) 16%,
+    rgba(0,0,0,1) 84%,
+    rgba(0,0,0,.9) 87%,
+    rgba(0,0,0,.65) 90%,
+    rgba(0,0,0,.32) 93.5%,
+    rgba(0,0,0,.09) 97%,
+    rgba(0,0,0,0) 100%);
+  mask-image:linear-gradient(to bottom,
+    rgba(0,0,0,0) 0%,
+    rgba(0,0,0,.09) 3%,
+    rgba(0,0,0,.32) 6.5%,
+    rgba(0,0,0,.65) 10%,
+    rgba(0,0,0,.9) 13%,
+    rgba(0,0,0,1) 16%,
+    rgba(0,0,0,1) 84%,
+    rgba(0,0,0,.9) 87%,
+    rgba(0,0,0,.65) 90%,
+    rgba(0,0,0,.32) 93.5%,
+    rgba(0,0,0,.09) 97%,
+    rgba(0,0,0,0) 100%);
+}
+.panel-wave canvas{display:block; width:100%; height:100%}
+
+/* Only the reader pool from the hero's veil recipe — not the top/bottom
+   fade. The hero needs that fade to hide its field under the nav and end
+   it cleanly at the page's own edge; a point panel has neither a nav
+   sitting on it nor a page edge to explain itself to, and one panel's
+   field now runs edge to edge into the next one's — a forced white band
+   at 14% and 86% would draw exactly the seam this whole redesign is
+   trying to remove. What's left is a pool for the text to sit in, sized
+   for a headline and two sentences rather than the hero's four-word
+   wordmark, and the flat wash so the loudest corner still reads as
+   weather rather than as a picture competing with the words. */
+.panel-wave[data-ready]::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 30rem 21rem at 50% 50%,
+      rgb(var(--wave-rgb) / .92) 0%,
+      rgb(var(--wave-rgb) / .92) 40%,
+      rgb(var(--wave-rgb) / .77) 54%,
+      rgb(var(--wave-rgb) / .54) 66%,
+      rgb(var(--wave-rgb) / .28) 78%,
+      rgb(var(--wave-rgb) / .08) 90%,
+      rgb(var(--wave-rgb) / 0)  100%),
+    rgb(var(--wave-rgb) / var(--wave-veil-a));
 }
 
-/* ---------- four columns ---------- */
-@media (min-width:980px){
-  .panels{grid-template-columns:repeat(4,1fr)}
-  .panel{
-    padding:0 clamp(18px,2.4vw,28px);
-    border-top:0; border-left:1px solid var(--line);
-  }
-  .panel:first-child{padding-left:0; border-left:0}
-  .panel:last-child{padding-right:0}
+/* ---------- each field arriving with its point ----------
+   A long fade, on the same [data-in] the copy above it rides, so the
+   field washes in under the words rather than being there waiting for
+   them. Slower than anything in the cascade — a background that arrives
+   as briskly as a headline reads as a light being switched on.
+
+   This was a scroll-linked crossfade first, animation-timeline:view()
+   dissolving each field into the next, and it was wrong twice over. The
+   fatal way: .panel-wave's nearest scrolling ancestor is .panel, which
+   is overflow:hidden and never scrolls, so the timeline could never
+   resolve — and an unresolved scroll timeline holds its 0% keyframe,
+   which here was opacity 0. Four blank screens, in every browser, not
+   just the one this was caught in. The quieter way: the panels are a
+   screen tall in a screen-tall window, so no two of them are ever on
+   screen together and there was never a moment for one field to dissolve
+   into another. The dissolve the eye actually reads is the scroll
+   itself, one full-bleed field replacing the last.
+
+   A transition rather than an animation, because a transition has no
+   0% to be stranded on: with the class never arriving the field simply
+   stays at the opacity it already had. */
+.panel-wave[data-ready]{
+  opacity:0;
+  transition:opacity 1.1s var(--ease);
 }
+.panel[data-in] .panel-wave[data-ready],
+.why-head[data-in] .panel-wave[data-ready]{opacity:1}
 
 /* The page has to end on the button, not on a paragraph — someone who read
    this far is at the bottom of the document with the hero's CTA a screen
@@ -659,8 +812,7 @@ body{
 .why-foot{
   display:flex; flex-direction:column; align-items:center;
   gap:clamp(16px,2.6vw,22px); text-align:center;
-  margin-top:clamp(38px,6vw,66px);
-  padding-top:clamp(28px,4vw,42px);
+  padding:clamp(38px,6vw,66px) var(--why-gutter) clamp(56px,9vh,110px);
   border-top:1px solid var(--line);
 }
 .why-foot p{
@@ -858,6 +1010,44 @@ body{
      this is the last thing on the page, so nothing else will hold it clear */
   padding-bottom:calc(clamp(20px,2.6vw,28px) + env(safe-area-inset-bottom,0px));
 }
+
+/* ---------- the sticky reveal ----------
+   The footer stops travelling with the page and holds at the bottom of
+   the window, and <main> — which is opaque and stacked above it — slides
+   off to uncover it. The page does not end so much as get out of the
+   way.
+
+   Two things make it work and both are already here: main carries
+   `position:relative; z-index:1` and the page's own --surface, so it is
+   a solid sheet with something to hide behind it; and this band carries
+   --wash, so what it uncovers is a filled band rather than a hole. All
+   this rule adds is the hold, and dropping the footer under main in the
+   stack — it shipped at z-index:1, level with main, which in DOM order
+   would have painted it on top and revealed nothing.
+
+   Sticky rather than fixed on purpose. Fixed would need the page padded
+   by the footer's exact height to leave scroll room for it, measured in
+   JavaScript and re-measured on every resize — the same machinery the
+   handoffs above used to need and no longer do. Sticky takes its own
+   height from the flow and lets go by itself at the document's end.
+
+   ---------- why the guard ----------
+   A bottom-sticky box taller than the window pins its BOTTOM edge to the
+   bottom of the window, which puts its top above the top of the screen
+   with no way to scroll up to it: the address, the social links and half
+   the columns would be unreachable. That is not hypothetical here. This
+   footer is 281px tall once .foot-cols goes to three columns at 760px,
+   and 782px stacked below that — taller than the usable height of most
+   phones. So the reveal is scoped to the widths where the footer is a
+   compact row, and to windows with room to show it. Everywhere else the
+   footer is what it always was: the last thing on the page, in flow.
+
+   The height floor is deliberately well clear of 281px. At exactly the
+   footer's own height the reveal has no travel to happen over and reads
+   as the page simply stopping. */
+@media (prefers-reduced-motion:no-preference) and (min-width:760px) and (min-height:520px){
+  .site-foot{position:sticky; bottom:0; z-index:0}
+}
 .foot-inner{max-width:var(--foot-inner-measure); margin:0 auto; display:grid; gap:clamp(28px,4vw,40px)}
 @media (min-width:760px){
   .foot-inner{
@@ -928,382 +1118,275 @@ body{
 .foot-col .foot-social a:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
 .foot-col .foot-social svg{width:17px; height:17px; display:block}
 
-/* ============ THE HANDOFF — the hero, and the page over it ============
-   Two screens that used to be one scroll are now a change of state: the
-   field stops moving with the page and holds, "What actually happens"
-   rises over it as a sheet, and the hero recedes behind that sheet rather
-   than sliding off the top of it. Then the three cards land and draw
-   themselves in.
+/* ============ THE HANDOFF — one screen giving way to the next =========
+   Every screen on this page now holds its own place in the document and
+   changes hands by fading. Nothing is pinned, nothing slides over
+   anything, and no box travels at a different speed from the page it is
+   on.
 
-   None of it is a scroll listener. The cover is position:sticky, the
-   recede is a scroll-driven animation the compositor owns, and the only
-   JavaScript is one IntersectionObserver that says "the section has
-   arrived" — see the scripts at the foot of index.html. */
+   It used to work the other way. The hero was position:sticky and held
+   while <main> climbed over it as a sheet; .how then held while .why
+   climbed over that; and the two pinned boxes receded behind glass on
+   scroll-linked animations, blurring and shrinking as they went. It read
+   well and it cost more than it looked:
 
-/* The cast the rising sheet throws back onto the field. Ink needs a real
-   shadow — the sheet and the hero are the same near-black and there would
-   otherwise be no edge at all; paper only needs a hint, since white on a
-   pale field already has one. */
-:root{--cover-cast:rgba(28,22,74,.16)}
-:root[data-theme="dark"]{--cover-cast:rgba(0,0,0,.55)}
+     - Two of the three sheets had to be measured against the window on
+       load and on every resize, because pinning a box taller than the
+       viewport strands its last line permanently out of reach. That is
+       what --park-top and the data-cover flags were for.
+     - Pinning one box while the page travels over it is parallax however
+       little it moves, so the whole mechanism had to be withheld from
+       anyone who asked for reduced motion — which left two different
+       pages to reason about.
+     - The recede ran on scroll-driven animations, and those are exactly
+       what the four points below had to be moved off: a timeline that
+       never resolves holds its first keyframe for ever.
 
-/* The corner the rising sheet turns. Not --radius-lg: that one is a card's,
-   read across a 340px box, and the same number spanning the whole window
-   reads as a nick rather than as an edge lifting. Scales with the window
-   for the same reason — it is the width of the sheet that sets how big a
-   corner has to be to register on it. */
-:root{--sheet-radius:clamp(20px,2.6vw,36px)}
+   A fade needs none of that. It does not care how tall the box is, it
+   reverses on its own when the reader scrolls back up, and its resting
+   state is the finished one, so nothing can be stranded mid-transition.
+   The section keeps its opaque ground and its place in the flow; only
+   its opacity changes. */
 
-/* Pinned, so the page slides over the hero instead of past it.
-
-   Behind a flag, and the flag is measured rather than guessed. The page
-   covers this box, so anything of the hero's below the fold can never be
-   scrolled down to — and the hero is one viewport by min-height only. Let
-   its content grow past that, which a large text setting and a short
-   landscape window both do, and pinning would hold the last line
-   permanently off-screen. So index.html measures whether the hero actually
-   fits the window, on load and on every resize, and sets the flag when it
-   does; when it does not, this is exactly the page it was. A media query
-   cannot stand in for that — the overflow is content against window, and
-   text size is not in the query.
-
-   top:0 and not bottom:0. bottom pins a box while it is still BELOW the
-   fold and lets go once it rises past — a footer that comes up to meet
-   you, which is the opposite job. */
-@media (prefers-reduced-motion:no-preference){
-  :root[data-cover] .hero{position:sticky; top:0}
-}
-
-/* The thing that does the covering, and the reason it has to be <main>
-   rather than the sections inside it: .how and .why are 1080 wide and the
-   window is not, so their ground stops at the measure and the pinned field
-   ran on down both margins. */
+/* Still the page's ground, still opaque, still above the hero — it is
+   simply no longer climbing over anything. .how and .why are full-bleed
+   and the window is not always as wide as their measure, so the ground
+   belongs on <main> rather than on the sections inside it. */
 main{
   position:relative; z-index:1;
   background:var(--surface);
 }
-/* Only where there is something pinned behind it to catch the cast — and
-   to turn a corner. Both are the same claim, that this is a sheet in front
-   of something rather than the next thing down the page, so both are
-   behind the same flag: with nothing pinned, a rounded corner is a notch
-   with the page's own ground showing through it. */
-@media (prefers-reduced-motion:no-preference){
-  :root[data-cover] main{
-    box-shadow:0 -30px 56px -22px var(--cover-cast);
-    border-radius:var(--sheet-radius) var(--sheet-radius) 0 0;
-  }
-}
 
-/* ---------- the recede ----------
-   Behind glass: the copy falls back and blurs out, the field dims to
-   almost nothing. Both are driven by the scroll position itself rather
-   than by a transition, so scrubbing back up runs it backwards and a
-   half-scroll holds it half-way — a transition would snap.
+/* The hero fades as the page leaves it, and fades back as the page
+   returns — the same [data-in] toggle every other screen here uses, so
+   scrolling back up brings it home rather than replaying an entrance.
 
-   Guarded twice. @supports because a browser without scroll timelines
-   should get the cover and no recede, which is a perfectly good page; and
-   prefers-reduced-motion because the blanket .01ms rule further up does
-   not help here — a progress timeline reads animation-duration as the
-   length of the range it maps, so .01ms would collapse the whole recede
-   into the first pixel of scroll and blink the hero out. */
+   The field and the glows fade a little less far than the copy. A trace
+   of the wave left under the edge is what stops the last inch of the
+   handoff reading as a plain empty band. */
 @media (prefers-reduced-motion:no-preference){
-  @supports (animation-timeline:scroll()){
-    :root[data-cover] .hero-body{
-      animation:hero-sink linear both;
-      animation-timeline:scroll(root block);
-      /* done a little before the sheet is fully up, so the copy has left
-         rather than been caught half-way under the edge */
-      animation-range:0 84dvh;
-    }
-    :root[data-cover] .hero-waves,
-    :root[data-cover] .hero-glow{
-      animation:hero-dim linear both;
-      animation-timeline:scroll(root block);
-      animation-range:0 100dvh;
-    }
+  .hero[data-anim] .hero-body,
+  .hero[data-anim] .hero-waves,
+  .hero[data-anim] .hero-glow{
+    transition:opacity .75s var(--ease);
   }
-}
-@keyframes hero-sink{
-  from{opacity:1; filter:blur(0px); transform:none}
-  to{opacity:0; filter:blur(9px); transform:translateY(-6vh) scale(.9)}
-}
-/* Not to zero. A trace of the field left under the sheet's edge is what
-   stops the last inch of the transition reading as a plain white gap. */
-@keyframes hero-dim{
-  from{opacity:1}
-  to{opacity:.1}
+  .hero[data-anim][data-out] .hero-body{opacity:0}
+  .hero[data-anim][data-out] .hero-waves,
+  .hero[data-anim][data-out] .hero-glow{opacity:.12}
 }
 
 /* ---------- the arrival ----------
-   The head rises, the three cards land on a stagger, and then each drawing
-   draws itself: the strokes are dashed out and their offset runs back to
-   zero, the closed shapes — the box, the minute chips, the orange dot —
-   pop in where the stroke that leads to them finishes.
+   The head fades up, then the three cards behind it on a short stagger.
 
-   Order is DOM order, which in all three drawings is already the order the
-   thing is read in: the mess, then the funnel, then the box it lands in;
-   each list heading, then its row, then the minutes on the end; the task,
-   then the dot, then the step pulled off the front of it.
+   This was a landing before: the head rose eighteen pixels, each card
+   rose thirty and scaled up from .975, and each drawing then drew itself
+   stroke by stroke off a dashed offset. All of it is gone, and gone the
+   same way the points below it went — the cards no longer travel, they
+   only fade, and the drawing fades with the card it sits on rather than
+   being drawn on afterwards.
 
-   Everything here hangs off [data-anim], which only JavaScript sets. The
-   resting state of this block is "invisible", and a page whose script
+   Fading the whole <svg> is also the only way to leave these drawings
+   their own shading. Several paths in them carry an opacity attribute
+   that IS the depth in the picture, and anything animating opacity per
+   path flattens the lot to full strength — which is why the old version
+   had to dash the strokes out instead, and why the closed shapes needed
+   a separate rule to pop. One fade on the parent scales all of them
+   together and none of that is needed.
+
+   Transitions rather than keyframes, so the whole section comes back
+   down as cleanly as it went up when the reader scrolls away and
+   returns. Everything hangs off [data-anim], which only JavaScript sets:
+   the resting state of this block is "visible", and a page whose script
    never ran must not be a page with a hole in it. */
 @media (prefers-reduced-motion:no-preference){
 
   .how[data-anim] .how-title,
   .how[data-anim] .how-lede,
-  .how[data-anim] .card{opacity:0}
-
-  /* Strokes hide by being dashed away rather than by going transparent —
-     three of these paths carry an opacity attribute of their own, which is
-     the depth in the drawing, and a keyframe animating opacity back to 1
-     would flatten all three to full strength. The closed shapes carry no
-     such attribute, so those do fade. */
-  .how[data-anim] .cfig > *:not(rect):not(circle){
-    stroke-dasharray:1; stroke-dashoffset:1;
+  .how[data-anim] .card{
+    opacity:0;
+    transition:opacity .75s var(--ease);
   }
-  .how[data-anim] .cfig rect,
-  .how[data-anim] .cfig circle{opacity:0}
 
-  .how[data-anim][data-in] .how-title{animation:how-rise .66s var(--ease) both}
-  .how[data-anim][data-in] .how-lede{animation:how-rise .66s var(--ease) .09s both}
-
-  /* the two counters the delays are built out of: --i is which card, and
-     inherits down into that card's drawing; --j is which mark within it */
+  /* --i is which card, and it sets that card's place in the stagger. */
   .cards .card:nth-child(1){--i:0}
   .cards .card:nth-child(2){--i:1}
   .cards .card:nth-child(3){--i:2}
-  .cfig > *:nth-child(1){--j:0}
-  .cfig > *:nth-child(2){--j:1}
-  .cfig > *:nth-child(3){--j:2}
-  .cfig > *:nth-child(4){--j:3}
-  .cfig > *:nth-child(5){--j:4}
-  .cfig > *:nth-child(6){--j:5}
-  .cfig > *:nth-child(7){--j:6}
-  .cfig > *:nth-child(8){--j:7}
-  .cfig > *:nth-child(9){--j:8}
-  .cfig > *:nth-child(10){--j:9}
 
+  .how[data-anim][data-in] .how-title{opacity:1}
+  .how[data-anim][data-in] .how-lede{opacity:1; transition-delay:.08s}
   .how[data-anim][data-in] .card{
-    animation:card-in .8s var(--ease) both;
-    animation-delay:calc(200ms + var(--i,0) * 120ms);
+    opacity:1;
+    transition-delay:calc(160ms + var(--i,0) * 110ms);
   }
-  .how[data-anim][data-in] .cfig > *{
-    animation:fig-draw .75s var(--ease) both;
-    /* after the card it is drawn on has landed */
-    animation-delay:calc(460ms + var(--i,0) * 120ms + var(--j,0) * 75ms);
-  }
-  /* after the rule above, and heavier than it, so the shorthand's
-     animation-name is the one being overridden rather than the reverse */
-  .how[data-anim][data-in] .cfig rect,
-  .how[data-anim][data-in] .cfig circle{
-    animation-name:fig-pop; animation-duration:.46s;
-    transform-box:fill-box; transform-origin:50% 50%;
-  }
+  /* The delays sit on the [data-in] state only, so losing the attribute
+     drops them and the section leaves in one piece rather than
+     unravelling card by card. */
 }
 
-@keyframes how-rise{
-  from{opacity:0; transform:translateY(18px)}
-  to{opacity:1; transform:none}
-}
-@keyframes card-in{
-  from{opacity:0; transform:translateY(30px) scale(.975)}
-  to{opacity:1; transform:none}
-}
-@keyframes fig-draw{
-  from{stroke-dashoffset:1}
-  to{stroke-dashoffset:0}
-}
-/* Overshoots on purpose. The chips and the dot are the only closed shapes
-   in three drawings otherwise made of travelling lines, and landing them
-   flat put them a beat behind the strokes that arrive at them. */
-@keyframes fig-pop{
-  from{opacity:0; transform:scale(.5)}
-  62%{opacity:1; transform:scale(1.07)}
-  to{opacity:1; transform:scale(1)}
-}
+/* ============ THE SECOND HANDOFF — .how, and the findings after it =====
+   Gone, along with the first one, and for the reasons written out up
+   there. .how used to pin at the top of the window while .why climbed
+   over it, receding behind glass on a view() timeline as it went.
 
-/* ============ THE SECOND HANDOFF — .how, and the findings over it =======
-   The same gesture again, one screen down. The hero holds and the loop
-   rises over it; the loop holds and the research rises over that. Three
-   screens, two handoffs, one move — a page that changes state twice
-   rather than a page that scrolls three times.
+   Both halves of that carried a cost this page no longer pays. The pin
+   needed --park-top: .how is one viewport by min-height only, and three
+   cards stacked on a phone are two viewports tall, so index.html had to
+   measure the box against the window on load and on every resize and
+   park it by its bottom edge when it overran — otherwise the last card
+   could never be scrolled to. And the recede rode a scroll-driven
+   animation, the one mechanism this page has now been burned by twice.
 
-   Everything here is the first handoff's machinery pointed at the next
-   pair of boxes, so the two read as one idea rather than as two effects
-   that happen to look alike. */
-
-/* Pinned, behind a flag measured the same way the hero's is: .how is one
-   viewport by min-height only, and a stack of three cards on a phone is
-   two viewports tall. Pin that and its bottom card can never be scrolled
-   down to. index.html measures the box against the window instead of
-   assuming, on load and on every resize.
-
-   --park-top comes from that same measurement and is 0 whenever the sheet
-   fits. When it overruns by a little — a 720-tall window costs it nine
-   pixels — the offset goes negative by exactly the overrun, which parks
-   the sheet by its bottom edge rather than its top: it scrolls until its
-   last line is on screen and pins there, so nothing of it is ever out of
-   reach. Past a quarter of a window the flag is refused outright and this
-   is the page it was.
-
-   And behind the motion query as well as the flag, which is what the hero
-   handoff already did. Pinning one box while the page travels over it is
-   parallax however little it moves — two things on screen going different
-   speeds — so a reader who has asked for less of that should not be given
-   it twice on the way down the page. Under `reduce` this is a section
-   that follows the one above it, which is what the rest of the page
-   becomes too. */
-@media (prefers-reduced-motion:no-preference){
-  :root[data-cover-how] .how{position:sticky; top:var(--park-top,0px)}
-
-  /* The cast the findings throw back onto the cards, and only where there
-     is something pinned behind them to catch it — and the same corner,
-     for the same reason. Same shadow main casts on the hero, same radius:
-     the sheet is the same sheet. Both belong inside this query rather than
-     outside it because both are claims about a box in front of another
-     one, and with nothing pinned there is no behind for them to describe:
-     the cast would fall on the section's own ground and the corner would
-     be a notch cut out of it. */
-  :root[data-cover-how] .why{
-    box-shadow:0 -30px 56px -22px var(--cover-cast);
-    border-radius:var(--sheet-radius) var(--sheet-radius) 0 0;
-  }
-}
-
-/* ---------- the recede ----------
-   Behind glass, like the hero: the cards fall back and blur out as the
-   research climbs over them. Driven by the scroll position rather than by
-   a transition, so scrubbing back up runs it backwards.
-
-   On .how itself rather than on its contents, which is only safe because
-   main's ground is directly behind it and is the same --surface: what
-   fades out here is a sheet against an identical sheet, so the recede
-   reads as the cards leaving and not as a hole opening.
-
-   view() and not scroll(root): the range wanted is exactly the stretch
-   where .how is parked at the top of the window and the sheet slides up
-   over it, which is what `exit` means — the box's own height of scroll,
-   however close to a viewport that happens to be. Written as scroll
-   offsets it would have to assume the hero above it is exactly one
-   viewport, which is the other flag's business, not this one's. A view
-   timeline ignores its own subject's sticky offset by definition, so
-   neither the pin nor --park-top disturbs it. */
-@media (prefers-reduced-motion:no-preference){
-  @supports (animation-timeline:view()){
-    :root[data-cover-how] .how{
-      animation:how-sink linear both;
-      animation-timeline:view(block);
-      /* done a little before the sheet is fully up, so the cards have
-         left rather than been caught half-way under its edge */
-      animation-range:exit 0% exit 86%;
-    }
-  }
-}
-@keyframes how-sink{
-  from{opacity:1; filter:blur(0px); transform:none}
-  to{opacity:0; filter:blur(10px); transform:translateY(-5vh) scale(.94)}
-}
+   What replaces it is what replaced the first handoff: the section holds
+   its place and fades, on the same [data-in] toggle as everything else,
+   which reverses on its own when the reader scrolls back up. Nothing to
+   measure, nothing to park, and one page rather than two — the reduced
+   motion branch is no longer a different layout, only a shorter fade. */
 
 /* ---------- the arrival ----------
-   The head rises, then the four findings wipe in left to right, then each
-   drawing draws itself.
+   The head rises once, on the same timer the loop's head above it uses —
+   it sits right where [data-in] fires, so a fixed delay and a scroll
+   position agree. Nothing else in .why still works that way.
 
-   The wipe is one property doing two jobs. .panel carries the hairline
-   that divides it from the one before — border-left in four columns,
-   border-top in one — and a clip-path inset run off the bottom edge takes
-   the border box with it, so the hairline draws itself down the column
-   and the finding appears behind it in the same move. No second line, no
-   pseudo-element to keep in step with three breakpoints' worth of edges.
-
-   The clip is finished well before the fade is, so the reveal ends on
-   copy settling rather than on a hard edge crossing the last line.
-
-   Order inside each drawing is DOM order, which is already the order the
-   thing is read in: the agitation, then the arrow, then the ruled lines
-   it settles into; the baseline, then the crests standing on it; the run,
-   then the first move, then the dot that starts it.
-
-   Everything hangs off [data-anim], which only JavaScript sets — the
-   resting state of this block is "invisible", and a page whose script
-   never ran must not be a page with a hole in it. */
+   Four full screens and a foot come after it, and a timer fired once
+   when the section first appeared has no way to know which of them the
+   reader has actually scrolled to — a fixed-delay reveal would have
+   point four sitting fully drawn from the moment the reader is still
+   reading point one. So everything from here down arrives by its own
+   position on the screen: animation-timeline:view() ties each point's
+   entrance to that point, specifically, crossing into the window — the
+   same mechanism the wave crossfades run on, and the recede above.
+   Where a browser hasn't shipped it, these elements simply skip the
+   [data-anim] hide and sit in their finished state — enhancement, not a
+   second reveal system to keep in step with the first. */
 @media (prefers-reduced-motion:no-preference){
 
+  /* Keyed to the title card's own [data-in] rather than the section's.
+     .why is five screens tall, so its section-level trigger fires as the
+     first pixel of it appears — which for a card that IS a screen would
+     mean arriving before the reader has reached it, and never leaving.
+     Watched on its own, it fades in and back out like every other
+     screen. */
   .why[data-anim] .why-title,
-  .why[data-anim] .why-lede,
-  .why[data-anim] .panel,
+  .why[data-anim] .why-lede{
+    opacity:0;
+    transition:opacity .7s var(--ease);
+  }
+  .why[data-anim] .why-head[data-in] .why-title{opacity:1}
+  .why[data-anim] .why-head[data-in] .why-lede{opacity:1; transition-delay:.08s}
+
+  /* ---------- why this is an observer and not a scroll timeline ----------
+     The obvious way to write what follows is animation-timeline:view():
+     tie each point's arrival to that point's own travel through the
+     window, no JavaScript at all. It was written that way first, and the
+     failure mode is why it is not written that way now.
+
+     A scroll-driven animation whose timeline never becomes active does
+     not fall back to its finished state — it sits pinned on its 0%
+     keyframe for ever. Every rule here opens at opacity 0, so an
+     inactive timeline is not a missing flourish, it is four blank
+     screens where the argument for the app should be. And @supports
+     does not protect against it: a browser can answer yes to
+     `animation-timeline: view()`, hand back a real ViewTimeline object,
+     and still report a null currentTime — measured, in the browser this
+     was built in, on a bare probe element with nothing else on the page.
+     Support for the syntax is not the same claim as the timeline
+     resolving against a real scrollport.
+
+     So the reveal rides the observer the two sheets above already use,
+     which has one useful property a timeline does not: [data-in] is set
+     by JavaScript, and if that JavaScript never runs, [data-anim] is
+     never set either — and without [data-anim] nothing here is hidden in
+     the first place. The page's resting state is "visible", and every
+     way this can fail lands on the copy being readable.
+
+     What it costs is the scrub — the reveal plays on its own clock
+     rather than tracking the scrollbar pixel for pixel. What it keeps is
+     the reversal, which is the part that matters: the observer toggles
+     rather than latches, so a screen fades out as it leaves and fades
+     back in on the way up. */
+
+  /* ---------- each point fades in, and fades back out ----------
+     A dissolve, not an entrance. Every point is a full screen with its
+     own field behind it, so what carries the reader from one to the next
+     is one screen giving way to another — and a thing that arrives and
+     then stays put is only half of that. [data-in] goes on as a point
+     reaches the middle of the window and comes off again as it leaves,
+     so each segment fades up, holds while it is being read, and fades
+     away under the one behind it.
+
+     Transitions, not keyframes, and that is what lets this go both ways
+     at all: an animation plays start to finish and would need a second,
+     reversed one to get home again, where a transition just runs to
+     whatever the value currently is — so taking the attribute off drives
+     it back with no second rule to keep in step. It is also the shape
+     that cannot strand anything: there is no 0% frame to be held on if
+     the observer never speaks, only the value the element already had.
+
+     The panels are a screen tall and the trigger is a band across the
+     middle of the window, so the seam between two points sits inside
+     that band for a moment — the outgoing point is still fading down
+     while the incoming one is fading up. That overlap is the crossfade,
+     the one the scroll-linked version was reaching for and could never
+     have had, since no two of these panels are on screen together.
+
+     Opacity only. No lift, no scale: a box sliding up is furniture
+     announcing itself, and these are not cards — they are screens, and
+     screens dissolve. */
+  .why[data-anim] .panel .fig,
+  .why[data-anim] .panel h3,
+  .why[data-anim] .panel p,
+  .why[data-anim] .panel .cite{
+    opacity:0;
+    transition:opacity .8s var(--ease);
+  }
   .why[data-anim] .why-foot{opacity:0}
 
-  /* Strokes hide by being dashed away rather than by going transparent:
-     most of these paths carry an opacity attribute of their own, which is
-     the depth in the drawing, and a keyframe animating opacity back to 1
-     would flatten the whole ruler to full strength. The one closed shape
-     — the dot the fourth run starts from — carries no such attribute, so
-     that one does fade. */
-  .why[data-anim] .fig path{stroke-dasharray:1; stroke-dashoffset:1}
-  .why[data-anim] .fig circle{opacity:0}
+  /* Fading the whole drawing rather than its marks one at a time, which
+     the stroke-drawing version it replaces could not do: most of those
+     paths carry an opacity attribute of their own — the depth in the
+     ruler, the collapsing crests — and anything that animates opacity
+     per path flattens the lot to full strength. One fade on the <svg>
+     scales all of them together and leaves the shading intact. */
+  .why[data-anim] .panel[data-in] .fig{opacity:1; transition-delay:0s}
+  .why[data-anim] .panel[data-in] h3{opacity:1; transition-delay:.1s}
+  .why[data-anim] .panel[data-in] p{opacity:1; transition-delay:.18s}
+  .why[data-anim] .panel[data-in] .cite{opacity:1; transition-delay:.26s}
+  /* The stagger is on the way in only. The delays live on the [data-in]
+     state, so losing the attribute drops them too and the point leaves
+     as one piece rather than unravelling line by line. */
 
-  /* the same rise the loop's head takes, so the two heads arrive as two
-     of a kind rather than as two different ideas */
-  .why[data-anim][data-in] .why-title{animation:how-rise .66s var(--ease) both}
-  .why[data-anim][data-in] .why-lede{animation:how-rise .66s var(--ease) .09s both}
+  /* The foot is reached only after four full screens of scroll, long
+     after .why's own section-level trigger fired, so it carries its own
+     [data-in] rather than a delay counted from that.
 
-  /* the two counters the delays are built out of: --k is which finding,
-     and inherits down into that finding's drawing; --j is which mark */
-  .panels .panel:nth-child(1){--k:0}
-  .panels .panel:nth-child(2){--k:1}
-  .panels .panel:nth-child(3){--k:2}
-  .panels .panel:nth-child(4){--k:3}
-  .fig > *:nth-child(1){--j:0}
-  .fig > *:nth-child(2){--j:1}
-  .fig > *:nth-child(3){--j:2}
-  .fig > *:nth-child(4){--j:3}
-  /* The ruler's ticks are a group rather than four loose marks, so they
-     are numbered on from the baseline they stand on — the group's own --j
-     would have drawn all eight at once, which is a ruler appearing rather
-     than a ruler running out. */
-  .fig g > *:nth-child(1){--j:1}
-  .fig g > *:nth-child(2){--j:2}
-  .fig g > *:nth-child(3){--j:3}
-  .fig g > *:nth-child(4){--j:4}
-  .fig g > *:nth-child(5){--j:5}
-  .fig g > *:nth-child(6){--j:6}
-  .fig g > *:nth-child(7){--j:7}
-  .fig g > *:nth-child(8){--j:8}
-
-  .why[data-anim][data-in] .panel{
-    animation:panel-in .84s var(--ease) both;
-    animation-delay:calc(170ms + var(--k,0) * 130ms);
-  }
-  .why[data-anim][data-in] .fig path{
-    animation:fig-draw .8s var(--ease) both;
-    /* after the finding it is drawn on has wiped in */
-    animation-delay:calc(470ms + var(--k,0) * 130ms + var(--j,0) * 62ms);
-  }
-  .why[data-anim][data-in] .fig circle{
-    animation:fig-pop .48s var(--ease) both;
-    animation-delay:calc(470ms + var(--k,0) * 130ms + var(--j,0) * 62ms);
-    transform-box:fill-box; transform-origin:50% 50%;
-  }
-
-  /* Last, and after the findings rather than with them — this is the end
-     of the document and it has to read as the thing you arrive at. */
-  .why[data-anim][data-in] .why-foot{animation:how-rise .72s var(--ease) 780ms both}
-  /* Scale rather than transform, and the reason is .cta:hover. An
-     animation filling forwards pins its final values over the specified
-     style, and a keyframe ending at transform:none would sit on top of
-     the hover lift for good — the same trap the hero's entrance sidesteps
-     with a backwards fill. The scale property is a different one, so the
-     button keeps its lift and the pop still fills. */
-  .why[data-anim][data-in] .why-foot .cta{animation:cta-pop .58s var(--ease) 920ms both}
+     The button used to pop in on `scale`, deliberately not `transform`,
+     because an animation filling forwards pins its final values over the
+     specified style and a keyframe ending at transform:none would have
+     sat on top of .cta:hover's lift for good. A transition on opacity
+     alone has no such quarrel with the hover — it never writes to a
+     transform at all, so the lift is left entirely to :hover. */
+  .why[data-anim] .why-foot{transition:opacity .72s var(--ease)}
+  .why[data-anim] .why-foot[data-in]{opacity:1}
 }
 
-@keyframes panel-in{
-  0%{opacity:0; clip-path:inset(0 0 100% 0); transform:translateY(18px)}
-  70%{clip-path:inset(0 0 0 0)}
-  100%{opacity:1; clip-path:inset(0 0 0 0); transform:none}
-}
-@keyframes cta-pop{
-  from{opacity:0; scale:.88}
-  to{opacity:1; scale:1}
+/* ---------- the foot of the page ----------
+   Nothing here animated before — the footer was simply the thing you
+   scrolled to once the document ran out. Now that every screen above it
+   arrives on its own cue, stopping there would read as the one place the
+   film cuts rather than dissolves. Same observer, one last time: the
+   brand and the link columns fade up together, the legal line a beat
+   behind them.
+
+   [data-anim] on the footer itself, for the reason the block above
+   carries in full: it is set by the same script that sets [data-in], so
+   a page whose JavaScript never ran is a page with a visible footer
+   rather than a hole where the links should be. */
+@media (prefers-reduced-motion:no-preference){
+  .site-foot[data-anim] .foot-inner,
+  .site-foot[data-anim] .foot-base{
+    opacity:0;
+    transition:opacity .7s var(--ease);
+  }
+  .site-foot[data-anim][data-in] .foot-inner{opacity:1}
+  .site-foot[data-anim][data-in] .foot-base{opacity:1; transition-delay:.13s}
 }
