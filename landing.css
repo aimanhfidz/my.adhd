@@ -1494,6 +1494,12 @@ main{
   left:50%; top:50%; width:210%; height:360%;
   transform:translate(-50%,-50%);
   background:radial-gradient(closest-side,var(--hero-bloom),transparent 70%);
+  /* This is a large gradient that scales for ever, sitting directly on top
+     of a WebGL canvas. Left to the browser's own layerisation it is a
+     candidate for repainting the gradient on every frame instead of
+     scaling one texture; over a canvas that decision can go either way.
+     Naming the property that changes takes the guess out of it. */
+  will-change:transform;
 }
 
 .cta-xl{
@@ -1527,6 +1533,7 @@ main{
   /* parked off the left edge, so a browser that never runs the animation
      shows a plain gradient capsule rather than a band stuck across it */
   transform:translateX(-170%) skewX(-16deg);
+  will-change:transform;
 }
 
 /* ---------- what somebody hesitating is weighing ---------- */
@@ -1578,20 +1585,22 @@ main{
   .close[data-anim] .close-lede,
   .close[data-anim] .close-assure{
     opacity:0;
-    transform:translate3d(0,.4em,0);
-    transition:opacity .72s var(--in-ease), transform .72s var(--in-ease);
+    transform:translate3d(0,.34em,0);
+    transition:opacity .46s var(--in-ease), transform .46s var(--in-ease);
   }
   /* Scale, and only scale. The wrapper has no hover of its own and nothing
      else writes to its transform, so the overshoot has the property to
-     itself. */
+     itself. Short: a spring that takes two thirds of a second is not a
+     spring, it is a float. The opacity is shorter still, so the button is
+     legible while it is still settling rather than arriving after it. */
   .close[data-anim] .cta-wrap{
     opacity:0;
-    transform:scale(.7);
-    transition:opacity .42s var(--in-ease), transform .66s var(--in-pop);
+    transform:scale(.76);
+    transition:opacity .26s var(--in-ease), transform .44s var(--in-pop);
   }
   .close[data-anim] .cta-wrap::before{
     opacity:0;
-    transition:opacity 1.1s var(--in-ease);
+    transition:opacity .7s var(--in-ease);
   }
 
   /* --i is a word's place in its row, --r its row's place in the sentence,
@@ -1603,24 +1612,42 @@ main{
   .cl-1 .cw{--r:0}
   .cl-2 .cw{--r:4}
 
+  /* ---------- the beat, at the length a beat actually is ----------
+     This shipped at nearly twice these numbers and read as sluggish, which
+     it was: 62ms of stagger over eight words, a .72s settle on each, and
+     the button held back to .86s meant the object the whole screen exists
+     for sat still for most of a second and was not finished arriving until
+     1.52s. The screen took 1.84s end to end.
+
+     The mistake was treating a scroll-triggered reveal like a film cut. A
+     reader has already arrived when this fires — they are looking at the
+     screen, waiting for it to finish — so the pause before the button is
+     paid in impatience, not in tension. A beat is about a fifth of a
+     second here, and the whole screen now settles inside ~1s with the
+     button moving at .44s.
+
+     Durations came down less than the delays did, because they are not
+     what was felt. --in-ease is an expo-out: a word is ~87% of the way
+     there in the first third of its transition, so most of a .46s settle
+     is tail nobody is waiting on. Dead air before a thing starts moving is
+     the part that reads as slow. */
   .close[data-anim][data-in] .close-title .cw{
     opacity:1; transform:none;
-    transition-delay:calc((var(--r,0) + var(--i,0)) * 62ms);
+    transition-delay:calc((var(--r,0) + var(--i,0)) * 38ms);
   }
-  .close[data-anim][data-in] .close-lede{opacity:1; transform:none; transition-delay:.62s}
-  /* the beat: the sentence is finished at ~.62s, the lede is legible by
-     ~.8s, and the button lands after both */
-  .close[data-anim][data-in] .cta-wrap{opacity:1; transform:none; transition-delay:.86s}
-  .close[data-anim][data-in] .cta-wrap::before{opacity:1; transition-delay:.9s}
-  .close[data-anim][data-in] .close-assure{opacity:1; transform:none; transition-delay:1.12s}
+  .close[data-anim][data-in] .close-lede{opacity:1; transform:none; transition-delay:.3s}
+  .close[data-anim][data-in] .cta-wrap{opacity:1; transform:none; transition-delay:.44s}
+  .close[data-anim][data-in] .cta-wrap::before{opacity:1; transition-delay:.46s}
+  .close[data-anim][data-in] .close-assure{opacity:1; transform:none; transition-delay:.58s}
 
   /* The halo breathes once the screen is settled — transform only, so it
      never fights the opacity the reveal above owns. Slow and small enough
      that it reads as the button being lit rather than as a thing pulsing
-     at you: 4.4s, and a fourteenth of its own size. */
+     at you: 4.4s, and a fourteenth of its own size. The delay tracks the
+     button's landing (.88s now), not the 1.52s it used to be. */
   .close[data-anim][data-in] .cta-wrap::before,
   .close:not([data-anim]) .cta-wrap::before{
-    animation:cta-halo 4.4s ease-in-out 1.2s infinite;
+    animation:cta-halo 4.4s ease-in-out .9s infinite;
   }
   @keyframes cta-halo{
     0%,100%{transform:translate(-50%,-50%) scale(1)}
@@ -1632,7 +1659,7 @@ main{
      is still growing reads as a rendering fault. */
   .close[data-anim][data-in] .cta-sheen::before,
   .close:not([data-anim]) .cta-sheen::before{
-    animation:cta-sheen 4.8s var(--ease) 1.6s infinite;
+    animation:cta-sheen 4.8s var(--ease) 1.1s infinite;
   }
   /* Across in the first quarter, then out of the way for the rest — the
      wait is the point, and a keyframe holding its end value is cheaper
