@@ -313,14 +313,76 @@
 
   </ul>
 
+  <!-- The section's own sign-off, and nothing else. The button that used to
+       sit under this line has a screen of its own now — see .close below.
+       A disclaimer is a poor thing to say immediately before asking someone
+       to act: it is the one sentence on the page that argues against the
+       press, and it was standing where the argument for it should be. -->
   <div class="why-foot">
     <p>
       None of this is treatment. It is what the research says about getting a
       thing out of your head and into a plan.
     </p>
-    <a class="cta" href="/install" data-app-link>Clear my head</a>
   </div>
 
+</section>
+
+<!-- ============ THE CLOSE — the ask, on a screen of its own ============
+     Every idea on this page gets a whole screen: the promise, the loop, the
+     title card, the four findings. The ask got a band at the foot of the
+     last one, which made it the smallest thing on a page built entirely out
+     of big ones.
+
+     So it is built exactly like the screens above it — full bleed, its own
+     wave field, the same [data-in] dissolve — and the only difference is
+     that the loudest object in it is a button rather than a sentence. The
+     field is `flow`, the hero's own form, run a quarter faster than
+     anywhere else on the page: the film opened on that current and closes
+     on it picking up. -->
+<section class="close">
+  <div class="panel-wave" data-wave="flow" data-wave-speed="1.25" aria-hidden="true"></div>
+
+  <div class="close-body">
+
+    <!-- Split by word into two rows, the same way the hero's is, and for
+         the same two reasons: the line breaks are the design rather than
+         wherever the viewport puts them, and each word can then arrive on
+         its own beat. The second row is the point and carries the brand
+         gradient — the page's other gradient sentence is the hero's, so
+         the film opens and closes in the one colour it has.
+
+         The spans are choreography and mean nothing, so the heading is
+         named outright. -->
+    <h2 class="close-title" aria-label="All day, your head has been the list.">
+      <span class="cl cl-1"><span class="cw">All</span><span class="cw">day,</span><span class="cw">your</span><span class="cw">head</span></span>
+      <span class="cl cl-2"><span class="cw">has</span><span class="cw">been</span><span class="cw">the</span><span class="cw">list.</span></span>
+    </h2>
+
+    <p class="close-lede">
+      Give it somewhere else to live. One box in, a sorted list back — with
+      the first step already picked.
+    </p>
+
+    <!-- The button gets a wrapper because the halo behind it has to hang
+         outside the capsule, and the capsule clips itself so the light can
+         travel across it. -->
+    <div class="cta-wrap">
+      <a class="cta cta-xl" href="/install" data-app-link>
+        <span class="cta-sheen" aria-hidden="true"></span>
+        <span class="cta-label">Clear my head</span>
+      </a>
+    </div>
+
+    <!-- The three things somebody hesitating at this button is actually
+         weighing. Same claims the footer makes, said at the moment they
+         are worth something. -->
+    <ul class="close-assure">
+      <li>No account</li>
+      <li>Nothing to set up</li>
+      <li>Your lists stay on your device</li>
+    </ul>
+
+  </div>
 </section>
 
 </main>
@@ -504,6 +566,12 @@
     watch(el, '-35% 0px -35% 0px');
   });
   watch(document.querySelector('.why-foot'), '0px 0px -45% 0px');
+  /* The closing screen. Its own flag, being a section rather than something
+     inside .why — and the points' band rather than the foot's, because it
+     is a screen and not a short box: with a band that fires as its top edge
+     clears the fold, the button would pop while it was still a sliver at
+     the bottom of the window. */
+  watch(document.querySelector('.close'), '-35% 0px -35% 0px', { ownFlag:true });
   /* The footer owns its own flag, being neither a sheet nor inside .why. */
   watch(document.querySelector('.site-foot'), '0px 0px -25% 0px', { ownFlag:true });
 

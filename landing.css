@@ -804,15 +804,20 @@ body{
   transition:opacity 1.1s var(--ease);
 }
 .panel[data-in] .panel-wave[data-ready],
-.why-head[data-in] .panel-wave[data-ready]{opacity:1}
+.why-head[data-in] .panel-wave[data-ready],
+.close[data-in] .panel-wave[data-ready]{opacity:1}
 
-/* The page has to end on the button, not on a paragraph — someone who read
-   this far is at the bottom of the document with the hero's CTA a screen
-   and a half behind them. */
+/* The section's sign-off. It used to carry the page's only button as well,
+   under the reasoning that the page had to end on one — which it still
+   does, one screen further down. What changed is that the button is no
+   longer sharing a band with the sentence that argues against pressing it.
+   The bottom gutter came in with the button: .close below is a full screen
+   that centres its own content, so there is no longer a page edge here for
+   this to hold itself off. */
 .why-foot{
   display:flex; flex-direction:column; align-items:center;
   gap:clamp(16px,2.6vw,22px); text-align:center;
-  padding:clamp(38px,6vw,66px) var(--why-gutter) clamp(56px,9vh,110px);
+  padding:clamp(38px,6vw,66px) var(--why-gutter) clamp(40px,6vh,72px);
   border-top:1px solid var(--line);
 }
 .why-foot p{
@@ -1389,4 +1394,263 @@ main{
   }
   .site-foot[data-anim][data-in] .foot-inner{opacity:1}
   .site-foot[data-anim][data-in] .foot-base{opacity:1; transition-delay:.13s}
+}
+
+/* ============ THE CLOSE — the ask, on a screen of its own ============
+   Same box as a research point: one viewport, full bleed, its own wave
+   field under it, isolated so the field can sit behind its own words. The
+   only thing that differs is what the screen is for — the four above it
+   make an argument, this one asks.
+
+   Deliberately NOT `.close > *{position:relative; z-index:1}`, which is how
+   .panel and .why-head lift their content off their field. Those two rules
+   are written above .panel-wave in this file and beat it on source order
+   alone; this block is at the foot of the file, so the same rule here would
+   win the other way round and take the field's own `position:absolute` and
+   `z-index:0` off it — a canvas in the flow, pushing the copy down a
+   screen. The one child that needs lifting says so itself instead. */
+.close{
+  position:relative;
+  min-height:100dvh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+  padding:clamp(28px,5vh,48px) clamp(20px,5vw,40px);
+  overflow:hidden;
+  isolation:isolate;
+  /* the two curves the arrival is built out of — the same pair the hero's
+     entrance names, because this is the same gesture at the other end of
+     the page: a long settle for the words, an overshoot for the payoff */
+  --in-ease:cubic-bezier(.16,1,.3,1);
+  --in-pop:cubic-bezier(.2,1.5,.4,1);
+}
+.close-body{
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; align-items:center;
+  gap:clamp(10px,1.8vh,18px);
+  width:100%; max-width:46rem;
+}
+
+/* ---------- the sentence ----------
+   Two rows, sized the way the hero's three are: the setup quiet, the point
+   loud. It is the biggest type on the page after the hero's own last line,
+   which is the right order — that one is the promise and this one is the
+   moment it is offered. */
+.close-title{
+  display:flex; flex-direction:column; align-items:center;
+  font-weight:800; letter-spacing:-.035em;
+}
+.cl{display:flex; flex-wrap:wrap; justify-content:center; column-gap:.28em}
+.cl-1{font-size:clamp(22px,min(6.4vw,5vh),36px); line-height:1.22; color:var(--muted)}
+/* The vw term leads and the vh term is the safety net, the same way round
+   as the hero's rows: what this line can overrun is the width, and the vh
+   is only there to stop a wide short window eating the button below it.
+
+   Both ends are measured against the rendered row rather than guessed, and
+   guessing is what got them wrong the first time: the four words set to
+   339px at 44px in a 335px column and wrapped, where the same sentence
+   measured as one unsplit string came to 326. The difference is the split
+   itself — four inline-blocks separated by a written column-gap do not get
+   the natural space the browser would have set between them, and .28em is
+   wider than that space at this size. Hence the tighter gap below, and
+   terms that leave real slack rather than four pixels: 42px in a 335px
+   column at 375pt, 36px in a 280px one at 320pt. Below that it wraps,
+   which .cl allows and which is the right way for this to fail. */
+.cl-2{
+  font-size:clamp(36px,min(11.2vw,9vh),68px); line-height:1.08;
+  /* about what a space actually measures at this weight and size — the
+     row is four words long and cannot afford the .cl default */
+  column-gap:.2em;
+}
+/* The page's other gradient sentence is the hero's payoff row. Having
+   exactly two means the film opens and closes on the same colour and
+   nothing in between borrows it. */
+.cl-2 .cw{
+  background:var(--grad); -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+}
+.close-title .cw{display:inline-block}
+
+.close-lede{
+  max-width:40ch;
+  font-size:clamp(15px,2.1vw,19px); color:var(--muted); line-height:1.55;
+}
+
+/* ---------- the button ----------
+   The wrapper exists for the halo, which has to reach well outside the
+   capsule, and for the pop, which scales the whole object — kept off .cta
+   itself on purpose. .cta:hover writes `transform:translateY(-2px)`, and a
+   reveal that also wrote a transform there would be the two of them
+   arguing over one property every time a cursor crossed the button. Scale
+   the wrapper, lift the anchor, and neither knows about the other. */
+.cta-wrap{
+  position:relative;
+  display:flex; justify-content:center;
+  margin-top:clamp(8px,2vh,20px);
+}
+/* The light the button sits in. Brand blue, the same token the hero's
+   bloom uses — a whisper on paper, most of the backdrop on ink. */
+.cta-wrap::before{
+  content:""; position:absolute; z-index:0; pointer-events:none;
+  left:50%; top:50%; width:210%; height:360%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side,var(--hero-bloom),transparent 70%);
+}
+
+.cta-xl{
+  position:relative; z-index:1; isolation:isolate;
+  font-size:clamp(17px,2.5vw,23px);
+  padding:clamp(17px,2.5vh,23px) clamp(36px,6.2vw,68px);
+  /* a longer, softer throw than .cta's — the object is twice the size and
+     the shadow has to read as the same distance off the page */
+  box-shadow:0 26px 60px -20px rgba(71,55,255,.92);
+}
+.cta-xl:hover{box-shadow:0 32px 68px -18px rgba(71,55,255,1)}
+.cta-label{position:relative; z-index:1}
+
+/* The travelling highlight, and why it is a child rather than a pseudo on
+   the anchor: the band has to be clipped to the capsule, and the only clip
+   Safari applies reliably to a transformed child is clip-path — which also
+   clips the focus ring, since an outline is not exempt from it. Clipping an
+   inner layer instead leaves :focus-visible's outline drawn on the anchor,
+   outside anything that clips. overflow is there as well for the browsers
+   that honour it, which costs nothing and covers the older clip-path. */
+.cta-sheen{
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  border-radius:inherit;
+  overflow:hidden;
+  clip-path:inset(0 round 999px);
+}
+.cta-sheen::before{
+  content:""; position:absolute; top:-25%; bottom:-25%; left:0; width:34%;
+  background:linear-gradient(100deg,
+    rgba(255,255,255,0) 0%, rgba(255,255,255,.42) 50%, rgba(255,255,255,0) 100%);
+  /* parked off the left edge, so a browser that never runs the animation
+     shows a plain gradient capsule rather than a band stuck across it */
+  transform:translateX(-170%) skewX(-16deg);
+}
+
+/* ---------- what somebody hesitating is weighing ---------- */
+.close-assure{
+  display:flex; flex-wrap:wrap; justify-content:center;
+  gap:.5em 1.15em; list-style:none;
+  margin-top:clamp(6px,1.4vh,12px);
+  font-size:clamp(12px,1.5vw,13.5px); font-weight:600;
+  letter-spacing:.015em; color:var(--faint);
+}
+/* Drawn rather than typed: a middot in the markup is a character that can
+   wrap to a line of its own. */
+.close-assure li{display:flex; align-items:center; gap:1.15em}
+.close-assure li + li::before{
+  content:""; width:3px; height:3px; border-radius:50%;
+  background:currentColor; opacity:.55;
+}
+/* The three of them want 377px and a phone's column is 335, so on a phone
+   they wrap — and a separator dot belongs *between* two items, not at the
+   head of a fresh line, which is exactly where wrapping puts it. There is
+   no selector for "first on its line", so below the width where the row
+   fits, it stops being a row: three short lines, no separators to
+   misplace. 560px is where the measure clears 377 with the gutters off. */
+@media (max-width:559.98px){
+  .close-assure{flex-direction:column; align-items:center; gap:.42em}
+  .close-assure li + li::before{display:none}
+}
+
+/* ---------- the arrival ----------
+   The same dissolve every screen above it rides, on the same [data-in]
+   toggle, so it goes away again on the way up rather than latching. What is
+   different is the last beat: the words fade and settle, and then the
+   button does not fade in — it lands, on an overshoot, a clear beat after
+   the sentence has finished being said. That pause is the whole effect. A
+   button that arrives with the copy is part of the copy; one that arrives
+   after it has been read is an answer to it.
+
+   Transitions rather than keyframes, for the reason written out at length
+   further up this file: a transition has no 0% frame to be stranded on, and
+   everything here hangs off [data-anim], which only JavaScript sets — so a
+   page whose script never ran is a page with a visible, pressable button.
+
+   The stagger lives on the [data-in] state only. Losing the attribute drops
+   every delay with it, and the screen leaves in one piece instead of
+   unravelling word by word. */
+@media (prefers-reduced-motion:no-preference){
+
+  .close[data-anim] .close-title .cw,
+  .close[data-anim] .close-lede,
+  .close[data-anim] .close-assure{
+    opacity:0;
+    transform:translate3d(0,.4em,0);
+    transition:opacity .72s var(--in-ease), transform .72s var(--in-ease);
+  }
+  /* Scale, and only scale. The wrapper has no hover of its own and nothing
+     else writes to its transform, so the overshoot has the property to
+     itself. */
+  .close[data-anim] .cta-wrap{
+    opacity:0;
+    transform:scale(.7);
+    transition:opacity .42s var(--in-ease), transform .66s var(--in-pop);
+  }
+  .close[data-anim] .cta-wrap::before{
+    opacity:0;
+    transition:opacity 1.1s var(--in-ease);
+  }
+
+  /* --i is a word's place in its row, --r its row's place in the sentence,
+     so one delay expression covers all eight rather than eight rules. */
+  .close-title .cw:nth-child(1){--i:0}
+  .close-title .cw:nth-child(2){--i:1}
+  .close-title .cw:nth-child(3){--i:2}
+  .close-title .cw:nth-child(4){--i:3}
+  .cl-1 .cw{--r:0}
+  .cl-2 .cw{--r:4}
+
+  .close[data-anim][data-in] .close-title .cw{
+    opacity:1; transform:none;
+    transition-delay:calc((var(--r,0) + var(--i,0)) * 62ms);
+  }
+  .close[data-anim][data-in] .close-lede{opacity:1; transform:none; transition-delay:.62s}
+  /* the beat: the sentence is finished at ~.62s, the lede is legible by
+     ~.8s, and the button lands after both */
+  .close[data-anim][data-in] .cta-wrap{opacity:1; transform:none; transition-delay:.86s}
+  .close[data-anim][data-in] .cta-wrap::before{opacity:1; transition-delay:.9s}
+  .close[data-anim][data-in] .close-assure{opacity:1; transform:none; transition-delay:1.12s}
+
+  /* The halo breathes once the screen is settled — transform only, so it
+     never fights the opacity the reveal above owns. Slow and small enough
+     that it reads as the button being lit rather than as a thing pulsing
+     at you: 4.4s, and a fourteenth of its own size. */
+  .close[data-anim][data-in] .cta-wrap::before,
+  .close:not([data-anim]) .cta-wrap::before{
+    animation:cta-halo 4.4s ease-in-out 1.2s infinite;
+  }
+  @keyframes cta-halo{
+    0%,100%{transform:translate(-50%,-50%) scale(1)}
+    50%    {transform:translate(-50%,-50%) scale(1.12)}
+  }
+
+  /* And a light travels across the capsule, once every few seconds. Held
+     until the button has actually landed — a sheen crossing a button that
+     is still growing reads as a rendering fault. */
+  .close[data-anim][data-in] .cta-sheen::before,
+  .close:not([data-anim]) .cta-sheen::before{
+    animation:cta-sheen 4.8s var(--ease) 1.6s infinite;
+  }
+  /* Across in the first quarter, then out of the way for the rest — the
+     wait is the point, and a keyframe holding its end value is cheaper
+     than a second animation to produce it. */
+  @keyframes cta-sheen{
+    0%  {transform:translateX(-170%) skewX(-16deg)}
+    24% {transform:translateX(430%)  skewX(-16deg)}
+    100%{transform:translateX(430%)  skewX(-16deg)}
+  }
+}
+
+/* ---------- landscape phones ----------
+   One viewport with a two-row headline, a lede, a 23px button and a row of
+   assurances in it is more than a 400px-tall window holds. The gaps close
+   up and the sentence gives back a step, the same trade .hero-body makes
+   at the same height. */
+@media (max-height:520px){
+  .close-body{gap:8px}
+  .cl-2{font-size:clamp(28px,7vw,40px)}
+  .cta-xl{font-size:17px; padding:14px 40px}
 }
