@@ -567,11 +567,22 @@
   });
   watch(document.querySelector('.why-foot'), '0px 0px -45% 0px');
   /* The closing screen. Its own flag, being a section rather than something
-     inside .why — and the points' band rather than the foot's, because it
-     is a screen and not a short box: with a band that fires as its top edge
-     clears the fold, the button would pop while it was still a sliver at
-     the bottom of the window. */
-  watch(document.querySelector('.close'), '-35% 0px -35% 0px', { ownFlag:true });
+     inside .why.
+
+     Not the points' band. Those wait for the middle strip of the window —
+     35% scrolled in — because a point is a thing to read and should not
+     start until it is the thing being read. This one is a button, and
+     making a button wait until it is a third of the way up the screen is
+     how it came to feel slow no matter what its durations said: the reveal
+     had not begun when the reader arrived, so every millisecond of it was
+     spent in front of them.
+
+     So it arms as soon as its top edge enters the window. The reveal plays
+     in the sliver at the bottom while the reader is still scrolling, and
+     is finished by the time the screen is theirs — which is the point.
+     The bottom margin only governs the way out, and it is kept generous so
+     the screen does not un-reveal early on the way back up. */
+  watch(document.querySelector('.close'), '-20% 0px 0px 0px', { ownFlag:true });
   /* The footer owns its own flag, being neither a sheet nor inside .why. */
   watch(document.querySelector('.site-foot'), '0px 0px -25% 0px', { ownFlag:true });
 

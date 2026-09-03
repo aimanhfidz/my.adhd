@@ -1585,8 +1585,8 @@ main{
   .close[data-anim] .close-lede,
   .close[data-anim] .close-assure{
     opacity:0;
-    transform:translate3d(0,.34em,0);
-    transition:opacity .46s var(--in-ease), transform .46s var(--in-ease);
+    transform:translate3d(0,.28em,0);
+    transition:opacity .38s var(--in-ease), transform .38s var(--in-ease);
   }
   /* Scale, and only scale. The wrapper has no hover of its own and nothing
      else writes to its transform, so the overshoot has the property to
@@ -1595,59 +1595,50 @@ main{
      legible while it is still settling rather than arriving after it. */
   .close[data-anim] .cta-wrap{
     opacity:0;
-    transform:scale(.76);
-    transition:opacity .26s var(--in-ease), transform .44s var(--in-pop);
+    transform:scale(.8);
+    transition:opacity .22s var(--in-ease), transform .34s var(--in-pop);
   }
   .close[data-anim] .cta-wrap::before{
     opacity:0;
-    transition:opacity .7s var(--in-ease);
+    transition:opacity .6s var(--in-ease);
   }
 
-  /* --i is a word's place in its row, --r its row's place in the sentence,
-     so one delay expression covers all eight rather than eight rules. */
-  .close-title .cw:nth-child(1){--i:0}
-  .close-title .cw:nth-child(2){--i:1}
-  .close-title .cw:nth-child(3){--i:2}
-  .close-title .cw:nth-child(4){--i:3}
-  .cl-1 .cw{--r:0}
-  .cl-2 .cw{--r:4}
+  /* ---------- no stagger ----------
+     There was a word-by-word cascade here, twice: 62ms apart, then 38ms
+     apart. Both read as slow, and cutting the second one in half was
+     treating the symptom. The stagger itself was the problem.
 
-  /* ---------- the beat, at the length a beat actually is ----------
-     This shipped at nearly twice these numbers and read as sluggish, which
-     it was: 62ms of stagger over eight words, a .72s settle on each, and
-     the button held back to .86s meant the object the whole screen exists
-     for sat still for most of a second and was not finished arriving until
-     1.52s. The screen took 1.84s end to end.
+     A stagger buys attention on a first screen, where the reader has just
+     landed and there is nothing else to look at. It costs attention here.
+     This screen is reached by scrolling, deliberately, at the end of an
+     argument the reader has already followed — they arrive having decided
+     to look at the button, and eight words arriving one at a time is
+     eight small waits stacked in front of it. Worse, the sentence is a
+     single thought: "All day, your head has been the list" does not mean
+     anything until the last word, so a cascade withholds the sense of it
+     for the whole length of the cascade.
 
-     The mistake was treating a scroll-triggered reveal like a film cut. A
-     reader has already arrived when this fires — they are looking at the
-     screen, waiting for it to finish — so the pause before the button is
-     paid in impatience, not in tension. A beat is about a fifth of a
-     second here, and the whole screen now settles inside ~1s with the
-     button moving at .44s.
+     So the sentence and its lede arrive together, as one statement, and
+     only the button is offset — by enough to read as landing rather than
+     appearing, and no more. The --i and --r machinery the cascade needed
+     is gone with it.
 
-     Durations came down less than the delays did, because they are not
-     what was felt. --in-ease is an expo-out: a word is ~87% of the way
-     there in the first third of its transition, so most of a .46s settle
-     is tail nobody is waiting on. Dead air before a thing starts moving is
-     the part that reads as slow. */
-  .close[data-anim][data-in] .close-title .cw{
-    opacity:1; transform:none;
-    transition-delay:calc((var(--r,0) + var(--i,0)) * 38ms);
-  }
-  .close[data-anim][data-in] .close-lede{opacity:1; transform:none; transition-delay:.3s}
-  .close[data-anim][data-in] .cta-wrap{opacity:1; transform:none; transition-delay:.44s}
-  .close[data-anim][data-in] .cta-wrap::before{opacity:1; transition-delay:.46s}
-  .close[data-anim][data-in] .close-assure{opacity:1; transform:none; transition-delay:.58s}
+     Settled: copy at 380ms, button at 460ms, the row under it at 560ms.
+     It opened at 1840ms. */
+  .close[data-anim][data-in] .close-title .cw,
+  .close[data-anim][data-in] .close-lede{opacity:1; transform:none}
+  .close[data-anim][data-in] .cta-wrap{opacity:1; transform:none; transition-delay:.12s}
+  .close[data-anim][data-in] .cta-wrap::before{opacity:1; transition-delay:.14s}
+  .close[data-anim][data-in] .close-assure{opacity:1; transform:none; transition-delay:.18s}
 
   /* The halo breathes once the screen is settled — transform only, so it
      never fights the opacity the reveal above owns. Slow and small enough
      that it reads as the button being lit rather than as a thing pulsing
      at you: 4.4s, and a fourteenth of its own size. The delay tracks the
-     button's landing (.88s now), not the 1.52s it used to be. */
+     button's landing, which is 460ms now. */
   .close[data-anim][data-in] .cta-wrap::before,
   .close:not([data-anim]) .cta-wrap::before{
-    animation:cta-halo 4.4s ease-in-out .9s infinite;
+    animation:cta-halo 4.4s ease-in-out .5s infinite;
   }
   @keyframes cta-halo{
     0%,100%{transform:translate(-50%,-50%) scale(1)}
@@ -1659,7 +1650,7 @@ main{
      is still growing reads as a rendering fault. */
   .close[data-anim][data-in] .cta-sheen::before,
   .close:not([data-anim]) .cta-sheen::before{
-    animation:cta-sheen 4.8s var(--ease) 1.1s infinite;
+    animation:cta-sheen 4.8s var(--ease) .7s infinite;
   }
   /* Across in the first quarter, then out of the way for the rest — the
      wait is the point, and a keyframe holding its end value is cheaper
