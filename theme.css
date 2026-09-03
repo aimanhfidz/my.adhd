@@ -98,14 +98,25 @@
     --line-strong:#3B3A52;
     --accent:#8B7DFF;
 
-    /* The capsule's purple lifts at night, and the word lifts with it because
-       it is the same token — #7B3FE4 is drawn for paper and gives only 3.3:1
-       on #101018, under AA for the 16px the wordmark is set at. It was failing
-       before the hero had a shader behind it; the field only took it from 3.3
-       to 3.0. Lifting --violet rather than --wordmark-accent is the point: the
-       lockup reads as one object only while the two purples are the same
-       purple, and .lg-pill drinks from this token too. */
-    --violet:#A97BFF;
+    /* --violet is deliberately NOT overridden here, and used to be.
+
+       It was lifted to #A97BFF at night because #7B3FE4 gives 3.31:1 on
+       #101018, measured against the 4.5:1 that 16px bold text needs. But
+       the wordmark is not text in that sense: WCAG 1.4.3 exempts logotypes
+       outright — "text that is part of a logo or brand name has no
+       contrast requirement" — and ".adhd" is half the brand name. The
+       threshold being enforced did not apply to the thing it was applied
+       to.
+
+       What the lift cost was the mark's identity across surfaces.
+       favicon.svg, icons/icon-source.svg and icons/mark-solid.svg all
+       carry #7B3FE4 on their own fixed ground and cannot follow a theme,
+       so a token that moved at night meant the lockup in the nav was a
+       different purple from the one in the browser tab beside it. One
+       brand purple, both themes, matching every standalone export.
+
+       The capsule and the word still share the token, so the lockup still
+       reads as one object — that part of the old note stands. */
     --focus:rgba(139,125,255,.26);
 
     --on-accent:#101018;
@@ -144,14 +155,11 @@
   --line-strong:#3B3A52;
   --accent:#8B7DFF;
 
-  /* The capsule's purple lifts at night, and the word lifts with it because
-     it is the same token — #7B3FE4 is drawn for paper and gives only 3.3:1
-     on #101018, under AA for the 16px the wordmark is set at. It was failing
-     before the hero had a shader behind it; the field only took it from 3.3
-     to 3.0. Lifting --violet rather than --wordmark-accent is the point: the
-     lockup reads as one object only while the two purples are the same
-     purple, and .lg-pill drinks from this token too. */
-  --violet:#A97BFF;
+  /* --violet is deliberately NOT overridden here — see the matching note in
+     the prefers-color-scheme block above for why the night lift came out.
+     Short version: it was enforcing a contrast threshold that WCAG 1.4.3
+     exempts logotypes from, and the cost was the nav's mark being a
+     different purple from the favicon's. */
   --focus:rgba(139,125,255,.26);
 
   --on-accent:#101018;
