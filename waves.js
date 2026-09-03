@@ -509,8 +509,36 @@
       draw();
     }
 
-    function play() {
-      if (raf || stillness.matches) return;
+    /* ---------- running, and wanting to be running ----------
+       Two different things, and conflating them cost this page most of its
+       frame budget.
+
+       There are three reasons a field stops: its owner parked it (the
+       scroll handler for the hero, an IntersectionObserver for each point
+       below), the tab went away, or the reader asked for stillness. Only
+       the first is a statement about whether this field should be running
+       at all. The other two are temporary conditions that suspend it.
+
+       `wanted` records the first; `raf` records whether it is actually
+       drawing. start/stop move `raf` and leave the intent alone, so a
+       condition that lifts resumes exactly the fields that were running
+       when it arrived — and no others.
+
+       What this fixes, measured: every field carries the visibilitychange
+       listener below, and it used to answer a tab return with a bare
+       play(). Returning to the tab therefore started all seven fields on
+       the landing page at once, wherever they happened to be. Worse, it
+       stayed that way: an IntersectionObserver only reports a *change*, so
+       a field that was off screen before the tab switch and is still off
+       screen after it never hears another word and draws for ever. One
+       alt-tab and the page was painting seven full-screen fragment shaders
+       instead of one, permanently. */
+    var wanted = false;
+
+    function start() {
+      /* Hidden tabs and readers who asked for stillness get nothing, and
+         neither is a reason to forget that this field wants to run. */
+      if (raf || stillness.matches || document.hidden) return;
       /* Not zero-ing the phase: it is the field's position, and picking
          the loop back up after a hidden tab, an off-screen pause, or a
          scrub should carry on from where the field was, not snap it back
@@ -520,27 +548,39 @@
       raf = requestAnimationFrame(frame);
     }
 
-    function pause() {
+    function stop() {
       if (!raf) return;
       cancelAnimationFrame(raf);
       raf = 0;
     }
 
-    /* Nothing behind a hidden tab is worth a GPU. */
+    /* The public pair. These are the owner speaking, so they set intent. */
+    function play() {
+      wanted = true;
+      start();
+    }
+
+    function pause() {
+      wanted = false;
+      stop();
+    }
+
+    /* Nothing behind a hidden tab is worth a GPU — and nothing off screen
+       is worth one either, which is the half this used to give away. */
     document.addEventListener('visibilitychange', function () {
-      if (document.hidden) pause();
-      else play();
+      if (document.hidden) stop();
+      else if (wanted) start();
     });
 
     if (stillness.addEventListener) {
       stillness.addEventListener('change', function () {
         if (stillness.matches) {
-          pause();
+          stop();
           phase = STILL_FRAME;
           invert = invertTo;
           draw();
-        } else {
-          play();
+        } else if (wanted) {
+          start();
         }
       });
     }

@@ -661,14 +661,22 @@ document.addEventListener('DOMContentLoaded', function(){
     if (!reduceMotion) field.seek(Math.random() * Math.PI * 2);
 
     /* Off the GPU when nowhere near the viewport — the crossfade above
-       already fades the canvas out well before this, so a generous
-       margin here never catches a field mid fade-in. */
+       already fades the canvas out well before this, so the margin only
+       has to be wide enough that a field is never caught mid fade-in.
+
+       It was 60%, which is wider than that job needs and wide enough to
+       cost real frames. Every screen here is 100dvh, so 60% on each side
+       makes the band 220vh and three of these run at once for most of a
+       scroll — three full-screen fragment shaders, each up to nine turns
+       of trig per pixel at twice the device ratio. A quarter of a
+       viewport is still a long lead at any speed a person reads at, and
+       it holds the usual count at one, two across a seam. */
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
           if (entry.isIntersecting) field.play(); else field.pause();
         });
-      }, { rootMargin: '60% 0px' });
+      }, { rootMargin: '25% 0px' });
       io.observe(host);
     }
   });
