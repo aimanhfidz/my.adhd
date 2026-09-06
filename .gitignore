@@ -22,3 +22,10 @@ client_secret*.json
 # Claude Code. launch.json describes how to preview this repo and is worth
 # keeping; settings.local.json is one machine's permission grants and is not.
 .claude/settings.local.json
+
+# Xcode. The project file and the shared scheme are the build; xcuserdata is
+# one person's window layout and breakpoints, and DerivedData is output.
+ios/**/xcuserdata/
+ios/build/
+DerivedData/
+*.xcuserstate
