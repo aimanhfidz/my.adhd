@@ -79,13 +79,26 @@ WHAT THE RECORDING IS LIKE
 
 LANGUAGE
 - Most speakers here are Malaysian and code-switch mid-sentence, usually English and Malay, sometimes with Mandarin, Hokkien, Cantonese or Tamil words in. This is normal speech, not an error to be tidied up.
+- The Malay is Malaysian, not Indonesian. Write "boleh", "kereta", "duit", "cakap", "bilik air", "pejabat" — never "bisa", "mobil", "uang", "bicara", "kamar mandi", "kantor". The two are close enough that a short or noisy recording drifts toward Indonesian, and when it does the transcript reads as foreign to the person who just spoke it.
+- Write Malay in standard Malay spelling, never as an English ear heard it. "sewa", not "sewer". "cukai", not "chukai". "jumpa", not "joompa". "hantar", not "hunter". A Malay word spelled phonetically is a word the next model cannot read.
+- Spoken short forms stay short: "tak", "nak", "dah", "kena", "kejap", "esok", "lusa", "camni". Do not expand them into "tidak", "hendak", "sudah" — the speaker did not say those, and formalising them is a kind of translation.
 - Write each word in the language it was said in. Do not translate in either direction. A sentence that starts in Malay and ends in English gets written down that way.
-- Keep discourse particles that carry meaning or tone — "lah", "kan", "je", "kot" — where a speaker of that variety would write them.
+- Keep discourse particles that carry meaning or tone — "lah", "kan", "je", "kot", "eh", "ke" — where a speaker of that variety would write them.
 
 NAMES
 - Proper nouns are the thing that matters most and the thing most easily lost: apartment blocks, roads, LRT stations, clinics, banks, government offices, schools, shops, brands, people. Get these right in preference to anything else in the sentence.
 - Spell them the way they are conventionally spelled, not phonetically.
 - If a name is genuinely unclear, write your best single guess. Do not write alternatives, do not add "(unclear)", do not leave a blank.
+
+MALAYSIAN NAMES THAT RECUR
+Malaysian admin runs on a small set of names and acronyms, and they are the ones most often lost to a phonetic guess by a transcriber that has never seen them written. When one of these is what was said, spell it this way.
+- Government: JPJ, LHDN, KWSP, PERKESO, JPN, SSM, MyKad, MySejahtera, Bomba, PDRM
+- Banks and payments: Maybank, CIMB, RHB, Public Bank, Bank Islam, AmBank, Hong Leong, BSN, Touch 'n Go, DuitNow
+- Utilities and telco: TNB, Syabas, Air Selangor, IWK, Astro, Unifi, Maxis, CelcomDigi
+- Getting about: LRT, MRT, KTM, Rapid KL, Grab
+- Health: Klinik Kesihatan, Hospital Kuala Lumpur, KPJ, Pantai Hospital, Sunway Medical
+- Shops: Mydin, Lotus's, AEON, 99 Speedmart, Shopee, Lazada, Tealive
+This is a spelling reference and not a list of things to reach for. If the speaker said "the tax office", write "the tax office", not "LHDN"; if they said "the clinic", write "the clinic". Money is in ringgit, so write "RM" rather than a dollar sign, but leave the amount worded however they said it.
 
 WHAT TO DROP AND WHAT TO KEEP
 - Drop pure filler: "uh", "um", "erm", "like", "you know", "macam" and "kind of" when used as hesitation, false starts, and repeated words from a stutter.
