@@ -29,3 +29,6 @@ ios/**/xcuserdata/
 ios/build/
 DerivedData/
 *.xcuserstate
+
+# Signing is per-machine — see ios/Signing.xcconfig.
+ios/Local.xcconfig
