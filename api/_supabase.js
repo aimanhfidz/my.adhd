@@ -42,6 +42,36 @@ export async function userFromRequest(req) {
   }
 }
 
+/**
+ * An Auth Admin call as the service role.
+ *
+ * Separate from db() because it is a different API under a different
+ * prefix, and because the things it can do are worse: /rest/v1 can only
+ * reach rows, this can end an account. Nothing should call it that has
+ * not already established, from the token, who is asking.
+ */
+export async function authAdmin(path, opts = {}) {
+  const res = await fetch(`${URL_BASE}/auth/v1/${path}`, {
+    method: opts.method || 'GET',
+    headers: {
+      apikey: SERVICE,
+      Authorization: `Bearer ${SERVICE}`,
+      'Content-Type': 'application/json',
+    },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '');
+    const err = new Error(`supabase auth ${res.status}: ${detail.slice(0, 200)}`);
+    err.status = res.status;
+    throw err;
+  }
+
+  if (res.status === 204) return null;
+  return res.json().catch(() => null);
+}
+
 /** A PostgREST call as the service role. RLS does not apply — be careful. */
 export async function db(path, opts = {}) {
   const res = await fetch(`${URL_BASE}/rest/v1/${path}`, {

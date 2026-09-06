@@ -120,6 +120,12 @@ const el = {
   acctBtn:      $('acct-btn'),
   acctHint:     $('acct-hint'),
   acctOut:      $('acct-out'),
+  acctDanger:   $('acct-danger'),
+  btnAcctDelete:       $('btn-acct-delete'),
+  acctDeleteConfirm:   $('acct-delete-confirm'),
+  acctDeleteText:      $('acct-delete-text'),
+  btnAcctDeleteCancel: $('btn-acct-delete-cancel'),
+  btnAcctDeleteGo:     $('btn-acct-delete-go'),
   signupOffer:  $('signup-offer'),
   signupYes:    $('signup-yes'),
   signupNo:     $('signup-no'),
@@ -3211,6 +3217,10 @@ function paintAccount() {
   const user = auth.user();
   el.acctCard.classList.toggle('is-on', !!user);
   el.acctOut.classList.toggle('is-hidden', !user);
+  /* Signed out there is no account to end, and a confirm box left armed
+     from before would be asking about something that is already gone. */
+  el.acctDanger.classList.toggle('is-hidden', !user);
+  if (!user) resetAcctDelete();
 
   if (!user) {
     el.acctFace.textContent = '\u{1F464}';
@@ -3353,6 +3363,81 @@ async function signOutHere() {
   paintAccount();
   paintSignupOffer();
   toast('Signed out. Your lists are still here.');
+}
+
+/* ---------------- ending the account ----------------
+   Guideline 5.1.1(v): an app that offers accounts has to let people end
+   them from inside it, and says in as many words that pointing at an
+   email address does not count. privacy.html pointed at an email address.
+
+   Deliberately the same two-stage shape as Clear everything on the lists
+   screen, because it is the same kind of moment and the app should not
+   keep two vocabularies for "are you sure". What differs is the stake,
+   and the copy carries it: clearing takes the tasks, this takes only the
+   copy of them, and it says so at both steps. */
+
+let acctDeleteStage = 0;
+let acctDeleteTimer;
+
+function resetAcctDelete() {
+  acctDeleteStage = 0;
+  clearTimeout(acctDeleteTimer);
+  if (!el.acctDeleteConfirm) return;
+  el.acctDeleteConfirm.classList.add('is-hidden');
+  el.acctDeleteConfirm.classList.remove('is-final');
+  el.btnAcctDelete.classList.remove('is-hidden');
+  el.btnAcctDeleteGo.disabled = false;
+}
+
+async function stepAcctDelete() {
+  acctDeleteStage += 1;
+
+  if (acctDeleteStage === 1) {
+    el.btnAcctDelete.classList.add('is-hidden');
+    el.acctDeleteConfirm.classList.remove('is-hidden');
+    el.acctDeleteConfirm.classList.remove('is-final');
+    el.acctDeleteText.textContent =
+      'Delete your account? Your lists stay on this device. What goes is the '
+      + 'copy that lets your devices meet — and the Google Calendar link with it.';
+    el.btnAcctDeleteGo.textContent = 'Yes, delete my account';
+  } else if (acctDeleteStage === 2) {
+    el.acctDeleteConfirm.classList.add('is-final');
+    el.acctDeleteText.textContent =
+      'Last check — this ends the account for good. Signing in again starts a '
+      + 'new empty one; it cannot bring this one back.';
+    el.btnAcctDeleteGo.textContent = 'Delete my account';
+  } else {
+    clearTimeout(acctDeleteTimer);
+    el.btnAcctDeleteGo.disabled = true;
+    el.btnAcctDeleteGo.textContent = 'Deleting…';
+
+    try {
+      await auth.deleteAccount();
+    } catch (_) {
+      /* Back to the last armed step rather than all the way out. The
+         answer to a delete that failed is usually to press it again, and
+         making somebody walk both stages a second time reads as though
+         the app were arguing with them. */
+      acctDeleteStage = 2;
+      el.btnAcctDeleteGo.disabled = false;
+      el.btnAcctDeleteGo.textContent = 'Delete my account';
+      clearTimeout(acctDeleteTimer);
+      acctDeleteTimer = setTimeout(resetAcctDelete, 20000);
+      toast('Could not delete the account. Nothing has changed.');
+      return;
+    }
+
+    if (window.cloud) cloud.forget();
+    resetAcctDelete();
+    paintAccount();
+    paintSignupOffer();
+    toast('Account deleted. Your lists are still on this device.');
+    return;
+  }
+
+  // don't leave it armed
+  clearTimeout(acctDeleteTimer);
+  acctDeleteTimer = setTimeout(resetAcctDelete, 20000);
 }
 
 /* Runs once at boot, before anything is drawn. Two jobs: catch the tokens
@@ -3852,6 +3937,9 @@ if (el.acctBtn) {
   el.acctBtn.addEventListener('click', acctAction);
   if (el.gcalDupeBtn) el.gcalDupeBtn.addEventListener('click', removeDuplicateCalendar);
   el.acctOut.addEventListener('click', signOutHere);
+  el.btnAcctDelete.addEventListener('click', stepAcctDelete);
+  el.btnAcctDeleteGo.addEventListener('click', stepAcctDelete);
+  el.btnAcctDeleteCancel.addEventListener('click', resetAcctDelete);
 }
 
 if (el.signupYes) {

@@ -205,6 +205,40 @@
       }
     },
 
+    /**
+     * Ends the account for good, everywhere.
+     *
+     * Guideline 5.1.1(v) wants this reachable from inside the app rather
+     * than by writing to us, which is what privacy.html used to ask for.
+     *
+     * The server does the deleting — it needs the service key to touch
+     * auth.users, and the cascades take the tasks and the Google token
+     * with it. This end only proves who is asking, then forgets the
+     * session, because there is no longer an account to log out of: the
+     * /logout call signOut() makes would answer 401 on a user that no
+     * longer exists.
+     *
+     * Throws if the account is still there, so the caller can say so
+     * rather than quietly leaving somebody signed in to nothing.
+     */
+    async deleteAccount() {
+      const access = await freshToken();
+      if (!access) throw new Error('not signed in');
+
+      const res = await fetch('/api/delete-account', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + access },
+      });
+      if (!res.ok) {
+        const detail = await res.json().catch(() => ({}));
+        throw new Error(detail.error || 'could not delete the account');
+      }
+
+      session = null;
+      persist();
+      announce();
+    },
+
     token: freshToken,
     absorbRedirect,
     onChange(fn) { listeners.push(fn); },

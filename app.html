@@ -413,6 +413,28 @@
           <span class="acct-hint" id="acct-hint"></span>
           <button class="btn-danger-quiet is-hidden" id="acct-out" type="button">Sign out</button>
         </div>
+
+        <!-- Ending the account, from inside the app. App Store Review
+             guideline 5.1.1(v) asks for exactly this and names an email
+             address as not enough, which is what privacy.html offered
+             until now.
+
+             Same two-stage shape as Clear everything on the lists screen:
+             a quiet button opens a box that has to be answered, the copy
+             hardens on the second press, and it disarms itself if left
+             alone. Signed out there is no account to end, so the whole
+             block goes with the Sign out button. -->
+        <div class="acct-danger is-hidden" id="acct-danger">
+          <button class="btn-danger-quiet" id="btn-acct-delete" type="button">Delete account</button>
+
+          <div class="clear-confirm is-hidden" id="acct-delete-confirm">
+            <p class="clear-confirm-text" id="acct-delete-text"></p>
+            <div class="clear-confirm-actions">
+              <button class="btn-soft" id="btn-acct-delete-cancel" type="button">Cancel</button>
+              <button class="btn-danger" id="btn-acct-delete-go" type="button"></button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- The one thing on this screen that reaches outside the browser, so
