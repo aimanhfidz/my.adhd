@@ -2,8 +2,13 @@
    Loaded by every page before its own stylesheet.
    Palette: Vivid Blue #4737FF on Paper White, Deep Blue #202030 and
    #101018 for night, Stone Gray for secondary text. Branding gradient
-   carries the CTAs. Vivid Orange belongs to the logo mark — it is not a
-   UI signal.
+   carries the CTAs. Vivid Orange does two jobs and only these two: the
+   asterisk in the mark, and everything that is late — urgent, overdue, a
+   sync that has gone stale. This line used to claim orange was the mark
+   and not a UI signal, which has not been true since 285331e gave the
+   urgent chip its background — and what makes it work as a signal is that
+   nothing else on the page competes for it. Destructive is --danger, a
+   different red for a different question, and the two never swap.
    Type: Baloo 2 (variable, 400-800), self-hosted. */
 
 @font-face{
@@ -26,7 +31,7 @@
   --navy:#202030;        /* Deep Blue    */
   --black:#101018;
   --stone:#5E5E6A;       /* Stone Gray   */
-  --orange:#F75C03;      /* Vivid Orange */
+  --orange:#F75C03;      /* Vivid Orange — the mark, and late */
   --violet:#7B3FE4;      /* logo capsule  */
   --danger:#D92D20;      /* destructive only — never decoration */
   /* The word wears the capsule's colour, in both themes — the lockup reads
