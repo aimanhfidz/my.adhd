@@ -29,9 +29,9 @@ a single task with a 2-minute first step. Everything else is parked out of sight
 
 1. **Dump** — one textarea, no structure, no categories. Or hold the mic and
    say it, which is the same funnel with the typing taken out.
-2. **Triage** — Claude turns the mess into structured tasks: rewritten title,
-   realistic minutes, energy cost, urgency, and a first step small enough that
-   refusing feels stupid.
+2. **Triage** — Claude (`claude-opus-5`, pinned in `api/triage.js`) turns the
+   mess into structured tasks: rewritten title, realistic minutes, energy
+   cost, urgency, and a first step small enough that refusing feels stupid.
 3. **The lists** — everything comes back grouped by category (work, admin,
    money, health, home, social, errand). Within a list: most urgent first,
    then shortest. Between lists: whichever holds the most urgent item leads.
@@ -476,8 +476,10 @@ What makes persisting the access token acceptable is the scope.
 `calendar.app.created` means the worst it can do is edit the app's own
 calendar — it cannot read, change or delete anything on the calendars the user
 already had. There is no XSS path to it either: every piece of task text
-reaches the DOM through `textContent`, and all eight `innerHTML` writes in
-`app.js` are either clearing a node or writing a static SVG. A token that could
+reaches the DOM through `textContent`, and every `innerHTML` write in `app.js`
+either clears a node or writes a static SVG — no task text reaches one. (The
+count used to be given here as eight and is now twelve; `grep -c innerHTML
+app.js` is the check, and what matters is that none of them interpolate.) A token that could
 reach a real diary would not be worth persisting. This one is — and the
 credential that would be worth stealing is the one kept on the far side of the
 service key.
@@ -573,7 +575,7 @@ landing page where a reviewer will look for them.
 | `origin_mismatch`, or the popup closes instantly | The origin is not in the authorised list, or has a trailing slash or a path on it |
 | "Google hasn't verified this app" | Published but unverified. *Advanced → Continue*. Expected for personal use |
 | The card goes amber about weekly | The app is still in **Testing**; grants expire after 7 days. Publish it (step 3) |
-| `idpiframe_initialization_failed`, or silent renewal never succeeds | Third-party cookies are blocked for `accounts.google.com`. The Reconnect button still works |
+| `idpiframe_initialization_failed`, or silent renewal never succeeds | Third-party cookies are blocked for `accounts.google.com`. The Reconnect button still works. **Signed in and linked this does not arise** — the server exchange needs no Google session in the browser, which is the whole reason it exists |
 
 ### How the sync works
 
@@ -613,18 +615,30 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `index.html` | Landing page — the front door. Full-bleed hero + copy |
 | `landing.css` | Landing-only layout |
 | `app.html` | The app. Six screens: dump, loading, lists, calendar, feedback, profile — plus the composer sheet, the tab bar, and the icon and logo SVG sprite |
-| `theme.css` | Palette and type. Loaded by **both** pages before their own stylesheet |
+| `theme.css` | Palette and type. Loaded by **every** page before its own stylesheet |
 | `favicon.svg` | The logo mark, standalone |
 | `fonts/` | Baloo 2 (variable, wght 400-800), self-hosted |
 | `docs/` | README screenshots and the two theme gifs. Not served by the app |
 | `styles.css` | App layout: one white page, content held to `--measure` (720px), gradient pill actions |
 | `app.js` | State, triage call, ordering, rendering, the composer, the calendar, the profile, the calendar sync |
 | `gcal.js` | Google Calendar: the OAuth token dance and the three verbs. Loads before `app.js`, which only ever asks it whether the feature is available |
-| `config.js` | Public front-end config — currently just the Google OAuth client ID. Empty means the calendar feature stays hidden |
+| `auth.js` | Signing in, and the whole of it. Optional always — the app opens on the dump box with no account. Hands the Google refresh token straight to `/api/link-google` and never writes it down |
+| `cloud.js` | The lists on every device: a signature per task, and the pass that reconciles this browser against Supabase. Talks to Supabase directly with the publishable key, not through `/api` |
+| `clock.js` | The visitor's city and local time at the end of the nav bar, on the four pages that have one — landing, guide and the two legal pages, not the app. No lookup and no request: the browser's own zone name carries the city |
+| `theme.js` | One theme controller for all seven pages, loaded synchronously from `<head>` so the stamp lands before first paint. Light is the default; the system preference does not decide, the toggle does |
+| `waves.js` | The wave field behind the landing hero. The three.js component ported to raw WebGL — one full-screen triangle, no dependency to fetch, which is what keeps the offline copy whole |
+| `config.js` | Public front-end config: the Google OAuth client ID, the Supabase URL and publishable key, the donate link. Everything in it ships to the browser and the file says so |
 | `voice.js` | Hold to talk. Records 16 kHz mono WAV in the browser and posts it to `/api/transcribe`; runs the browser's own speech engine alongside it purely for rough live text |
 | `api/triage.js` | Claude call — triage + breakdown modes |
 | `api/transcribe.js` | Gemini call — audio in, transcript out. The only place a recording is ever sent |
 | `api/feedback.js` | The note sent from the feedback screen. One per device per UTC day |
+| `api/_supabase.js` | Shared by every route that holds the service key. The service key bypasses RLS, so everything in here exists to prove a request is acting for the user who sent it |
+| `api/link-google.js` | Takes custody of the Google refresh token at sign-in and puts it in `google_tokens`, where the browser can never read it again |
+| `api/gcal-token.js` | Spends that refresh token server to server for an hour-long access token. This is what ended the reconnect prompt on iOS |
+| `api/gcal-calendar.js` | Settles once, for the whole account, which Google calendar is the my.adhd one — the fix for two devices linking at once and creating two |
+| `api/delete-account.js` | Ends an account from inside the app, and takes the cloud copy of the lists with it. App Store Guideline 5.1.1(v) |
+| `api/admin-feedback.js` | Reads the feedback table. The only route that hands one person another person's writing, so it is the only one gated on `ADMIN_EMAILS` — and it fails closed |
+| `admin.html` / `admin.js` / `admin.css` | The notes page, at `/admin`. Presentation only: the access decision is made server-side by `api/admin-feedback.js`, and hiding the list from a signed-out visitor is politeness rather than security |
 | `install.html` / `install.css` | The "add to home screen" walkthrough |
 | `privacy.html` / `terms.html` | The legal pages. Written against the code -- if they disagree with it, one of the two is a bug |
 | `legal.css` | Long-form prose: one measured column. The only stylesheet on the site that is about reading |
@@ -632,6 +646,10 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `animation/` | Logo morph exports — self-animating svg, mp4, gif. For social and this README |
 | `animation/app/` | The loading screen's mp4, one per theme. **Loaded by the app** |
 | `animation/source/` | `gen.py` (svg), `render.py` (gif + mp4), the four beats, the motion sheet |
+| `components/ui/` | `flowing-waves-shader.tsx`, the three.js component `waves.js` was ported from. Reference, not shipped — nothing on the site imports it |
+| `waves-lab.html` | A bench for the wave field: the shader's switches on sliders. Reached only from the hidden `waves` link in the admin nav, and deliberately not in the service worker |
+| `package.json` / `vercel.json` | The one dependency and the `dev` script; `cleanUrls`, the two function timeouts, and the security headers |
+| `serve.py` | Local preview that applies the same `cleanUrls` rule Vercel does, so `/app` resolves without a build. `npm run dev` runs it. It does not run the functions |
 | `ios/` | **Not the web app.** The `WKWebView` shell that opens `/app` on an iPhone and adds haptics, reminders, the share sheet, Siri and Google sign-in. Ships separately, edits nothing above it — [`ios/README.md`](ios/README.md) |
 
 ## The loading animation
