@@ -386,17 +386,41 @@ checkbox, so it can be hidden without unlinking anything.
 
 ### Where the auth lives
 
-In the browser, and nowhere else. Google Identity Services hands out an access
-token that lasts an hour; there is no client secret, no refresh token, and no
-server-side session, because there is no server-side anything. The API calls in
-`gcal.js` go straight from the browser to `googleapis.com` and never touch
-`/api`. Unlinking revokes the token and forgets the link; the events already in
-Google are left where they are.
+Two places, and which one answers depends on whether you are signed in. There
+is one rule across both: **an access token dies in an hour and is allowed on
+the device; a refresh token does not expire and never touches it.**
 
-**The token is kept in `localStorage` until it expires, and that reversed an
-earlier decision.** It was memory-only, on the reasoning that a bearer
-credential on disk is readable by anything that can run script on the origin —
-and the only cost looked like one silent round-trip after a reload.
+**Signed in and linked — on the server.** Signing in asks Google for offline
+access, so the callback carries a `provider_refresh_token`. It appears exactly
+once, in the URL fragment, and `auth.js` posts it straight to
+`/api/link-google` without ever writing it to disk. It lands in
+`google_tokens`, a table with RLS on and deliberately no policies — no anon or
+user JWT can read it at all, and only `link-google.js` and `gcal-token.js`,
+both holding the service key, ever touch it. When `gcal.js` wants a token it
+calls `POST /api/gcal-token`, which spends the refresh token against
+`oauth2.googleapis.com` server to server and returns an hour-long access token
+and the calendar id. The refresh token itself never comes back across. This
+path needs `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SUPABASE_URL` and
+`SUPABASE_SERVICE_ROLE_KEY`; without them the endpoint answers `503` and names
+which one is missing.
+
+**Signed out, or signed in but not yet linked — in the browser, as before.**
+`serverToken()` returns `null` in both cases and `getToken()` falls through to
+Google Identity Services in the page: an access token, no client secret, no
+refresh token, nothing server-side. This was the whole arrangement once and is
+still the whole of it for anyone who never makes an account.
+
+**The calendar verbs never moved.** Only minting a token and settling which
+calendar is "the" my.adhd one go through `/api`; insert, patch and remove
+still go straight from the browser to `googleapis.com`. Unlinking revokes the
+token and forgets the link locally, and a grant revoked on Google's side comes
+back from `/api/gcal-token` as a `409`, which drops the link rather than
+retrying a dead token. Events already in Google are left where they are.
+
+**The access token is kept in `localStorage` until it expires, and that
+reversed an earlier decision.** It was memory-only, on the reasoning that a
+bearer credential on disk is readable by anything that can run script on the
+origin — and the only cost looked like one silent round-trip after a reload.
 
 iOS disproved that. Silent renewal needs Google's iframe on
 `accounts.google.com` to read its own session cookie, and Safari's tracking
@@ -406,13 +430,23 @@ So every reopen failed to renew, and the app demanded a reconnect before it
 would save one dated task. A security property nobody can use is not a security
 property.
 
-What makes the trade acceptable is the scope. `calendar.app.created` means the
-worst this token can do is edit the app's own calendar — it cannot read, change
-or delete anything on the calendars the user already had. There is no XSS path
-to it either: every piece of task text reaches the DOM through `textContent`,
-and all eight `innerHTML` writes in `app.js` are either clearing a node or
-writing a static SVG. A token that could reach a real diary would not be worth
-persisting. This one is.
+**The server path is what actually fixed that, and it is why accounts exist
+here at all.** Persisting the access token stopped the reconnect prompt for an
+hour at a time; a server holding the refresh token stops it for good, because
+the exchange is server to server and needs no Google session in the browser —
+which is precisely what iOS would not give. The browser flow stayed as the
+fallback rather than being replaced, so the feature still works with no account
+at all.
+
+What makes persisting the access token acceptable is the scope.
+`calendar.app.created` means the worst it can do is edit the app's own
+calendar — it cannot read, change or delete anything on the calendars the user
+already had. There is no XSS path to it either: every piece of task text
+reaches the DOM through `textContent`, and all eight `innerHTML` writes in
+`app.js` are either clearing a node or writing a static SVG. A token that could
+reach a real diary would not be worth persisting. This one is — and the
+credential that would be worth stealing is the one kept on the far side of the
+service key.
 
 ### Setting it up
 
