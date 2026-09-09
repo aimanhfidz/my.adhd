@@ -842,10 +842,10 @@ half-pressed confirm can't wait around for a stray tap. There is no undo and
 no backup — tasks live only in this browser's `localStorage`, and clearing is
 final. `--danger` is reserved for this; it is never decoration.
 
-## Deliberately not in v1
+## Deliberately not in the beta
 
-Timers, streaks, XP, notifications, sub-projects, tags, accounts. Every one of
-those is a reason for the app to feel like homework.
+Timers, streaks, XP, notifications, sub-projects, tags. Every one of those is
+a reason for the app to feel like homework.
 
 **Calendars were on this list and came off it.** The dump reads days and times
 out of plain language, so the dates existed whether or not anything drew
@@ -854,7 +854,13 @@ anyone to schedule. Nothing else here has earned the same exception yet.
 
 **Google Calendar came off it too, on the same argument and one more.** The
 dates were already there; the only question was whether they stayed trapped in
-one browser. It stayed honest about the rest of the list by keeping the auth
-entirely client-side — there is still no account and still no server holding
-anything of yours — and by asking for a scope that cannot touch the calendars
-you already had. It is off until you turn it on.
+one browser. It stayed honest about the rest of the list by asking for a
+scope that cannot touch the calendars you already had. It is off until you
+turn it on.
+
+**Accounts were on this list and came off it.** Signing in is optional and
+arrives late: the app still opens with no network and no signup, and
+`localStorage` is still the source of truth whether or not anyone is signed
+in. What an account buys is a second copy in `cloud.js` so the lists reach
+your other devices — and, since it offers accounts at all, a way to end one
+from inside the app.
