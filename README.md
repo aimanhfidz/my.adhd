@@ -139,13 +139,47 @@ Manual deploys, if you need one:
 npx vercel --prod
 ```
 
-`ANTHROPIC_API_KEY` and `GEMINI_API_KEY` live in that project's Environment
-Variables. Each is only ever read server-side — `ANTHROPIC_API_KEY` in
-`api/triage.js`, `GEMINI_API_KEY` in `api/transcribe.js` — and neither reaches
-the browser.
+### The environment variables
+
+Eight, all in that Vercel project's **Environment Variables**, and every one
+of them read server-side only. Nothing secret reaches the browser: what the
+front end needs is in `config.js`, which is public by design and explains at
+the top of the file why each line in it is safe to publish.
+
+| Variable | Read by | Without it |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | `api/triage.js` | Triage 500s and the app falls back to the local parser — **silently**, see below |
+| `GEMINI_API_KEY` | `api/transcribe.js` | Transcription 500s and the browser's own engine answers instead — **silently**, and easier to miss |
+| `SUPABASE_URL` | `api/_supabase.js`, and so every route below it | Every `/api` route that touches the database answers 503 |
+| `SUPABASE_SERVICE_ROLE_KEY` | the same | The same. This is the key that bypasses RLS; it must never appear in `config.js` |
+| `GOOGLE_CLIENT_ID` | `api/gcal-token.js` | `/api/gcal-token` 503s and the calendar link falls back to the in-browser flow |
+| `GOOGLE_CLIENT_SECRET` | `api/gcal-token.js` | The same, and this one has no public half — it exists nowhere else |
+| `FEEDBACK_SALT` | `api/feedback.js` | The feedback screen cannot send; it is what the daily limit counts against |
+| `ADMIN_EMAILS` | `api/admin-feedback.js` | Comma-separated. Empty **fails closed** and locks everyone out, including you |
+
+**`GOOGLE_CLIENT_ID` lives in two places on purpose and they have to agree.**
+The public half is `window.MYADHD_GOOGLE_CLIENT_ID` in `config.js`, which the
+browser flow uses; the env var is the same client id, needed server-side
+because an OAuth exchange sends the id and the secret together. Change the
+client and both move.
+
+**The Supabase pair does not stop sign-in.** Signing in and list sync go from
+the browser to Supabase with the publishable key, so they carry on working
+while every `/api` route answers 503 — feedback, account deletion, and the
+whole server side of the calendar link, quietly, in an app that otherwise
+looks fine.
+
+**The Google pair fails by going backwards rather than by breaking.**
+`serverToken()` treats any non-OK answer as "no server path" and falls through
+to Google Identity Services in the page, which is the arrangement described in
+[Where the auth lives](#where-the-auth-lives) — so the calendar keeps working
+on a desktop and starts demanding a reconnect on a phone. If iOS is asking to
+reconnect again, check these two before anything else. `/api/gcal-token` is
+the one route that names what is missing in its 503 body rather than only in
+the log.
 
 **Env vars are per-project and do not survive being moved to a new one, and
-their absence is silent**: `api/triage.js` returns 500, the client swallows it,
+the two API keys go missing silently**: `api/triage.js` returns 500, the client swallows it,
 and the app falls back to the local heuristic parser. You get worse titles and
 guessed times with no error — only the small "sorted offline" banner says so.
 After any project change, dump something real and check that banner is absent
