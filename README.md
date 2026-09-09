@@ -10,6 +10,18 @@
 Live at **[myadhd.my](https://myadhd.my)** — the app itself is
 at [/app](https://myadhd.my/app).
 
+> **This README is the web app.** Two projects live in this repo and ship
+> separately: the web app at the root, which deploys to myadhd.my, and the
+> iOS shell in **[`ios/`](ios/README.md)**, a `WKWebView` case around that
+> deployed page. Everything below is the web app unless it says otherwise.
+
+**The web app is the public beta, and that is where the work goes.**
+myadhd.my is open to anyone now, so the root of this repo is the surface
+being used, broken, and fixed in front of real people — features and fixes
+land here first. The iOS shell is deliberately the quieter half: it is not on
+a release track, it adds only what a browser tab cannot do on an iPhone, and
+it holds no copy of anything below. Its state is its own README's to tell.
+
 The whole app does one thing: you empty your head into a box, and it hands back
 a single task with a 2-minute first step. Everything else is parked out of sight.
 
@@ -552,6 +564,7 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `animation/` | Logo morph exports — self-animating svg, mp4, gif. For social and this README |
 | `animation/app/` | The loading screen's mp4, one per theme. **Loaded by the app** |
 | `animation/source/` | `gen.py` (svg), `render.py` (gif + mp4), the four beats, the motion sheet |
+| `ios/` | **Not the web app.** The `WKWebView` shell that opens `/app` on an iPhone and adds haptics, reminders, the share sheet, Siri and Google sign-in. Ships separately, edits nothing above it — [`ios/README.md`](ios/README.md) |
 
 ## The loading animation
 

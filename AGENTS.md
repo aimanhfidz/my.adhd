@@ -9,6 +9,18 @@ Two things live in this repo and they are not the same project.
   `https://myadhd.my/app` and adds what a browser tab cannot do on an
   iPhone. It is a case around the web app, not a copy of it.
 
+## Where the focus is
+
+**The web app is the public beta.** myadhd.my is open to anyone now, so the
+root of this repo is the surface under active development — features, fixes,
+and anything a user would notice belong there, and land there first.
+
+**The iOS shell is not on a release track.** It builds and it works, but it
+is a case around whatever is deployed, and it is the quieter half on purpose.
+An iOS ambition is not a reason to move the web app; if the shell needs
+something the page does not offer, that is a conversation about the website,
+held separately — see below.
+
 ## iOS work does not edit the web app
 
 Work on the iOS shell stays inside `ios/`. The shell gets what it needs by
