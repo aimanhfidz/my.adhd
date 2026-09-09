@@ -436,9 +436,11 @@ body{
 .btn-soft:disabled{opacity:.45; cursor:not-allowed}
 
 /* ---------- screen 3: the lists ----------
-   The dump comes back grouped by category. Within a list: most urgent
-   first, then shortest. Between lists: whichever holds the most urgent
-   item leads. Detail stays collapsed so the lists stay scannable. */
+   The dump comes back under four deadline headings — Late, Today, Coming
+   up, No date yet. Under a dated one the clock leads, then urgency, then
+   length; the undated one leads on urgency. Category is the filter row
+   above, not the shape of the page. Detail stays collapsed so the lists
+   stay scannable. */
 
 .lists-summary{
   font-size:13.5px; color:var(--faint); margin-bottom:22px;

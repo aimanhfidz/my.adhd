@@ -35,5 +35,7 @@ route will not do it. Changing the website is a decision about the website,
 not a step in an iOS task — even when the iOS task is blocked without it.
 
 The reverse holds too: a change to the web app should not assume the shell
-exists. `ios/README.md` lists the four values the shell treats as promises
-about the page, and they break quietly when either side moves.
+exists. `ios/README.md` lists the values the shell treats as promises about
+the page — grounds, ids, a store key, selectors — and they break quietly when
+either side moves. Grep `ios/` before renaming one; the list is a signpost,
+not a guarantee it is complete.

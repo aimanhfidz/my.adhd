@@ -32,9 +32,11 @@ a single task with a 2-minute first step. Everything else is parked out of sight
 2. **Triage** — Claude (`claude-opus-5`, pinned in `api/triage.js`) turns the
    mess into structured tasks: rewritten title, realistic minutes, energy
    cost, urgency, and a first step small enough that refusing feels stupid.
-3. **The lists** — everything comes back grouped by category (work, admin,
-   money, health, home, social, errand). Within a list: most urgent first,
-   then shortest. Between lists: whichever holds the most urgent item leads.
+3. **The lists** — everything comes back under four headings, in the order
+   the day presses on you: **Late**, **Today**, **Coming up**, **No date
+   yet**. Category (work, admin, money, health, home, social, errand) is a
+   filter across the top rather than the shape of the page — a row of pills
+   that appears once there are two lists to choose between.
    Tap a task for its first step, "break it down", and **Edit / Remove**.
    Completed items collect in a "N done" row with undo.
 
@@ -47,9 +49,24 @@ which shows the open count.
 
 ### Why it orders what it orders
 
-`groupByCategory()` in `app.js` sorts **within** a list by urgency, then by
-length — short tasks win ties, because momentum beats optimality. **Between**
-lists, whichever holds the most urgent item leads.
+`bucketize()` in `app.js` puts every task under one of four headings, and
+what decides which is its deadline and nothing else. A heading can say at a
+glance what a chip on a card cannot, and mixing urgency into it would leave a
+line reading "Today" holding something that is not. Only the headings with
+something under them are drawn: an empty **Late** is a worse thing to read
+than no heading at all.
+
+`sortBucket()` then orders what sits underneath, and the rule changes with the
+heading. Under a dated one the **clock leads** — the heading has already said
+these are all late, or all today, so what is left to know is which comes
+first — then urgency, then length. **No date yet** has no clock to lead with,
+so urgency does, and between two of equal standing the quicker one wins:
+a list you can put a dent in beats one you can only stare at.
+
+**Category no longer orders anything.** `groupByCategory()` is still there and
+still called twice, but it feeds the filter pills and the "N lists" count —
+not the shape of the page. This used to be the other way
+round, and the sentence describing it outlived the change by a fortnight.
 
 **Energy is captured but does not affect ordering.** The model rates every
 task `low` / `medium` / `high` and the chip on the row shows it, but nothing
@@ -67,8 +84,14 @@ than the user has — which belongs to a "just one thing" focus screen.
 
 ## Screens
 
-Real output — the lists below are what the model returned for one dump of seven
-things, not mock-ups.
+Real output — the lists below are what the model returned for one dump of
+seven things, not mock-ups.
+
+**They are also out of date.** These were taken on 23 August, before the
+lists moved to deadline headings and before the mark settled on one violet,
+so they show tasks under *Money / Admin / Work / Health* — a shape the app no
+longer has. Kept until they are retaken, because a stale photograph of the
+real thing still says more than nothing.
 
 | Dump | Lists |
 |---|---|
