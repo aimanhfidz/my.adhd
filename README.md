@@ -85,24 +85,32 @@ than the user has — which belongs to a "just one thing" focus screen.
 ## Screens
 
 Real output — the lists below are what the model returned for one dump of
-seven things, not mock-ups.
+seven things, not mock-ups. Taken against myadhd.my on 9 September from this
+dump, typed as one paragraph of seven lines:
 
-**They are also out of date.** These were taken on 23 August, before the
-lists moved to deadline headings and before the mark settled on one violet,
-so they show tasks under *Money / Admin / Work / Health* — a shape the app no
-longer has. Kept until they are retaken, because a stale photograph of the
-real thing still says more than nothing.
+> the electricity bill was due yesterday · submit the expense claim today ·
+> pay rent before friday · email the landlord about the kitchen leak · renew
+> my passport · book a dentist appointment · buy a birthday present for sarah
+> next tuesday
+
+Seven things, four lists, and three of the four headings — nothing was late
+on the day, so **Late** does not appear. The model kept the two dates it was
+given as dates (`Fri 11 Sep`, `Tue 15 Sep`), read "today" as today, and left
+"was due yesterday" undated but urgent, which is the honest reading: the bill
+is overdue, not scheduled.
 
 | Dump | Lists |
 |---|---|
-| <img src="docs/screen-dump.png" alt="The dump screen: one textarea and a Clear my head button" /> | <img src="docs/screen-lists.png" alt="The lists screen: tasks grouped into Money, Admin, Work, Health" /> |
+| <img src="docs/screen-dump.png" alt="The dump screen: a welcome meme, one textarea, a Clear my head button, and View my lists" /> | <img src="docs/screen-lists.png" alt="The lists screen: a category filter row, then tasks under Today, Coming up and No date yet" /> |
 
 Same screen on the dark theme, via the header toggle:
 
 <img src="docs/screen-lists-dark.png" alt="The lists screen in dark mode" width="520" />
 
-Note the single orange **urgent** pill on the rent task. Vivid Orange is
-reserved for *act now* — one thing at a time, or it stops meaning anything.
+Note how little orange there is: two **urgent** pills out of seven tasks, and
+nothing else on the page competing for the colour. Vivid Orange is *act now*
+and the mark, and nothing else — spend it on a third thing and it stops
+meaning anything.
 
 **Every screen and every route between them:**
 [screen map](https://claude.ai/code/artifact/447d9c4a-f7f2-4249-8434-f640bc49a25b)
