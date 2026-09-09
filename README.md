@@ -1,4 +1,4 @@
-# my.adhd — MVP #1
+# my.adhd — public beta
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/morph-dark.gif" />
