@@ -1,5 +1,5 @@
 /* ============================================================
-   my.adhd — MVP feature: Brain Dump -> Auto-Triage -> One Task
+   my.adhd — Brain Dump -> Auto-Triage -> One Task
    Storage: localStorage, always, account or not — the app opens with no
    network and no signup, which is the whole point. An optional account
    adds a second copy in cloud.js so the lists reach your other devices;
