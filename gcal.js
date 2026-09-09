@@ -1,13 +1,20 @@
 /* ============================================================
    my.adhd — Google Calendar link
 
-   What this file is for: the app has no accounts and no server-side
-   store, and this feature does not get to change that. So the whole
-   OAuth dance happens in the browser with Google Identity Services and
-   an access token that lives in memory for an hour. There is no client
-   secret, no refresh token, and nothing about your Google account is
-   ever sent to our backend — the calls in here go straight from your
-   browser to googleapis.com.
+   What this file is for: getting an access token for Google Calendar
+   and spending it. There are two ways to get one and the account
+   decides which. Signed in and linked, /api/gcal-token mints one from a
+   refresh token held on the server that this browser never sees.
+   Otherwise the OAuth dance happens here in the page with Google
+   Identity Services — no client secret, no refresh token, nothing
+   server-side at all. That second path was once the whole of this file,
+   and is still the whole of it for anyone who never signs in.
+
+   Either way what comes back is an access token good for an hour, kept
+   until it expires rather than held in memory — the long note below the
+   store is why that changed. The three verbs go straight from this
+   browser to googleapis.com; only minting a token and settling which
+   calendar is ours ever touch /api.
 
    The scope is calendar.app.created, which is the narrow one: it lets
    the app make its own secondary calendar and edit events on *that*.
