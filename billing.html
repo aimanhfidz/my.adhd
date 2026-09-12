@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Billing — my.adhd</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#FFFFFF" />
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+<script src="theme.js"></script>
+<script src="config.js"></script>
+<script src="auth.js" defer></script>
+<script src="billing.js" defer></script>
+<link rel="stylesheet" href="theme.css" />
+<link rel="stylesheet" href="test.css" />
+<style>
+/* This page is scaffolding. It is where Stripe returns to after checkout,
+   and it is how the three plans get tested end to end before any of this
+   is wired into the app. It borrows test.css because that is the other
+   standalone page and the shapes are the same; it is noindex because
+   nobody should find it from a search. When the real pricing page exists
+   this stays as the account screen. */
+.plan{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:20px; flex-wrap:wrap;
+  padding:20px 0; border-bottom:1px solid var(--line);
+}
+.plan-name{font-family:var(--display); font-weight:600; font-size:20px; color:var(--ink)}
+.plan-price{font-family:var(--mono); font-size:14px; color:var(--muted); margin-top:4px}
+.plan-note{font-size:13px; color:var(--faint); margin-top:6px}
+.state{
+  font-family:var(--mono); font-size:13px; line-height:1.9;
+  padding:18px 20px; border:1px solid var(--line); border-radius:12px;
+  background:var(--wash); color:var(--ink-soft);
+  white-space:pre-wrap; overflow-wrap:anywhere;
+}
+.pill-state{
+  display:inline-block; padding:3px 10px; border-radius:999px;
+  font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.is-yes{background:rgba(247,92,3,.14); color:var(--orange)}
+.is-no{background:var(--wash-2); color:var(--faint)}
+.msg{margin-top:16px; font-size:14px; color:var(--muted); min-height:1.4em}
+</style>
+</head>
+<body>
+
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Seven orange arms: the eighth (lower-right) is detached and carried
+         by the violet capsule sitting just off the centre. -->
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+</svg>
+
+<div class="t-wrap">
+
+  <header class="t-head">
+    <a class="brand-lockup" href="/" aria-label="my.adhd home">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="wordmark">my<span class="accent">.adhd</span></span>
+    </a>
+    <a class="t-exit" href="/app">Back to the app</a>
+  </header>
+
+  <p class="kicker">Billing.</p>
+  <h1>Your plan</h1>
+
+  <div class="msg" id="msg"></div>
+
+  <div class="state" id="state" style="margin-top:22px">reading…</div>
+
+  <div class="t-actions">
+    <button class="btn" id="refresh" type="button">Re-check</button>
+    <button class="btn" id="portal" type="button" hidden>Manage billing</button>
+    <button class="btn" id="signin" type="button" hidden>Sign in</button>
+  </div>
+
+  <div class="t-note">
+    <h2>The three plans</h2>
+
+    <div class="plan">
+      <div>
+        <div class="plan-name">Weekly</div>
+        <div class="plan-price">RM9.90 / week</div>
+        <div class="plan-note">First 3 days free. Card taken now, charged when the trial ends.</div>
+      </div>
+      <button class="btn btn-go" data-plan="weekly" type="button">Start trial</button>
+    </div>
+
+    <div class="plan">
+      <div>
+        <div class="plan-name">Annual</div>
+        <div class="plan-price">RM49.90 / year</div>
+        <div class="plan-note">RM4.16 a month. RM0.96 a week.</div>
+      </div>
+      <button class="btn" data-plan="annual" type="button">Choose annual</button>
+    </div>
+
+    <div class="plan" style="border-bottom:0">
+      <div>
+        <div class="plan-name">Lifetime <span class="pill-state is-yes">best value</span></div>
+        <div class="plan-price">RM99.90 once</div>
+        <div class="plan-note">One payment. No renewal to forget about.</div>
+      </div>
+      <button class="btn" data-plan="lifetime" type="button">Buy lifetime</button>
+    </div>
+  </div>
+
+  <div class="t-note">
+    <h2>Testing this</h2>
+    <p>
+      In Stripe test mode the card <b>4242&nbsp;4242&nbsp;4242&nbsp;4242</b> with any
+      future expiry and any CVC completes a purchase. <b>4000&nbsp;0000&nbsp;0000&nbsp;3220</b>
+      forces 3D Secure and <b>4000&nbsp;0000&nbsp;0000&nbsp;9995</b> declines for
+      insufficient funds &mdash; worth trying, because a declined renewal is
+      the case that decides whether access actually lapses.
+    </p>
+    <p>
+      Entitlement is granted by the webhook, not by returning to this page,
+      so after checkout the row can take a second or two to appear. That is
+      what <b>Re-check</b> is for. If it never appears, the webhook is not
+      reaching the server &mdash; see <code>docs/stripe-setup.md</code>.
+    </p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var msg = document.getElementById('msg');
+  var box = document.getElementById('state');
+
+  function say(t, bad) {
+    msg.textContent = t || '';
+    msg.style.color = bad ? 'var(--danger)' : 'var(--muted)';
+  }
+
+  function paint(s) {
+    var signedIn = window.auth && window.auth.signedIn();
+    document.getElementById('signin').hidden = !!signedIn;
+    document.getElementById('portal').hidden = !signedIn || !s.plan;
+    document.querySelectorAll('[data-plan]').forEach(function (b) {
+      b.disabled = !signedIn;
+    });
+
+    if (!signedIn) { box.textContent = 'signed out — sign in to see a plan'; return; }
+
+    box.innerHTML =
+      'entitled  ' + (s.entitled
+        ? '<span class="pill-state is-yes">yes</span>'
+        : '<span class="pill-state is-no">no</span>') + '\n' +
+      'plan      ' + (s.plan || '—') + '\n' +
+      'status    ' + s.status + '\n' +
+      'renews    ' + (s.currentPeriodEnd
+        ? s.currentPeriodEnd.toLocaleString()
+        : (s.plan === 'lifetime' ? 'never — lifetime' : '—')) + '\n' +
+      'cancelling' + (s.cancelAtPeriodEnd ? ' yes, at period end' : ' no');
+  }
+
+  document.getElementById('signin').addEventListener('click', function () {
+    if (window.auth) window.auth.signIn();
+  });
+  document.getElementById('refresh').addEventListener('click', function () {
+    say('re-checking…');
+    window.billing.refresh().then(function () { say(''); });
+  });
+  document.getElementById('portal').addEventListener('click', function () {
+    say('opening Stripe…');
+    window.billing.portal().catch(function (e) { say(e.message, true); });
+  });
+  document.querySelectorAll('[data-plan]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      say('opening Stripe…');
+      window.billing.checkout(b.getAttribute('data-plan'))
+        .catch(function (e) { say(e.message, true); });
+    });
+  });
+
+  /* Stripe just sent them back. The webhook may not have landed yet, so
+     re-read a couple of times rather than showing "not entitled" to
+     somebody who has just paid. */
+  var p = new URLSearchParams(location.search);
+  if (p.get('ok')) {
+    say('Payment received. Waiting for Stripe to confirm…');
+    var tries = 0;
+    var poll = setInterval(function () {
+      tries++;
+      window.billing.refresh().then(function (s) {
+        if (s.entitled) { clearInterval(poll); say('All set.'); }
+        else if (tries >= 6) { clearInterval(poll); say('Still waiting — press Re-check in a moment.'); }
+      });
+    }, 1500);
+  }
+  if (p.get('cancelled')) say('Checkout cancelled. Nothing was charged.');
+
+  window.addEventListener('load', function () {
+    if (window.billing) window.billing.onChange(paint);
+    if (window.auth && window.auth.onChange) window.auth.onChange(function () { paint(window.billing.state()); });
+  });
+})();
+</script>
+
+</body>
+</html>
