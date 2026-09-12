@@ -50,8 +50,14 @@
 
 <main class="legal">
 
+  <!-- The two blocks the wide layout puts in the left column. They are
+       wrappers and nothing else: below 1160px legal.css runs .legal as a
+       single centred track and these have no effect at all, so the reading
+       order on a phone is the order it has always been. -->
+  <div class="legal-head">
   <h1 class="legal-title">Privacy</h1>
   <p class="legal-date">Last updated <time datetime="2026-08-25">25 August 2026</time></p>
+  </div>
 
   <p class="legal-lede">
     This is the whole of it, written to be read rather than to be survived.
@@ -77,6 +83,8 @@
         advertising, no cookies, no third-party scripts on the page.</li>
     </ul>
   </section>
+
+  <div class="legal-body">
 
   <h2>Your tasks and your profile</h2>
   <p>
@@ -303,6 +311,7 @@
 
   <p class="legal-back"><a href="/">&larr; Back to my.adhd</a></p>
 
+  </div>
 </main>
 
 <!-- ============ the footer ============

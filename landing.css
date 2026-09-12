@@ -31,11 +31,13 @@
      the theme in force. Values are the brand's, so theme.css stays the one
      place the palette is written. Orange is not among them on purpose — it
      belongs to the logo mark and is not a surface. */
-  /* Night runs deep — deep blue up to the brand, not up to the pale one.
-     The pale highlight made a bright field for the near-black reader pool
-     to sit in, and a pool that dark against a surround that light is an
-     oval again whatever the falloff does. It also matches the night --grad,
-     which starts at #2A1FA6 rather than at the daylight blue. */
+  /* Night runs deep — deep violet up to the brand violet, not up to the
+     pale one. The pale highlight made a bright field for the near-black
+     reader pool to sit in, and a pool that dark against a surround that
+     light is an oval again whatever the falloff does. The pair used to be
+     --blue-deep/--blue and the ends are the violet's, at the same two
+     depths: the field is the brand's colour, and the brand's colour here
+     is purple. */
   --wave-ink-ground:var(--black);
   --wave-ink-mid:var(--blue-deep);
   --wave-ink-hi:var(--blue);
@@ -57,8 +59,8 @@
      because these six are unthemed and a themed token would answer for
      whichever theme happened to be up when waves.js read it. */
   --wave-paper-ground:#FFFFFF;
-  --wave-paper-mid:#E9E7FB;
-  --wave-paper-hi:var(--pale);
+  --wave-paper-mid:#EDE6FB;
+  --wave-paper-hi:var(--violet-pale);
   /* the one gap between the nav and the first line of copy — every page
      starts its content here, so the titles line up across the site */
   --top-gap:clamp(14px,3.4vh,34px);
@@ -303,7 +305,12 @@ body{
    full gutter-to-gutter measure, and the note's ends walked out to 4.38:1.
    This is a phone rule, not a small-screen rule. */
 @media (max-width:480px){
-  :root[data-theme="dark"]{--wave-veil-a:.30}
+  /* The wash used to drop to .30 here, on the reasoning above: no surround
+     to close, so nothing for the heavier wash to do. True, but the wash
+     is also what sets how bright the field reads, and site.css now holds
+     every page to the same .50 so the field is one field across the site
+     rather than a brighter cousin on a phone. It stays .50. */
+  :root[data-theme="dark"]{--wave-veil-a:.50}
   /* Tracks the window rather than sitting at a fixed height: the copy
      spreads as the hero gets taller, so a flat 17rem that cleared the note
      on an 812pt phone left its ends at 4.42:1 on a 900pt one. The rem is
@@ -894,12 +901,15 @@ body{
      justify-content stops deciding anything. */
   min-height:100dvh;
   display:flex; flex-direction:column; justify-content:center;
-  /* The bar is fixed and this section is now parked at a fixed place
-     rather than scrolled to, so a head that lands under the bar lands
-     under it for good. The top gutter carries the bar's height; the two
-     ends being unequal is what centres the content in the space below the
-     bar rather than in the window. */
-  padding:calc(var(--bar-h) + clamp(28px,4.5vh,64px)) clamp(20px,5vw,40px) clamp(52px,8vh,100px);
+  /* The top gutter used to carry the bar's height as well, so the content
+     centred in the space below the bar rather than in the window. That was
+     right while this was the first screen under the hero and the bar was
+     the only thing over it. It is not any more: #problem and #emotion open
+     the page now, and .how is reached by scrolling past both — so the bar
+     is over whatever happens to be under it, this section is never parked
+     beneath it, and the allowance became a nav's height of empty page
+     between the Emotion beat and this heading. Measured at 390. */
+  padding:clamp(28px,4.5vh,64px) clamp(20px,5vw,40px) clamp(52px,8vh,100px);
 }
 
 /* the section head, shared with .why — same size, same measure, so the two
@@ -1671,4 +1681,541 @@ main{
   .close-body{gap:8px}
   .cl-2{font-size:clamp(28px,7vw,40px)}
   .cta-xl{font-size:17px; padding:14px 40px}
+}
+
+
+/* ============ THE BAR'S LINKS ============
+   Five destinations added to a bar that used to carry a mark, a clock and
+   one button. Everything below sits after the .nav block above on purpose:
+   two of these rules exist to cancel margins written up there.
+
+   The links take the middle by `margin-inline:auto`, which splits the free
+   space either side of them — mark hard left, clock and buttons hard right.
+   That only holds while theirs is the ONLY auto margin in the row: CSS
+   shares free space equally between every auto it finds, so the two the bar
+   already had have to go, or the row ends up with the links a third of the
+   way across and no way to say why.
+
+   Inside the breakpoint, and not outside it. display:none takes the row out
+   of the layout but leaves it in the DOM, so a bare sibling selector cancels
+   those margins on a phone too — where there is no centred row to make room
+   for, and the result is the mark, the clock and both buttons huddled
+   together on the left with the rest of the bar empty. Measured on a 390. */
+@media (min-width:1024px){
+  .nav-links ~ .nav-clock,
+  .nav-links ~ .theme-toggle{margin-left:0}
+}
+
+.nav-links{
+  /* The row is a desktop object. Below 1024 it is gone and .nav-toggle
+     opens the sheet instead — five labels, a mark, a clock and two buttons
+     do not fit on a phone at any size worth reading. */
+  display:none;
+  margin-inline:auto;
+  list-style:none;
+  align-items:center;
+  gap:clamp(14px,2vw,26px);
+}
+@media (min-width:1024px){
+  .nav-links{display:flex}
+}
+/* The clock is the first thing to go when the row is tight. It is the one
+   piece of the bar that is ambient rather than useful, and between 1024 and
+   1200 it is what pushes the links off centre.
+
+   Bounded at BOTH ends, and the lower bound is the load-bearing one. The
+   bar above already carries `.nav-clock:not([hidden]) ~ .theme-toggle
+   {margin-left:0}` — written when the clock was the element holding the
+   right-hand auto margin, which it still is on a phone. display:none does
+   not add [hidden], so hiding the clock below 1024 left that rule matching
+   a box that no longer pushes anything: the mark, both buttons and the
+   whole right-hand side of the bar collapsed to the left. Measured on a
+   390. Below 1024 there is no link row to make room for anyway. */
+@media (min-width:1024px) and (max-width:1199.98px){
+  .nav-links ~ .nav-clock{display:none}
+}
+.nav-links a{
+  position:relative; display:block;
+  padding:3px 1px;
+  font-size:14px; font-weight:600; white-space:nowrap;
+  color:var(--muted); text-decoration:none;
+  transition:color .18s var(--ease);
+}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a:focus-visible{
+  outline:none; color:var(--ink);
+  box-shadow:0 0 0 4px var(--focus); border-radius:6px;
+}
+/* Where you are, drawn rather than coloured. Colour alone would have to
+   carry the whole signal at 14px against --muted, and the two are close
+   enough on paper that it reads as a hover left behind. The rule under the
+   word is unambiguous, and it grows from the middle so the marker travelling
+   between two links reads as one thing moving. */
+.nav-links a::after{
+  content:""; position:absolute; left:0; right:0; bottom:-3px; height:2px;
+  border-radius:2px; background:var(--accent);
+  transform:scaleX(0); transform-origin:50% 50%;
+  transition:transform .24s var(--ease);
+}
+.nav-links a[aria-current]{color:var(--ink)}
+.nav-links a[aria-current]::after{transform:scaleX(1)}
+
+/* ---------- the phone's button ----------
+   Same 34px circle as .theme-toggle, down to the border and the hover, and
+   for the plainest of reasons: they sit next to each other, and a bar with
+   two button sizes in it reads as a bar with a mistake in it. */
+.nav-toggle{
+  flex:none; width:34px; height:34px;
+  display:grid; place-items:center;
+  margin-left:8px;
+  background:none; border:1.5px solid var(--line-strong); border-radius:999px;
+  color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+@media (min-width:1024px){
+  .nav-toggle{display:none}
+}
+.nav-toggle:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
+.nav-toggle:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+/* Two rules, not three. The open state is an X, and an X is two strokes —
+   a third one has to be faded out to get there, which is a hamburger
+   pretending to be a close button rather than becoming one. */
+.nav-toggle .nt-bars{
+  position:relative; display:block; width:16px; height:11px;
+}
+.nav-toggle .nt-bars i{
+  position:absolute; left:0; width:16px; height:1.8px; border-radius:2px;
+  background:currentColor;
+  transition:transform .24s var(--ease), top .24s var(--ease);
+}
+.nav-toggle .nt-bars i:nth-child(1){top:0}
+.nav-toggle .nt-bars i:nth-child(2){top:9.2px}
+.nav-toggle[aria-expanded="true"] .nt-bars i{top:4.6px}
+.nav-toggle[aria-expanded="true"] .nt-bars i:nth-child(1){transform:rotate(45deg)}
+.nav-toggle[aria-expanded="true"] .nt-bars i:nth-child(2){transform:rotate(-45deg)}
+
+/* ---------- the sheet ----------
+   Fixed rather than absolute, so it leaves the bar's flex row entirely and
+   covers the page instead of stretching the bar to hold it. It starts under
+   the bar and runs to the bottom of the window: the mark and the two
+   buttons stay visible and pressable while it is open, which is what keeps
+   the close button where the open button was. */
+.nav-sheet{
+  position:fixed; z-index:-2;
+  top:var(--bar-h); left:0; right:0; bottom:0;
+  background:var(--surface);
+  border-top:1px solid var(--line);
+  padding:clamp(18px,4vh,40px) clamp(20px,5vw,40px) calc(clamp(20px,5vw,40px) + env(safe-area-inset-bottom, 0px));
+  display:flex; flex-direction:column; align-items:stretch;
+  gap:clamp(18px,3vh,28px);
+  overflow-y:auto;
+  /* z-index -2 puts it under the bar's own row and under .nav::before, so
+     the ground the bar paints on scroll stays the bar's and the sheet reads
+     as hanging from underneath it. */
+}
+.nav-sheet[hidden]{display:none}
+.nav-sheet ul{list-style:none; display:flex; flex-direction:column}
+.nav-sheet li + li{border-top:1px solid var(--line)}
+.nav-sheet ul a{
+  display:block; padding:clamp(13px,2.2vh,17px) 2px;
+  font-size:clamp(19px,5.2vw,24px); font-weight:700; letter-spacing:-.025em;
+  color:var(--ink); text-decoration:none;
+}
+.nav-sheet ul a[aria-current]{color:var(--accent)}
+.nav-sheet ul a:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:6px}
+/* The one thing the sheet adds that the bar does not have: the page's own
+   button, so a reader who opened the menu looking for the way in finds it
+   without closing the menu again. */
+.nav-sheet-cta{
+  margin-top:auto; align-self:stretch; text-align:center;
+  padding:15px 22px; font-size:16px;
+}
+/* Nothing behind a full-screen sheet should scroll under it. */
+:root[data-nav-open], :root[data-nav-open] body{overflow:hidden}
+
+/* Anchors have to clear a bar that is fixed over them, and scroll-padding
+   on the scroll container is the one place to say it once — every in-page
+   link, the keyboard, and the browser's own restore all read it. */
+html{scroll-padding-top:calc(var(--bar-h) + clamp(10px,2vh,22px))}
+@media (prefers-reduced-motion:no-preference){
+  html{scroll-behavior:smooth}
+}
+
+
+/* ============ THE READING BANDS ============
+   About, PESTA, Activities, Testimonials, Contact.
+
+   None of them is a screen, and that is the decision the rest of this
+   block follows from. .why's points and .how each take a whole viewport
+   because each is one beat — a claim, a finding, a step — and a beat wants
+   the window to itself. These five are not beats. They are sections you
+   read at your own pace, several paragraphs long, and five more 100dvh
+   boxes on a page that already spends six of them would turn an argument
+   into a corridor: eleven screens to scroll through before the button.
+
+   So they are bands. The same 1080 measure .how and the footer already
+   sit on, ordinary vertical padding, the page's own ground, and one
+   hairline at the top of each — which is the divider vocabulary .why-foot
+   established, used here for the same job. No wave fields: three
+   full-screen shaders already run at once across a seam, and the field's
+   cost is per pixel of window, not per section. */
+.band{
+  position:relative; z-index:1;
+  max-width:1080px; margin:0 auto;
+  padding:clamp(56px,10vh,120px) clamp(20px,5vw,40px);
+  border-top:1px solid var(--line);
+}
+
+/* The head, shared with .how — see .how-head above, which is the same box
+   at the same measure. The kicker is the one thing added: with five bands
+   in a row the reader needs the section's name in the page as well as in
+   the bar, and the title is a sentence rather than a label. */
+.band-head{text-align:center; max-width:36rem; margin:0 auto clamp(30px,5vw,52px)}
+.band-kicker{
+  margin-bottom:clamp(8px,1.4vw,12px);
+  font-size:12px; font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--faint);
+}
+.band-title{
+  font-size:clamp(24px,4.2vw,38px); font-weight:800;
+  letter-spacing:-.035em; line-height:1.08;
+  /* These titles are sentences rather than labels, and a sentence left to
+     wrap on its own puts one or two words alone on the last line. Ignored
+     where it is not supported, which is the correct fallback: the old
+     ragged break. */
+  text-wrap:balance;
+}
+.band-lede{
+  margin-top:clamp(8px,1.4vw,12px);
+  font-size:clamp(14px,1.9vw,17px); color:var(--muted); line-height:1.55;
+}
+
+/* ---------- copy that is not finished ----------
+   Two of these five bands ship as scaffolding, and the page has to say so
+   out loud. A dashed edge and a marker in the corner are not decoration
+   here: invented praise under a plausible name is a fabricated review, and
+   a framework with the wrong words in it is worse than one that admits it
+   is waiting. Delete the attribute from a row when its copy is real; when
+   the last one goes, so does all of this. */
+[data-placeholder]{
+  position:relative;
+  /* so the marker's square corner is cut by the box's round one */
+  overflow:hidden;
+  border:1.5px dashed var(--line-strong) !important;
+  background:var(--wash);
+}
+[data-placeholder]::after{
+  content:"work in progress";
+  position:absolute; top:0; right:0;
+  padding:3px 9px 4px;
+  border-bottom-left-radius:10px;
+  background:var(--line-strong); color:var(--surface);
+  font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+}
+
+/* ---------- ABOUT ----------
+   Reading on the left, checkable facts on the right. The facts are a <dl>
+   and not a fourth card grid because each one is a property of the app
+   rather than a feature of it — a term and its value, which is the one
+   thing a definition list is actually for. */
+.about-grid{
+  display:grid; gap:clamp(26px,4vw,48px);
+  align-items:start;
+}
+@media (min-width:820px){
+  .about-grid{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+}
+.about-lead{display:flex; flex-direction:column; gap:clamp(12px,1.8vw,18px)}
+.about-lead p{
+  font-size:clamp(14.5px,1.8vw,16.5px); color:var(--muted); line-height:1.65;
+  max-width:56ch;
+}
+.about-lead p:first-child{color:var(--ink-soft); font-size:clamp(15.5px,2vw,18px)}
+.about-facts{
+  display:flex; flex-direction:column;
+  border-top:1px solid var(--line);
+}
+.about-facts > div{
+  display:flex; align-items:baseline; justify-content:space-between;
+  gap:16px; padding:clamp(10px,1.4vw,13px) 0;
+  border-bottom:1px solid var(--line);
+}
+.about-facts dt{
+  flex:none;
+  font-size:12px; font-weight:700; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--faint);
+}
+.about-facts dd{
+  text-align:right;
+  font-size:clamp(13.5px,1.6vw,15px); font-weight:600; color:var(--ink-soft);
+  line-height:1.4;
+}
+
+/* ---------- PESTA ----------
+   Five rows, and the letter is the furniture. It is set big and quiet
+   rather than big and loud: an acronym read down the left margin is a
+   spine, and a spine in the accent colour five times over would out-shout
+   every heading beside it. */
+.pesta{list-style:none; display:flex; flex-direction:column; max-width:46rem; margin-inline:auto}
+/* Hairline-separated rows rather than five more cards. The page already
+   spends furniture on .acts and .quotes, and a third bordered set in the
+   same stretch reads as card soup; the letters down the left are furniture
+   enough to hold five rows together. */
+.pesta-step{
+  display:grid; grid-template-columns:auto minmax(0,1fr);
+  align-items:start; gap:clamp(14px,2.4vw,26px);
+  padding:clamp(18px,2.6vw,26px) 0;
+}
+.pesta-step + .pesta-step{border-top:1px solid var(--line)}
+.ps-letter{
+  flex:none;
+  width:clamp(44px,6vw,62px);
+  font-size:clamp(36px,6vw,58px); font-weight:800; line-height:.9;
+  letter-spacing:-.05em;
+  color:var(--blue-pale);
+  font-variant-numeric:tabular-nums;
+}
+:root[data-theme="dark"] .ps-letter{color:#3B3A6E}
+.ps-body{display:flex; flex-direction:column; gap:5px; padding-top:clamp(2px,.6vw,6px)}
+.ps-name{
+  font-size:clamp(17px,2.2vw,21px); font-weight:800;
+  letter-spacing:-.025em; line-height:1.2;
+}
+.ps-line{
+  font-size:clamp(14px,1.7vw,16px); color:var(--muted); line-height:1.6;
+  max-width:56ch;
+}
+/* The link to the beat this row names. It is what makes the section a map
+   of the page rather than a description of one — and it is also the test:
+   five links that land on five real sections is the claim, checkable by
+   pressing them. No arrow glyph, because two of the five beats are above
+   this section and three are below, and a direction that is wrong for two
+   of them is worse than none. */
+.ps-jump{
+  align-self:start; margin-top:4px;
+  font-size:13px; font-weight:700; color:var(--accent);
+  text-decoration:none;
+  border-bottom:1.5px solid transparent;
+  transition:border-color .18s var(--ease);
+}
+.ps-jump:hover{border-bottom-color:var(--accent)}
+.ps-jump:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+
+/* ---------- ACTIVITIES ----------
+   Six of them, so the grid runs to three and then two and then one — never
+   leaving one item alone on a row, which is the trap .cards above avoids by
+   refusing two columns for three cards. Six divides both ways. */
+.acts{
+  list-style:none;
+  display:grid; gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+}
+@media (min-width:600px){ .acts{grid-template-columns:repeat(2,1fr)} }
+@media (min-width:900px){ .acts{grid-template-columns:repeat(3,1fr)} }
+/* A one-pixel gap over a ruled ground, so the six read as one object cut
+   into six rather than six objects that happen to be near each other. It is
+   the only way to draw shared hairlines in a grid that reflows. */
+.act{
+  background:var(--surface);
+  padding:clamp(20px,2.6vw,28px);
+  display:flex; flex-direction:column; gap:7px;
+}
+.act-n{
+  font-size:12px; font-weight:700; letter-spacing:.1em;
+  color:var(--blue-pale);
+}
+:root[data-theme="dark"] .act-n{color:#4A4880}
+.act h3{
+  font-size:clamp(15.5px,1.9vw,17.5px); font-weight:700;
+  letter-spacing:-.02em; line-height:1.25;
+}
+.act p{font-size:clamp(13.5px,1.6vw,15px); color:var(--muted); line-height:1.55}
+
+/* ---------- TESTIMONIALS ---------- */
+.quotes{list-style:none; display:grid; gap:clamp(14px,2vw,20px)}
+@media (min-width:760px){ .quotes{grid-template-columns:repeat(3,1fr)} }
+.quote{
+  display:flex; flex-direction:column; gap:clamp(14px,2vw,18px);
+  padding:clamp(20px,2.6vw,28px);
+  background:var(--surface);
+  border:1.5px solid var(--line);
+  border-radius:var(--radius-lg);
+}
+.q-head{
+  font-size:clamp(17px,2vw,21px); line-height:1.3; letter-spacing:-.01em;
+  color:var(--ink); margin-bottom:10px;
+}
+.quote blockquote p{
+  font-size:clamp(15px,1.9vw,17px); color:var(--ink-soft);
+  line-height:1.55; letter-spacing:-.012em;
+}
+.q-by{
+  margin-top:auto;
+  display:flex; flex-direction:column; gap:2px;
+  font-size:13px; line-height:1.4;
+}
+.q-who{font-weight:700; color:var(--ink)}
+.q-what{color:var(--faint)}
+
+/* ---------- CONTACT ---------- */
+.contact-grid{
+  display:grid; gap:clamp(24px,3.4vw,44px); align-items:start;
+}
+@media (min-width:820px){
+  .contact-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+}
+.contact-ways{display:flex; flex-direction:column; gap:clamp(10px,1.4vw,14px)}
+.cway{
+  display:flex; align-items:center; gap:14px;
+  padding:clamp(14px,1.8vw,18px);
+  border:1.5px solid var(--line); border-radius:var(--radius-lg);
+  text-decoration:none; color:inherit;
+  transition:border-color .18s var(--ease), background .18s var(--ease);
+}
+.cway:hover{border-color:var(--accent); background:var(--wash)}
+.cway:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.cw-ico{
+  flex:none; width:38px; height:38px; display:grid; place-items:center;
+  border-radius:999px; background:var(--wash); color:var(--accent);
+}
+.cway:hover .cw-ico{background:var(--surface)}
+.cw-ico svg{width:19px; height:19px; display:block}
+.cw-body{display:flex; flex-direction:column; gap:1px; min-width:0}
+.cw-k{
+  font-size:11.5px; font-weight:700; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--faint);
+}
+.cw-v{
+  font-size:clamp(14.5px,1.8vw,16px); font-weight:700; color:var(--ink);
+  letter-spacing:-.015em; overflow-wrap:anywhere;
+}
+.contact-note h3{
+  font-size:clamp(15.5px,1.9vw,17.5px); font-weight:700; letter-spacing:-.02em;
+}
+.contact-note ul{list-style:none; margin-top:clamp(12px,1.6vw,16px); display:grid; gap:10px}
+.contact-note li{
+  position:relative; padding-left:20px;
+  font-size:clamp(13.5px,1.6vw,15px); color:var(--muted); line-height:1.55;
+}
+.contact-note li::before{
+  content:""; position:absolute; left:2px; top:.62em;
+  width:6px; height:6px; border-radius:999px; background:var(--blue-pale);
+}
+:root[data-theme="dark"] .contact-note li::before{background:#4A4880}
+.contact-small{
+  margin-top:clamp(14px,2vw,20px);
+  font-size:13px; color:var(--faint); line-height:1.6;
+}
+
+/* ---------- the arrival ----------
+   The same fade every other screen on this page uses, on the same
+   [data-anim] / [data-in] pair, with the head arriving a beat before the
+   body under it. Nothing travels and nothing scales — see THE HANDOFF
+   above for why this page gave all that up. Resting state is visible: the
+   flag is only ever set from JavaScript, so a page whose script never ran
+   is a page, not a page with five holes in it. */
+@media (prefers-reduced-motion:no-preference){
+  .band[data-anim] .band-head,
+  .band[data-anim] .about-grid,
+  .band[data-anim] .pesta,
+  .band[data-anim] .acts,
+  .band[data-anim] .quotes,
+  .band[data-anim] .contact-grid{
+    opacity:0;
+    transition:opacity .7s var(--ease);
+  }
+  .band[data-anim] .about-grid,
+  .band[data-anim] .pesta,
+  .band[data-anim] .acts,
+  .band[data-anim] .quotes,
+  .band[data-anim] .contact-grid{transition-delay:.12s}
+  .band[data-anim][data-in] .band-head,
+  .band[data-anim][data-in] .about-grid,
+  .band[data-anim][data-in] .pesta,
+  .band[data-anim][data-in] .acts,
+  .band[data-anim][data-in] .quotes,
+  .band[data-anim][data-in] .contact-grid{opacity:1}
+}
+
+
+/* ============ THE TWO OPENING BEATS ============
+   #problem and #emotion, between the hero and the Solution.
+
+   They are bands, like the other five, but given more air and bigger type
+   than any of them — because these two are beats of the argument and the
+   others are sections about the product. The reader arriving here has read
+   one promise and nothing else; if these two do not land, nothing below
+   them is being read on purpose.
+
+   Still no wave field, for the reason the band comment above gives. What
+   marks them instead is space: a beat that is mostly empty page reads as a
+   pause, and a pause is what the hero has to hand over into. */
+.band-beat{padding-block:clamp(76px,14vh,164px)}
+
+/* ---------- PROBLEM ----------
+   Six moments under the head, one per line, hairline between. Not two
+   columns: these are read one after another, each recognised or not, and a
+   grid turns six recognitions into one block of text to skim. The measure
+   is narrower than the band for the same reason — a sentence running the
+   full 1080 stops being a line and starts being a paragraph. */
+.symptoms{
+  list-style:none;
+  max-width:44rem; margin-inline:auto;
+}
+.symptoms li{
+  padding:clamp(13px,1.8vw,17px) 0;
+  border-top:1px solid var(--line);
+  font-size:clamp(15px,1.9vw,17.5px);
+  color:var(--ink-soft); line-height:1.5;
+}
+.symptoms li:last-child{border-bottom:1px solid var(--line)}
+
+/* ---------- EMOTION ----------
+   The shortest band and the largest type outside the hero and the ask. No
+   .band-head here: the sentence IS the head, and wrapping it in the shared
+   36rem measure would have set the page's loudest line at the size of a
+   section title. */
+.band-emotion{
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center;
+  gap:clamp(14px,2.4vh,26px);
+}
+.beat-title{
+  max-width:16ch; text-wrap:balance;
+  font-size:clamp(30px,6.4vw,62px); font-weight:800;
+  letter-spacing:-.04em; line-height:1.05;
+}
+.beat-body{
+  max-width:44ch;
+  font-size:clamp(15px,2.1vw,19px); color:var(--muted); line-height:1.55;
+}
+/* The line that turns the page. Everything above it is the problem and
+   everything below it is the answer, and the whole argument depends on
+   this landing as relief rather than as another accusation — so it gets
+   the ink, the weight and a rule of its own, and it gets them without the
+   accent colour, which on this site is what a link looks like. */
+.beat-turn{
+  text-wrap:balance;
+  margin-top:clamp(6px,1.4vh,14px);
+  padding-top:clamp(16px,2.6vh,26px);
+  border-top:1px solid var(--line);
+  max-width:34ch;
+  font-size:clamp(16px,2.3vw,21px); font-weight:700;
+  color:var(--ink); letter-spacing:-.02em; line-height:1.35;
+}
+
+/* The two beats join the same arrival as the other bands — see the block
+   above. .band-emotion has no inner wrapper to fade, so its children carry
+   it themselves. */
+@media (prefers-reduced-motion:no-preference){
+  .band[data-anim] .symptoms{opacity:0; transition:opacity .7s var(--ease); transition-delay:.12s}
+  .band[data-anim][data-in] .symptoms{opacity:1}
+
+  .band-emotion[data-anim] > *{opacity:0; transition:opacity .7s var(--ease)}
+  .band-emotion[data-anim] > .beat-body,
+  .band-emotion[data-anim] > .beat-turn{transition-delay:.14s}
+  .band-emotion[data-anim][data-in] > *{opacity:1}
 }

@@ -18,14 +18,30 @@
    there came out 139px narrower than 68ch in the column above it, so the
    rule under the links started well inside them. 39.64rem is what 68ch of
    Baloo 2 measured at 16px, to a tenth of a pixel. */
-:root{--legal-measure:39.64rem}
+:root{
+  --legal-measure:39.64rem;
+  /* The gutter, named because the track below has to subtract it: the
+     measure is the width of the box the prose sat in when .legal was that
+     box, gutter included, and the track is what is left inside it. */
+  --legal-gutter:clamp(20px,5vw,40px);
+}
 
 .legal{
-  max-width:var(--legal-measure);
-  margin:0 auto;
-  padding:0 clamp(20px,5vw,40px) clamp(60px,12vh,120px);
-  padding-left:max(clamp(20px,5vw,40px), env(safe-area-inset-left, 0px));
-  padding-right:max(clamp(20px,5vw,40px), env(safe-area-inset-right, 0px));
+  /* main is never capped, at any width. It is <main> that carries the
+     page's ground — landing.css paints it --surface so the sticky footer
+     has something opaque to be revealed from under — and a main narrower
+     than the window leaves that footer showing down both sides of the
+     page as two bands of the wrong colour, which is what every legal page
+     was doing on any screen wider than its column. So the cap moves off
+     the box painting the ground and onto a track inside it: main runs
+     edge to edge, the reading measure is unchanged, and the reveal still
+     has its lid. */
+  display:grid;
+  grid-template-columns:minmax(0, calc(var(--legal-measure) - var(--legal-gutter) * 2));
+  justify-content:center;
+  padding:0 var(--legal-gutter) clamp(60px,12vh,120px);
+  padding-left:max(var(--legal-gutter), env(safe-area-inset-left, 0px));
+  padding-right:max(var(--legal-gutter), env(safe-area-inset-right, 0px));
   font-size:16px;
   line-height:1.68;
   color:var(--muted);
@@ -119,3 +135,72 @@
 }
 .legal-back a{text-decoration:none; font-weight:600}
 .legal-back a:hover{text-decoration:underline}
+
+/* ---------- the wide layout ----------
+   One measured column is right for a phone and wrong for a 1400px screen,
+   where it leaves two thirds of the page empty and reads as an unfinished
+   site rather than a considered one. So once there is room the page takes
+   the width and spends it on a second column instead of on a longer line:
+   the title and the summary box go left, the prose goes right.
+
+   The breakpoint is 1160 and not 1000, which is where this started. Two
+   columns need the sidebar's 26rem, the gap, and a line of prose still
+   worth reading — under about 1150px there is not enough for all three,
+   and what 1000 actually produced at 1024 was a 381px thread of prose
+   beside a 512px summary box: the aside wider than the page it annotates.
+   Below the breakpoint nothing here applies: .legal falls back to the one
+   centred track it is declared with above, which is the phone's layout. */
+@media (min-width:1160px){
+  /* 26rem of sidebar, 50rem of prose, and the gap between them. Written
+     as tokens because the footer has to land on the same two edges and
+     the gap is not a constant — see --foot-measure at the bottom. On
+     :root and not on .legal, because .site-foot is main's sibling and
+     would inherit nothing declared on it. */
+  :root{--legal-gap:clamp(40px,5vw,80px); --legal-shell:calc(76rem + var(--legal-gap))}
+
+  .legal{
+    /* One centred track becomes two. `justify-content:center` and the
+       gutter are the base rule's and still apply; all that changes here
+       is what sits between the gutters.
+
+       Both tracks floor at 0 and cap at what they must never exceed, so
+       the pair can only shrink to fit: there is no width at which this
+       overflows and no sideways scrollbar to find. The sidebar reaches
+       its 26rem first and every pixel after that goes to the prose, which
+       is the right order — the summary box has a fixed amount to say and
+       the prose is what the page is. */
+    grid-template-columns:minmax(0,26rem) minmax(0,50rem);
+    /* Centred and not spread is the reason the base rule's
+       justify-content is left alone. `space-between` was here and it
+       keeps pushing: on a 1920 monitor it left the two columns 560px
+       apart, which is not one page with two columns, it is two pages.
+       Centred, the slack collects outside the pair once both tracks have
+       reached their cap, which is a margin rather than a canyon. */
+    column-gap:var(--legal-gap);
+    align-items:start;
+  }
+  .legal-head{grid-column:1; grid-row:1}
+  .legal-lede{grid-column:2; grid-row:1; margin-top:0}
+  /* The one block worth keeping on screen while the prose scrolls past it:
+     it is the summary of everything to the right of it. */
+  .legal-tldr{
+    grid-column:1; grid-row:2;
+    position:sticky; top:clamp(20px,4vh,40px);
+    margin-top:clamp(28px,4vh,44px);
+  }
+  .legal-body{grid-column:2; grid-row:2}
+  /* The first heading in column two starts a row, not a section — the air
+     a section break carries would drop it below the box beside it. */
+  .legal-body > :first-child{margin-top:clamp(28px,4vh,44px)}
+
+  /* The footer follows the page it ends, on the same edges. --foot-measure
+     is the outer box including the gutter the band has already spent, so
+     the gutter goes back on here and comes off again in landing.css. The
+     gap is inside the shell rather than added to a constant because it is
+     a clamp: hard-code 80 and the two disagree by a few pixels at every
+     width between 1160 and 1600, which is exactly where a rule that does
+     not line up with the column above it is visible. With the width back,
+     so is the brand-beside-links arrangement the narrow column gave up. */
+  .site-foot{--foot-measure:calc(var(--legal-shell) + var(--foot-gutter) * 2)}
+  .site-foot .foot-inner{grid-template-columns:minmax(0,1.35fr) minmax(0,2fr)}
+}

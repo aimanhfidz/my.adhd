@@ -50,8 +50,14 @@
 
 <main class="legal">
 
+  <!-- The two blocks the wide layout puts in the left column. They are
+       wrappers and nothing else: below 1160px legal.css runs .legal as a
+       single centred track and these have no effect at all, so the reading
+       order on a phone is the order it has always been. -->
+  <div class="legal-head">
   <h1 class="legal-title">Terms of use</h1>
   <p class="legal-date">Last updated <time datetime="2026-08-24">24 August 2026</time></p>
+  </div>
 
   <p class="legal-lede">
     Using my.adhd means agreeing to what is below. It is short, because the
@@ -70,6 +76,8 @@
         only in your browser, and we cannot recover them.</li>
     </ul>
   </section>
+
+  <div class="legal-body">
 
   <h2>What my.adhd is</h2>
   <p>
@@ -228,6 +236,7 @@
 
   <p class="legal-back"><a href="/">&larr; Back to my.adhd</a></p>
 
+  </div>
 </main>
 
 <!-- ============ the footer ============
