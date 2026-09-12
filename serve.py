@@ -17,6 +17,13 @@ PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
 
 
 class CleanUrls(http.server.SimpleHTTPRequestHandler):
+    # Nothing here is worth caching, and a stale stylesheet held over an
+    # edit reads as the edit not working. Vercel sends its own headers;
+    # this only ever applies to the local copy.
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-store, must-revalidate')
+        super().end_headers()
+
     def translate_path(self, path):
         found = super().translate_path(path)
         if not os.path.exists(found) and not path.endswith('/') and os.path.exists(found + '.html'):

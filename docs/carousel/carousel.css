@@ -1,0 +1,199 @@
+/* my.adhd carousel — one 1080×1350 slide per <section class="slide">.
+
+   The layout is a straight copy of the INVT/Dakreativ carousel format:
+   a floating header (wordmark left, tracked caps label right), a footer
+   rule with company name and an NN / TT counter, and a left-aligned body
+   block in the lower-middle of the slide with an empty top half. Only the
+   body block changes between the three slide types.
+
+   Every colour and face is a token from theme.css / site.css so the slides
+   read as the site and not as the reference. Orange stays a signal — the
+   counter dot and the CTA circle — never a heading; the reference's navy
+   accent is --violet here. */
+
+@font-face{
+  font-family:"DM Sans";
+  src:url("../../fonts/DMSans-Variable.ttf") format("truetype-variations"),
+      url("../../fonts/DMSans-Variable.ttf") format("truetype");
+  font-weight:100 900; font-style:normal; font-display:block;
+}
+@font-face{
+  font-family:"DM Mono";
+  src:url("../../fonts/DMMono-Regular.ttf") format("truetype");
+  font-weight:400; font-style:normal; font-display:block;
+}
+@font-face{
+  font-family:"Baloo 2";
+  src:url("../../fonts/Baloo2-Variable.ttf") format("truetype-variations"),
+      url("../../fonts/Baloo2-Variable.ttf") format("truetype");
+  font-weight:400 800; font-style:normal; font-display:block;
+}
+
+:root{
+  --sans:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --display:"Baloo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+  --orange:#F75C03;
+  --violet:#7B3FE4;
+
+  --surface:#FFFFFF;
+  --wash-2:#E9E7FD;
+  --backdrop:#E9E7FB;
+  --backdrop-2:#D9D5F6;
+  --pale:#D1CDFF;
+  --ink:#101018;
+  --ink-soft:#202030;
+  --muted:#5E5E6A;
+  --faint:#6B6B7A;
+  --line-strong:#CFCBE9;
+  --accent:var(--violet);
+
+  /* the three blobs, as rgba so the alpha can differ from the token */
+  --blob-a:rgba(209,205,255,.55);   /* --pale */
+  --blob-b:rgba(233,231,253,.95);   /* --wash-2 */
+  --blob-c:rgba(217,213,246,.70);   /* --backdrop-2 */
+  --vignette:rgba(16,16,24,.045);
+
+  /* the grid */
+  --w:1080px; --h:1350px;
+  --margin:92px;          /* 8.5% of width, same as the reference */
+  --head-y:96px;          /* header baseline zone */
+  --foot-rule:1212px;     /* footer rule, ≈ 89.8% down */
+}
+:root[data-theme="dark"]{
+  --surface:#101018;
+  --ink:#F3F2FB;
+  --ink-soft:#D6D4EA;
+  --muted:#9A98AC;
+  --faint:#8B8AA0;
+  --line-strong:#3B3A52;
+  --accent:#A97BFF;                 /* --type-dim at night */
+  --blob-a:rgba(58,28,134,.55);     /* --violet-deep */
+  --blob-b:rgba(53,41,191,.35);     /* --blue-deep */
+  --blob-c:rgba(35,35,51,.90);      /* --wash-2 night */
+  --vignette:rgba(0,0,0,.35);
+}
+
+html,body{margin:0; padding:0}
+body{
+  background:#8E8CA0;               /* preview ground, never in a slide */
+  font-family:var(--sans); color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  display:flex; flex-direction:column; align-items:flex-start; gap:24px; padding:24px;
+}
+body[data-render]{gap:0; padding:0; background:var(--surface)}
+
+/* ---------- the slide ---------- */
+.slide{
+  position:relative; flex:none; overflow:hidden;
+  width:var(--w); height:var(--h);
+  background:var(--surface); color:var(--ink);
+  isolation:isolate;
+}
+.slide::before{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:
+    radial-gradient(560px 560px at 45% 30%, var(--blob-a), transparent 70%),
+    radial-gradient(760px 700px at 104% 98%, var(--blob-b), transparent 68%),
+    radial-gradient(560px 560px at -6% 96%, var(--blob-c), transparent 70%),
+    linear-gradient(180deg, var(--vignette), transparent 22%, transparent 78%, var(--vignette)),
+    var(--surface);
+}
+/* the blobs drift a little from slide to slide, as in the reference;
+   carousel.js (and build_canvas.py) set data-blob to 1, 2, 3, 1, 2, 3 … */
+.slide[data-blob="2"]::before{
+  background:
+    radial-gradient(620px 620px at 84% 28%, var(--blob-a), transparent 70%),
+    radial-gradient(700px 640px at 96% 104%, var(--blob-b), transparent 68%),
+    radial-gradient(520px 520px at 6% 88%, var(--blob-c), transparent 70%),
+    linear-gradient(180deg, var(--vignette), transparent 22%, transparent 78%, var(--vignette)),
+    var(--surface);
+}
+.slide[data-blob="3"]::before{
+  background:
+    radial-gradient(600px 600px at 18% 36%, var(--blob-a), transparent 70%),
+    radial-gradient(720px 660px at 100% 92%, var(--blob-b), transparent 68%),
+    radial-gradient(480px 480px at 40% 108%, var(--blob-c), transparent 70%),
+    linear-gradient(180deg, var(--vignette), transparent 22%, transparent 78%, var(--vignette)),
+    var(--surface);
+}
+
+/* ---------- header ---------- */
+.head{
+  position:absolute; left:var(--margin); right:var(--margin); top:var(--head-y);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.lockup{display:flex; align-items:center; gap:12px; color:var(--ink)}
+.lockup svg{width:44px; height:44px; display:block; flex:none}
+.lockup .lg-star{fill:var(--orange)}
+.lockup .lg-pill{stroke:var(--violet)}
+.wordmark{
+  font-family:var(--display); font-weight:800; font-size:44px; line-height:1;
+  letter-spacing:-.02em; color:var(--ink); transform:translateY(-2px);
+}
+.wordmark .accent{color:var(--violet)}
+.label{
+  font-family:var(--mono); font-weight:400; font-size:24px; line-height:1;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--faint);
+}
+
+/* ---------- footer ---------- */
+.foot{
+  position:absolute; left:var(--margin); right:var(--margin); top:var(--foot-rule);
+  border-top:1px solid var(--line-strong); padding-top:40px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:var(--mono); font-weight:400; font-size:24px; line-height:1;
+}
+.foot .org{letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+.foot .count{
+  display:inline-flex; align-items:center; letter-spacing:.06em; color:var(--ink);
+  font-variant-numeric:tabular-nums;
+}
+.foot .count::before{
+  content:""; flex:none; width:9px; height:9px; border-radius:999px;
+  background:var(--orange); margin-right:16px;
+}
+
+/* ---------- body block ---------- */
+.body{
+  position:absolute; left:var(--margin); right:var(--margin);
+  top:calc(var(--head-y) + 60px); bottom:calc(var(--h) - var(--foot-rule) + 20px);
+  display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
+  padding-top:6%;                    /* optical centre sits a little low, as in the reference */
+}
+.kicker{
+  font-family:var(--mono); font-weight:400; font-size:30px; line-height:1;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--faint);
+  margin:0 0 34px;
+}
+.num{
+  font-family:var(--display); font-weight:600; font-size:124px; line-height:.95;
+  letter-spacing:-.02em; color:var(--accent);
+  margin:0 0 -2px;
+}
+.title{
+  font-family:var(--display); font-weight:600; font-size:100px; line-height:1.05;
+  letter-spacing:-.025em; color:var(--ink);
+  margin:0; text-wrap:balance; max-width:100%;
+}
+.title .ac{font-style:normal; color:var(--accent)}
+.copy{
+  font-family:var(--sans); font-weight:400; font-size:40px; line-height:1.5;
+  color:var(--ink-soft); margin:22px 0 0; max-width:100%;
+}
+.copy.sub{margin-top:18px; max-width:100%}
+
+/* outro extras */
+.react{display:flex; align-items:center; gap:52px; margin-top:52px; color:var(--accent)}
+.react svg{width:64px; height:64px; display:block}
+.arrow-cta{
+  display:inline-flex; align-items:center; gap:24px; margin-top:56px;
+  font-family:var(--sans); font-size:40px; color:var(--ink); text-decoration:none;
+}
+.arrow-cta i{
+  flex:none; display:grid; place-items:center;
+  width:96px; height:96px; border-radius:999px;
+  background:var(--orange); color:#FFFFFF;
+}
+.arrow-cta svg{width:36px; height:36px; display:block}

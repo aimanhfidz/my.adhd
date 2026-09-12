@@ -7,7 +7,7 @@
    the cache is the parachute, not the source of truth. The triage API is
    never cached — a stale answer is worse than an honest failure. */
 
-const CACHE = 'myadhd-v41';
+const CACHE = 'myadhd-v45';
 
 const SHELL = [
   '/',
@@ -15,22 +15,48 @@ const SHELL = [
   '/app',
   '/privacy',
   '/terms',
+  /* The public site. '/' above is the scene; these are the pages under
+     it. */
+  '/activities',
+  '/about',
+  '/testimonials',
+  '/contact',
+  '/self-check',
+  '/blog',
+  '/habits',
+  '/reading-list',
+  '/tools',
   '/app.js',
   '/gcal.js',
   '/cloud.js',
   '/voice.js',
   '/auth.js',
+  '/billing.js',
   '/config.js',
   '/theme.js',
   '/clock.js',
   '/waves.js',
   '/styles.css?v=6',
   '/theme.css',
+  '/site.css',
+  '/site.js',
+  '/site.ms.js',
+  /* the self-check is its own page with its own two files — see the
+     head of test.css for why it shares nothing with the site */
+  '/test.css',
+  '/test.js',
   '/landing.css',
   '/legal.css',
   '/install.css',
   '/favicon.svg?v=3',
   '/fonts/Baloo2-Variable.ttf',
+  /* The site's two faces. Baloo above is the app's and the wordmark's;
+     these are every other page's, and a home-screen copy opened offline
+     without them falls back to the system sans, which is a different
+     website. */
+  '/fonts/DMSans-Variable.ttf',
+  '/fonts/DMMono-Regular.ttf',
+  '/fonts/DMMono-Light.ttf',
   '/icons/apple-touch-icon.png?v=3',
   '/icons/favicon-16.png?v=3',
   '/icons/favicon-32.png?v=3',

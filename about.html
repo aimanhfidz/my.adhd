@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>About us — MyADHD</title>
+<meta name="description" content="Too many Malaysians grow up believing they’re careless, lazy, or just not trying hard enough. MyADHD exists to close that gap." />
+<meta name="theme-color" content="#FFFFFF" />
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+<link rel="icon" href="/icons/favicon-32.png?v=3" sizes="32x32" type="image/png" />
+<link rel="icon" href="/icons/favicon-16.png?v=3" sizes="16x16" type="image/png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=3" />
+<link rel="manifest" href="/site.webmanifest?v=3" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="MyADHD" />
+<meta property="og:title" content="About us — MyADHD" />
+<meta property="og:description" content="Too many Malaysians grow up believing they’re careless, lazy, or just not trying hard enough. MyADHD exists to close that gap." />
+<meta property="og:image" content="https://myadhd.my/icons/og.png?v=3" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="my.adhd" />
+<link rel="preload" href="fonts/DMSans-Variable.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="preload" href="fonts/DMMono-Regular.ttf" as="font" type="font/ttf" crossorigin />
+<!-- synchronous: the data-theme stamp has to land before first paint, or
+     a saved dark choice arrives as a white flash -->
+<script src="theme.js"></script>
+<script src="clock.js" defer></script>
+<script src="waves.js" defer></script>
+<script src="site.ms.js" defer></script>
+<script src="site.js" defer></script>
+<link rel="stylesheet" href="theme.css" />
+<link rel="stylesheet" href="site.css" />
+</head>
+<body>
+
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Seven orange arms: the eighth (lower-right) is detached and carried
+         by the violet capsule sitting just off the centre. -->
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+</svg>
+<!-- ============ the page's weather ============
+     The wave field used to sit in a bordered box partway down the page,
+     which made it a picture of itself: a framed illustration on a page
+     whose whole argument is that it has no furniture. It is the ground
+     now — fixed behind everything, one field per page, and the veil over
+     it is what keeps it weather rather than wallpaper. -->
+<div class="page-wave" aria-hidden="true"><div class="panel-wave" data-wave="flow" data-wave-speed="0.4"></div></div>
+
+<nav class="bar">
+    <a class="back" href="/" aria-label="Back to the front" data-i18n-aria="949ec14"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 19l-7-7 7-7"/></svg></a>
+    <a class="brand-lockup" href="/" aria-label="MyADHD home" data-i18n-aria="12f3e1f">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="wordmark">my<span class="accent">.adhd</span></span>
+    </a>
+    <p class="bar-org">MyADHD</p>
+
+    <ul class="bar-links">
+      <li><a href="/activities" data-i18n="ie58f7f8">Activities</a></li>
+      <li><a href="/about" aria-current="page" data-i18n="i3ffb811">About us</a></li>
+      <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+      <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+    </ul>
+
+    <!-- filled in by clock.js, and hidden until it is -->
+    <p class="nav-clock" hidden><span class="nc-place"></span><span class="nc-time"></span></p>
+
+    <nav class="bar-lang" aria-label="Language" data-i18n-aria="89b86ab">
+      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-lang="ms" aria-pressed="false" lang="ms">BM</button>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+      <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.9 8.9 0 1 0 11.1 11.1z"/></svg>
+      <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+    </button>
+
+    <button class="bar-toggle" type="button" aria-expanded="false" aria-controls="bar-sheet" aria-label="Open menu" data-i18n-aria="197101e">
+      <span class="nt-bars" aria-hidden="true"><i></i><i></i></span>
+    </button>
+
+    <!-- The sheet is a copy of the row above, which is the one duplication
+         in this bar: two lists, kept in step by hand. -->
+    <div class="bar-sheet" id="bar-sheet" hidden>
+      <ul>
+        <li><a href="/activities" data-i18n="ie58f7f8">Activities</a></li>
+        <li><a href="/about" aria-current="page" data-i18n="i3ffb811">About us</a></li>
+        <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+        <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+      </ul>
+      <nav class="bar-lang sheet-lang" aria-label="Language" data-i18n-aria="89b86ab">
+      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-lang="ms" aria-pressed="false" lang="ms">BM</button>
+    </nav>
+      <p class="sheet-sub" data-i18n="ib226a42">What we offer: <a href="/self-check">Self-check</a> · <a href="/blog">Blog</a> · <a href="/habits">Habits</a> · <a href="/reading-list">Reading list</a> · <a href="/tools">Tools</a></p>
+    </div>
+  </nav>
+
+<a class="pill" href="/self-check" data-i18n="i1d4d87b">Take the self-check</a>
+
+<main class="spine">
+
+  <!-- ============ the body ============
+       docs/content/about.md, in order, at the four sizes site.css owns.
+       The Malay line is mono because on this site a list of names for a
+       thing is a label — and it is not italicised, because those are four
+       ordinary Malay words rather than foreign matter. -->
+  <section id="problem" class="sec-full" data-reveal>
+    <p class="kicker" data-i18n="i0974f3c">About us.</p>
+    <p class="statement is-wide" data-i18n="ie71b270">You meant to start that assignment three weeks ago. You&rsquo;re late even when you leave early. You interrupt people mid-sentence and feel bad about it every time. Your mind is in six places at once, and none of them is the one you need it in.</p>
+  </section>
+
+  <section id="emotion" data-reveal>
+    <p class="name-line" data-i18n="i658d1f4">In Malaysia, we have names for this. Malas. Tak fokus. Tak matang. Tak reti jaga barang.</p>
+    <p class="statement" style="margin-top:clamp(28px,4vh,52px)" data-i18n="ia275e17">We don&rsquo;t often have the other name for it: <span class="adhd-word">ADHD</span>.</p>
+  </section>
+
+  <section id="believe" data-reveal>
+    <p class="body-copy" data-i18n="i9030eaa">That&rsquo;s the gap MyADHD exists to close. Too many Malaysians grow up believing they&rsquo;re careless, lazy, or just not trying hard enough &mdash; when what they&rsquo;re actually dealing with is a brain that&rsquo;s wired differently, and a country that hasn&rsquo;t been taught to recognise it. Awareness here is still thin. Diagnosis is slow and expensive. Adult <span class="adhd-word">ADHD</span>, especially, is barely discussed at all.</p>
+    <p class="body-copy" data-i18n="i4282922">We&rsquo;re here to change that. We share what <span class="adhd-word">ADHD</span> actually looks like in everyday Malaysian life &mdash; at school, at work, in marriage, in families. We point people toward proper assessment instead of guesswork. And we build a space where you can finally stop asking what&rsquo;s wrong with me and start asking better questions.</p>
+
+    <p class="sign" data-i18n="i2c7e465"><b>Aiman Hafidz</b>Founder, MyADHD</p>
+  </section>
+
+  <section class="marquee" aria-hidden="true">
+  <span>MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; </span>
+</section>
+
+  <section class="ask" data-reveal>
+  <p class="ask-line" data-i18n="i5abc5dd">If any of this sounds familiar, it doesn&rsquo;t mean you have <span class="adhd-word">ADHD</span>. But it might mean it&rsquo;s worth finding out.</p>
+  <a class="arrow-cta" href="/self-check" data-i18n="ia8ac426">Take the self-check <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+</section>
+
+  <nav class="pager" aria-label="Next page" data-i18n-aria="4bfc194">
+  <span class="p-label" data-i18n="ibc98198">Next</span>
+  <a href="/testimonials" data-i18n="i618d739"><i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i> Testimonials</a>
+</nav>
+</main>
+
+<footer class="foot">
+
+  <!-- The sign-off and the ask, side by side. The first version stacked
+       these and left the whole right half of the band empty. -->
+  <div class="foot-top">
+    <p class="foot-line" data-i18n="i53ac30e">A brain dump that answers back. No account, nothing to set up, and your lists stay on your device.</p>
+    <a class="arrow-cta" href="/install" data-app-link data-i18n="i731361d">Clear my head <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+  </div>
+
+  <div class="foot-cols">
+    <div class="foot-col">
+      <h2 data-i18n="ib953849">What we offer</h2>
+      <ul>
+        <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+        <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
+        <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
+        <li><a href="/reading-list" data-i18n="id80f6ec">Reading list</a></li>
+        <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2>MyADHD</h2>
+      <ul>
+        <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+        <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+        <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2>my.adhd</h2>
+      <ul>
+        <li><a href="/app" data-i18n="ice21cc3">Open my.adhd</a></li>
+        <li><a href="/install" data-i18n="i85773bc">Add to home screen</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2 data-i18n="i979e25d">Say hello</h2>
+      <ul>
+        <li><a href="https://www.threads.com/@myadhd.my" rel="me noopener" target="_blank">Threads</a></li>
+        <li><a href="https://www.instagram.com/myadhd.my/" rel="me noopener" target="_blank">Instagram</a></li>
+        <li><a href="mailto:hello@myadhd.my">hello@myadhd.my</a></li>
+        <li><a href="/privacy" data-i18n="icf01481">Privacy</a></li>
+        <li><a href="/terms" data-i18n="ia55a275">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot-base">
+    <p class="foot-note" data-i18n="ide9430f">A tool for getting started &mdash; not treatment, therapy, or medical advice.</p>
+    <p>&copy; <span data-year>2026</span> MyADHD</p>
+  </div>
+
+</footer>
+
+</body>
+</html>

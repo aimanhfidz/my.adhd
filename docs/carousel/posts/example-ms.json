@@ -1,0 +1,27 @@
+{
+  "slug": "example-ms",
+  "lang": "ms",
+  "theme": "dark",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "_note": "SALINAN CONTOH — struktur sahaja. Kandungan sebenar ditulis kemudian.",
+  "slides": [
+    { "type": "cover",
+      "kicker": "Nak tahu rahsianya.",
+      "title": "Tajuk utama\n[[di sini]]:\nmaksimum tiga [[baris]]?",
+      "sub": "Leret untuk tahu sebab-sebabnya." },
+    { "type": "point",
+      "title": "Poin pertama [[kata kunci]]",
+      "body": "Dua atau tiga baris ayat badan yang menerangkan poin ini dengan bahasa mudah, kemudian berhenti." },
+    { "type": "point",
+      "title": "Poin kedua\n[[dua baris]]",
+      "body": "Dua atau tiga baris ayat badan yang menerangkan poin ini dengan bahasa mudah, kemudian berhenti." },
+    { "type": "point",
+      "title": "Poin ketiga [[kata kunci]]",
+      "body": "Dua atau tiga baris ayat badan yang menerangkan poin ini dengan bahasa mudah, kemudian berhenti." },
+    { "type": "outro",
+      "title": "Apa pendapat\n[[anda]]?",
+      "body": "Kongsi di ruangan komen, atau simpan untuk rujukan nanti.",
+      "cta": { "label": "Cuba percuma di myadhd.my" } }
+  ]
+}

@@ -11,6 +11,40 @@
    different red for a different question, and the two never swap.
    Type: Baloo 2 (variable, 400-800), self-hosted. */
 
+/* ============ the site's two faces ============
+   Baloo 2 above is the app's and the wordmark's, and it stays theirs. The
+   public site is set in DM Sans and DM Mono — light-weight sans at large
+   sizes for anything that is a sentence, mono for anything that is a
+   label. Self-hosted for the same reason Baloo is: a page that has to ask
+   a third party before it can draw its own headline is a page with a
+   flash of the wrong type in it.
+
+   DM Sans is the variable file, so one request covers 100-900 and the
+   site can set 400 everywhere and mean it. DM Mono has no variable cut;
+   400 is the working weight and 300 is for the big grey lines. */
+@font-face{
+  font-family:"DM Sans";
+  src:url("fonts/DMSans-Variable.ttf") format("truetype-variations"),
+      url("fonts/DMSans-Variable.ttf") format("truetype");
+  font-weight:100 900;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:"DM Mono";
+  src:url("fonts/DMMono-Regular.ttf") format("truetype");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:"DM Mono";
+  src:url("fonts/DMMono-Light.ttf") format("truetype");
+  font-weight:300;
+  font-style:normal;
+  font-display:swap;
+}
+
 @font-face{
   font-family:"Baloo 2";
   src:url("fonts/Baloo2-Variable.ttf") format("truetype-variations"),
@@ -33,6 +67,8 @@
   --stone:#5E5E6A;       /* Stone Gray   */
   --orange:#F75C03;      /* Vivid Orange — the mark, and late */
   --violet:#7B3FE4;      /* logo capsule  */
+  --violet-deep:#3A1C86; /* the violet's deep end — the field runs to it */
+  --violet-pale:#DCC9FF; /* and its pale one, for the same field on paper */
   --danger:#D92D20;      /* destructive only — never decoration */
   /* The word wears the capsule's colour, in both themes — the lockup reads
      as one object only while the two purples are the same purple. */
@@ -52,12 +88,18 @@
   --line:#E4E2F5;
   --line-strong:#CFCBE9;
   --accent:var(--blue);
+  --type-dim:var(--violet);
   --focus:rgba(71,55,255,.18);
 
   --radius:14px;
   --radius-lg:22px;
   --radius-card:34px;
   --measure:720px;      /* readable column width for the app */
+  /* The public site's two families — see the @font-face blocks above.
+     --display stays Baloo and stays the app's; on the site it is worn by
+     the wordmark and by nothing else. */
+  --sans:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --ease:cubic-bezier(.22,.9,.28,1);
   --display:"Baloo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
@@ -102,6 +144,7 @@
     --line:#262636;
     --line-strong:#3B3A52;
     --accent:#8B7DFF;
+    --type-dim:#A97BFF;
 
     /* --violet is deliberately NOT overridden here, and used to be.
 
@@ -159,6 +202,7 @@
   --line:#262636;
   --line-strong:#3B3A52;
   --accent:#8B7DFF;
+  --type-dim:#A97BFF;
 
   /* --violet is deliberately NOT overridden here — see the matching note in
      the prefers-color-scheme block above for why the night lift came out.
@@ -196,19 +240,36 @@
 @media (hover:hover){ .brand-lockup:hover .wordmark{color:var(--accent)} }
 
 /* ---------- day / night ----------
-   A round icon button that shows where a click takes you: a moon while
-   the page is light, a sun while it is dark. */
+   A round icon button that shows where the page IS, not where a click
+   takes you: a sun while it is light, a moon while it is dark. It used to
+   show the other one — the destination rather than the state — which is a
+   defensible convention and the wrong one here, because the bar carries a
+   clock two elements to its left and a reader scanning that strip reads
+   the pair as one report on the time of day. The button still says what
+   pressing it does; it says it in the accessible name, which is where a
+   screen reader looks and where an icon cannot help anyone. */
 .theme-toggle{
   /* the mark's optical bearing, given back to the other end of the bar */
   margin-right:var(--logo-bearing);
+  /* The ring follows the icon. Orange behind the sun and the theme's own
+     accent behind the moon — one exception, written here and nowhere
+     else: orange is this site's signal colour and it only works as a
+     signal while nothing competes for it, so the toggle borrows it for
+     the ring alone and never for a fill. */
+  --ring:var(--orange);
+  --ring-glow:rgba(247,92,3,.22);
   flex:none; width:34px; height:34px; display:grid; place-items:center;
-  background:none; border:1.5px solid var(--line-strong); border-radius:999px;
+  background:none; border:1.5px solid var(--ring); border-radius:999px;
   color:var(--muted); cursor:pointer; padding:0;
   transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
 }
-.theme-toggle:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
-.theme-toggle:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+:root[data-theme="dark"] .theme-toggle{--ring:var(--accent); --ring-glow:var(--focus)}
+.theme-toggle:hover{color:var(--ring); border-color:var(--ring); background:var(--wash)}
+.theme-toggle:focus-visible{outline:none; border-color:var(--ring); box-shadow:0 0 0 4px var(--ring-glow)}
 .theme-toggle svg{width:17px; height:17px; display:block}
-.theme-toggle .t-sun{display:none}
-:root[data-theme="dark"] .theme-toggle .t-sun{display:block}
-:root[data-theme="dark"] .theme-toggle .t-moon{display:none}
+/* Light is the default, so the sun is the resting state and the moon is
+   what the dark stamp swaps in. */
+.theme-toggle .t-moon{display:none}
+.theme-toggle .t-sun{display:block}
+:root[data-theme="dark"] .theme-toggle .t-moon{display:block}
+:root[data-theme="dark"] .theme-toggle .t-sun{display:none}

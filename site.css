@@ -1,0 +1,1329 @@
+/* ============ MyADHD — the site ============
+   Loaded by every public page. landing.css is the other stylesheet in
+   this repo and it is the legal pages' and /install's, not this site's —
+   the landing page it was named for was deleted on 2026-09-11 as
+   redundant with /tools. Tokens come from theme.css, so
+   this file names no colour of its own except inside [data-placeholder],
+   where the point is to look like scaffolding rather than like the site.
+
+   The shape is borrowed openly from loudsrl.com and written down in
+   docs/loud-redesign-plan.md: light-weight sans at large sizes for
+   anything that is a sentence, mono for anything that is a label,
+   hairline grids, one vertical rule down the left of every page, and
+   colour only on the circle of a button. What is ours is the palette,
+   the wave field, the mark, and every word.
+
+   Nothing here is a component library. Each page in the plan names the
+   classes it uses; these are those classes and no others. */
+
+*{box-sizing:border-box; margin:0; padding:0}
+
+html{
+  /* Every in-page link has to clear a bar that is fixed over it, and
+     scroll-padding on the scroll container says it once for the keyboard,
+     the anchor and the browser's own restore. Same trick landing.css
+     uses; the bar is the same height. */
+  scroll-padding-top:var(--scroll-offset);
+}
+@media (prefers-reduced-motion:no-preference){
+  html{scroll-behavior:smooth}
+}
+
+body{
+  background:var(--surface);
+  color:var(--ink);
+  /* The site is DM Sans. --display is Baloo and belongs to the wordmark
+     and the app; a heading that comes out rounded and bold is a heading
+     that is still inheriting it. */
+  font-family:var(--sans);
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+  overflow-x:hidden;
+}
+
+:root{
+  /* ---------- the wave field's two ramps ----------
+     waves.js reads these six by name and falls back to a saturated blue
+     when they are missing — which is what a field on a page that did not
+     define them looks like: a graphic, not weather. landing.css carries
+     the same six for the same reason; they live in both files rather than
+     in theme.css because waves.js holds BOTH ramps at once and cross-fades
+     between them, so it needs the ink colours while the page is still on
+     paper. A themed token only ever answers for the theme in force.
+
+     Day runs pale-to-pale and night deep-to-brand, and the register that
+     matters is luminance rather than saturation: on white, a field that
+     falls a long way in brightness leaves a visible halo where anything
+     sits over it. Values are the brand's, so theme.css stays the one
+     place the palette is actually written. */
+  /* Night runs the brand's own three: near-black, deep blue, vivid blue.
+     This ramp has been round the houses — it was --blue-deep/--blue once,
+     went grey because that "marbled the field electric blue", then went
+     violet (#2B1B45/#6247B4) to keep the sheen without the blue. What
+     that history missed is that the electric blue was never the ramp's
+     fault, it was the veil's: the reference frame everyone agreed on is
+     exactly this ramp under a flat .50 wash of --black, which composites
+     the crests to #2B238B — a deep indigo, not a graphic. So the ramp goes
+     back to the brand and the wash below does the dimming, the same wash
+     on every page, which is the only way three pages ever show the same
+     field. landing.css carries the same three, read by name. */
+  --wave-ink-ground:var(--black);
+  --wave-ink-mid:var(--blue-deep);
+  --wave-ink-hi:var(--blue);
+  /* Day is the same idea the other way up: pale ground, pale highlight,
+     colour carried in chroma rather than in a long fall of luminance —
+     which on a white page is what leaves a visible halo under anything
+     sitting over it. Both values are within .006 of the pair they
+     replace, so the halo stays where it was: absent. */
+  --wave-paper-ground:#FFFFFF;
+  --wave-paper-mid:#F0EAFB;
+  --wave-paper-hi:#D8C6F2;
+
+  /* The bar, written the way landing.css writes it so the two agree on
+     where the first line of a page can start. --nav-row is the toggle's
+     34px circle, which is the tallest thing in the row and cannot be
+     measured from CSS. */
+  --safe-top:env(safe-area-inset-top, 0px);
+  --nav-gap:clamp(10px,2vh,18px);
+  --bar-top:calc(var(--nav-gap) + var(--safe-top));
+  --bar-bottom:var(--nav-gap);
+  --nav-row:34px;
+  --bar-h:calc(var(--bar-top) + var(--nav-row) + var(--bar-bottom));
+  /* How far an in-page link has to land below the top of the scrollport
+     to clear that bar. A token because two rules need the same number and
+     one of them needs to cancel it — see .funnel. */
+  --scroll-offset:calc(var(--bar-h) + clamp(10px,2vh,22px));
+  /* The window's gutter and the measure inside it. LOUD runs ~64px and
+     ~1300px at 1440; ours is the same shape with the phone floor the
+     rest of the repo uses. */
+  --gutter:clamp(20px,4.4vw,64px);
+  /* The measure. 1300 was LOUD's and it left a third of a 1440 window
+     empty on the right, because our spine also spends a gutter and a rule
+     on the left before it starts. The page is a document with a left edge,
+     not a centred column, so the cap is there to stop a line running to
+     2000px on a wide monitor — not to hold the content in. */
+  --inner:1680px;
+  /* The space between two sections. Deliberately enormous — the whole
+     register of this design is air, and a section that arrives before the
+     last one has finished reads as a page with too much in it, which is
+     the one thing this site is arguing against. */
+  /* The space between two sections. It was clamp(72px,14vh,180px), which
+     is LOUD's air — but LOUD spends it between whole ideas, and ours was
+     also landing between a heading and its own illustration: 360px of
+     nothing inside one thought. Generous, not cavernous. */
+  --band:clamp(48px,8vh,104px);
+}
+@media (display-mode:standalone){
+  :root{--bar-top:calc(clamp(16px,3.2vh,28px) + max(env(safe-area-inset-top, 0px), 34px))}
+}
+
+/* The sprite the lockup reads from. Same rule landing.css carries, and
+   for the same reason: an inline <svg> left visible draws a line box. */
+.sprite{position:absolute; width:0; height:0; overflow:hidden}
+
+
+/* ============ THE BAR ============
+   Fixed and transparent. LOUD's bar floats over whatever is under it and
+   never paints a ground of its own — the page's top padding is what keeps
+   a heading from arriving underneath it. That is a real constraint on
+   every section A below: none of them may start above --bar-h.
+
+   Same three slots the old nav had, so clock.js and theme.js still find
+   what they bind to: a lockup, .nav-clock, .theme-toggle. */
+.bar{
+  position:fixed; top:0; left:0; right:0; z-index:20;
+  display:flex; align-items:center; gap:clamp(10px,1.6vw,20px);
+  padding-top:var(--bar-top);
+  padding-bottom:var(--bar-bottom);
+  padding-left:calc(var(--gutter) + env(safe-area-inset-left, 0px));
+  padding-right:calc(var(--gutter) + env(safe-area-inset-right, 0px));
+}
+/* On a reading page the bar has a ground, and that is a departure from
+   LOUD worth naming: theirs floats because on every one of their pages
+   there is a full-bleed picture or shader behind it. Ours has body text
+   behind it, and a transparent bar over body text is not a look, it is
+   two paragraphs on top of each other — measured on /pesta, where the
+   jump links ran straight through the nav.
+
+   It was a ground that faded in on a scroll flag first. That is the
+   cleverer version and it buys nothing here: the bar is over content the
+   moment the page is longer than the window, which is always. */
+.bar{
+  background:var(--surface);
+  border-bottom:1px solid var(--line);
+}
+/* The scene is the exception the rule was written for. Its stage never
+   moves, so nothing ever travels under the bar, and a band drawn across
+   the wave field would cut a visible seam through it. */
+.scene .bar{background:none; border-bottom:0}
+
+/* The mark, and — on every page but the home — a circled back arrow in
+   its place. LOUD swaps the lockup for one on every sub-page, which is
+   what tells you at a glance that you are inside the site rather than at
+   the front of it. */
+/* The mark rides on every page, not just the front one. It was dropped
+   from the sub-pages when the lockup was swapped for a back arrow, which
+   meant Baloo — the brand's own face — appeared on exactly one page of
+   eleven. The arrow is navigation; the lockup is whose site this is. */
+.bar .brand-lockup{display:flex; align-items:center; gap:9px; text-decoration:none; flex:none}
+.back + .brand-lockup{margin-left:-2px}
+/* The lockup carries the brand on a bar that is otherwise all borrowed
+   structure, so it is set a step above the links beside it rather than
+   level with them. 26/20 against the nav's 15px. */
+.bar .logo{width:26px; height:26px; display:block}
+.bar .lg-star{fill:var(--orange)}
+.bar .lg-pill{stroke:var(--violet)}
+.bar .wordmark{
+  font-family:var(--display); font-weight:800; font-size:20px;
+  letter-spacing:-.02em; color:var(--ink);
+}
+.bar .wordmark .accent{color:var(--wordmark-accent)}
+.back{
+  flex:none; width:34px; height:34px; display:grid; place-items:center;
+  border:1.5px solid var(--line-strong); border-radius:999px;
+  color:var(--muted); text-decoration:none;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+.back:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
+.back:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.back svg{width:16px; height:16px; display:block}
+
+/* The organisation's name, in the slot where LOUD says "Digital Product
+   Company.". It is not a tagline and not a claim — it is who the site
+   belongs to, which on a page about ADHD matters more than a slogan. */
+.bar-org{
+  font-size:13px; color:var(--faint);
+  letter-spacing:.06em; white-space:nowrap;
+}
+/* The organisation's name goes first when the row is tight — the lockup
+   beside it already says whose site this is, and in the brand's own face. */
+@media (max-width:1279.98px){ .bar-org{display:none} }
+
+/* The five links. Centred by their own auto margins, which only works
+   while theirs are the only autos in the row — hence the two overrides
+   below, and hence both of them living inside the breakpoint where the
+   row actually exists. Get that wrong and the whole right-hand side of
+   the bar collapses to the left on a phone. */
+.bar-links{
+  display:none; margin-inline:auto; list-style:none;
+  align-items:center; gap:clamp(14px,2vw,28px);
+}
+@media (min-width:1024px){
+  .bar-links{display:flex}
+  .bar-links ~ .nav-clock,
+  .bar-links ~ .theme-toggle{margin-left:0}
+}
+.bar-links a{
+  font-size:15px; font-weight:500; white-space:nowrap;
+  color:var(--faint); text-decoration:none;
+  transition:color .18s var(--ease);
+}
+.bar-links a:hover{color:var(--ink)}
+/* Where you are, said by dimming everything else rather than by drawing a
+   marker. LOUD does it this way and it is the right call for a paged
+   site: there is nothing to travel between, so a moving underline would
+   be describing a journey that is not happening. */
+/* The page you are on, marked in the one colour the site spends on
+   things that matter. A dot rather than an underline: the bar is five
+   words in a row and a rule under one of them reads as a text link. */
+.bar-links a[aria-current]{color:var(--ink); position:relative}
+.bar-links a[aria-current]::after{
+  content:""; position:absolute; left:50%; bottom:-9px; translate:-50% 0;
+  width:5px; height:5px; border-radius:999px; background:var(--orange);
+}
+.bar-links a:focus-visible{outline:none; color:var(--ink); box-shadow:0 0 0 4px var(--focus); border-radius:6px}
+
+/* The clock keeps its own auto margin, exactly as it had in the old bar,
+   which is what holds the right-hand group against the window's edge. */
+.nav-clock{
+  display:flex; align-items:baseline; gap:.9em;
+  margin:0 8px 0 auto;
+  font-size:12px; font-weight:500; letter-spacing:.12em;
+  text-transform:uppercase; white-space:nowrap;
+  color:var(--faint); font-variant-numeric:tabular-nums;
+}
+.nav-clock[hidden]{display:none}
+.nav-clock:not([hidden]) ~ .theme-toggle{margin-left:0}
+@media (max-width:520px){ .nav-clock .nc-place{display:none} }
+/* Between 1024 and 1200 the clock is what pushes the link row off centre,
+   and it is the one thing in the bar that is ambient rather than useful.
+   Bounded at both ends: below 1024 there is no row to make room for, and
+   hiding it there would strand the auto margin above. */
+@media (min-width:1024px) and (max-width:1199.98px){
+  .bar-links ~ .nav-clock{display:none}
+}
+
+/* ---------- the phone's menu ----------
+   Lifted whole from the old landing page, hrefs aside: same button, same
+   sheet, same two-stroke X. It worked, and a second implementation of a
+   hamburger is a second thing to keep in step. */
+
+/* ---------- the language switch ----------
+   EN | BM, the same two-letter pair the self-check wears, in the same
+   quiet register as the clock beside it. In the bar's row on a desktop;
+   below that width the row has no room and the phone sheet carries the
+   second copy, so the switch is never more than one tap away. */
+.bar-lang{display:none; align-items:center; gap:2px}
+.bar-lang button{
+  font:inherit; font-size:12px; letter-spacing:.06em; line-height:1;
+  color:var(--faint); background:none; border:1px solid transparent;
+  border-radius:999px; padding:6px 8px; cursor:pointer;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+.bar-lang button:hover{color:var(--ink)}
+.bar-lang button[aria-pressed="true"]{color:var(--ink); border-color:var(--line-strong); background:var(--wash)}
+.bar-lang button:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+@media (min-width:1024px){ .bar > .bar-lang{display:flex} }
+.bar-sheet .sheet-lang{display:flex; margin-top:clamp(18px,3vh,28px)}
+
+.bar-toggle{
+  flex:none; width:34px; height:34px; display:grid; place-items:center;
+  margin-left:8px;
+  background:none; border:1.5px solid var(--line-strong); border-radius:999px;
+  color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+@media (min-width:1024px){ .bar-toggle{display:none} }
+.bar-toggle:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
+.bar-toggle:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.bar-toggle .nt-bars{position:relative; display:block; width:16px; height:11px}
+.bar-toggle .nt-bars i{
+  position:absolute; left:0; width:16px; height:1.8px; border-radius:2px;
+  background:currentColor;
+  transition:transform .24s var(--ease), top .24s var(--ease);
+}
+.bar-toggle .nt-bars i:nth-child(1){top:0}
+.bar-toggle .nt-bars i:nth-child(2){top:9.2px}
+.bar-toggle[aria-expanded="true"] .nt-bars i{top:4.6px}
+.bar-toggle[aria-expanded="true"] .nt-bars i:nth-child(1){transform:rotate(45deg)}
+.bar-toggle[aria-expanded="true"] .nt-bars i:nth-child(2){transform:rotate(-45deg)}
+
+.bar-sheet{
+  position:fixed; z-index:-2;
+  top:var(--bar-h); left:0; right:0; bottom:0;
+  background:var(--surface);
+  border-top:1px solid var(--line);
+  padding:clamp(18px,4vh,40px) var(--gutter) calc(var(--gutter) + env(safe-area-inset-bottom, 0px));
+  display:flex; flex-direction:column; align-items:stretch;
+  gap:clamp(18px,3vh,28px);
+  overflow-y:auto;
+}
+.bar-sheet[hidden]{display:none}
+.bar-sheet ul{list-style:none; display:flex; flex-direction:column}
+.bar-sheet li + li{border-top:1px solid var(--line)}
+.bar-sheet ul a{
+  display:block; padding:clamp(12px,2vh,16px) 2px;
+  font-size:clamp(19px,5.2vw,24px); font-weight:500; letter-spacing:-.02em;
+  color:var(--ink); text-decoration:none;
+}
+.bar-sheet ul a[aria-current]{color:var(--accent)}
+.bar-sheet ul a:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:6px}
+/* The five offer pages, under the five nav ones. They are children of
+   Activities rather than siblings of it, so they get a smaller voice
+   rather than a sixth row — and their links need styling of their own, or
+   they arrive as the browser's underlined blue, which is the one thing on
+   this site that would look like a mistake. */
+.bar-sheet .sheet-sub{
+  margin-top:-4px; line-height:2;
+  font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--faint);
+}
+.bar-sheet .sheet-sub a{
+  color:var(--muted); text-decoration:none;
+  border-bottom:1px solid var(--line-strong);
+}
+.bar-sheet .sheet-sub a:hover{color:var(--ink); border-bottom-color:var(--accent)}
+:root[data-nav-open], :root[data-nav-open] body{overflow:hidden}
+
+
+/* ============ THE PILL ============
+   Bottom right, on every page, always the next thing to do. LOUD's says
+   "Are you the next?" and never changes; ours changes exactly once — the
+   app's pages offer the app, every other page offers the self-check —
+   because this site has two things to be the next step of. */
+.pill{
+  position:fixed; right:var(--gutter); z-index:19;
+  bottom:calc(clamp(20px,3vh,40px) + env(safe-area-inset-bottom, 0px));
+  padding:10px 18px; border-radius:999px;
+  border:1px solid var(--line-strong); background:var(--surface);
+  font-size:13px; color:var(--ink); text-decoration:none; white-space:nowrap;
+  transition:background .18s var(--ease), border-color .18s var(--ease);
+}
+.pill::before{
+  content:""; flex:none; width:7px; height:7px; border-radius:999px;
+  background:var(--orange); margin-right:9px;
+}
+.pill{display:inline-flex; align-items:center}
+.pill:hover{border-color:var(--orange); color:var(--ink)}
+.pill:focus-visible{outline:none; border-color:var(--orange); box-shadow:0 0 0 4px rgba(247,92,3,.22)}
+
+
+/* ============ THE SPINE ============
+   One hairline down the left of every page under the bar. It is the
+   single most recognisable thing about LOUD's sub-pages and it costs one
+   border: it turns a stack of centred sections into a document with a
+   left edge, which is what makes the enormous white space read as
+   composition rather than as absence. Not on the home scene, which has
+   no document to bind. */
+.spine{
+  border-left:1px solid var(--line);
+  margin-left:var(--gutter);
+  padding-left:clamp(20px,2.2vw,32px);
+  padding-right:var(--gutter);
+  padding-bottom:var(--band);
+  max-width:var(--inner);
+}
+.spine > section{padding-block:var(--band)}
+/* The first section clears the bar and then starts. It used to add another
+   140px on top of that, which on /about meant the opening sentence — the
+   one the page exists to deliver — began below the fold on a laptop. A
+   page's first line should be the first thing you read. */
+.spine > section:first-child{padding-top:calc(var(--bar-h) + clamp(28px,5vh,64px))}
+
+/* A section that takes the window. Contact and the openers use it: a
+   heading, its lede and nothing else, centred in a screen of its own, so
+   the page arrives one idea at a time instead of as a column with gaps
+   in it. */
+.sec-full{
+  min-height:calc(100dvh - var(--bar-h));
+  display:flex; flex-direction:column; justify-content:center;
+}
+
+
+/* ============ TYPE ============
+   Four sizes and two families do the whole site. Anything that needs a
+   fifth size is a section that has not decided what it is. */
+
+/* The eyebrow over a section. Mono, uppercase, wide, and with the
+   trailing full stop LOUD puts on theirs — it is the one piece of
+   punctuation that makes a label read as a title card. */
+.kicker{
+  font-family:var(--mono); font-size:12px; font-weight:400;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--faint);
+  margin-bottom:clamp(18px,2.4vw,28px);
+}
+
+/* A pillar page's h1: mono, and grey rather than black. LOUD sets these
+   in --muted and it is the detail that keeps the opener quiet enough for
+   the statement two sections down to be the loudest thing on the page. */
+/* ---------- the brand's own face ----------
+   Baloo 2 is my.adhd's typeface — it is what the app is set in and what
+   the wordmark is drawn from — and until now it appeared on this site
+   only inside the lockup. Every display line wears it now: the page
+   titles, the statements, the two asks. DM Sans keeps the body and DM
+   Mono keeps the labels, so the LOUD structure is intact; what changes is
+   whose voice says the loud parts.
+
+   Weight 600 rather than 400. Baloo is drawn round and open and at 400 on
+   a 58px line it reads underinflated next to DM Sans; 600 is where it
+   sits at the same optical weight as the copy under it. */
+.page-title{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(30px,4.8vw,62px); line-height:1.1; letter-spacing:-.025em;
+  color:var(--ink); max-width:22ch; text-wrap:balance;
+}
+
+.lede{
+  margin-top:clamp(20px,2.6vw,32px);
+  font-size:clamp(17px,2vw,22px); line-height:1.55; color:var(--ink-soft);
+  max-width:60ch;
+}
+
+/* The big sans sentence. Weight 400 at 48px is the whole personality of
+   this design — a headline that is large because it matters, not heavy
+   because it is shouting. */
+.statement{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(26px,3.6vw,48px);
+  line-height:1.2; letter-spacing:-.02em; color:var(--ink);
+  max-width:28ch; text-wrap:balance;
+}
+/* The wide variant runs to the measure rather than stopping two thirds
+   of the way across it. At display sizes a 34ch line is a column with a
+   third of the page empty beside it — which is the gap that kept showing
+   up in review. */
+.statement.is-wide{max-width:44ch}
+
+.body-copy{
+  font-size:clamp(16px,1.9vw,19px); line-height:1.65; color:var(--ink-soft);
+  max-width:66ch;
+}
+.body-copy + .body-copy{margin-top:1.1em}
+
+.section-h2{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(26px,3.4vw,44px);
+  line-height:1.16; letter-spacing:-.02em; color:var(--ink);
+  max-width:26ch; text-wrap:balance;
+}
+
+/* The numerals. The only place the brand blue appears as ink, and the
+   thing that makes an ordered set of anything read as a sequence rather
+   than as a list. */
+.num{
+  font-family:var(--mono); font-size:20px; font-weight:400;
+  color:var(--blue); letter-spacing:.04em;
+}
+:root[data-theme="dark"] .num{color:var(--accent)}
+
+
+/* ============ THE ASK ============
+   Every page ends on one sentence and one button, the way LOUD's do.
+   There are two of them because the site has two things to ask for: the
+   organisation asks you to find out, and the app asks you to start. Which
+   one a page carries is decided in the plan, not here. */
+.ask{
+  display:flex; flex-direction:column; align-items:center;
+  text-align:center;
+}
+/* The same rhythm the front page's funnel runs, for the same reason. One
+   `gap` made the sentence and whatever follows it two things of equal
+   weight standing 31px apart; they are not. The sentence is the page's
+   one message and the rest is the practical matter — a lede, a button, a
+   row of assurances — and it comes after a real break rather than
+   crowding the line it answers. Only the first thing after the sentence
+   gets the break; the pieces of the practical matter keep a step between
+   them, so the button is still read as belonging to the lede above it. */
+.ask-line + *{margin-top:clamp(34px,6vh,76px)}
+.ask-line + * ~ *{margin-top:clamp(22px,3.4vh,38px)}
+.ask-line{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(30px,5.2vw,72px);
+  line-height:1.08; letter-spacing:-.025em; color:var(--ink);
+  max-width:26ch; text-wrap:balance;
+}
+.ask-line.is-app{font-size:clamp(34px,6.4vw,88px); line-height:1.05; max-width:18ch}
+.ask-lede{
+  font-size:clamp(17px,2vw,22px); line-height:1.5; color:var(--muted);
+  max-width:46ch; text-wrap:balance;
+}
+.ask-assure{
+  list-style:none; display:flex; flex-wrap:wrap; justify-content:center;
+  gap:1.15em;
+  font-family:var(--mono); font-size:12px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--faint);
+}
+.ask-assure li{display:flex; align-items:center; gap:1.15em}
+.ask-assure li + li::before{content:"•"; color:var(--line-strong)}
+
+/* The button. A label with a filled circle after it, which is LOUD's
+   whole button vocabulary and the only place on the site that colour
+   fills a shape. Ours is the brand blue rather than their purple; the
+   arrow moves, the circle grows, nothing else happens. */
+.arrow-cta{
+  display:inline-flex; align-items:center; gap:16px;
+  font-size:clamp(18px,2.2vw,22px); color:var(--ink); text-decoration:none;
+}
+/* Orange, and this is the one decision in the file that needed arguing.
+   The app reserves --orange for a single meaning — start here — and puts
+   it on nothing else. That rule is worth keeping, and it is also exactly
+   what a call to action is. So orange is the fill of every primary button
+   on the site and appears nowhere that is not something to press: not in
+   a heading, not on a rule, not as decoration. It is the warmest thing on
+   a page of near-monochrome, which is the point. */
+.arrow-cta i{
+  flex:none; display:grid; place-items:center;
+  width:56px; height:56px; border-radius:999px;
+  background:var(--orange); color:#FFFFFF;
+  transition:width .22s var(--ease), height .22s var(--ease), background .18s var(--ease);
+}
+.arrow-cta:hover i{width:62px; height:62px}
+.arrow-cta:focus-visible{outline:none}
+.arrow-cta:focus-visible i{box-shadow:0 0 0 4px var(--focus)}
+.arrow-cta svg{width:20px; height:20px; display:block}
+
+/* The same object at half volume, for a link that continues rather than
+   concludes: an outlined circle instead of a filled one. */
+.arrow-link{
+  display:inline-flex; align-items:center; gap:14px;
+  font-size:clamp(16px,1.9vw,18px); color:var(--ink); text-decoration:none;
+}
+.arrow-link i{
+  flex:none; display:grid; place-items:center;
+  width:40px; height:40px; border-radius:999px;
+  border:1.5px solid var(--line-strong); color:var(--ink);
+  transition:border-color .18s var(--ease), background .18s var(--ease);
+}
+.arrow-link:hover i{border-color:var(--accent); background:var(--wash)}
+.arrow-link:focus-visible{outline:none}
+.arrow-link:focus-visible i{border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.arrow-link svg{width:16px; height:16px; display:block}
+
+/* ---------- the pager ----------
+   "Next → Self-check", exactly LOUD's foot-of-page move. It is what turns
+   ten separate pages into one sequence you can read straight through. */
+.pager{
+  display:flex; align-items:center; justify-content:center; gap:18px;
+  flex-wrap:wrap; text-align:center;
+  padding-top:var(--band);
+  border-top:1px solid var(--line);
+}
+.pager .p-label{font-size:clamp(17px,2vw,22px); color:var(--muted)}
+.pager a{
+  display:inline-flex; align-items:center; gap:16px;
+  font-size:clamp(17px,2vw,22px); color:var(--ink); text-decoration:none;
+}
+.pager a i{
+  flex:none; display:grid; place-items:center;
+  width:48px; height:48px; border-radius:999px;
+  border:1.5px solid var(--line-strong);
+  transition:border-color .18s var(--ease), background .18s var(--ease);
+}
+.pager a:hover i{border-color:var(--accent); background:var(--wash)}
+.pager a:focus-visible{outline:none}
+.pager a:focus-visible i{border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.pager a svg{width:18px; height:18px; display:block}
+
+
+/* ============ GRIDS ============
+   One-pixel gaps over a ruled ground, so a set of cells reads as one
+   object cut up rather than as several objects near each other. It is the
+   only way to draw shared hairlines in a grid that reflows, and it is
+   what LOUD's deliverables and services tables are made of. Square
+   corners throughout: there is not one rounded rectangle on their site
+   and the sharpness is half of why it reads as considered. */
+.grid{
+  display:grid; gap:1px;
+  background:var(--line); border:1px solid var(--line);
+}
+.grid > *{
+  background:var(--surface);
+  padding:clamp(22px,3vw,40px);
+  display:flex; flex-direction:column;
+}
+@media (min-width:760px){
+  .grid-2{grid-template-columns:1fr 1fr}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+}
+/* A row that does not divide leaves a hole, and the hole is not empty —
+   it shows the grid's own ruled ground, which arrives as a solid lavender
+   block where a cell should be. Five beats in a three-column grid is the
+   case that found it. The filler is a real cell with nothing in it, so the
+   object stays cut into equal parts. */
+.grid .filler{background:var(--surface)}
+/* The icon sits in a band of its own so a row keeps one height however
+   long the text under it runs, and the gap under it is deliberately
+   enormous — LOUD's cells are mostly air, and the air is the design. */
+.cell-ico{
+  height:48px; display:flex; align-items:flex-start;
+  margin-bottom:clamp(40px,7vh,72px); color:var(--ink);
+}
+.cell-ico svg{height:100%; width:auto; max-width:100%; display:block; overflow:visible}
+.cell-label{
+  font-family:var(--mono); font-size:13px; font-weight:400;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--faint);
+  margin-bottom:14px;
+}
+.cell-title{
+  font-size:clamp(18px,2.2vw,24px); font-weight:400;
+  line-height:1.25; letter-spacing:-.015em; color:var(--ink);
+}
+.cell-text{
+  margin-top:12px;
+  font-size:clamp(15px,1.7vw,17px); line-height:1.6; color:var(--muted);
+}
+.cell-cite{margin-top:14px; font-size:12px; color:var(--faint)}
+/* The mono footnote under a grid, LOUD's "Each individual step involves
+   reiterative processes…" — the small print of a table, set as such. */
+.grid-foot{
+  margin-top:clamp(20px,3vh,32px);
+  font-family:var(--mono); font-size:12px; line-height:1.7; color:var(--faint);
+  max-width:70ch;
+}
+
+/* The figure drawings, carried over from the old page. Stroke tokens so
+   they follow the theme; the third card keeps its orange, which on this
+   site means one thing and only one: start here. */
+.cfig,.fig{display:block; width:100%; height:auto; overflow:visible}
+.cell-ico .cfig,.cell-ico .fig{width:auto; height:100%}
+.cfig .w,.fig .w{fill:none; stroke:var(--accent); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.cfig .q,.fig .q{fill:none; stroke:var(--line-strong); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.cfig .h{fill:none; stroke:var(--accent); stroke-width:3.2; stroke-linecap:round}
+.cfig .o{fill:var(--orange)}
+.cfig .os{fill:none; stroke:var(--orange); stroke-width:3.4; stroke-linecap:round}
+.fig .d{fill:var(--accent)}
+.fig .s{fill:none; stroke:var(--accent); stroke-width:2.9; stroke-linecap:round}
+.fig .r{fill:none; stroke:var(--fig-run); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+:root{--fig-run:var(--blue-pale)}
+:root[data-theme="dark"]{--fig-run:#48466A}
+
+
+/* ============ THE OFFER ROWS ============
+   /activities is five of these stacked. LOUD's Think page sets its
+   services out the same way — numeral, name, one grey line, two
+   paragraphs, a link — and the hairline between rows is what stops five
+   long blocks reading as one undifferentiated wall. */
+/* The list starts under the opener without a second helping of air: the
+   section's own band is already between them, and the first row was
+   adding 80px more on top of it. */
+.offers{list-style:none; margin-top:calc(var(--band) * -0.5)}
+.offer{padding-block:clamp(30px,5vh,58px)}
+.offer + .offer{border-top:1px solid var(--line)}
+.offer .num{display:block; margin-bottom:clamp(16px,2.4vh,26px)}
+.offer h2{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(26px,3.4vw,44px);
+  line-height:1.16; letter-spacing:-.02em; color:var(--ink);
+  max-width:22ch; text-wrap:balance;
+}
+.offer .offer-sub{
+  margin-top:14px;
+  font-family:var(--mono); font-size:13px; line-height:1.6; color:var(--faint);
+  max-width:60ch;
+}
+.offer .body-copy{margin-top:clamp(20px,2.8vh,30px)}
+.offer .arrow-link{margin-top:clamp(24px,3.4vh,38px)}
+
+
+/* ============ THE PAGE'S WEATHER ============
+   One wave field per sub-page, fixed behind everything.
+
+   It was a bordered 16:9 box sitting partway down the page, standing in
+   for the photograph LOUD runs there. That was wrong twice over: it made
+   the field a picture of itself — a framed illustration on a page whose
+   whole argument is that it carries no furniture — and it put the loudest
+   thing on the page in the middle of a column of reading.
+
+   As the ground it does what it was always for. Fixed rather than
+   scrolled, so it reads as the weather the page is happening in rather
+   than as an object travelling past. The veil is the whole trick: without
+   it the shader's highlight is a saturated brand blue at full strength
+   and every paragraph sits on top of a graphic. */
+.page-wave{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+}
+.page-wave .panel-wave{position:absolute; inset:0}
+.page-wave canvas{display:block; width:100%; height:100%}
+/* The same wash as the hero, at the same strength, so the field on
+   /about is the field on the front page and not a dimmer cousin of it.
+   It was heavier here on purpose — three thousand words over a field
+   instead of one sentence — but "heavier" was done as a second radial
+   stacked on a second flat wash, and the sub-pages came out a different
+   brightness from the scene they link back to. What keeps the column
+   legible is the wash itself — at .50 the crests composite to #2B238B,
+   which is ink-dark by any contrast measure — and the reading measure,
+   which never reaches the corners where the field is loudest. .spine has
+   a z-index and no ground of its own; the words sit on the washed field
+   directly, on every page, which is the point. */
+.page-wave::after{
+  content:""; position:absolute; inset:0;
+  background:rgb(var(--wave-rgb) / var(--wave-veil-a));
+}
+/* Everything the reader came for sits above it. main and footer get a
+   layer of their own; the bar already has one. */
+.spine, .foot, .ask, .pager{position:relative; z-index:1}
+/* ...and the bar's ground has to go, or it paints a band across a field
+   that now runs the full height of the window. */
+.bar{background:none; border-bottom:0}
+/* The bar floats over the page's own weather now, so its ground cannot
+   be opaque without cutting a band across the field — and at 82% the
+   pager underneath was legibly reading through it. A blur solves both:
+   whatever passes behind is unreadable, the field's colour still comes
+   through, and the bar stays a pane rather than a slab. The flat fill
+   underneath is the fallback wherever backdrop-filter is not supported,
+   which is why it is high enough to work on its own. */
+.bar::after{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:rgb(var(--wave-rgb) / .90);
+  border-bottom:1px solid var(--line);
+}
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)){
+  .bar::after{
+    background:rgb(var(--wave-rgb) / .72);
+    -webkit-backdrop-filter:blur(14px) saturate(1.2);
+    backdrop-filter:blur(14px) saturate(1.2);
+  }
+}
+.scene .bar::after{display:none}
+
+/* ============ THE MARQUEE ============
+   A giant line of type travelling sideways between sections. LOUD runs
+   one on nearly every page and it does something a static headline
+   cannot: it makes a page of quiet reading suddenly have a pulse, without
+   asking the reader to do anything. The text is duplicated in the markup
+   because a single copy leaves a gap when it wraps. */
+.marquee{
+  overflow:hidden; white-space:nowrap;
+  padding-block:clamp(20px,3vh,36px);
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  position:relative; z-index:1;
+}
+/* It ran at 160px and 60 seconds, which is two mistakes that hide each
+   other: at that size two words fill the window so there is nothing to
+   read, and at that speed the travel is four pixels a second so there is
+   nothing to see moving. Half the size and a third of the duration —
+   now the whole sentence is on screen and it is visibly going
+   somewhere. */
+.marquee span{
+  display:inline-block;
+  font-size:clamp(24px,3.6vw,52px); font-weight:400;
+  letter-spacing:-.02em; color:var(--ink);
+}
+@media (prefers-reduced-motion:no-preference){
+  .marquee span{animation:slide 22s linear infinite; will-change:transform}
+  .marquee:hover span{animation-play-state:paused}
+}
+@keyframes slide{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+
+
+/* ============ THE FOOTER ============
+   Rebuilt to LOUD's shape, which is the one thing the first version got
+   plainly wrong: it stacked a huge quiet line above four columns and left
+   the entire right half of the band empty, so the end of every page was a
+   column of text with a hole beside it.
+
+   Theirs is two rows that both fill. The top row is the sign-off on the
+   left and the ask on the right, side by side; the columns underneath are
+   divided by vertical rules and spread edge to edge. */
+.foot{
+  border-top:1px solid var(--line);
+  padding:clamp(56px,9vh,110px) var(--gutter) calc(clamp(24px,3.4vh,40px) + env(safe-area-inset-bottom, 0px));
+  max-width:var(--inner);
+  margin-inline:auto;
+}
+.foot-top{
+  display:flex; flex-wrap:wrap; align-items:end; justify-content:space-between;
+  gap:clamp(28px,5vw,64px);
+  padding-bottom:clamp(48px,8vh,96px);
+}
+.foot-line{
+  font-family:var(--mono); font-weight:400;
+  font-size:clamp(20px,2.6vw,34px); line-height:1.3; color:var(--ink-soft);
+  max-width:26ch; margin:0;
+}
+.foot-cols{
+  display:grid; gap:0;
+  border-top:1px solid var(--line);
+  grid-template-columns:1fr;
+}
+@media (min-width:760px){ .foot-cols{grid-template-columns:repeat(2,1fr)} }
+@media (min-width:1080px){ .foot-cols{grid-template-columns:repeat(4,1fr)} }
+/* The vertical rules between columns, drawn as borders on the cells so
+   they appear only where two columns actually meet — a background-gap
+   grid would draw them on the outside edges too. */
+.foot-col{padding:clamp(26px,3.4vh,38px) clamp(18px,2.2vw,32px)}
+.foot-col:first-child{padding-left:0}
+@media (min-width:760px){
+  .foot-col:nth-child(n+2){border-left:1px solid var(--line)}
+}
+@media (min-width:760px) and (max-width:1079.98px){
+  .foot-col:nth-child(3){border-left:0}
+  .foot-col:nth-child(n+3){border-top:1px solid var(--line)}
+}
+.foot-col h2{
+  font-family:var(--mono); font-size:12px; font-weight:400;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--faint);
+}
+.foot-col ul{list-style:none; margin-top:18px; display:grid; gap:11px}
+.foot-col a{
+  font-size:16px; color:var(--muted); text-decoration:none;
+  transition:color .18s var(--ease);
+}
+.foot-col a:hover{color:var(--ink)}
+.foot-col a:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+.foot-col a[href^="mailto:"]{overflow-wrap:anywhere}
+.foot-base{
+  /* The pill is fixed to the bottom-right corner, so at the foot of the
+     page it lands on top of whatever is there — which was the copyright.
+     The band reserves the pill's own height plus its margin, and the base
+     row wraps rather than running under it. */
+  padding-bottom:clamp(56px,8vh,86px);
+  padding-top:clamp(18px,2.6vh,26px);
+  border-top:1px solid var(--line);
+  display:flex; flex-wrap:wrap; gap:10px 28px; justify-content:space-between;
+  font-size:13px; color:var(--faint);
+}
+.foot-note{max-width:52ch}
+
+
+/* ============ COPY THAT IS NOT FINISHED ============
+   Five pages ship with a hole in them. A dashed edge and a marker in the
+   corner are not decoration: a screening questionnaire with invented
+   items, or a shelf of books nobody read, would be worse than an empty
+   frame that says so. The marker reads "work in progress" rather than
+   "placeholder" — the second is a word for the people building the page,
+   the first is a promise to the person reading it. Delete the attribute
+   when the real thing goes in; when the last one goes, all of this goes
+   with it.
+
+   The one place in this file allowed a literal colour, because the point
+   is to look like scaffolding rather than like the site. */
+[data-placeholder]{
+  position:relative; overflow:hidden;
+  border:1.5px dashed var(--line-strong) !important;
+  background:var(--wash);
+  min-height:120px;
+}
+[data-placeholder]::after{
+  content:"work in progress";
+  position:absolute; top:0; right:0;
+  padding:3px 9px 4px;
+  background:var(--line-strong); color:var(--surface);
+  font-family:var(--mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.ph-note{
+  font-family:var(--mono); font-size:13px; line-height:1.7; color:var(--faint);
+  max-width:60ch;
+}
+
+
+/* ============ THE HOME SCENE ============
+   One screen that plays itself.
+
+   It used to be six viewports of scroll track with a sticky stage inside,
+   and the headline typed as you scrolled. That is LOUD's mechanism and it
+   was the wrong one to copy here, for two reasons that only showed up
+   once it was real: the page said nothing at all until you scrolled it,
+   and pressing a beat in the corner list jumped you to a scroll offset
+   where that beat was still half-typed — so the one interaction on the
+   page reliably showed you an unfinished sentence.
+
+   So the scene is one 100dvh screen now and the writing happens on a
+   timer. Scrolling does what scrolling should: it leaves, and what it
+   leaves for is the ask. */
+.scene{
+  position:relative; height:100dvh; overflow:hidden; isolation:isolate;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:calc(var(--bar-h) + 20px) var(--gutter) clamp(150px,24vh,240px);
+}
+.scene > *:where(:not(.bar):not(.pill)){position:relative; z-index:1}
+.hero-waves{position:absolute; inset:0; z-index:0}
+.hero-waves canvas{display:block; width:100%; height:100%}
+
+/* ---------- the veil ----------
+   Three layers, ported from landing.css, and it is three rather than one
+   for reasons all visible the moment you drop one. The pool is what the
+   headline sits in; its stops walk a smoothstep rather than a straight
+   line, because a plateau running into a linear ramp is continuous in
+   value but not in slope and the eye finds that break and draws an edge
+   on it. The linear pass gives the bar something to sit on and eases the
+   bottom out so the field ends rather than being cut off at a line. The
+   flat wash under both keeps the loud corners reading as weather behind a
+   page instead of a picture on it. */
+.hero-waves::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 36rem var(--wave-reader-h) at 50% 46%,
+      rgb(var(--wave-rgb) / .92) 0%,
+      rgb(var(--wave-rgb) / .92) 44%,
+      rgb(var(--wave-rgb) / .80) 56%,
+      rgb(var(--wave-rgb) / .58) 68%,
+      rgb(var(--wave-rgb) / .31) 79%,
+      rgb(var(--wave-rgb) / .09) 90%,
+      rgb(var(--wave-rgb) / 0)  100%),
+    linear-gradient(to bottom,
+      rgb(var(--wave-rgb) / 1) 0%,
+      rgb(var(--wave-rgb) / .32) 11%,
+      rgb(var(--wave-rgb) / 0) 22%,
+      rgb(var(--wave-rgb) / 0) 74%,
+      rgb(var(--wave-rgb) / .34) 86%,
+      rgb(var(--wave-rgb) / .72) 94%,
+      rgb(var(--wave-rgb) / 1) 100%),
+    rgb(var(--wave-rgb) / var(--wave-veil-a));
+}
+/* On ink the surround comes UP to meet the pool rather than the pool
+   going down to meet the page. A 0.92 pool over a field two stops
+   brighter is a dark ellipse sitting on the screen however gently it is
+   faded — no falloff shape hides a gap that size. The field is quieter at
+   night for it, which is also what it should be. */
+:root{--wave-rgb:255 255 255; --wave-veil-a:.46; --wave-reader-h:27rem}
+/* .50 and 16 16 24, the same two numbers landing.css uses, because these
+   two are what set how bright the field reads on every page: the wash is
+   the brightness. It was .70 over 12 12 20 here, .50 over 16 16 24 on the
+   landing page and a stacked .55 + radial on the sub-pages, and the same
+   canvas came out three different fields. One pair, everywhere. */
+:root[data-theme="dark"]{--wave-rgb:16 16 24; --wave-veil-a:.50}
+/* No phone exception. landing.css used to lighten its night wash to .30
+   on a phone, and for a moment this file copied it; but that rule was
+   written for a hero whose copy sits in a reader pool, and the sub-pages
+   have no pool — at .30 the body text on /about landed straight on
+   unwashed crests. The wash is the brightness, and the brightness is the
+   same on every page at every width, or it is not the same field. */
+@media (max-width:700px){ :root{--wave-reader-h:max(18rem, 34vh)} }
+
+/* The index over the headline: which value is showing, out of how many. */
+.index{
+  font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--faint);
+  margin-bottom:26px;
+}
+.index b{font-weight:400; color:var(--ink)}
+
+/* The line itself. It arrives a word at a time on a timer and holds; the
+   word arriving is dim, the ones behind it are ink. min-height holds three
+   lines open so the screen never jumps as one value hands over to the
+   next. */
+.type{
+  font-family:var(--mono); font-weight:400;
+  font-size:clamp(21px,3.5vw,46px); line-height:1.32; letter-spacing:-.015em;
+  color:var(--ink); text-align:center; max-width:30ch;
+  min-height:4em;
+}
+/* The word still arriving is purple rather than grey. --type-dim is the
+   brand violet by day and a lighter one at night, where the field behind
+   it is now purple too and #7B3FE4 has nothing to sit against. */
+.type .dim{color:var(--type-dim)}
+
+/* ---------- the activities, bottom left ----------
+   LOUD lists its verticals down there and lights one at a time. Ours are
+   the five things the organisation actually offers, and unlike LOUD's
+   they are links — this is the only navigation on the page besides the
+   bar, so it had better go somewhere.
+
+   They pop in one after another on load rather than all at once: five
+   labels appearing together is a block arriving, five arriving in
+   sequence is a list being read out. */
+.acts-list{
+  position:absolute; left:var(--gutter); bottom:clamp(28px,5vh,52px);
+  list-style:none; display:grid; gap:13px; z-index:2; margin:0;
+}
+.acts-list a{
+  display:inline-block;
+  font-family:var(--mono); font-size:12px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted); text-decoration:none;
+  transition:color .3s var(--ease), translate .3s var(--ease);
+}
+.acts-list a:hover{color:var(--ink); translate:3px 0}
+.acts-list li[aria-current] a{color:var(--ink)}
+/* The marker, in the site's action colour, so the item lit in the corner
+   reads as the one you could press rather than as the one being narrated. */
+.acts-list li[aria-current] a::before{
+  content:""; display:inline-block; vertical-align:middle;
+  width:5px; height:5px; border-radius:999px; background:var(--orange);
+  margin-right:9px; margin-top:-2px;
+}
+.acts-list a:focus-visible{outline:2px solid var(--accent); outline-offset:4px}
+@media (prefers-reduced-motion:no-preference){
+  .acts-list[data-anim] li{opacity:0; translate:0 6px; transition:opacity .5s var(--ease), translate .5s var(--ease)}
+  .acts-list[data-anim][data-in] li{opacity:1; translate:0 0}
+  .acts-list[data-anim] li:nth-child(1){transition-delay:.10s}
+  .acts-list[data-anim] li:nth-child(2){transition-delay:.20s}
+  .acts-list[data-anim] li:nth-child(3){transition-delay:.30s}
+  .acts-list[data-anim] li:nth-child(4){transition-delay:.40s}
+  .acts-list[data-anim] li:nth-child(5){transition-delay:.50s}
+}
+@media (max-width:820px){
+  /* On a phone the headline is the whole screen and a second index in the
+     corner is clutter — the bar's sheet already lists these five. */
+  .acts-list{display:none}
+}
+
+/* The nudge at the bottom of the scene. Without it a screen that fills the
+   window and plays itself looks finished, and nobody scrolls. */
+.scroll-cue{
+  position:absolute; left:50%; translate:-50% 0; bottom:clamp(22px,4vh,40px);
+  z-index:2;
+  display:grid; place-items:center; width:42px; height:42px;
+  border:1.5px solid var(--line-strong); border-radius:999px;
+  color:var(--muted); text-decoration:none;
+  transition:border-color .18s var(--ease), color .18s var(--ease);
+}
+.scroll-cue:hover{border-color:var(--orange); color:var(--ink)}
+.scroll-cue:focus-visible{outline:none; border-color:var(--orange); box-shadow:0 0 0 4px rgba(247,92,3,.22)}
+.scroll-cue svg{width:16px; height:16px; display:block}
+@media (prefers-reduced-motion:no-preference){
+  .scroll-cue{animation:cue 2.4s var(--ease) infinite}
+}
+@keyframes cue{0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)}}
+@media (max-width:820px){ .scroll-cue{display:none} }
+
+/* The front page's last screen. The ask and the sign-off are one
+   composition, not two blocks that happen to be adjacent: the ask takes
+   whatever height is left and centres in it, the footer sits on the
+   floor. Scrolled to the bottom — which is where a reader arrives — the
+   sentence is in the middle of the window and the fine print is at the
+   edge of it, rather than the sentence riding high with a band of empty
+   page under it. Only index.html has this shape; every other page ends
+   on the full footer and a pager. */
+.ending{
+  min-height:100svh;
+  display:flex; flex-direction:column;
+}
+/* Both children already centre themselves with `margin-inline:auto`, and
+   an auto margin on the cross axis switches a flex item's stretch off —
+   so without this the footer sized to its own content and the band's rule
+   came out 700px wide in the middle of a 1440 window. */
+.ending > *{width:100%}
+.ending > .foot{
+  /* The sign-off here is one legal line, not a sitemap: the band's
+     default top padding is sized for the three-column footer the other
+     pages carry, and 110px of air over a single sentence reads as another
+     gap rather than as the end. */
+  padding-top:clamp(26px,4vh,44px);
+  /* .foot-base below already reserves the floating pill's height under
+     the row; spending a second gutter after it only lifts the fine print
+     further off the bottom of the window. */
+  padding-bottom:env(safe-area-inset-bottom, 0px);
+}
+/* .foot draws the rule that ends the page. .foot-base draws the one that
+   separates the sitemap from the fine print — and with no sitemap above
+   it the two land within 30px of each other, which reads as a mistake
+   because it is one. */
+.ending > .foot .foot-base{border-top:0; padding-top:0}
+
+/* ---------- the funnel ----------
+   What the scene scrolls into. The home page had nothing here but the
+   footer, so a reader who scrolled past the scene arrived at a column of
+   links and no reason to press any of them. This is the reason. */
+.funnel{
+  /* A screen of its own, the way .sec-full gives the openers one. It was
+     min(88vh,760px), which at 1440 the content already exceeded — so the
+     min-height did nothing at all, the section was whatever the copy
+     happened to measure, and what you saw depended on where the scroll
+     stopped: the ask, then a hundred-odd pixels of nothing, then the
+     footer's rule creeping into the same view. A closing ask reads as an
+     ending or it reads as a gap, and the difference is whether the window
+     holds it alone.
+
+     The screen belongs to .ending, though, not to this. 100svh here plus
+     a footer under it is one screen and a bit, and the bit is what put
+     the sentence off-centre at the bottom of the page — so this takes
+     what is left after the footer and centres in that. (.ending is svh
+     and not dvh: nothing here is sticky, and a block that regrows as a
+     phone's toolbar retracts shifts the copy under the reader's thumb.) */
+  flex:1; min-height:0;
+  /* and it lands flush. The scroll-padding above exists so a heading does
+     not arrive under the bar, but this section has already bought that
+     height back in its own padding — left alone, /#start would drop it
+     88px down the window and hang the same 88px of it below the fold, so
+     the one screen it is would never be one screenful. A negative
+     scroll-margin is how a target opts out. */
+  scroll-margin-top:calc(-1 * var(--scroll-offset));
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+  /* The bar floats over this section rather than above it — the funnel is
+     what /#start scrolls to, and it is also what you land on scrolling to
+     the bottom — so the top has to buy its height back or the kicker
+     arrives underneath the lockup. Which means the two paddings are not
+     equal and must not be: the same air on both sides, plus the bar's
+     height on top of the top one. Set them equal and the block centres in
+     the box while sitting a bar's-height high in the window, which is the
+     one thing the reader can actually see. */
+  --funnel-air:clamp(20px,4vh,48px);
+  padding:calc(var(--bar-h) + var(--funnel-air)) var(--gutter) var(--funnel-air);
+  max-width:var(--inner); margin-inline:auto;
+}
+/* The rhythm below is three deliberate steps and not one `gap`. A single
+   gap made the eyebrow, the sentence, the lede and the buttons four
+   things of equal weight standing in a row, and they are not: the label
+   belongs to the sentence and sits close under it, the sentence is the
+   page's one message, and the practical matter — how long it takes,
+   where to press — comes after a real break rather than crowding it. */
+.funnel .kicker{margin:0 0 clamp(14px,2.2vh,26px)}
+.funnel-line{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(30px,5.4vw,74px);
+  line-height:1.06; letter-spacing:-.025em; color:var(--ink);
+  /* 26ch and not 20ch, which is what .ask-line — the same sentence, on
+     every other page — has always been set to. At 20 this broke into four
+     lines whose lengths balance could not even out: a short opener over a
+     line half again as wide. At 26 it is three, and three lines of it is
+     one shape rather than a paragraph. */
+  max-width:26ch; text-wrap:balance;
+}
+.funnel-lede{
+  margin-top:clamp(34px,6vh,76px);   /* the break: message above, detail below */
+  font-size:clamp(16px,1.9vw,20px); line-height:1.55; color:var(--ink-soft);
+  max-width:52ch; text-wrap:balance;
+}
+/* Two ways on, and they are not equal: the organisation's front door is
+   the self-check, and the app is the thing you reach for once you know.
+   So one is the orange button and the other is a plain link beside it. */
+.funnel-actions{
+  margin-top:clamp(26px,4.4vh,54px);
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
+  gap:clamp(18px,3vw,38px);
+}
+
+/* ============ THE DECODE ============
+   /about opens on a headline that resolves out of noise as you scroll.
+   LOUD does this on their Manifesto and it is the right form for a page
+   whose first line is "You lose your keys. Again." — the sentence arrives
+   the way the recognition does, out of something that looked like
+   nothing.
+
+   Same track-and-stage mechanics as the scene above. */
+.decode-stage{
+  position:sticky; top:0; height:100dvh; overflow:hidden; isolation:isolate;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:clamp(28px,6vh,60px);
+  padding:calc(var(--bar-h) + 20px) var(--gutter) clamp(80px,12vh,120px);
+  background:var(--wash);
+}
+.decode-stage > *{position:relative; z-index:1}
+/* The tiles behind it. Generated in script rather than written out
+   because forty divs in the markup is forty divs of nothing to read. */
+.mosaic{
+  position:absolute; inset:0; z-index:0;
+  display:grid; grid-template-columns:repeat(8,1fr); grid-template-rows:repeat(5,1fr);
+}
+.mosaic i{display:block; background:var(--blue)}
+.decode{
+  font-family:var(--mono); font-weight:400;
+  font-size:clamp(26px,5vw,60px); line-height:1.2; letter-spacing:-.01em;
+  color:var(--ink); text-align:center; max-width:22ch;
+  white-space:pre-wrap;
+}
+.decode .raw{color:var(--faint)}
+.chev{
+  display:grid; place-items:center; width:44px; height:44px;
+  border:1.5px solid var(--line-strong); border-radius:999px;
+  color:var(--ink); text-decoration:none;
+  transition:border-color .18s var(--ease), background .18s var(--ease);
+}
+.chev:hover{border-color:var(--accent); background:var(--surface)}
+.chev:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.chev svg{width:18px; height:18px; display:block}
+/* Same as the scene above: the track's height arrives from script. */
+
+
+/* ============ SMALL SHARED PIECES ============ */
+
+/* The Malay line on /about, and the app's turn line. Mono, because on
+   this site a list of names for a thing is a label, and because setting
+   it apart is the whole point of that paragraph. Not italic — those are
+   four ordinary Malay words, not foreign matter. */
+.name-line{
+  font-family:var(--mono); font-weight:400;
+  font-size:clamp(19px,2.6vw,34px); line-height:1.4; letter-spacing:-.01em;
+  color:var(--ink); max-width:34ch;
+}
+.turn{
+  margin-top:clamp(24px,3.4vh,38px);
+  padding-top:clamp(18px,2.6vh,28px);
+  border-top:1px solid var(--line);
+  font-size:clamp(18px,2.2vw,24px); line-height:1.35; color:var(--ink);
+  max-width:34ch; text-wrap:balance;
+}
+/* Six moments, one per line. Hairlines and nothing else — this is a list
+   of recognitions, and each one wants its own beat. */
+.symptoms{list-style:none; max-width:44rem}
+.symptoms li{
+  padding:clamp(13px,1.8vw,17px) 0;
+  border-top:1px solid var(--line);
+  font-size:clamp(15px,1.9vw,17.5px); line-height:1.5; color:var(--ink-soft);
+}
+.symptoms li:last-child{border-bottom:1px solid var(--line)}
+/* The founder's name at the foot of /about. */
+.sign{
+  margin-top:clamp(40px,6vh,72px);
+  padding-top:clamp(18px,2.6vh,26px);
+  border-top:1px solid var(--line);
+  font-family:var(--mono); font-size:13px; line-height:1.8; color:var(--faint);
+}
+.sign b{display:block; font-weight:400; color:var(--ink)}
+/* A quote card and its attribution. The headline is the person's own
+   summary of what changed, set like a cell title above the quote it
+   introduces; the by-line is whatever they were willing to give. */
+.q-head{
+  font-size:clamp(18px,2.2vw,24px); font-weight:400;
+  line-height:1.25; letter-spacing:-.015em; color:var(--ink);
+  margin-bottom:clamp(12px,1.8vh,18px);
+}
+.quote blockquote p{
+  font-size:clamp(17px,2vw,20px); line-height:1.5; color:var(--ink-soft);
+  letter-spacing:-.01em;
+}
+.q-by{margin-top:auto; padding-top:clamp(20px,3vh,28px); font-size:13px; line-height:1.5}
+.q-who{display:block; color:var(--ink)}
+.q-what{display:block; color:var(--faint)}
+/* The contact rows. */
+.cw-ico{
+  height:28px; display:flex; align-items:center; color:var(--accent);
+  margin-bottom:clamp(28px,5vh,52px);
+}
+.cw-ico svg{width:22px; height:22px; display:block}
+.cell-link{
+  font-size:clamp(18px,2.2vw,24px); color:var(--ink); text-decoration:none;
+  overflow-wrap:anywhere;
+  border-bottom:1px solid transparent;
+  transition:border-color .18s var(--ease);
+}
+.cell-link:hover{border-bottom-color:var(--accent)}
+.cell-list{list-style:none; display:grid; gap:12px}
+.cell-list li{
+  font-size:clamp(15px,1.7vw,18px); line-height:1.5; color:var(--muted);
+}
+/* The centred "no ticket system" sign-off. */
+.sign-off{text-align:center; display:grid; gap:clamp(12px,2vh,18px); justify-items:center}
+/* ---------- /contact, on one screen ----------
+   The head, the four ways and the sign-off share one .sec-full, so the
+   page is read in a glance rather than found by scrolling. Everything
+   here is the same rule as elsewhere with less air in it: the cells were
+   padded and the icons spaced for a section that had a screen to itself,
+   and three of those stacked in one window do not fit a laptop. Scoped,
+   so the grid on /tools and the sign-off anywhere else keep their room. */
+.contact-one{gap:clamp(26px,4vh,44px)}
+.contact-one .lede{margin-bottom:0}
+.contact-one .grid > *{padding:clamp(18px,2.4vw,28px)}
+.contact-one .cw-ico{margin-bottom:clamp(12px,2vh,20px)}
+.contact-one .cell-list{gap:8px}
+
+.sign-off p{font-size:16px; color:var(--ink)}
+.sign-off a{
+  font-family:var(--mono); font-size:clamp(20px,3vw,34px); color:var(--ink);
+  text-decoration:none; border-bottom:1px solid var(--line-strong);
+  overflow-wrap:anywhere;
+}
+.sign-off a:hover{border-bottom-color:var(--accent)}
+/* The numbered list on /pesta — LOUD's "1. Branding … 6. Product
+   Management", set grey and large because it is a table of contents for
+   the grid underneath it. */
+.plain-list{list-style:none; display:grid; gap:clamp(10px,1.6vh,18px)}
+.plain-list li{
+  font-size:clamp(20px,2.6vw,32px); font-weight:400; color:var(--faint);
+  letter-spacing:-.01em;
+}
+.ps-jump{
+  margin-top:16px; align-self:start;
+  font-size:14px; color:var(--accent); text-decoration:none;
+  border-bottom:1.5px solid transparent;
+  transition:border-color .18s var(--ease);
+}
+.ps-jump:hover{border-bottom-color:var(--accent)}
+/* Two disabled pills for the language switch /blog promises. */
+.lang{display:flex; gap:8px; margin-top:clamp(20px,2.6vw,30px)}
+.lang span{
+  padding:6px 14px; border-radius:999px; border:1px solid var(--line-strong);
+  font-family:var(--mono); font-size:12px; letter-spacing:.1em; color:var(--faint);
+}
+/* A row of radio pills, for the self-check's shape. */
+.scale{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
+.scale span{
+  padding:8px 16px; border:1px solid var(--line-strong); border-radius:999px;
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em; color:var(--faint);
+}
+
+
+/* ============ THE ARRIVAL ============
+   Every section fades up as it reaches the window and stays faded up.
+   Nothing travels, nothing scales — the old landing page gave all that
+   away for good reasons written down in landing.css, and this file is not
+   going to reintroduce it.
+
+   [data-anim] is set from JavaScript only. The resting state of this
+   block is "visible", so a page whose script never ran is a page rather
+   than a page with holes in it. */
+@media (prefers-reduced-motion:no-preference){
+  [data-reveal][data-anim]{opacity:0; transition:opacity .7s var(--ease)}
+  [data-reveal][data-anim][data-in]{opacity:1}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important}
+}
+
+
+/* ============ THE WORD ITSELF ============
+   Every standalone "ADHD" on the site is set in the capsule's violet —
+   the same purple as the ".adhd" half of the wordmark, from the same
+   token, so the word and the mark are visibly the same word. It is not a
+   link and not a button, so it takes only the colour: no underline, no
+   weight change, nothing that would make it look pressable.
+
+   Applied by wrapping the word in the markup rather than by anything
+   clever, because "MyADHD" must NOT get it — that string is the
+   organisation's name and the lockup beside it already carries the
+   brand's colours. Only the bare word is wrapped. */
+.adhd-word{color:var(--wordmark-accent)}

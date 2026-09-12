@@ -183,6 +183,11 @@ the top of the file why each line in it is safe to publish.
 | `GEMINI_API_KEY` | `api/transcribe.js` | Transcription 500s and the browser's own engine answers instead — **silently**, and easier to miss |
 | `SUPABASE_URL` | `api/_supabase.js`, and so every route below it | Every `/api` route that touches the database answers 503 |
 | `SUPABASE_SERVICE_ROLE_KEY` | the same | The same. This is the key that bypasses RLS; it must never appear in `config.js` |
+| `STRIPE_SECRET_KEY` | `api/checkout.js`, `api/portal.js`, `api/stripe-webhook.js` | Checkout and the portal answer `503`. Nothing can be bought |
+| `STRIPE_WEBHOOK_SECRET` | `api/stripe-webhook.js` | **Every webhook is rejected**, so people pay and are never granted access. The loudest one to get wrong |
+| `STRIPE_PRICE_WEEKLY` | `api/checkout.js` | That plan answers `503`; the other two still work |
+| `STRIPE_PRICE_ANNUAL` | the same | The same |
+| `STRIPE_PRICE_LIFETIME` | the same | The same |
 | `GOOGLE_CLIENT_ID` | `api/gcal-token.js` | `/api/gcal-token` 503s and the calendar link falls back to the in-browser flow |
 | `GOOGLE_CLIENT_SECRET` | `api/gcal-token.js` | The same, and this one has no public half — it exists nowhere else |
 | `FEEDBACK_SALT` | `api/feedback.js` | The feedback screen cannot send; it is what the daily limit counts against |
@@ -790,29 +795,172 @@ now deliberately kept in step across both, at 4s.
 
 ## Pages
 
-`index.html` is the landing page. Its CTAs point at `/install` and carry
-`data-app-link`; an inline script rewrites them to `/app` for anyone already
-running from the home screen, or who has been shown the guide once — the
-install stop happens exactly one time.
+The site is **MyADHD** — an organisation that makes ADHD
+recognisable in everyday Malaysian life — and the my.adhd app is one of
+the five things it offers. Until 2026-09-09 the whole site was the app's
+landing page; that page was kept at `/landing-page` for two days and
+deleted on 2026-09-11 — everything it said about the app now lives on
+`/tools`.
 
-**The hero is one viewport. The page is not.** The hero is `100dvh` and sized
-in `vh`/`dvh` clamps, so the first screen is always whole — headline, CTA and
-a one-line disclaimer, with nothing cut off on a phone. Below it the document
-scrolls, through three things:
+`site.css` and `site.js` are the public site. `landing.css` is the legal
+pages' and `/install`'s and is not edited for the new pages. The copy for
+About and Activities is the user's, kept verbatim in `docs/content/`; the
+design is written down in `docs/loud-redesign-plan.md`.
 
-1. `.how` — three cards, the loop itself: everything into one box, back
-   grouped and timed, each task opening on a first step. The one section on
-   the site with furniture on it, because three parallel steps only read as
-   three if each one is bounded. The drawings are the same two marks as the
-   figures below them — a travelling wave and a straight rule — and the third
-   is the only drawing on the site allowed orange, which means what it always
-   means here: start here.
-2. `.why` — four research findings, divided by hairlines and nothing else,
-   ending on the closing CTA. Deliberately not cards: it is a column of
-   reading, and boxing it would put furniture on the page twice.
-3. `footer.site-foot` — the site's one filled band, on the same 1080 measure
-   as `.why`: the lockup, the app and legal links, the contact address, and
-   the disclaimer again above the copyright.
+| URL | What it is |
+|---|---|
+| `/` | The scene — one screen that plays itself, then the funnel. No full footer |
+| `/activities` | **What We Offer** — the five offers, each linking to its own page |
+| `/self-check` | **The test.** A standalone page, outside the site — see below |
+| `/blog` | Offer 02. Empty index, placeholder |
+| `/habits` | Offer 03. Five named habits, explanations placeholder |
+| `/reading-list` | Offer 04. Empty shelf, placeholder |
+| `/tools` | Offer 05 — **the app's product page**, carrying what the old landing page said about it |
+| `/about` | About Us. Opens on the first sentence, immediately |
+| `/testimonials` | Three real quotes, in the words the people used |
+| `/contact` | Email, Threads, Instagram. No form |
+
+The bar carries four of these: Activities, About us, Testimonials,
+Contact us. The five offer pages are children of Activities
+and show it as the current link. Every page ends on an Ask and a pager,
+and the pagers form one loop through all nine.
+
+### The scene
+
+`/` is one `100dvh` screen that plays itself. Five things the organisation
+believes are written out a word at a time on a timer; the five things it
+offers light up in the corner beside them. Scrolling is left to do what it
+is for, which is reach the ask.
+
+**It was a six-viewport scroll track first**, with the headline typing as
+you came down it — LOUD's mechanism. Two things were wrong with it and
+neither showed up until it was real. The page said nothing at all until
+you scrolled it, so the first thing a visitor met was a blank screen with
+a bar on top. And pressing an item in the corner list jumped you to the
+scroll offset where that item began, which is the offset where its
+sentence is one word long — so the single interaction on the page
+reliably delivered an unfinished sentence.
+
+The corner list is **links**, not scroll positions: it is the only
+navigation on that screen besides the bar. The writing pauses when the tab
+is hidden or the scene is scrolled off, because a timer firing into a DOM
+nobody can see is just work.
+
+The five sentences are lifted from `docs/content/about.md` — they are the
+organisation's own words, not written for the home page. If they are ever
+replaced with proper value statements, `LINES` in `scene()` is the only
+place they live.
+
+### The funnel
+
+The scene scrolls into one, and the home page ends there. Before it there
+was nothing under the scene but the footer, so a reader who scrolled
+arrived at a column of links and no reason to press any of them. Two ways
+on, and they are not equal: the self-check is the organisation's front
+door and gets the orange button; everything else is a plain link beside
+it. **The front page carries no full footer** — only the disclaimer and
+the copyright. Every other page has one, and the buttons are how you reach
+it.
+
+### Two asks, two pills
+
+The organisation asks you to find out; the app asks you to start. So
+`.ask-org` and its "Take the self-check" pill are on every page except
+`/tools`, which carries `.ask-app` and "Clear my head". Every link into
+the app still has `data-app-link` and `href="/install"`, and the inline
+rewrite to `/app` for installed users runs on every page.
+
+### Type and colour
+
+DM Sans and DM Mono, self-hosted beside Baloo 2 in `fonts/`, declared in
+`theme.css` as `--sans` and `--mono`. **Baloo (`--display`) is now the
+wordmark's and the app's only** — a heading that comes out rounded and
+bold is one still inheriting it. Sans at 400 does every sentence, mono
+does every label; nothing on the site is bold except the lockup, which is
+Baloo and rides on **every** page — it was dropped from the sub-pages when
+the lockup became a back arrow, which left the brand's own face rendering
+on one page out of eleven.
+
+**Orange is the action colour and appears nowhere that is not something to
+press:** the fill of every primary button, the dot on the pill, the dot
+under the current nav item, the marker beside the lit item in the home
+corner list. Not in a heading, not on a rule, not as decoration. It is the
+app's own rule — orange means *start here* — applied to a site whose whole
+job is getting somebody to start. Blue stays on the `01 02 03` numerals
+and on links.
+
+### Copy that is not finished
+
+`/self-check`, `/blog`, `/habits`, `/reading-list` and `/testimonials`
+each ship with a hole marked `data-placeholder`: a dashed edge and a
+corner marker. Inventing screening items, book titles or praise would be
+worse than an empty frame that says so. Delete the attribute when the real
+thing goes in; when the last one goes, the whole treatment goes with it.
+
+### The self-check
+
+`/self-check` is the ASRS-v1.1 screener and it is **deliberately not part
+of the website**: no bar, no footer, no pager, no pill, and its own
+`test.css` / `test.js` rather than `site.css`. Once somebody starts a
+screener every other link on the screen is an invitation to abandon it,
+and a change to the site must not be able to move something under a
+person answering questions about their own attention. It is out of the
+pager loop; the footer and every CTA still link to it.
+
+The eighteen questions are transcribed verbatim from
+`adhd-questionnaire-ASRS111.pdf` and **must not be reworded, reordered or
+trimmed** — a screening instrument's validity is a property of its exact
+wording and scoring.
+
+**The scoring is per-question and easy to get wrong.** `band` in
+`test.js` is the leftmost darkly-shaded box on that row of the printed
+form: Q1–Q3 count from *Sometimes*, Q4–Q6 from *Often*, and Part B varies
+row by row. Part A scores out of 6 and four or more is the threshold the
+instrument sets. **Part B is not scored at all** — the form says outright
+that "no total score or diagnostic likelihood is utilized" for those
+twelve. Every value was read off a render of page 2 of the PDF; check it
+against that page again if it is ever touched.
+
+Attribution is on the page twice, before the reader starts and again on
+the result: the checklist was developed with the **World Health
+Organization** and the Workgroup on Adult ADHD (Lenard Adler, MD; Ronald
+C. Kessler, PhD; Thomas Spencer, MD). Nothing answered is stored or sent
+— no account, no analytics on answers, no `localStorage` write.
+
+
+### The bands
+
+`#problem`, `#emotion`, `#activities`, `#about`, `#pesta`, `#testimonials` and
+`#contact` are `.band`s, not screens. `.how`, `.why`'s points and `.close` each
+take a whole viewport because each is one beat and a beat wants the window to
+itself; a band is several paragraphs read at your own pace. Eleven `100dvh`
+boxes would have made the page a corridor. Bands get the same 1080 measure as
+`.how` and the footer, ordinary vertical padding, one hairline at the top, and
+**no wave field** — three full-screen shaders already run at once across a
+seam, and a field costs per pixel of window, not per section.
+
+`#problem` and `#emotion` carry `.band-beat` on top of that: more air and
+bigger type than the rest, because those two are beats of the argument and the
+others are sections about the product.
+
+### Copy that is not finished yet
+
+`/testimonials` carries three real quotes (since 2026-09-11); the people asked
+not to be named, so each by-line is what they gave — sex and age. The
+`[data-placeholder]` treatment stays for the blog, the habits and the shelf.
+
+### The bar
+
+`.nav` is fixed, and carries the lockup, five links, the clock and the theme
+toggle. The links are in **page order**, so the `aria-current` underline
+travels one way as you scroll rather than jumping backwards — a scroll-spy
+observer picks whichever section is nearest the top of the window while still
+in it (nearest-to-top, not most-visible: the bands are shorter than the window,
+so two are on screen for most of a scroll and "most visible" flickers at every
+seam). Below 1024 the row is gone and `.nav-toggle` opens `#nav-sheet`, a
+full-screen sheet holding the same five links — the one duplication in the bar,
+and the two lists have to be kept in step by hand. `html` carries
+`scroll-padding-top` so an anchor clears the fixed bar.
 
 The body clips sideways only (`overflow-x:hidden`) and scrolls vertically —
 the hero scrolls with it when a notch and browser chrome push it past a
@@ -981,3 +1129,50 @@ arrives late: the app still opens with no network and no signup, and
 in. What an account buys is a second copy in `cloud.js` so the lists reach
 your other devices — and, since it offers accounts at all, a way to end one
 from inside the app.
+
+
+## Billing
+
+Three plans: **Weekly** RM9.90 with a 3-day trial, **Annual** RM49.90, and
+**Lifetime** RM99.90 as a one-time payment. Setting it up — products,
+webhook, env vars, test cards — is `docs/stripe-setup.md`.
+
+The rail is complete and **nothing is gated yet**. `window.billing.entitled()`
+answers truthfully; no feature reads it. The app behaves exactly as it did.
+
+### How it fits together
+
+| File | Job |
+|---|---|
+| `api/_stripe.js` | Talks to Stripe with plain `fetch` — no SDK, matching `_supabase.js`. Form encoder, pinned API version, and the webhook signature check |
+| `api/checkout.js` | Makes a Checkout session. Takes a **plan name**, never a price id — a price id in the body is one the browser can change |
+| `api/stripe-webhook.js` | **The only thing that grants or revokes access.** Verifies the signature, writes `billing` |
+| `api/portal.js` | Opens Stripe's billing portal, so this app never builds a cancel flow |
+| `sql/001_billing.sql` | The `billing` table, its RLS, and `is_entitled()` |
+| `billing.js` | Client. Reads the row, never decides it |
+| `/billing` | Account screen, where Stripe returns to, and the end-to-end test harness. `noindex` |
+
+### The rules that matter
+
+**Entitlement is written by the webhook and by nothing else.** A Checkout
+session that was *created* is not a payment that *succeeded*, so
+`/api/checkout` grants nothing. The browser only ever reads.
+
+**`billing.entitled()` is for showing and hiding UI, not for locking.**
+RLS lets an account read its own row and write nothing, so a tampered
+browser can only lie to itself — but anything with a real unit cost
+(`api/triage.js`, `api/transcribe.js`) must check the token server-side
+and call `is_entitled()` itself when gates arrive.
+
+**`past_due` is not entitled.** Stripe keeps retrying a failed card and
+moves the row back to `active` if it works. Access lapses meanwhile, which
+is the intended behaviour and the case worth testing.
+
+**Lifetime has a null `current_period_end`.** That is what makes it never
+lapse, and it is why it is a one-time `payment` price rather than a
+subscription with a very long interval.
+
+**The webhook needs the raw body.** `export const config = { api: { bodyParser: false } }`
+in `stripe-webhook.js` is load-bearing: a parsed and re-serialised body has
+different bytes and the signature stops matching for perfectly genuine
+requests.

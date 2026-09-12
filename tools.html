@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Tools — MyADHD</title>
+<meta name="description" content="The right tool doesn’t fix ADHD. It just moves the effort out of your head and into something that won’t forget." />
+<meta name="theme-color" content="#FFFFFF" />
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+<link rel="icon" href="/icons/favicon-32.png?v=3" sizes="32x32" type="image/png" />
+<link rel="icon" href="/icons/favicon-16.png?v=3" sizes="16x16" type="image/png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=3" />
+<link rel="manifest" href="/site.webmanifest?v=3" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="MyADHD" />
+<meta property="og:title" content="Tools — MyADHD" />
+<meta property="og:description" content="The right tool doesn’t fix ADHD. It just moves the effort out of your head and into something that won’t forget." />
+<meta property="og:image" content="https://myadhd.my/icons/og.png?v=3" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="my.adhd" />
+<link rel="preload" href="fonts/DMSans-Variable.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="preload" href="fonts/DMMono-Regular.ttf" as="font" type="font/ttf" crossorigin />
+<!-- synchronous: the data-theme stamp has to land before first paint, or
+     a saved dark choice arrives as a white flash -->
+<script src="theme.js"></script>
+<script src="clock.js" defer></script>
+<script src="waves.js" defer></script>
+<script src="site.ms.js" defer></script>
+<script src="site.js" defer></script>
+<link rel="stylesheet" href="theme.css" />
+<link rel="stylesheet" href="site.css" />
+</head>
+<body>
+
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Seven orange arms: the eighth (lower-right) is detached and carried
+         by the violet capsule sitting just off the centre. -->
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+</svg>
+<!-- ============ the page's weather ============
+     The wave field used to sit in a bordered box partway down the page,
+     which made it a picture of itself: a framed illustration on a page
+     whose whole argument is that it has no furniture. It is the ground
+     now — fixed behind everything, one field per page, and the veil over
+     it is what keeps it weather rather than wallpaper. -->
+<div class="page-wave" aria-hidden="true"><div class="panel-wave" data-wave="flow" data-wave-speed="0.4"></div></div>
+
+<nav class="bar">
+    <a class="back" href="/" aria-label="Back to the front" data-i18n-aria="949ec14"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 19l-7-7 7-7"/></svg></a>
+    <a class="brand-lockup" href="/" aria-label="MyADHD home" data-i18n-aria="12f3e1f">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="wordmark">my<span class="accent">.adhd</span></span>
+    </a>
+    <p class="bar-org">MyADHD</p>
+
+    <ul class="bar-links">
+      <li><a href="/activities" aria-current="page" data-i18n="ie58f7f8">Activities</a></li>
+      <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+      <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+      <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+    </ul>
+
+    <!-- filled in by clock.js, and hidden until it is -->
+    <p class="nav-clock" hidden><span class="nc-place"></span><span class="nc-time"></span></p>
+
+    <nav class="bar-lang" aria-label="Language" data-i18n-aria="89b86ab">
+      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-lang="ms" aria-pressed="false" lang="ms">BM</button>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+      <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.9 8.9 0 1 0 11.1 11.1z"/></svg>
+      <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+    </button>
+
+    <button class="bar-toggle" type="button" aria-expanded="false" aria-controls="bar-sheet" aria-label="Open menu" data-i18n-aria="197101e">
+      <span class="nt-bars" aria-hidden="true"><i></i><i></i></span>
+    </button>
+
+    <!-- The sheet is a copy of the row above, which is the one duplication
+         in this bar: two lists, kept in step by hand. -->
+    <div class="bar-sheet" id="bar-sheet" hidden>
+      <ul>
+        <li><a href="/activities" aria-current="page" data-i18n="ie58f7f8">Activities</a></li>
+        <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+        <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+        <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+      </ul>
+      <nav class="bar-lang sheet-lang" aria-label="Language" data-i18n-aria="89b86ab">
+      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-lang="ms" aria-pressed="false" lang="ms">BM</button>
+    </nav>
+      <p class="sheet-sub" data-i18n="ib226a42">What we offer: <a href="/self-check">Self-check</a> · <a href="/blog">Blog</a> · <a href="/habits">Habits</a> · <a href="/reading-list">Reading list</a> · <a href="/tools">Tools</a></p>
+    </div>
+  </nav>
+
+<a class="pill" href="/install" data-app-link data-i18n="i7068fcf">Clear my head</a>
+
+<main class="spine">
+  <!-- ============ the opener ============
+       Offer 05's own block from docs/content/activities.md, repeated
+       verbatim: the list said this, and the page it points at delivers
+       it. Saying something different here would make the list a lie. -->
+  <section data-reveal>
+    <p class="kicker" data-i18n="i7b0ab73">What we offer &middot; 05.</p>
+    <h1 class="page-title" data-i18n="i8899c05">Tools That Take the Load Off</h1>
+    <p class="offer-sub" style="margin-top:18px" data-i18n="i807b8c9">Apps, timers, and systems that do the remembering for you</p>
+    <p class="body-copy" data-i18n="iafd634e">The right tool doesn&rsquo;t fix <span class="adhd-word">ADHD</span>. It just moves the effort out of your head and into something that won&rsquo;t forget.</p>
+    <p class="body-copy" data-i18n="ie4a2411">We test what we recommend and tell you what it costs, whether the free version is enough, and &mdash; honestly &mdash; whether it&rsquo;s still going to be on your phone in a month.</p>
+  </section>
+
+  <!-- ============ A. the emotion beat ============
+       The app's own pages open where the old landing page opened: on how
+       the day feels, and on the line that says it is a sorting problem
+       rather than a character one. -->
+  <section id="emotion" data-reveal>
+    <p class="kicker" data-i18n="i9ce7222">How it feels.</p>
+    <p class="statement" data-i18n="i527d231">Busy all day. Nothing finished.</p>
+    <p class="lede" data-i18n="i95f8063">It is not that you don&rsquo;t care. You care about all of it at once, which is the same as being unable to pick &mdash; and by the evening the only thing you can point to is how tired you are.</p>
+    <p class="turn" data-i18n="i718697a">That is not a character flaw. It is an unsorted list.</p>
+  </section>
+
+  <!-- ============ B. the problem ============ -->
+  <section id="problem" data-reveal>
+    <p class="kicker" data-i18n="iefbcc91">The problem.</p>
+    <p class="statement is-wide" data-i18n="i3b9ab85">Nothing is written down, so all of it has to be held &mdash; at once, all day, in the one place that is already busy.</p>
+    <ul class="symptoms" style="margin-top:clamp(30px,5vh,56px)">
+      <li data-i18n="i6ca8fee">The dentist appointment arrives at 11pm, in bed.</li>
+      <li data-i18n="ib2ba447">You open the laptop to do one thing and close it having done another.</li>
+      <li data-i18n="i6385af3">Six things feel equally urgent, so none of them starts.</li>
+      <li data-i18n="ic585cd6">The thing you have avoided for a week takes four minutes.</li>
+      <li data-i18n="i87adff4">You write a list, and then you lose the list.</li>
+      <li data-i18n="i5489801">By the time you have decided what to do first, the hour is gone.</li>
+    </ul>
+  </section>
+
+  <!-- ============ C. what actually happens ============ -->
+  <section data-reveal>
+    <p class="kicker" data-i18n="id0167c3">What actually happens.</p>
+    <h2 class="section-h2" data-i18n="i4004dab">From a head with too much in it to one thing you can start.</h2>
+    <div class="grid grid-3" style="margin-top:clamp(30px,5vh,56px)">
+      <div>
+        <p class="num" style="margin-bottom:22px">01</p>
+        <div class="cell-ico"><svg class="cfig" viewBox="0 0 240 132" aria-hidden="true">
+          <g class="w">
+            <path pathLength="1" d="M20 20c10-13 17 10 27-3s16 9 26-4"/>
+            <path pathLength="1" d="M96 16c9-11 15 9 24-3"/>
+            <path pathLength="1" d="M148 22c10-13 17 10 27-3s16 8 25-5"/>
+            <path pathLength="1" d="M40 44c10-11 16 9 26-2s16 8 25-3" opacity=".72"/>
+            <path pathLength="1" d="M126 46c9-10 15 8 24-2s15 7 24-3" opacity=".72"/>
+            <path pathLength="1" d="M66 66c9-9 15 7 24-2s15 7 23-3" opacity=".46"/>
+          </g>
+          <path pathLength="1" class="q" d="M26 58L100 92M214 58L140 92"/>
+          <rect class="q" x="86" y="92" width="68" height="30" rx="13"/>
+          <path pathLength="1" class="w" d="M100 107h26"/>
+        </svg></div>
+        <p class="cell-label" data-i18n="i4a66d14">Everything</p>
+        <p class="cell-title" data-i18n="i2f3e778">It all goes in one box</p>
+        <p class="cell-text" data-i18n="i0eb9424">One field. No category to pick, no order to get right &mdash; type it, or hold the mic and say it. The mess is the correct input.</p>
+      </div>
+      <div>
+        <p class="num" style="margin-bottom:22px">02</p>
+        <div class="cell-ico"><svg class="cfig" viewBox="0 0 240 132" aria-hidden="true">
+          <path pathLength="1" class="h" d="M14 10h34"/>
+          <path pathLength="1" class="q" d="M14 28h120"/>
+          <rect class="q" x="182" y="21" width="44" height="14" rx="7"/>
+          <path pathLength="1" class="h" d="M14 54h26"/>
+          <path pathLength="1" class="q" d="M14 72h140"/>
+          <rect class="q" x="196" y="65" width="30" height="14" rx="7"/>
+          <path pathLength="1" class="h" d="M14 98h40"/>
+          <path pathLength="1" class="q" d="M14 116h104"/>
+          <rect class="q" x="188" y="109" width="38" height="14" rx="7"/>
+        </svg></div>
+        <p class="cell-label" data-i18n="ife73d79">Quiet</p>
+        <p class="cell-title" data-i18n="id0f9c4c">It comes back grouped and timed</p>
+        <p class="cell-text" data-i18n="ic0175ae">Work, admin, money, health, home, social, errands. Most urgent first, then the shortest &mdash; momentum beats optimality &mdash; and every task carries an estimate in minutes. Written down and placed, it stops asking to be remembered.</p>
+      </div>
+      <div>
+        <p class="num" style="margin-bottom:22px">03</p>
+        <div class="cell-ico"><svg class="cfig" viewBox="0 0 240 132" aria-hidden="true">
+          <path pathLength="1" class="q" d="M26 20h190"/>
+          <path pathLength="1" class="q" d="M26 30v24" opacity=".55"/>
+          <circle class="o" cx="26" cy="62" r="5.5"/>
+          <path pathLength="1" class="os" d="M46 62h140"/>
+          <path pathLength="1" class="q" d="M46 90h150" opacity=".62"/>
+          <path pathLength="1" class="q" d="M46 110h112" opacity=".38"/>
+        </svg></div>
+        <p class="cell-label" data-i18n="i952f375">Start</p>
+        <p class="cell-title" data-i18n="i2747af5">Each task opens on a first step</p>
+        <p class="cell-text" data-i18n="ided158b">One move, small enough that refusing it feels silly. It arrives in orange &mdash; the one colour the app keeps for a single meaning, which is: start here.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ D. what you can do ============ -->
+  <section id="activities" data-reveal>
+    <p class="kicker" data-i18n="i5ad9b38">Activities.</p>
+    <h2 class="section-h2" data-i18n="i72ed8e4">What you can actually do in it</h2>
+    <p class="lede" data-i18n="idda735f">Six things, and no settings screen between you and any of them.</p>
+    <div class="grid grid-2" style="margin-top:clamp(30px,5vh,56px)">
+      <div>
+        <p class="num" style="margin-bottom:clamp(40px,7vh,72px)">01</p>
+        <p class="cell-title" data-i18n="ie648f01">Dump the lot</p>
+        <p class="cell-text" data-i18n="i1c57691">One textarea. No structure, no categories, no order to get right. The mess is the correct input, and a new dump adds to your lists rather than replacing them.</p>
+      </div>
+      <div>
+        <p class="num" style="margin-bottom:clamp(40px,7vh,72px)">02</p>
+        <p class="cell-title" data-i18n="iae44077">Hold to talk</p>
+        <p class="cell-text" data-i18n="i37b35dc">The same funnel with the typing taken out. Hold the mic, say it, let go. The recording exists only until the transcript comes back &mdash; it is never stored, and what lands in the box is editable text.</p>
+      </div>
+      <div>
+        <p class="num" style="margin-bottom:clamp(40px,7vh,72px)">03</p>
+        <p class="cell-title" data-i18n="ifc8ee38">Let it triage</p>
+        <p class="cell-text" data-i18n="if40dbdc">The pile comes back as tasks: a rewritten title, realistic minutes, an energy cost, an urgency, and a first step small enough that refusing it feels stupid.</p>
+      </div>
+      <div>
+        <p class="num" style="margin-bottom:clamp(40px,7vh,72px)">04</p>
+        <p class="cell-title" data-i18n="iea7ed95">Read four lists, not seven</p>
+        <p class="cell-text" data-i18n="i32ebaf6">Late, Today, Coming up, No date yet &mdash; in the order the day presses on you. Category is a filter across the top, not the shape of the page, and an empty heading is never drawn.</p>
+      </div>
+      <div>
+        <p class="num" style="margin-bottom:clamp(40px,7vh,72px)">05</p>
+        <p class="cell-title" data-i18n="ie6674b4">Send the dated ones to Google Calendar</p>
+        <p class="cell-text" data-i18n="i8e5cf58">Off until you turn it on, and scoped so it cannot touch the calendars you already had. It makes one of its own and keeps that in step.</p>
+      </div>
+      <div>
+        <p class="num" style="margin-bottom:clamp(40px,7vh,72px)">06</p>
+        <p class="cell-title" data-i18n="i07cf224">Keep it on every device &mdash; or don&rsquo;t</p>
+        <p class="cell-text" data-i18n="i75bf3f5">Signing in is optional and arrives late. Your browser stays the source of truth either way; an account only buys a second copy so the same lists turn up on your phone.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ E. why a box helps ============ -->
+  <section data-reveal>
+    <p class="kicker" data-i18n="i0d85f96">Why a box helps.</p>
+    <h2 class="section-h2" data-i18n="i9fcd86b">Four things that are true about a head with too much in it.</h2>
+    <div class="grid grid-2" style="margin-top:clamp(30px,5vh,56px)">
+      <div>
+        <div class="cell-ico"><svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
+        <path pathLength="1" class="w" d="M4 30C7 12 11 44 15 22S22 46 26 20S33 42 37 24S43 34 47 26"/>
+        <path pathLength="1" class="q" d="M54 26h8"/>
+        <path pathLength="1" class="w" d="M70 15h58M70 24h44M70 33h52"/>
+      </svg></div>
+        <p class="cell-label" data-i18n="i369b507">Finding 01</p>
+        <p class="cell-title" data-i18n="ic8edc22">Writing it down calms your head &mdash; even before you finish</p>
+        <p class="cell-text" data-i18n="i9312ace">An unfinished task keeps tapping on your shoulder, crowding out whatever you turned to instead. Write down exactly what you&rsquo;ll do next and the tapping stops there &mdash; while the task itself is still waiting.</p>
+        <p class="cell-cite" data-i18n="idf31914">Masicampo &amp; Baumeister, 2011</p>
+      </div>
+      <div>
+        <div class="cell-ico"><svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
+        <path pathLength="1" class="q" d="M4 34h124"/>
+        <path pathLength="1" class="w" d="M6 34q9-19 18 0M28 34q9-19 18 0M50 34q9-19 18 0M72 34q9-19 18 0"/>
+        <path pathLength="1" class="q" d="M94 34q9-12 18 0" opacity=".85"/>
+        <path pathLength="1" class="q" d="M116 34q8-6 16 0" opacity=".55"/>
+      </svg></div>
+        <p class="cell-label" data-i18n="icafbb12">Finding 02</p>
+        <p class="cell-title" data-i18n="ia981778">Your head can only hold about four things at once</p>
+        <p class="cell-text" data-i18n="i23aff6b">That&rsquo;s the limit of short-term memory once you stop rehearsing it. A busy day has more than four things in it, so the list needs a home that isn&rsquo;t you.</p>
+        <p class="cell-cite">Cowan, 2001</p>
+      </div>
+      <div>
+        <div class="cell-ico"><svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
+        <path pathLength="1" class="q" d="M4 36h124"/>
+        <g class="w">
+          <path pathLength="1" d="M6 36V18"/>
+          <path pathLength="1" d="M23 36V25" opacity=".82"/>
+          <path pathLength="1" d="M40 36V18" opacity=".6"/>
+          <path pathLength="1" d="M57 36V25" opacity=".42"/>
+          <path pathLength="1" d="M74 36V18" opacity=".28"/>
+          <path pathLength="1" d="M91 36V25" opacity=".17"/>
+          <path pathLength="1" d="M108 36V18" opacity=".09"/>
+          <path pathLength="1" d="M125 36V25" opacity=".04"/>
+        </g>
+      </svg></div>
+        <p class="cell-label" data-i18n="if520c9b">Finding 03</p>
+        <p class="cell-title" data-i18n="id36595a">You can&rsquo;t see time passing &mdash; so you guess wrong</p>
+        <p class="cell-text" data-i18n="i0345b48">People with <span class="adhd-word">ADHD</span> are consistently off when judging how long something takes &mdash; not lazy, just blind to the clock. So every task gets its minutes written down, not guessed.</p>
+        <p class="cell-cite">Marx et al., 55-study meta-analysis</p>
+      </div>
+      <div>
+        <div class="cell-ico"><svg class="fig" viewBox="0 0 132 48" aria-hidden="true">
+        <path pathLength="1" class="r" d="M9 30C23 8 37 8 51 30S81 48 95 30S123 12 129 20"/>
+        <path pathLength="1" class="s" d="M9 30c4-6 8-10 13-12.5"/>
+        <circle class="d" cx="9" cy="30" r="3.4"/>
+      </svg></div>
+        <p class="cell-label" data-i18n="iba5d69d">Finding 04</p>
+        <p class="cell-title" data-i18n="i38fb59e">One tiny step is enough to start</p>
+        <p class="cell-text" data-i18n="icc954d9">A plan works best when it says exactly what to do first. So every task comes with one small move already picked out &mdash; small enough that starting feels easy.</p>
+        <p class="cell-cite" data-i18n="if8c50e6">Gollwitzer &amp; Sheeran, 2006</p>
+      </div>
+    </div>
+    <p class="grid-foot" data-i18n="if4a3ede">None of this is treatment. It is what the research says about getting a thing out of your head and into a plan.</p>
+  </section>
+
+  <section class="marquee" aria-hidden="true">
+  <span>Your head is not a list, but it is being used as one &mdash; Your head is not a list, but it is being used as one &mdash; Your head is not a list, but it is being used as one &mdash; Your head is not a list, but it is being used as one &mdash; Your head is not a list, but it is being used as one &mdash; Your head is not a list, but it is being used as one &mdash; Your head is not a list, but it is being used as one &mdash; Your head is not a list, but it is being used as one &mdash; </span>
+</section>
+
+  <div id="start"></div>
+  <section class="ask" data-reveal>
+  <p class="ask-line is-app" data-i18n="ia1673f2">All day, your head has been the list.</p>
+  <p class="ask-lede" data-i18n="i834af51">Give it somewhere else to live. One box in, a sorted list back &mdash; with the first step already picked.</p>
+  <a class="arrow-cta" href="/install" data-app-link data-i18n="i731361d">Clear my head <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+  <ul class="ask-assure">
+    <li data-i18n="i257fa99">No account</li>
+    <li data-i18n="i10fc385">Nothing to set up</li>
+    <li data-i18n="i24b5de4">Your lists stay on your device</li>
+  </ul>
+</section>
+
+  <nav class="pager" aria-label="Next page" data-i18n-aria="4bfc194">
+  <span class="p-label" data-i18n="ibc98198">Next</span>
+  <a href="/about" data-i18n="i8e07898"><i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i> About us</a>
+</nav>
+</main>
+
+<footer class="foot">
+
+  <!-- The sign-off and the ask, side by side. The first version stacked
+       these and left the whole right half of the band empty. -->
+  <div class="foot-top">
+    <p class="foot-line" data-i18n="i53ac30e">A brain dump that answers back. No account, nothing to set up, and your lists stay on your device.</p>
+    <a class="arrow-cta" href="/install" data-app-link data-i18n="i731361d">Clear my head <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+  </div>
+
+  <div class="foot-cols">
+    <div class="foot-col">
+      <h2 data-i18n="ib953849">What we offer</h2>
+      <ul>
+        <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+        <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
+        <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
+        <li><a href="/reading-list" data-i18n="id80f6ec">Reading list</a></li>
+        <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2>MyADHD</h2>
+      <ul>
+        <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+        <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+        <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2>my.adhd</h2>
+      <ul>
+        <li><a href="/app" data-i18n="ice21cc3">Open my.adhd</a></li>
+        <li><a href="/install" data-i18n="i85773bc">Add to home screen</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2 data-i18n="i979e25d">Say hello</h2>
+      <ul>
+        <li><a href="https://www.threads.com/@myadhd.my" rel="me noopener" target="_blank">Threads</a></li>
+        <li><a href="https://www.instagram.com/myadhd.my/" rel="me noopener" target="_blank">Instagram</a></li>
+        <li><a href="mailto:hello@myadhd.my">hello@myadhd.my</a></li>
+        <li><a href="/privacy" data-i18n="icf01481">Privacy</a></li>
+        <li><a href="/terms" data-i18n="ia55a275">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot-base">
+    <p class="foot-note" data-i18n="ide9430f">A tool for getting started &mdash; not treatment, therapy, or medical advice.</p>
+    <p>&copy; <span data-year>2026</span> MyADHD</p>
+  </div>
+
+</footer>
+
+</body>
+</html>

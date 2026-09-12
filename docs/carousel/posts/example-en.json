@@ -1,0 +1,33 @@
+{
+  "slug": "example-en",
+  "lang": "en",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "_note": "PLACEHOLDER COPY — structure only. Real content comes later.",
+  "slides": [
+    { "type": "cover",
+      "kicker": "Placeholder kicker.",
+      "title": "Headline goes\n[[here]]:\nthree lines [[max]]?",
+      "sub": "Swipe to see the reasons." },
+    { "type": "point",
+      "title": "First point [[keyword]]",
+      "body": "Two or three lines of body copy that explain the point in plain words, and stop." },
+    { "type": "point",
+      "title": "Second point\n[[two lines]]",
+      "body": "Two or three lines of body copy that explain the point in plain words, and stop." },
+    { "type": "point",
+      "title": "Third point [[keyword]]",
+      "body": "Two or three lines of body copy that explain the point in plain words, and stop." },
+    { "type": "point",
+      "title": "Fourth point [[keyword]]",
+      "body": "Two or three lines of body copy that explain the point in plain words, and stop." },
+    { "type": "point",
+      "title": "Fifth point [[keyword]]",
+      "body": "Two or three lines of body copy that explain the point in plain words, and stop." },
+    { "type": "outro",
+      "title": "What do\n[[you]] think?",
+      "body": "Tell us in the comments, or save this for later.",
+      "cta": { "label": "Try it free at myadhd.my" } }
+  ]
+}

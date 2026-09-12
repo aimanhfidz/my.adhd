@@ -32,3 +32,13 @@ DerivedData/
 
 # Signing is per-machine — see ios/Signing.xcconfig.
 ios/Local.xcconfig
+
+# Carousel renders and seeded canvases are output, not source.
+docs/carousel/out/
+
+# Reference captures and design exports — input to the redesign, not
+# source, and 116MB of PNGs in a public repo. They stay on disk here.
+loudsrl_website_screenshots/
+my.adhd_screenshot/
+myadhd-ui-design/
+myadhd-ui-design.zip
