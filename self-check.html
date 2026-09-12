@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Self-check — MyADHD</title>
+<meta name="description" content="The Adult ADHD Self-Report Scale (ASRS-v1.1), developed with the World Health Organization. Ten minutes, no login, no cost. A screening tool, not a diagnosis." />
+<meta name="theme-color" content="#FFFFFF" />
+<meta name="robots" content="index, follow" />
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+<link rel="icon" href="/icons/favicon-32.png?v=3" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=3" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="MyADHD" />
+<meta property="og:title" content="Self-check — MyADHD" />
+<meta property="og:description" content="Ten minutes, no login, no cost. A screening tool, not a diagnosis." />
+<meta property="og:image" content="https://myadhd.my/icons/og.png?v=3" />
+<link rel="preload" href="fonts/DMSans-Variable.ttf" as="font" type="font/ttf" crossorigin />
+<script src="theme.js"></script>
+<script src="test.js" defer></script>
+<link rel="stylesheet" href="theme.css" />
+<!-- Its own stylesheet, not site.css. This page is deliberately outside
+     the website: see the head of test.css. -->
+<link rel="stylesheet" href="test.css" />
+</head>
+<body>
+
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Seven orange arms: the eighth (lower-right) is detached and carried
+         by the violet capsule sitting just off the centre. -->
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+</svg>
+
+<div class="t-wrap">
+
+  <header class="t-head">
+    <a class="brand-lockup" href="/" aria-label="MyADHD home">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="wordmark">my<span class="accent">.adhd</span></span>
+    </a>
+    <div class="t-head-right">
+      <nav class="t-lang" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+        <button type="button" data-lang="ms" aria-pressed="false" lang="ms">BM</button>
+      </nav>
+      <a class="t-exit" href="/" data-i18n="exit">Leave the self-check</a>
+    </div>
+  </header>
+
+  <!-- ============ 1. before you start ============ -->
+  <section data-screen="intro">
+  <!-- Two wrappers so the desktop layout has something to put in each
+       column: what the page says on the left, what it costs you on the
+       right. Below 900px test.css leaves them as plain blocks, and the
+       order on a phone is the order it was. -->
+  <div class="t-intro">
+  <div class="t-intro-say">
+    <p class="kicker" data-i18n="kicker">The self-check.</p>
+    <h1 data-i18n="h1">Ten minutes, no login, no cost.</h1>
+    <p class="lede" data-i18n="lede">
+      This is the Adult <span class="adhd-word">ADHD</span> Self-Report Scale (ASRS-v1.1) &mdash; the screening
+      questionnaire used by health services, reproduced here in full. Answer
+      honestly about the <b>past six months</b> and you&rsquo;ll get a clear read on
+      whether your traits fall within the range that warrants a proper
+      assessment.
+    </p>
+
+  </div>
+
+  <div class="t-intro-spec">
+    <ul class="t-facts">
+      <li><span class="k" data-i18n="f1k">Questions</span><span class="v" data-i18n="f1v">6, or 18 if you want the fuller picture</span></li>
+      <li><span class="k" data-i18n="f2k">Time</span><span class="v" data-i18n="f2v">About 5 minutes</span></li>
+      <li><span class="k" data-i18n="f3k">Cost</span><span class="v" data-i18n="f3v">Free, and no account</span></li>
+      <li><span class="k" data-i18n="f4k">Your answers</span><span class="v" data-i18n="f4v">Never stored, never sent</span></li>
+      <li><span class="k" data-i18n="f5k">What you get</span><span class="v" data-i18n="f5v">A score out of 6, and what it means</span></li>
+    </ul>
+
+    <div class="t-actions">
+      <button class="btn btn-go start-a" type="button" data-i18n="startA">Start the 6-question screener</button>
+      <button class="btn start-ab" type="button" data-i18n="startAB">Answer all 18</button>
+    </div>
+
+  </div>
+  </div>
+
+  <div class="t-note">
+    <h2 data-i18n="whoH">Who wrote these questions</h2>
+    <p data-i18n="who1">
+      The eighteen questions in this self-check are the <b>Adult <span class="adhd-word">ADHD</span> Self-Report Scale
+      (ASRS-v1.1) Symptom Checklist</b>. They are reproduced word for word; MyADHD
+      Malaysia did not write them and has not altered them.
+    </p>
+    <p data-i18n="who2">
+      The checklist was developed in conjunction with the <b>World Health
+      Organization (WHO)</b> and the Workgroup on Adult <span class="adhd-word">ADHD</span>, which included:
+    </p>
+    <ul>
+      <li><b>Lenard Adler, MD</b> — Associate Professor of Psychiatry and Neurology, New York University Medical School</li>
+      <li><b>Ronald C. Kessler, PhD</b> — Professor, Department of Health Care Policy, Harvard Medical School</li>
+      <li><b>Thomas Spencer, MD</b> — Associate Professor of Psychiatry, Harvard Medical School</li>
+    </ul>
+    <p data-i18n="who3">
+      The questions are consistent with DSM-IV criteria and address how
+      <span class="adhd-word">ADHD</span> symptoms show up in adults. The scoring used here is the
+      instrument&rsquo;s own: Part A is the six-question screener, and an answer
+      counts when it falls in that question&rsquo;s shaded band on the printed
+      form. Part B carries no score at all &mdash; the form is explicit that
+      &ldquo;no total score or diagnostic likelihood is utilized&rdquo; for those twelve.
+    </p>
+  </div>
+
+  <div class="t-note">
+    <h2 data-i18n="notH">What this is not</h2>
+    <p class="warn" data-i18n="not1">
+      <b>This is a screening tool, not a diagnosis.</b> Only a psychiatrist or
+      clinical psychologist can diagnose <span class="adhd-word">ADHD</span>. A high score is a reason to
+      book that conversation, not an answer; a low score does not rule
+      anything out.
+    </p>
+    <p data-i18n="not2">
+      Nothing you answer here is stored or sent anywhere. There is no
+      account, no analytics on your answers, and no copy kept &mdash; they exist
+      in this tab while it is open and go when you close it.
+    </p>
+  </div>
+  </section>
+
+  <!-- ============ 2. the questions ============ -->
+  <section data-screen="quiz" hidden>
+    <div class="q-bar"><span class="bar-fill"></span></div>
+    <p class="q-meta"><span class="q-count"></span><span class="q-part"></span></p>
+    <h2 class="q-text"></h2>
+    <div class="q-options" role="group" aria-label="How often" data-i18n-aria="howOften"></div>
+    <div class="q-foot">
+      <button class="q-back" type="button" data-i18n="back">&larr; Previous question</button>
+      <p class="q-hint" data-i18n="hint">Press 1&ndash;5 to answer</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. the result ============ -->
+  <section data-screen="result" hidden>
+    <p class="kicker" data-i18n="rKicker">Your result.</p>
+    <div class="r-head">
+      <span class="r-score">0</span>
+      <span class="r-of" data-i18n="rOf">of 6 Part A answers in the significant band</span>
+    </div>
+    <h1 class="r-verdict"></h1>
+    <p class="r-detail"></p>
+
+    <div class="r-partb" hidden>
+      <span data-i18n="rB1">You also answered Part B, where</span> <b class="r-bscore">0</b> <span data-i18n="rB2">of 12 fell in the
+      shaded bands. Part B is not scored and does not change the result above
+      &mdash; it gives a clinician extra cues to ask about.</span>
+    </div>
+
+    <ul class="r-next">
+      <li data-i18n="n1">Take this result to a psychiatrist or clinical psychologist &mdash; it gives them something concrete to start from.</li>
+      <li data-i18n="n2">Write down what actually goes wrong in a week, and bring that too.</li>
+      <li data-i18n="n3">Whatever the number said, the day still has to get done. <a href="/tools">See what we build for that</a>.</li>
+    </ul>
+
+    <div class="t-actions">
+      <button class="btn r-again" type="button" data-i18n="again">Take it again</button>
+      <a class="btn" href="/" data-i18n="home">Back to MyADHD</a>
+    </div>
+
+  <div class="t-note">
+    <h2 data-i18n="whoH">Who wrote these questions</h2>
+    <p data-i18n="who1">
+      The eighteen questions in this self-check are the <b>Adult <span class="adhd-word">ADHD</span> Self-Report Scale
+      (ASRS-v1.1) Symptom Checklist</b>. They are reproduced word for word; MyADHD
+      Malaysia did not write them and has not altered them.
+    </p>
+    <p data-i18n="who2">
+      The checklist was developed in conjunction with the <b>World Health
+      Organization (WHO)</b> and the Workgroup on Adult <span class="adhd-word">ADHD</span>, which included:
+    </p>
+    <ul>
+      <li><b>Lenard Adler, MD</b> — Associate Professor of Psychiatry and Neurology, New York University Medical School</li>
+      <li><b>Ronald C. Kessler, PhD</b> — Professor, Department of Health Care Policy, Harvard Medical School</li>
+      <li><b>Thomas Spencer, MD</b> — Associate Professor of Psychiatry, Harvard Medical School</li>
+    </ul>
+    <p data-i18n="who3">
+      The questions are consistent with DSM-IV criteria and address how
+      <span class="adhd-word">ADHD</span> symptoms show up in adults. The scoring used here is the
+      instrument&rsquo;s own: Part A is the six-question screener, and an answer
+      counts when it falls in that question&rsquo;s shaded band on the printed
+      form. Part B carries no score at all &mdash; the form is explicit that
+      &ldquo;no total score or diagnostic likelihood is utilized&rdquo; for those twelve.
+    </p>
+  </div>
+
+  <div class="t-note">
+    <h2 data-i18n="notH">What this is not</h2>
+    <p class="warn" data-i18n="not1">
+      <b>This is a screening tool, not a diagnosis.</b> Only a psychiatrist or
+      clinical psychologist can diagnose <span class="adhd-word">ADHD</span>. A high score is a reason to
+      book that conversation, not an answer; a low score does not rule
+      anything out.
+    </p>
+    <p data-i18n="not2">
+      Nothing you answer here is stored or sent anywhere. There is no
+      account, no analytics on your answers, and no copy kept &mdash; they exist
+      in this tab while it is open and go when you close it.
+    </p>
+  </div>
+  </section>
+
+</div>
+
+</body>
+</html>

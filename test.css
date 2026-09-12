@@ -1,0 +1,325 @@
+/* ============ the self-check ============
+   The stylesheet for one page, and deliberately not site.css.
+
+   This page is not part of the website. It has no bar, no footer, no
+   pager, no pill and nothing to navigate to but the way back — because
+   the moment somebody starts a screener, every other link on the screen
+   is an invitation to abandon it. Giving it its own file rather than a
+   `body.is-test` branch inside site.css is the same decision made once
+   more: a change to the site cannot reach in here and move something
+   under a person answering questions about their own attention.
+
+   Tokens and faces still come from theme.css, so it is recognisably the
+   same brand — just none of the same furniture. */
+
+*{box-sizing:border-box; margin:0; padding:0}
+
+body{
+  background:var(--surface);
+  color:var(--ink);
+  font-family:var(--sans);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  min-height:100dvh;
+  display:flex; flex-direction:column;
+}
+
+.sprite{position:absolute; width:0; height:0; overflow:hidden}
+
+/* ---------- the shell ----------
+   One column, centred, capped at a reading measure. No full-bleed
+   anything: this is a form, and a form that sprawls is a form you lose
+   your place in. */
+.t-wrap{
+  width:100%; max-width:760px;
+  margin-inline:auto;
+  padding:clamp(20px,4vw,40px) clamp(20px,5vw,40px)
+          calc(clamp(28px,5vh,56px) + env(safe-area-inset-bottom, 0px));
+  flex:1;
+  display:flex; flex-direction:column;
+}
+
+/* ---------- the head ----------
+   The mark, and the one link off this page. It is a text link rather than
+   a button because it must not compete with the answers. */
+.t-head{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; padding-block:clamp(4px,1.4vh,12px);
+  margin-bottom:clamp(24px,5vh,52px);
+}
+.t-head .brand-lockup{display:flex; align-items:center; gap:9px; text-decoration:none}
+.t-head .logo{width:26px; height:26px; display:block}
+.t-head .lg-star{fill:var(--orange)}
+.t-head .lg-pill{stroke:var(--violet)}
+.t-head .wordmark{
+  font-family:var(--display); font-weight:800; font-size:20px;
+  letter-spacing:-.02em; color:var(--ink);
+}
+.t-head .wordmark .accent{color:var(--wordmark-accent)}
+/* The exit and the language switch share the right end of the head, in
+   the same quiet register: nothing up here may compete with the answers.
+   The switch is two letters each because the page has no room for a
+   word — and "BM" is what every Malaysian form calls it. */
+.t-head-right{display:flex; align-items:center; gap:clamp(14px,2.4vw,26px)}
+/* On a phone the Malay exit label is longer than the English and there is
+   no row that holds the lockup, the switch and it side by side without
+   breaking the label in half. So the right end stacks: switch above,
+   exit under it, both flush right, and the label keeps its one line. */
+@media (max-width:480px){
+  .t-head-right{flex-direction:column; align-items:flex-end; gap:6px}
+  .t-exit{white-space:nowrap}
+}
+.t-lang{display:flex; align-items:center; gap:2px}
+.t-lang button{
+  font:inherit; font-size:13px; letter-spacing:.04em; line-height:1;
+  color:var(--faint); background:none; border:1px solid transparent;
+  border-radius:999px; padding:6px 9px; cursor:pointer;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+.t-lang button:hover{color:var(--ink)}
+.t-lang button[aria-pressed="true"]{color:var(--ink); border-color:var(--line-strong); background:var(--wash)}
+.t-lang button:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.t-exit{
+  font-size:14px; color:var(--faint); text-decoration:none;
+  border-bottom:1px solid transparent;
+  transition:color .18s var(--ease), border-color .18s var(--ease);
+}
+.t-exit:hover{color:var(--ink); border-bottom-color:var(--line-strong)}
+.t-exit:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+
+/* ---------- type ---------- */
+.kicker{
+  font-family:var(--mono); font-size:12px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--faint);
+  margin-bottom:clamp(14px,2.4vh,22px);
+}
+h1{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(28px,5.4vw,46px); line-height:1.1; letter-spacing:-.025em;
+  color:var(--ink); text-wrap:balance;
+}
+.lede{
+  margin-top:clamp(16px,2.6vh,24px);
+  font-size:clamp(16px,2vw,19px); line-height:1.6; color:var(--ink-soft);
+}
+.adhd-word{color:var(--wordmark-accent)}
+
+/* ---------- the intro ---------- */
+.t-facts{
+  list-style:none; margin-top:clamp(26px,4vh,40px);
+  border-top:1px solid var(--line);
+}
+.t-facts li{
+  display:flex; align-items:baseline; justify-content:space-between; gap:18px;
+  padding:13px 0; border-bottom:1px solid var(--line);
+  font-size:15px;
+}
+.t-facts dt, .t-facts .k{
+  font-family:var(--mono); font-size:12px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--faint); flex:none;
+}
+.t-facts .v{color:var(--ink-soft); text-align:right}
+
+.t-actions{
+  display:flex; flex-wrap:wrap; gap:14px 18px; align-items:center;
+  margin-top:clamp(28px,4.4vh,44px);
+}
+/* Orange is the site's action colour and it means one thing — start here.
+   It belongs on exactly one button on this page. */
+.btn{
+  display:inline-flex; align-items:center; gap:12px;
+  padding:14px 22px 14px 24px; border-radius:999px;
+  border:1.5px solid var(--line-strong); background:none;
+  font-family:var(--sans); font-size:16px; color:var(--ink);
+  text-decoration:none; cursor:pointer;
+  transition:border-color .18s var(--ease), background .18s var(--ease);
+}
+.btn:hover{border-color:var(--accent); background:var(--wash)}
+.btn:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.btn-go{
+  background:var(--orange); border-color:var(--orange); color:#FFFFFF;
+  font-weight:500;
+}
+.btn-go:hover{background:var(--orange); border-color:var(--orange); filter:brightness(1.06)}
+.btn-go:focus-visible{box-shadow:0 0 0 4px rgba(247,92,3,.28)}
+
+/* ---------- the progress bar ----------
+   Six questions is short and eighteen is not, and the difference between
+   "nearly there" and "no idea how long this is" is the difference between
+   finishing and closing the tab. */
+.q-bar{
+  height:3px; background:var(--line); border-radius:999px; overflow:hidden;
+  margin-bottom:clamp(22px,3.6vh,34px);
+}
+.bar-fill{
+  display:block; height:100%; width:0%;
+  background:var(--orange);
+  transition:width .3s var(--ease);
+}
+.q-meta{
+  display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+  font-family:var(--mono); font-size:12px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--faint);
+  margin-bottom:clamp(18px,3vh,28px);
+}
+
+/* ---------- the question ----------
+   Large, and alone on the screen. Nothing else is competing for the
+   sentence you are being asked to be honest about. */
+.q-text{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(21px,3.4vw,32px); line-height:1.25; letter-spacing:-.015em;
+  color:var(--ink); text-wrap:balance;
+  outline:none;
+}
+.q-options{
+  display:grid; gap:10px;
+  margin-top:clamp(28px,4.4vh,44px);
+}
+/* Full-width rows rather than a row of five chips: a chip row makes the
+   five answers different sizes, which quietly makes the short ones easier
+   to press. Equal rows, in the order the scale runs. */
+.opt{
+  display:flex; align-items:center; gap:14px;
+  width:100%; padding:16px 20px;
+  border:1.5px solid var(--line); border-radius:12px;
+  background:var(--surface);
+  font-family:var(--sans); font-size:clamp(15px,1.9vw,17px); color:var(--ink);
+  text-align:left; cursor:pointer;
+  transition:border-color .16s var(--ease), background .16s var(--ease);
+}
+.opt::before{
+  content:""; flex:none; width:16px; height:16px; border-radius:999px;
+  border:1.5px solid var(--line-strong);
+  transition:border-color .16s var(--ease), box-shadow .16s var(--ease);
+}
+.opt:hover{border-color:var(--line-strong); background:var(--wash)}
+.opt[aria-pressed="true"]{border-color:var(--orange)}
+.opt[aria-pressed="true"]::before{
+  border-color:var(--orange);
+  box-shadow:inset 0 0 0 4px var(--orange);
+}
+.opt:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+
+.q-foot{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  margin-top:clamp(24px,4vh,36px);
+}
+.q-back{
+  background:none; border:0; padding:6px 0; cursor:pointer;
+  font-family:var(--sans); font-size:14px; color:var(--faint);
+}
+.q-back:hover:not(:disabled){color:var(--ink)}
+.q-back:disabled{opacity:.35; cursor:default}
+.q-back:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:4px}
+.q-hint{
+  font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--faint); text-align:right;
+}
+@media (max-width:560px){ .q-hint{display:none} }
+
+/* ---------- the result ---------- */
+.r-head{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap}
+.r-score{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(52px,12vw,96px); line-height:1; letter-spacing:-.04em;
+  color:var(--orange);
+}
+.r-of{
+  font-family:var(--mono); font-size:13px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--faint);
+}
+.r-verdict{
+  margin-top:clamp(18px,3vh,28px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(20px,3.2vw,30px); line-height:1.22; letter-spacing:-.02em;
+  color:var(--ink); text-wrap:balance;
+}
+.r-detail{
+  margin-top:clamp(14px,2.4vh,22px);
+  font-size:clamp(15px,1.9vw,18px); line-height:1.65; color:var(--ink-soft);
+}
+.r-partb{
+  margin-top:clamp(24px,4vh,36px); padding:18px 20px;
+  border:1px solid var(--line); border-radius:12px;
+  font-size:15px; line-height:1.6; color:var(--muted);
+}
+.r-next{list-style:none; margin-top:clamp(26px,4vh,40px); border-top:1px solid var(--line)}
+.r-next li{
+  padding:15px 0; border-bottom:1px solid var(--line);
+  font-size:15px; line-height:1.6; color:var(--ink-soft);
+}
+
+/* ---------- the small print ----------
+   Two blocks that are not decoration and must not be treated as such: who
+   wrote the instrument, and what this page is not. Both appear before the
+   reader starts AND on the result, because the person who most needs the
+   second one is the person who just scored five. */
+.t-note{
+  margin-top:clamp(34px,6vh,64px);
+  padding-top:clamp(20px,3vh,28px);
+  border-top:1px solid var(--line);
+}
+.t-note h2{
+  font-family:var(--mono); font-size:12px; font-weight:400;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--faint);
+  margin-bottom:12px;
+}
+.t-note p{
+  font-size:14px; line-height:1.7; color:var(--muted);
+  max-width:68ch;
+}
+.t-note p + p{margin-top:.9em}
+/* The list of authors is followed by more prose, and ran straight into it. */
+.t-note ul + p{margin-top:.9em}
+.t-note ul{list-style:none; margin-top:10px; display:grid; gap:6px}
+.t-note li{font-size:14px; line-height:1.6; color:var(--muted)}
+.t-note li b{font-weight:600; color:var(--ink-soft)}
+.t-note .warn{color:var(--ink-soft)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important}
+}
+
+/* ---------- the intro, on a desktop ----------
+   The wrap above is capped at 760px because a form that sprawls is a form
+   you lose your place in — and that stays true of the questions and the
+   result. It was never true of the page in front of them, which is a
+   pitch: a headline, what it costs you, and two buttons. Capped at 760 on
+   a 1440px screen that pitch was a strip down the middle of an empty
+   page.
+
+   So the intro, and only the intro, takes the width. :has() is doing the
+   asking, and where it is not understood the page keeps the 760 it had —
+   which is the narrow version, not a broken one. */
+@media (min-width:900px){
+  /* Inside the breakpoint, not above it: between 760 and 900 the columns
+     have not split yet, and a wrap let loose before they do is one long
+     line of lede. */
+  .t-wrap:has(> [data-screen="intro"]:not([hidden])){max-width:1600px}
+
+  .t-intro{
+    display:grid;
+    grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
+    column-gap:clamp(40px,5vw,88px);
+    align-items:start;
+  }
+  /* The facts and the buttons line up with the headline rather than with
+     the top of the column, which is where the eye is already. */
+  .t-intro-spec{padding-top:clamp(8px,1.6vh,18px)}
+  .t-intro-spec .t-facts{margin-top:0}
+
+  /* The two notes are footnotes to the pitch, not sections of it: side by
+     side they read as the small print they are, and the page ends where
+     the buttons said it would. */
+  /* :not([hidden]) is load-bearing, not tidiness. `display:grid` from an
+     author sheet outranks the `[hidden]{display:none}` the browser brings,
+     so without it this rule un-hides the intro the moment someone starts
+     the quiz and the pitch sits on top of question one. */
+  [data-screen="intro"]:not([hidden]){
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    column-gap:clamp(40px,5vw,88px);
+  }
+  [data-screen="intro"] > .t-intro{grid-column:1 / -1}
+}
