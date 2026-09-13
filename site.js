@@ -432,6 +432,16 @@
     document.querySelectorAll('[data-year]').forEach(function (el) { el.textContent = y; });
   })();
 
+  /* The install stop used to be skippable: anyone already running from
+     the home screen, or who had been shown the guide once, had their
+     app links rewritten from /install straight to /app.
+
+     The app is shut while it is rebuilt, so there is nowhere to rewrite
+     to — every one of those links says /soon in the markup now, and
+     data-app-link is off them. This is left standing, and left doing
+     nothing, because it is the thing to put back: restore the body
+     below and the attribute on the CTAs, and the shortcut returns.
+
   (function appLinks() {
     var done = false;
     try {
@@ -442,6 +452,7 @@
     if (!done) return;
     document.querySelectorAll('[data-app-link]').forEach(function (a) { a.href = '/app'; });
   })();
+  */
 
   /* The service worker, so the home-screen copy opens without a
      connection and Chrome offers a real install rather than a shortcut. */

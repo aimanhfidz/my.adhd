@@ -35,6 +35,44 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
 <script>
+/* ============ the hold ============
+   The app is shut while it is being rebuilt, and this is the door. It is
+   inline and it is first, before a stylesheet or a font or the theme
+   stamp, so a person who is not let in never sees a frame of an app they
+   cannot use.
+
+   Inline rather than a file on purpose: this page is in the service
+   worker's cache and opens with no signal, and a gate that arrives over
+   the network is a gate that fails open exactly when it is least
+   watched.
+
+   Two ways past it, and neither is a lock — the test is in public
+   JavaScript and anyone reading this file can see it. It is a curtain.
+   It keeps people out who would otherwise wander in; it would not keep
+   out somebody trying.
+
+     · localhost — `python3 serve.py` is development and is never held.
+     · ?dev=1 once on the real site, which remembers that browser until
+       localStorage is cleared. ?dev=0 gives the key back.
+
+   To open the app to everyone again: delete this block from app.html and
+   install.html, put the hrefs back (they all say /soon now — git log will
+   show which), restore the rewrite in site.js, drop /soon from sw.js and
+   bump its cache. Nothing else knows about this. */
+try{
+  var q = new URLSearchParams(location.search);
+  if (q.has('dev')) {
+    try { q.get('dev') === '0' ? localStorage.removeItem('myadhd.dev')
+                               : localStorage.setItem('myadhd.dev', '1'); } catch(e){}
+  }
+  var local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  var pass = false;
+  try { pass = localStorage.getItem('myadhd.dev') === '1'; } catch(e){}
+  if (!local && !pass) location.replace('/soon');
+}catch(e){}
+</script>
+
+<script>
 /* Already pinned? Then this page has nothing to teach — go straight in,
    before first paint, so the app never flashes the guide at itself. */
 try{

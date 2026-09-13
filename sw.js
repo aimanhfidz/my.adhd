@@ -7,12 +7,16 @@
    the cache is the parachute, not the source of truth. The triage API is
    never cached — a stale answer is worse than an honest failure. */
 
-const CACHE = 'myadhd-v45';
+/* v47: the app is shut behind /soon — every cached copy of /app and
+   /install carries the hold now, and /soon has to be cached with them or
+   a home-screen copy opened offline redirects into nothing. */
+const CACHE = 'myadhd-v47';
 
 const SHELL = [
   '/',
   '/install',
   '/app',
+  '/soon',
   '/privacy',
   '/terms',
   /* The public site. '/' above is the scene; these are the pages under
