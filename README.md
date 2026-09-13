@@ -811,7 +811,7 @@ design is written down in `docs/loud-redesign-plan.md`.
 |---|---|
 | `/` | The scene — one screen that plays itself, then the funnel. No full footer |
 | `/activities` | **What We Offer** — the five offers, each linking to its own page |
-| `/self-check` | **The test.** A standalone page, outside the site — see below |
+| `/self-check` | **The test.** A standalone page, outside the site. Google sign-in + a PDPA intake since 2026-09-13 — see below |
 | `/blog` | Offer 02. Empty index, placeholder |
 | `/habits` | Offer 03. Five named habits, explanations placeholder |
 | `/reading-list` | Offer 04. Empty shelf, placeholder |
@@ -824,6 +824,29 @@ The bar carries four of these: Activities, About us, Testimonials,
 Contact us. The five offer pages are children of Activities
 and show it as the current link. Every page ends on an Ask and a pager,
 and the pagers form one loop through all nine.
+
+### The Malay
+
+Every page has a Malay half. `site.js` harvests the English out of the
+markup at load and keys each element by a hash of its own HTML; `site.ms.js`
+holds the Malay under the same keys, so the HTML stays the only place
+English lives and an id the Malay file does not know simply stays English.
+The choice is one `localStorage` key, `myadhd.lang`, shared with the app and
+with `/self-check`, and `<html lang>` follows it.
+
+**The keys are hashes of the English, so editing English markup rotates the
+key and silently drops that string back to English.** Change a sentence on a
+page and its Malay is gone until the new key is written into `site.ms.js` —
+nothing errors, the page just quietly turns bilingual in the wrong way. Grep
+the old string's key before you touch the English.
+
+**The Malay is not a translation and must not read like one**, which is the
+one rule about it that is easy to lose. It is the same promises said again
+by someone who speaks Malay, in `awak`, in this brand's voice — the rules,
+the word bank and the checklist are in `docs/bahasa-melayu-voice.md`, and
+the whole file was rewritten against them on 2026-09-13. The screener is
+the exception in both directions: the eighteen ASRS questions in `test.js`
+are an instrument, not copy, and they get no voice pass at all.
 
 ### The scene
 
@@ -866,9 +889,17 @@ it.
 
 The organisation asks you to find out; the app asks you to start. So
 `.ask-org` and its "Take the self-check" pill are on every page except
-`/tools`, which carries `.ask-app` and "Clear my head". Every link into
-the app still has `data-app-link` and `href="/install"`, and the inline
-rewrite to `/app` for installed users runs on every page.
+`/tools`, which carries `.ask-app` and "Clear my head".
+
+**While the app is shut, every link into it points at `/soon`.** That is
+the whole of the change on the site's side: `data-app-link` is off the
+CTAs, the rewrite in `site.js` is commented out with a note saying how to
+put it back, and `/app` and `/install` carry an inline hold at the top of
+their `<head>` that sends everyone but a developer to `/soon` before the
+first paint. The hold is a curtain, not a lock — the test is in public
+JavaScript. Past it: `localhost` is never held, and `?dev=1` once on
+myadhd.my remembers that browser (`?dev=0` gives the key back). The block
+comment in `app.html` lists everything to undo when the app opens again.
 
 ### Type and colour
 
@@ -907,6 +938,11 @@ and a change to the site must not be able to move something under a
 person answering questions about their own attention. It is out of the
 pager loop; the footer and every CTA still link to it.
 
+It now also loads `config.js` and `auth.js` — the only two files it shares
+with the app — and links to `/privacy` and `/terms` from the consent
+label. Those are the only two links off the page, and they open in a new
+tab: a person cannot agree to a notice they are not allowed to read.
+
 The eighteen questions are transcribed verbatim from
 `adhd-questionnaire-ASRS111.pdf` and **must not be reworded, reordered or
 trimmed** — a screening instrument's validity is a property of its exact
@@ -924,8 +960,54 @@ against that page again if it is ever touched.
 Attribution is on the page twice, before the reader starts and again on
 the result: the checklist was developed with the **World Health
 Organization** and the Workgroup on Adult ADHD (Lenard Adler, MD; Ronald
-C. Kessler, PhD; Thomas Spencer, MD). Nothing answered is stored or sent
-— no account, no analytics on answers, no `localStorage` write.
+C. Kessler, PhD; Thomas Spencer, MD).
+
+**Since 2026-09-13 the screener is gated and the answers are kept.** This
+reversed a promise the page made in about fifteen places, so the copy, the
+Malay translations and both legal pages moved in the same deploy — a live
+form whose page still says "never stored" is worse than either half.
+
+The flow is six screens, not three: `intro → gate → details → quiz →
+result`, plus `young`. The **gate asks the age before the Google button**,
+and that order is the point — ask afterwards and Supabase has already
+created an account for a sixteen-year-old before we were allowed to ask
+them anything. Under 18 gets its own screen, and that branch makes **no
+network call at all**.
+
+The minimum age is 18 in three places that must agree: the browser, the
+API, and a `check` constraint in the table. Malaysia's age of majority is
+18, so a minor cannot consent for themselves; and the instrument is the
+*Adult* self-report scale, validated only on adults.
+
+`auth.signIn({ scopes: '', offline: false })` — identity only. The app's
+bare `signIn()` still asks for the calendar scope, and putting a Google
+Calendar prompt in front of somebody starting a mental-health screener
+would be the worst bug in the feature.
+
+Three tables in `sql/002_self_check.sql`, because there are three kinds of
+fact with three lifetimes: a **profile** is current and gets corrected, a
+**consent** is a historical event that must never be edited, a
+**submission** is an event and a retake is a second one. Consent is the
+one thing that survives account deletion, with `user_id` set to null —
+proof that somebody agreed, under which notice, on what date, but not who.
+
+**Part A is scored by the database, not by the API.** `score_a` is a
+generated column, so the band table exists in exactly two places (`test.js`
+for display, the migration for the record) rather than three. Watch the
+indexing: **Postgres arrays are 1-indexed and `test.js` is 0-indexed.**
+
+**Retention is a `pg_cron` job inside the database**, not a Vercel cron and
+not a promise somebody has to remember: 24 months from `last_seen_at`,
+which is bumped by a completed submission and never by a page view. See
+`docs/supabase-setup.md` — the extension has to be enabled by hand, and
+if it is not, `002` still creates the tables and the deletion silently
+never runs.
+
+The POST goes from `finish()`, **after** `show('result')`, and is never
+awaited or retried. Somebody who has just answered eighteen questions
+about their own attention is not made to watch a spinner to learn their
+score, and a network they do not control cannot take the result away from
+them.
 
 
 ### The bands
