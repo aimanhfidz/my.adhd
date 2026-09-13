@@ -56,13 +56,15 @@
        order on a phone is the order it has always been. -->
   <div class="legal-head">
   <h1 class="legal-title">Privacy</h1>
-  <p class="legal-date">Last updated <time datetime="2026-08-25">25 August 2026</time></p>
+  <p class="legal-date">Last updated <time datetime="2026-09-13">13 September 2026</time></p>
   </div>
 
   <p class="legal-lede">
     This is the whole of it, written to be read rather than to be survived.
     If anything below turns out not to match what the app does, the app is
-    the bug and we want to hear about it.
+    the bug and we want to hear about it. Most of my.adhd holds nothing of
+    yours. The self-check is the exception, and it has a section of its own
+    — with the same notice in Bahasa Melayu at the foot of this page.
   </p>
 
   <section class="legal-tldr">
@@ -72,6 +74,11 @@
         Signing in is optional and exists for one reason: so the same lists
         appear on your phone and your laptop. Do not sign in and there is no
         account, no login, and no copy of your lists anywhere but here.</li>
+      <li><strong>The self-check is the one part that asks who you are.</strong>
+        It needs a Google sign-in, your name, your age and your gender, and it
+        keeps your answers — which are health data, so it asks you to agree to
+        that separately and will not start until you have. Nothing else on the
+        site works that way.</li>
       <li><strong>What you type into the dump box is sent to an AI</strong> to
         be turned into tasks, and is not stored afterwards. <strong>If you hold
         the mic and talk instead, the recording is sent to be transcribed</strong>
@@ -80,7 +87,8 @@
       <li><strong>Google Calendar is off unless you turn it on</strong>, and
         when it is on, the app can only touch a calendar it made itself.</li>
       <li><strong>There is no tracking of any kind.</strong> No analytics, no
-        advertising, no cookies, no third-party scripts on the page.</li>
+        advertising, no advertising profile, and nothing that follows you
+        between sites.</li>
     </ul>
   </section>
 
@@ -98,9 +106,11 @@
 
   <h2>Signing in, and what that changes</h2>
   <p>
-    Signing in with Google is optional and the app never asks twice. It buys
-    two things: your lists appear on every device you sign in on, and the
-    calendar link stops expiring. Nothing else about the app changes.
+    Signing in with Google is optional and the app never asks twice. In the
+    app it buys two things: your lists appear on every device you sign in on,
+    and the calendar link stops expiring. Nothing else about the app changes.
+    On the self-check it does one more thing — it is what your screener
+    record is attached to, so that you can come back and delete it.
   </p>
   <p>
     To make the first of those work, a copy of your tasks is kept in our
@@ -112,7 +122,9 @@
   </p>
   <p>
     Your name, your chosen face, your energy setting and your calendar link
-    are not part of that. They stay on each device separately.
+    are not part of that. They stay on each device separately. The self-check
+    is the exception to all of this: it keeps its own record, in its own
+    tables, under its own rules — see below.
   </p>
   <p>
     Signing out stops the copying and leaves the lists on that device alone.
@@ -120,8 +132,12 @@
     that on your profile: <strong>Delete account</strong>, under Sign out. It
     asks twice and then it is done — the account, the synced copy of your
     tasks, and the Google Calendar link all go together, and the refresh token
-    we were holding is handed back to Google on the way out. Nothing is kept
-    and there is nothing to undo it with.
+    we were holding is handed back to Google on the way out. Your self-check
+    record goes with it too — the details you gave and every answer you saved.
+    One thing outlives it, deliberately: the record that a consent was given,
+    with your identity removed from it, so what is left says that somebody
+    agreed, under which version of this notice and on what date, but not who.
+    Nothing else is kept and there is nothing to undo it with.
   </p>
   <p>
     What it does not touch is this device. The lists in your browser are still
@@ -230,11 +246,67 @@
     account permissions</a> page.
   </p>
 
+  <h2>The self-check</h2>
+  <p>
+    <a href="/self-check">The self-check</a> is the ASRS-v1.1, a screening
+    questionnaire developed with the World Health Organization. It is the one
+    part of my.adhd that asks who you are, and the only part that keeps
+    anything about your health. Everything in this section applies to it and to
+    nothing else.
+  </p>
+  <p>
+    <strong>What it keeps.</strong> Your name, the email address on the Google
+    account you signed in with, your age, your gender, a phone number if you
+    give one — it is optional and the screener works the same without it — and
+    your answers together with your Part A score.
+  </p>
+  <p>
+    <strong>Why it is treated differently.</strong> Answers about attention,
+    restlessness and concentration are information about your health, and the
+    PDPA calls that <strong>sensitive personal data</strong>. The law asks for
+    explicit consent before anyone may process it, which is why the page puts
+    that on a tick of its own rather than folding it into a general agreement,
+    and why it will not start until you have ticked it.
+  </p>
+  <p>
+    <strong>What it is for.</strong> Three things, and the page names all three
+    before it asks:
+  </p>
+  <ul>
+    <li>To follow up with you about ADHD support — only if you tick the third
+      box, which is optional and separate.</li>
+    <li>So we know which record is yours, and you can ask to see it, correct it
+      or delete it.</li>
+    <li>To count how Malaysians score, with your name and every other
+      identifying detail stripped out. The counts are built so that a group of
+      fewer than five people is never reported at all, because a small enough
+      statistic is a person.</li>
+  </ul>
+  <p>
+    <strong>Who else sees it.</strong> Nobody outside MyADHD, except the
+    providers that hold it for us — Supabase, our database, and Vercel, our
+    host. It is not sold, not shared for advertising, and not given to an
+    employer, an insurer or a school.
+  </p>
+  <p>
+    <strong>It is never obligatory.</strong> Close the page and nothing is
+    kept. The consequence of not giving us this is simply that we cannot save
+    your result or find it again for you — there is no other penalty, and the
+    questions themselves are free to anyone.
+  </p>
+  <p class="legal-note">
+    The record is yours to end. <strong>Delete account</strong> in the app
+    removes the details and every saved answer. We keep it for 24 months after
+    your most recent self-check in any case, and then it is deleted
+    automatically.
+  </p>
+
   <h2>Feedback</h2>
   <p>
     If you send a note from the feedback screen, we store the text of it. We do
     not store your name, your email, or anything that identifies you, because
-    the app has never asked you for any of those.
+    the feedback box has never asked you for any of those. It is not connected
+    to your self-check record and there is no key that would join the two.
   </p>
   <p>
     We do store a one-way, salted hash of your IP address alongside it, for one
@@ -258,28 +330,56 @@
     <li>No analytics. Not Google Analytics, not a privacy-friendly alternative,
       not a page-view counter. There is genuinely nothing.</li>
     <li>No advertising, and no data sold, rented or shared with anyone for it.</li>
-    <li>No cookies. The app stores things in your browser, but nothing is sent
-      to a server, so no cookie banner is needed and none is shown.</li>
+    <li>No cookies of ours. The app stores things in your browser, and nothing
+      we set is sent to a server. Signing in is the one exception, and even
+      there the cookie is not ours: the sign-in hops through Google and
+      Supabase, on their own domains, and whatever they set is set by them.</li>
     <li>No third-party scripts on the page — except Google's own sign-in
       library, which is loaded only at the moment you press "Link Google
-      Calendar", and never before.</li>
-    <li>No profiling, no automated decisions about you, and no attempt to work
-      out who you are.</li>
+      Calendar", and never before. Signing in to the self-check does not load
+      anything: it works by sending you to Google and back, which is a
+      different thing from putting Google inside our page.</li>
+    <li>No profiling and no automated decisions about you. A self-check score
+      is worked out by the instrument's own published rules, shown to you, and
+      never used to decide anything without a person involved.</li>
   </ul>
 
-  <h2>Children</h2>
+  <h2>Children and young people</h2>
   <p>
-    This is not built or intended for children under 13, and we do not
-    knowingly collect anything from them. Since we do not collect identifying
-    information from anyone, we have no way to detect age — which is a
-    limitation, stated plainly rather than dressed up.
+    The app is not built or intended for children under 13, and we do not
+    knowingly collect anything from them. It asks nobody their age, so there is
+    no way for it to detect one — a limitation, stated plainly rather than
+    dressed up.
+  </p>
+  <p>
+    <strong>The self-check asks outright, and stops at 18.</strong> Two reasons,
+    and both matter. In Malaysia a person under 18 cannot give consent for
+    themselves, and we have no way to verify a parent's. And the instrument is
+    the <em>Adult</em> ADHD Self-Report Scale: it was written for adults and
+    its scoring has only ever been validated on them, so a number from it would
+    not mean anything for a younger person anyway. Someone who tells us they
+    are under 18 is shown where to get help instead, and nothing they typed is
+    sent anywhere or kept: no name, no age, no answers, and no record of any
+    kind in our database.
+  </p>
+  <p>
+    One thing about that is worth saying plainly, because the alternative is a
+    promise with an asterisk on it. The screener asks you to sign in before it
+    asks your age, so by the time somebody tells us they are under 18 a Google
+    sign-in has already happened and an account exists at Supabase. We sign it
+    straight back out and nothing is ever written against it — but the account
+    was made, and we would rather write that here than claim the page never
+    touches the network on that path. If you are under 18 and would like that
+    account removed as well, write to <a href="mailto:hello@myadhd.my">hello@myadhd.my</a>
+    and we will delete it.
   </p>
 
   <h2>Your rights over your data</h2>
   <p>
-    Most of the usual rights — access, correction, deletion, portability — are
-    unusual here because we mostly do not hold anything to exercise them
-    against. In practice:
+    Access, correction, deletion, portability. For most of my.adhd these are
+    unusual rights to exercise, because we mostly do not hold anything to
+    exercise them against. For the self-check we hold a great deal, and there
+    they matter in the ordinary way. In practice:
   </p>
   <ul>
     <li><strong>Your lists:</strong> yours already. "Clear everything" on the
@@ -290,10 +390,20 @@
     <li><strong>A feedback note:</strong> we cannot find it by asking you who
       you are, because we do not know. Quote it back to us and we will delete
       it.</li>
+    <li><strong>Your self-check record:</strong> the details you gave and every
+      answer you saved. Write to us and we will send you a copy, correct
+      anything that is wrong, or delete the lot — and <strong>Delete
+      account</strong> in the app deletes it without asking us at all. If you
+      ticked the box allowing us to contact you, say the word and we will stop;
+      that one is a preference, not a condition, and withdrawing it does not
+      take the screener away from you.</li>
   </ul>
   <p>
-    If you are in the UK, the EU, or anywhere with similar law, you also have
-    the right to complain to your data protection authority.
+    In Malaysia these rights are the ones the Personal Data Protection Act 2010
+    gives you, and if we get this wrong you can complain to the
+    <strong>Personal Data Protection Commissioner (Jabatan Perlindungan Data
+    Peribadi)</strong>. If you are in the UK, the EU, or anywhere with similar
+    law, you have the equivalent right to complain to your own authority.
   </p>
 
   <h2>Changes</h2>
@@ -303,11 +413,114 @@
     quietly folded in.
   </p>
 
+  <h2>How long we keep things</h2>
+  <ul>
+    <li><strong>Your self-check record:</strong> 24 months after your most
+      recent self-check, then deleted automatically. The deletion is a job that
+      runs nightly inside the database, not a promise somebody has to remember
+      to keep. Taking the screener again starts the 24 months over.</li>
+    <li><strong>The consent record:</strong> the same 24 months, and it is
+      stripped of your identity the moment you delete your account.</li>
+    <li><strong>Your synced tasks:</strong> for as long as the account exists.
+      Delete the account and they go with it.</li>
+    <li><strong>What you type into the dump box, and anything you say into the
+      mic:</strong> not kept at all. It exists for the length of one request.</li>
+    <li><strong>A feedback note:</strong> kept until we have acted on it, and in
+      practice longer — there is no name attached to it to expire.</li>
+  </ul>
+
+  <h2>Where your data is</h2>
+  <p>
+    Our database is <a href="https://supabase.com/" rel="noopener">Supabase</a>
+    and our host is <a href="https://vercel.com/" rel="noopener">Vercel</a>.
+    The AI that sorts a dump is <a href="https://www.anthropic.com/" rel="noopener">Anthropic</a>,
+    and transcription is Google. All of them run on servers outside Malaysia,
+    which means your data is transferred out of the country when you use those
+    parts of the app. The PDPA allows that with your consent and where the
+    receiving place gives comparable protection; we are telling you plainly
+    rather than leaving it out.
+  </p>
+
+  <h2>Donations and Stripe</h2>
+  <p>
+    If you choose to give something, the payment is handled entirely by
+    <a href="https://stripe.com/" rel="noopener">Stripe</a> on their own pages.
+    We never see or store your card. What we keep is what Stripe tells us
+    afterwards: a customer id, which plan if any, whether it is current, and
+    when it next renews — enough to know whether an account is entitled, and
+    nothing about the card itself. That record goes when the account goes.
+  </p>
+
   <h2>Contact</h2>
   <p>
-    Questions, corrections, or a note to delete:
-    <a href="mailto:hello@myadhd.my">hello@myadhd.my</a>.
+    Questions, corrections, a copy of what we hold, or a note to delete:
+    <a href="mailto:hello@myadhd.my">hello@myadhd.my</a>. MyADHD is the data
+    user for everything described on this page. We answer access and correction
+    requests within <strong>21 days</strong>, which is the period the PDPA sets;
+    if we need longer we will tell you why before that runs out.
   </p>
+
+  <h2 lang="ms">Notis Privasi PDPA (Bahasa Melayu)</h2>
+  <div lang="ms">
+    <p>
+      Notis ini diberikan menurut seksyen 7 Akta Perlindungan Data Peribadi
+      2010. Ia mengenai maklumat yang dikumpulkan oleh
+      <a href="/self-check">semakan kendiri</a> di myadhd.my.
+    </p>
+    <p>
+      <strong>Data yang diproses.</strong> Nama anda, alamat e-mel akaun Google
+      yang anda gunakan untuk log masuk, umur anda, jantina anda, nombor
+      telefon anda jika anda memberikannya, serta jawapan anda kepada soal
+      selidik saringan dan skor Bahagian A anda. Jawapan tersebut ialah
+      maklumat mengenai kesihatan anda dan merupakan <strong>data peribadi
+      sensitif</strong> di bawah Akta, yang memerlukan kebenaran nyata anda.
+    </p>
+    <p>
+      <strong>Sumber data.</strong> Daripada anda sendiri, dan daripada akaun
+      Google yang anda gunakan untuk log masuk.
+    </p>
+    <p>
+      <strong>Tujuan.</strong> Tiga sahaja: untuk menghubungi anda tentang
+      sokongan ADHD jika anda memilihnya; untuk mengenal pasti rekod anda
+      supaya anda boleh mengakses, membetulkan atau memadamnya; dan untuk
+      menghasilkan statistik agregat tanpa nama.
+    </p>
+    <p>
+      <strong>Pendedahan.</strong> Data anda tidak dijual dan tidak dikongsi
+      untuk pengiklanan. Ia didedahkan hanya kepada penyedia perkhidmatan yang
+      menyimpannya bagi pihak kami — Supabase (pangkalan data) dan Vercel
+      (hos) — yang mungkin menyimpannya pada pelayan di luar Malaysia.
+    </p>
+    <p>
+      <strong>Kewajipan membekalkan data.</strong> Tidak wajib. Anda boleh
+      menutup halaman itu dan tiada apa-apa disimpan. Nombor telefon adalah
+      pilihan tersendiri. Akibat tidak memberikan data ini hanyalah kami tidak
+      dapat menyimpan atau mencari semula keputusan anda.
+    </p>
+    <p>
+      <strong>Hak anda.</strong> Anda berhak meminta akses kepada data
+      peribadi anda, membetulkannya jika ia tidak tepat, menghadkan
+      pemprosesannya, dan menarik balik kebenaran anda pada bila-bila masa.
+      Untuk berbuat demikian, e-mel
+      <a href="mailto:hello@myadhd.my">hello@myadhd.my</a>. Kami akan menjawab
+      dalam tempoh <strong>21 hari</strong>. Anda juga boleh membuat aduan
+      kepada <strong>Pesuruhjaya Perlindungan Data Peribadi (Jabatan
+      Perlindungan Data Peribadi, Malaysia)</strong>.
+    </p>
+    <p>
+      <strong>Tempoh penyimpanan.</strong> Dua puluh empat (24) bulan selepas
+      semakan kendiri terakhir anda, kemudian dipadam secara automatik.
+    </p>
+    <p>
+      <strong>Pengguna data.</strong> MyADHD,
+      <a href="mailto:hello@myadhd.my">hello@myadhd.my</a>.
+    </p>
+    <p>
+      Sekiranya terdapat percanggahan antara versi Bahasa Melayu dan Bahasa
+      Inggeris notis ini, kedua-duanya hendaklah dibaca bersama; versi Bahasa
+      Inggeris terdapat di bahagian atas halaman ini.
+    </p>
+  </div>
 
   <p class="legal-back"><a href="/">&larr; Back to my.adhd</a></p>
 
@@ -336,8 +549,8 @@
       <div class="foot-col">
         <h2>The app</h2>
         <ul>
-          <li><a href="/app">Open my.adhd</a></li>
-          <li><a href="/install">Add to home screen</a></li>
+          <li><a href="/soon">Open my.adhd</a></li>
+          <li><a href="/soon">Add to home screen</a></li>
         </ul>
       </div>
       <div class="foot-col">

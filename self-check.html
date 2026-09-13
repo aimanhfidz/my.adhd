@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Self-check — MyADHD</title>
-<meta name="description" content="The Adult ADHD Self-Report Scale (ASRS-v1.1), developed with the World Health Organization. Ten minutes, no login, no cost. A screening tool, not a diagnosis." />
+<meta name="description" content="The Adult ADHD Self-Report Scale (ASRS-v1.1), developed with the World Health Organization. Ten minutes, free, and a copy that stays yours. A screening tool, not a diagnosis." />
 <meta name="theme-color" content="#FFFFFF" />
 <meta name="robots" content="index, follow" />
 <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
@@ -13,10 +13,19 @@
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="MyADHD" />
 <meta property="og:title" content="Self-check — MyADHD" />
-<meta property="og:description" content="Ten minutes, no login, no cost. A screening tool, not a diagnosis." />
+<meta property="og:description" content="Ten minutes, free, and a copy that stays yours. A screening tool, not a diagnosis." />
 <meta property="og:image" content="https://myadhd.my/icons/og.png?v=3" />
 <link rel="preload" href="fonts/DMSans-Variable.ttf" as="font" type="font/ttf" crossorigin />
 <script src="theme.js"></script>
+<!-- The two files this page shares with the app, and the only two.
+     test.css still says everything else here is its own, and that is
+     still true — but the screener now needs to know who you are before it
+     will keep an answer, and auth.js is where that lives. config.js must
+     be a plain tag before it: auth.js reads the two Supabase globals at
+     parse time, and a deferred config.js would arrive after it has
+     already decided it is unconfigured. -->
+<script src="config.js"></script>
+<script src="auth.js" defer></script>
 <script src="test.js" defer></script>
 <link rel="stylesheet" href="theme.css" />
 <!-- Its own stylesheet, not site.css. This page is deliberately outside
@@ -66,7 +75,7 @@
   <div class="t-intro">
   <div class="t-intro-say">
     <p class="kicker" data-i18n="kicker">The self-check.</p>
-    <h1 data-i18n="h1">Ten minutes, no login, no cost.</h1>
+    <h1 data-i18n="h1">Ten minutes, free, and a copy that stays yours.</h1>
     <p class="lede" data-i18n="lede">
       This is the Adult <span class="adhd-word">ADHD</span> Self-Report Scale (ASRS-v1.1) &mdash; the screening
       questionnaire used by health services, reproduced here in full. Answer
@@ -81,8 +90,8 @@
     <ul class="t-facts">
       <li><span class="k" data-i18n="f1k">Questions</span><span class="v" data-i18n="f1v">6, or 18 if you want the fuller picture</span></li>
       <li><span class="k" data-i18n="f2k">Time</span><span class="v" data-i18n="f2v">About 5 minutes</span></li>
-      <li><span class="k" data-i18n="f3k">Cost</span><span class="v" data-i18n="f3v">Free, and no account</span></li>
-      <li><span class="k" data-i18n="f4k">Your answers</span><span class="v" data-i18n="f4v">Never stored, never sent</span></li>
+      <li><span class="k" data-i18n="f3k">Cost</span><span class="v" data-i18n="f3v">Free. Google sign-in required</span></li>
+      <li><span class="k" data-i18n="f4k">Your answers</span><span class="v" data-i18n="f4v">Stored in your account. Delete any time.</span></li>
       <li><span class="k" data-i18n="f5k">What you get</span><span class="v" data-i18n="f5v">A score out of 6, and what it means</span></li>
     </ul>
 
@@ -129,11 +138,217 @@
       anything out.
     </p>
     <p data-i18n="not2">
-      Nothing you answer here is stored or sent anywhere. There is no
-      account, no analytics on your answers, and no copy kept &mdash; they exist
-      in this tab while it is open and go when you close it.
+      Your answers are stored, and this is what that means. When you
+      finish, your answers, your Part A score and the details you gave
+      &mdash; name, age, gender, and a phone number if you gave one &mdash; are saved
+      against your Google account in our database at Supabase. They are
+      for three things and no others: to follow up about ADHD support if
+      you asked us to, so you can find and delete your own record, and,
+      with your name and every other identifying detail stripped out, to
+      count how Malaysians score. We keep it for 24 months after your last
+      self-check and then it is deleted automatically.
+      <a href="/privacy" target="_blank" rel="noopener">The privacy notice</a>
+      sets it out in full, in English and Bahasa Melayu.
     </p>
   </div>
+  </section>
+
+  <!-- ============ 1a. the door ============
+       The screen that offers the sign-in, and the only thing on it is the
+       button that takes it. Start does not redirect to Google by itself:
+       leaving the site is the reader's press to make, and a page that
+       swaps itself for accounts.google.com unannounced has taken that
+       press from them.
+
+       Nothing is asked here — no age, no name. Everything we need is
+       asked once, together, on the details screen after the redirect. So
+       the under-18 check lives there now, and tooYoung() signs the
+       account straight back out when it fires. -->
+  <section data-screen="gate" hidden>
+    <p class="kicker" data-i18n="gKicker">Before you start.</p>
+    <h2 data-i18n="gH">First, who the result belongs to.</h2>
+    <p class="lede" data-i18n="gLede">
+      The self-check keeps your result, so it needs to know whose it is.
+      That means a Google sign-in &mdash; for your name and email, and nothing
+      else. It does not ask for your calendar or your contacts.
+    </p>
+
+    <div class="t-actions">
+      <button class="btn btn-go g-go" type="button" data-i18n="gGo">Continue with Google</button>
+      <button class="btn g-back" type="button" data-i18n="gBack">Go back</button>
+    </div>
+
+    <p class="t-fine" data-i18n="gFine">
+      The screener itself is free and always will be. Signing in is how the
+      result gets saved to you &mdash; and how you can delete it later. The
+      next screen is Google&rsquo;s own; you come straight back here after it.
+    </p>
+  </section>
+
+  <!-- ============ 1b. who you are ============
+       Where the asking actually happens: reached straight after the
+       redirect back from Google, and straight away for somebody already
+       signed in from /app. Name, phone, age, gender and the consent ticks
+       in one pass, and the age here is the only age this page asks for. -->
+  <section data-screen="details" hidden>
+    <p class="kicker" data-i18n="dKicker">Almost there.</p>
+    <h2 data-i18n="dH">A few details, then we begin.</h2>
+    <p class="lede" data-i18n="dLede">
+      This is what gets kept alongside your answers. Read the notice under
+      it before you tick anything &mdash; it is short, and it is the part that
+      actually matters.
+    </p>
+
+    <label class="field">
+      <span class="field-label" data-i18n="dName">Your name</span>
+      <input class="field-input d-name" type="text" autocomplete="name"
+             data-i18n-ph="dNamePh" placeholder="What should we call you?" />
+    </label>
+    <p class="f-err d-name-err" role="alert" hidden></p>
+
+    <label class="field">
+      <span class="field-label" data-i18n="dPhone">Phone number <span class="f-opt" data-i18n="dPhoneOpt">optional</span></span>
+      <input class="field-input d-phone" type="tel" autocomplete="tel"
+             data-i18n-ph="dPhonePh" placeholder="012-345 6789" />
+    </label>
+    <p class="f-err d-phone-err" role="alert" hidden></p>
+
+    <label class="field">
+      <span class="field-label" data-i18n="dAge">Your age</span>
+      <input class="field-input d-age" type="number" inputmode="numeric"
+             autocomplete="off" data-i18n-ph="dAgePh" placeholder="e.g. 28" />
+    </label>
+    <p class="f-err d-age-err" role="alert" hidden></p>
+
+    <!-- Real radios inside .opt labels, not aria-pressed buttons. Arrow-key
+         movement, grouping and the "one of these is required" behaviour all
+         come free from the control, and aria-pressed inside a radiogroup is
+         the wrong word anyway. No <select>: an <option> cannot hold a
+         nested span, so applyLang() could never translate it. -->
+    <fieldset class="field f-set">
+      <legend class="field-label" data-i18n="dGender">Gender</legend>
+      <div class="opt-set">
+        <label class="opt"><input type="radio" name="gender" value="male" class="sr-only" /><span data-i18n="gMale">Male</span></label>
+        <label class="opt"><input type="radio" name="gender" value="female" class="sr-only" /><span data-i18n="gFemale">Female</span></label>
+        <label class="opt"><input type="radio" name="gender" value="undisclosed" class="sr-only" /><span data-i18n="gNone">Prefer not to say</span></label>
+      </div>
+    </fieldset>
+    <p class="f-err d-gender-err" role="alert" hidden></p>
+
+    <!-- ============ the notice, and the three ticks ============
+         Both languages are shown at once, and neither is behind the EN/BM
+         switch. The PDPA asks for the notice to be given in the national
+         language and in English — in both, not in whichever one the
+         reader happens to have chosen. -->
+    <div class="c-block">
+      <p class="c-notice" data-i18n="cNoticeEn" lang="en">
+        <strong>Before you answer &mdash; what MyADHD keeps, and why.</strong>
+        If you go on, MyADHD (hello@myadhd.my) keeps your name, your Google
+        email, your age, your gender, a phone number if you give one, your
+        answers and your Part A score. The answers are about your health,
+        which makes them <strong>sensitive personal data</strong> under
+        Malaysia&rsquo;s Personal Data Protection Act 2010 &mdash; and the law asks
+        you to agree to those separately. That is the second box.
+        Three purposes and no others: to follow up about ADHD support if you
+        tick the third box; to know which record is yours, so you can ask to
+        see it or delete it; and, with your name and everything else
+        identifying stripped out, to count how Malaysians score. We do not
+        sell it. Nobody sees it outside MyADHD and the providers who hold it
+        for us &mdash; Supabase, our database, and Vercel, our host &mdash; who may
+        store it on servers outside Malaysia.
+        None of this is obligatory: close the page and nothing is kept. The
+        phone number is optional on its own. To see, correct or delete what
+        we hold, write to <a href="mailto:hello@myadhd.my">hello@myadhd.my</a>
+        and we will answer within 21 days. We keep a record for 24 months
+        after your last self-check, and then it is deleted automatically.
+      </p>
+      <p class="c-notice" data-i18n="cNoticeMs" lang="ms">
+        <strong>Sebelum anda menjawab &mdash; apa yang MyADHD simpan, dan mengapa.</strong>
+        Jika anda teruskan, MyADHD (hello@myadhd.my) akan menyimpan nama
+        anda, e-mel Google anda, umur anda, jantina anda, nombor telefon
+        anda jika anda memberikannya, jawapan anda dan skor Bahagian A anda.
+        Jawapan itu berkaitan dengan kesihatan anda, yang menjadikannya
+        <strong>data peribadi sensitif</strong> di bawah Akta Perlindungan
+        Data Peribadi 2010 &mdash; dan undang-undang meminta anda bersetuju
+        kepadanya secara berasingan. Itulah kotak kedua.
+        Tiga tujuan, dan tiada yang lain: untuk menghubungi anda tentang
+        sokongan ADHD jika anda menanda kotak ketiga; untuk mengetahui rekod
+        mana milik anda, supaya anda boleh meminta melihatnya atau
+        memadamnya; dan, setelah nama anda dan segala butiran pengenalan
+        lain dibuang, untuk mengira bagaimana rakyat Malaysia mendapat skor.
+        Kami tidak menjualnya. Tiada sesiapa melihatnya selain MyADHD dan
+        penyedia yang menyimpannya bagi pihak kami &mdash; Supabase, pangkalan
+        data kami, dan Vercel, hos kami &mdash; yang mungkin menyimpannya pada
+        pelayan di luar Malaysia.
+        Semua ini tidak wajib: tutup halaman ini dan tiada apa-apa disimpan.
+        Nombor telefon adalah pilihan tersendiri. Untuk melihat, membetulkan
+        atau memadam apa yang kami simpan, e-mel
+        <a href="mailto:hello@myadhd.my">hello@myadhd.my</a> dan kami akan
+        menjawab dalam masa 21 hari. Kami menyimpan rekod selama 24 bulan
+        selepas semakan kendiri terakhir anda, dan kemudian ia dipadam
+        secara automatik.
+      </p>
+
+      <!-- The only two target="_blank" links on this page. test.css says
+           every link here is an invitation to abandon the screener, and it
+           is right — but a person cannot agree to a notice they are not
+           allowed to read, and sending them away to read it would cost
+           them the form they have just filled in. -->
+      <label class="check">
+        <input type="checkbox" class="c-terms sr-only" />
+        <span data-i18n="cTerms">I have read and agree to the
+          <a href="/terms" target="_blank" rel="noopener">Terms of use</a> and the
+          <a href="/privacy" target="_blank" rel="noopener">Privacy Notice</a>.</span>
+      </label>
+
+      <label class="check">
+        <input type="checkbox" class="c-health sr-only" />
+        <span data-i18n="cHealth">I explicitly consent to MyADHD processing my
+          answers to these health questions &mdash; sensitive personal data under
+          the PDPA &mdash; for the three purposes above.</span>
+      </label>
+
+      <label class="check">
+        <input type="checkbox" class="c-contact sr-only" />
+        <span data-i18n="cContact">You may contact me about ADHD support,
+          resources and events. <span class="f-opt" data-i18n="cContactOpt">optional</span></span>
+      </label>
+
+      <p class="f-err c-err" role="alert" hidden></p>
+    </div>
+
+    <div class="t-actions">
+      <button class="btn btn-go d-go" type="button" data-i18n="dGo">Start the screener</button>
+    </div>
+  </section>
+
+  <!-- ============ 1c. the door that stays shut ============
+       Its own screen, not an inline error under the age field. Inline,
+       "you must be 18" reads as a validation failure to be worked around
+       by typing 19. As a screen it reads as what it is. Nothing on this
+       branch touches the network. -->
+  <section data-screen="young" hidden>
+    <p class="kicker" data-i18n="yKicker">Not this one.</p>
+    <h2 data-i18n="yH">This one is for adults.</h2>
+    <p class="lede" data-i18n="yLede">
+      The ASRS is the <strong>Adult</strong> self-report scale. It was written
+      for people 18 and over, and its scoring has only ever been tested on
+      them &mdash; so a number from it would not mean anything for you. That is
+      not a brush-off. It is the instrument being honest about what it is.
+    </p>
+    <p data-i18n="yHelp">
+      If focus, restlessness or getting started are hard right now, the
+      person to talk to is a GP or a school counsellor, who can refer you to
+      someone who assesses young people. If you need to talk to somebody
+      today, <strong>Talian Kasih 15999</strong> answers 24 hours, free, in
+      Malay and English (WhatsApp 019-261 5999).
+    </p>
+    <p class="t-fine" data-i18n="yNothing">
+      Nothing you typed has been sent anywhere, and nothing has been kept.
+    </p>
+    <div class="t-actions">
+      <a class="btn" href="/" data-i18n="yHome">Back to MyADHD</a>
+    </div>
   </section>
 
   <!-- ============ 2. the questions ============ -->
@@ -175,6 +390,13 @@
       <a class="btn" href="/" data-i18n="home">Back to MyADHD</a>
     </div>
 
+    <!-- Written by submit(), after the result is already on screen, and
+         only once the save has landed or failed. No data-i18n: both
+         strings come from STR and are set with textContent, because this
+         is the one line on the page whose wording depends on something
+         that happened rather than on what the markup says. -->
+    <p class="r-saved" hidden></p>
+
   <div class="t-note">
     <h2 data-i18n="whoH">Who wrote these questions</h2>
     <p data-i18n="who1">
@@ -210,9 +432,17 @@
       anything out.
     </p>
     <p data-i18n="not2">
-      Nothing you answer here is stored or sent anywhere. There is no
-      account, no analytics on your answers, and no copy kept &mdash; they exist
-      in this tab while it is open and go when you close it.
+      Your answers are stored, and this is what that means. When you
+      finish, your answers, your Part A score and the details you gave
+      &mdash; name, age, gender, and a phone number if you gave one &mdash; are saved
+      against your Google account in our database at Supabase. They are
+      for three things and no others: to follow up about ADHD support if
+      you asked us to, so you can find and delete your own record, and,
+      with your name and every other identifying detail stripped out, to
+      count how Malaysians score. We keep it for 24 months after your last
+      self-check and then it is deleted automatically.
+      <a href="/privacy" target="_blank" rel="noopener">The privacy notice</a>
+      sets it out in full, in English and Bahasa Melayu.
     </p>
   </div>
   </section>

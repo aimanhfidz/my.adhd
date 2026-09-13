@@ -178,15 +178,39 @@
     user: () => (session ? session.user : null),
     signedIn: () => !!session,
 
-    /** Leaves the page. Comes back to wherever it was called from. */
-    signIn() {
+    /** Leaves the page. Comes back to wherever it was called from.
+     *
+     *  Called bare — signIn() — this is what it has always been: the
+     *  calendar scope, offline access, a forced consent screen. Every
+     *  caller in the app wants exactly that and none of them passes
+     *  anything, which is why the defaults are the old literals rather
+     *  than something tidier.
+     *
+     *  `opts.scopes:''` and `opts.offline:false` are for the self-check,
+     *  which needs to know who you are and nothing else. Asking a person
+     *  who came to answer eighteen questions about their own attention
+     *  for permission to write to their Google Calendar is a bad trade at
+     *  any conversion rate, and under the PDPA collecting an access you
+     *  have no use for is the thing the Act calls excessive.
+     *
+     *  Dropping offline matters more than it looks: access_type=offline
+     *  with no scope still shows a consent screen and still makes Google
+     *  mint a refresh token, so leaving it on would buy the prompt we are
+     *  trying to avoid *and* a credential we would then be holding for no
+     *  reason. With it off no provider_refresh_token comes back, and the
+     *  /api/link-google call in absorbRedirect() is already guarded on
+     *  that — so an existing calendar link is left exactly as it was. */
+    signIn(opts) {
+      const o = opts || {};
+      const scopes = o.scopes === undefined ? SCOPES : o.scopes;
+      const offline = o.offline === undefined ? true : !!o.offline;
+
       const back = location.origin + location.pathname;
-      const url = URL_BASE + '/auth/v1/authorize'
+      let url = URL_BASE + '/auth/v1/authorize'
         + '?provider=google'
-        + '&redirect_to=' + encodeURIComponent(back)
-        + '&scopes=' + encodeURIComponent(SCOPES)
-        + '&access_type=offline'
-        + '&prompt=consent';
+        + '&redirect_to=' + encodeURIComponent(back);
+      if (scopes) url += '&scopes=' + encodeURIComponent(scopes);
+      if (offline) url += '&access_type=offline&prompt=consent';
       location.href = url;
     },
 

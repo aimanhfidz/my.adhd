@@ -15,7 +15,7 @@ Understanding ADHD shouldn't require a referral letter and a six-month wait. Eve
 
 Based on the screening questionnaire used by Malaysian health services
 
-Ten minutes, no login, no cost. Answer honestly and you'll get a clear read on whether your traits fall within the range that warrants a proper assessment.
+Ten minutes and a Google sign-in, free. Answer honestly and you'll get a clear read on whether your traits fall within the range that warrants a proper assessment.
 
 This is a screening tool, not a diagnosis — only a psychiatrist or clinical psychologist can give you that. But it tells you whether the conversation is worth having, and it gives you something concrete to bring to the appointment instead of "doktor, saya rasa saya ada masalah fokus."
 

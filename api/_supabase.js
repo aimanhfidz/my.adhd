@@ -43,6 +43,42 @@ export async function userFromRequest(req) {
 }
 
 /**
+ * The same check, but handing back the email as well as the id.
+ *
+ * A sibling rather than a wider return from userFromRequest(), which three
+ * routes already call and read as a bare id. Changing that shape would
+ * mean touching all of them to gain a field none of them wants, and a
+ * route that silently starts receiving an object where it expected a
+ * string is the kind of change that passes review and fails in
+ * production.
+ *
+ * Only /api/self-check needs this: the screener record stores the email
+ * so that a row is legible to a human answering a deletion request
+ * without a second lookup. It comes from the verified token, never from
+ * the request body — an email a caller can choose is an email a caller
+ * can borrow.
+ *
+ * Returns { id, email } or null. Never throws.
+ */
+export async function userWithEmail(req) {
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7).trim() : '';
+  if (!token) return null;
+
+  try {
+    const res = await fetch(`${URL_BASE}/auth/v1/user`, {
+      headers: { apikey: SERVICE, Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return null;
+    const user = await res.json();
+    if (!user || !user.id) return null;
+    return { id: user.id, email: user.email || '' };
+  } catch (_) {
+    return null;
+  }
+}
+
+/**
  * An Auth Admin call as the service role.
  *
  * Separate from db() because it is a different API under a different

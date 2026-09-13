@@ -201,6 +201,137 @@ h1{
 }
 .opt:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
 
+/* ---------- the gate, the details form, the door that stays shut ----------
+   Everything from here to the result belongs to the three screens in
+   front of the questions. The fields are styles.css's .field trio, copied
+   rather than imported: this page does not load the app's stylesheet and
+   admin.css sets the precedent for restating a handful of rules instead
+   of pulling in a file for three of them.
+
+   No rule in this block sets display:grid or display:flex on a
+   [data-screen] section. See the note at the foot of this file — an
+   author sheet's display outranks [hidden], and a screen that forgets
+   :not([hidden]) renders on top of question one. */
+.field{display:block; width:100%; margin-top:clamp(20px,3vh,28px)}
+.field-label{
+  display:block; font-family:var(--sans); font-size:13px; font-weight:600;
+  color:var(--muted); margin-bottom:8px;
+}
+.field-input{
+  width:100%; font-family:var(--sans); font-size:16px; color:var(--ink);
+  background:var(--surface); border:1.5px solid var(--line-strong);
+  border-radius:12px; padding:13px 15px;
+  transition:border-color .16s var(--ease), box-shadow .16s var(--ease);
+}
+.field-input:focus{
+  outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus);
+}
+.field-input[aria-invalid="true"]{border-color:var(--danger)}
+/* 16px on the input above is not a taste decision: iOS Safari zooms the
+   whole page in when a focused field is smaller than that, and a form
+   that jumps on first tap reads as broken. */
+
+.f-set{border:0; padding:0; margin-top:clamp(20px,3vh,28px)}
+.f-set .field-label{padding:0}
+
+/* "optional", in the label, in the same mono the rest of the page uses
+   for a label about a label. It has to be visible before the field is
+   filled in, not discovered after a validation error. */
+.f-opt{
+  font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--faint); font-weight:400;
+  margin-left:8px;
+}
+
+/* The gender radios reuse .opt. The visual state moves from
+   [aria-pressed] to :has(input:checked) because these are real radios —
+   :has() is already load-bearing in this file (see the intro widening
+   below), so this adds no new browser assumption, and where it is not
+   understood the radio still works and simply loses its filled circle. */
+.opt-set{display:grid; gap:10px}
+.opt:has(input:checked){border-color:var(--orange)}
+.opt:has(input:checked)::before{
+  border-color:var(--orange);
+  box-shadow:inset 0 0 0 4px var(--orange);
+}
+.opt:has(input:focus-visible){
+  border-color:var(--accent); box-shadow:0 0 0 4px var(--focus);
+}
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+
+/* ---------- the consent block ---------- */
+.c-block{
+  margin-top:clamp(28px,4.4vh,44px);
+  padding:clamp(18px,3vw,26px);
+  border:1.5px solid var(--line); border-radius:14px;
+  background:var(--wash);
+}
+.c-notice{
+  font-size:13.5px; line-height:1.65; color:var(--muted);
+  margin-bottom:14px;
+}
+.c-notice strong{color:var(--ink)}
+.c-notice + .c-notice{
+  padding-top:14px; border-top:1px solid var(--line);
+}
+.check{
+  display:flex; align-items:flex-start; gap:13px;
+  margin-top:16px; cursor:pointer;
+  font-family:var(--sans); font-size:14.5px; line-height:1.5; color:var(--ink);
+}
+/* Square, where .opt is round. A circle means "one of these"; these are
+   three independent answers and two of them are required, so the shape
+   has to say "many". */
+.check::before{
+  content:""; flex:none; width:18px; height:18px; margin-top:1px;
+  border:1.5px solid var(--line-strong); border-radius:5px;
+  transition:border-color .16s var(--ease), box-shadow .16s var(--ease);
+}
+.check:hover::before{border-color:var(--ink)}
+/* Orange here is a state mark, not a second call to action — the one
+   button rule above still holds. */
+.check:has(input:checked)::before{
+  border-color:var(--orange);
+  box-shadow:inset 0 0 0 4px var(--orange);
+}
+.check:has(input:focus-visible)::before{
+  border-color:var(--accent); box-shadow:0 0 0 4px var(--focus);
+}
+.check a{color:var(--accent)}
+
+/* ---------- errors ---------- */
+.f-err{
+  margin-top:8px; font-family:var(--sans); font-size:13px;
+  line-height:1.45; color:var(--danger);
+}
+
+/* A bare <p> on these screens has no margin of its own — the intro never
+   needed one, because every paragraph there is a .lede or inside a
+   .t-note. The young screen has two plain paragraphs in a row and they
+   ran together. */
+[data-screen="young"] .lede + p{
+  margin-top:clamp(14px,2vh,20px);
+  font-size:clamp(15px,1.8vw,17px); line-height:1.6; color:var(--ink-soft);
+}
+
+/* ---------- the small print under a button ---------- */
+.t-fine{
+  margin-top:clamp(18px,2.6vh,26px);
+  font-size:13.5px; line-height:1.6; color:var(--faint);
+}
+
+/* One line under the result, written only once the save has actually
+   landed or actually failed. Hidden until then, so a request that never
+   finished says nothing rather than something untrue. */
+.r-saved{
+  margin-top:clamp(20px,3vh,28px);
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em;
+  color:var(--faint);
+}
+
 .q-foot{
   display:flex; align-items:center; justify-content:space-between; gap:16px;
   margin-top:clamp(24px,4vh,36px);
