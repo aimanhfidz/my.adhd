@@ -200,19 +200,45 @@ body{
    beside it already says whose site this is, and in the brand's own face. */
 @media (max-width:1279.98px){ .bar-org{display:none} }
 
-/* The five links. Centred by their own auto margins, which only works
-   while theirs are the only autos in the row — hence the two overrides
-   below, and hence both of them living inside the breakpoint where the
-   row actually exists. Get that wrong and the whole right-hand side of
-   the bar collapses to the left on a phone. */
+/* The five links, centred on the window.
+
+   They used to centre with their own auto margins, and an auto margin
+   splits the space that is *left over* — so the row sat halfway between
+   the lockup and the language switch, which are not the same width, and
+   never halfway across the window. Off by about thirty pixels, which is
+   exactly enough to look like a mistake and not enough to look
+   deliberate.
+
+   So on desktop the row comes out of the flow and is pinned to 50% of
+   the bar, which is fixed and full-width and therefore the thing the eye
+   actually measures against. top/bottom rather than a height: the bar's
+   own padding is what sets the row, and repeating 34px here would be a
+   second copy of --nav-row to keep in step.
+
+   Taking it out of the flow takes its auto margins with it, and those
+   were also what held the right-hand group against the window's edge —
+   hence the margin-right:auto below, on whichever of the two left-hand
+   items is the last one still showing. Get that wrong and the switch and
+   the toggle drift into the middle of the bar. */
 .bar-links{
   display:none; margin-inline:auto; list-style:none;
   align-items:center; gap:clamp(14px,2vw,28px);
 }
 @media (min-width:1024px){
-  .bar-links{display:flex}
-  .bar-links ~ .nav-clock,
+  .bar-links{
+    display:flex;
+    position:absolute; left:50%; translate:-50% 0;
+    top:var(--bar-top); bottom:var(--bar-bottom);
+    margin-inline:0;
+  }
+  /* the one auto in the row, and it belongs on the left group */
+  .bar .brand-lockup{margin-right:auto}
+  .bar-links ~ .nav-clock{margin-left:0}
   .bar-links ~ .theme-toggle{margin-left:0}
+}
+@media (min-width:1280px){
+  .bar .brand-lockup{margin-right:0}
+  .bar-org{margin-right:auto}
 }
 .bar-links a{
   font-size:15px; font-weight:500; white-space:nowrap;
