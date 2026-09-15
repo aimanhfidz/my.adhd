@@ -628,6 +628,9 @@ body{
    case that found it. The filler is a real cell with nothing in it, so the
    object stays cut into equal parts. */
 .grid .filler{background:var(--surface)}
+/* Below 760px the grid is one column, so every count divides and there is no
+   hole to plug — the filler would be the empty box it exists to prevent. */
+@media (max-width:759px){.grid .filler{display:none}}
 /* The icon sits in a band of its own so a row keeps one height however
    long the text under it runs, and the gap under it is deliberately
    enormous — LOUD's cells are mostly air, and the air is the design. */

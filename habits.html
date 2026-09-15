@@ -199,6 +199,12 @@
         <p class="cell-title" data-i18n="iaaab651">Getting through the day without burning out by 3pm</p>
         <div style="margin-top:18px"><p class="cell-text" data-i18n="ie4d1e46">The afternoon crash usually starts the night before. If your nights run late, hold the time you get up steady, not the time you go to bed.</p><p class="cell-text" data-i18n="i1437805">And spend your good hours on the work that needs them. Admin at 10am spends the sharpest hours you get on the cheapest thing you do.</p></div>
       </div>
+      <!-- Five cells in a two-column grid leaves the sixth slot showing the
+           grid's own ruled ground — a solid lavender block where a cell
+           should be. site.css calls this the filler: a real cell with nothing
+           in it, so the object stays cut into equal parts. It is dropped
+           below 760px, where the grid is one column and nothing is missing. -->
+      <div class="filler" aria-hidden="true"></div>
     </div>
 
     <p class="turn" data-i18n="ia6bfd85">Small, testable changes. Start with one.</p>
