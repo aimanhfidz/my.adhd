@@ -132,7 +132,8 @@
       exit: 'Tinggalkan semakan kendiri',
       kicker: 'Semakan kendiri.',
       h1: 'Sepuluh minit, percuma, dan salinan yang kekal milik awak.',
-      lede: 'Ini ialah Skala Laporan Kendiri <span class="adhd-word">ADHD</span> Dewasa (ASRS-v1.1) — soal selidik saringan yang digunakan perkhidmatan kesihatan, diterjemahkan di sini untuk bacaan. Jawab jujur tentang <b>enam bulan yang lalu</b>, dan awak dapat gambaran jelas sama ada ciri-ciri awak cukup kuat untuk pergi buat penilaian penuh.',
+      lede: 'Ini ialah Skala Laporan Kendiri <span class="adhd-word">ADHD</span> Dewasa (ASRS-v1.1) — soal selidik saringan yang digunakan perkhidmatan kesihatan, diterjemahkan di sini untuk bacaan.',
+      lede2: 'Jawab dengan jujur tentang <b>enam bulan lepas</b>. Awak akan dapat gambaran jelas sama ada ciri-ciri awak berada dalam julat yang wajar mendapat penilaian penuh.',
       f1k: 'Soalan', f1v: '6, atau 18 kalau awak nak gambaran yang lebih penuh',
       f2k: 'Masa', f2v: 'Kira-kira 5 minit',
       f3k: 'Kos', f3v: 'Percuma. Perlu log masuk Google',
@@ -143,10 +144,33 @@
       whoH: 'Siapa yang menulis soalan ini',
       who1: 'Lapan belas soalan dalam semakan kendiri ini ialah <b>Senarai Semak Simptom Skala Laporan Kendiri <span class="adhd-word">ADHD</span> Dewasa (ASRS-v1.1)</b>. Versi Bahasa Melayu di halaman ini ialah terjemahan untuk bacaan; instrumen yang menjadi rujukan, dan yang menentukan skor, ialah teks asal dalam bahasa Inggeris, yang MyADHD tidak menulis dan tidak mengubahnya.',
       who2: 'Senarai semak ini dibangunkan bersama <b>Pertubuhan Kesihatan Sedunia (WHO)</b> dan Kumpulan Kerja <span class="adhd-word">ADHD</span> Dewasa, yang terdiri daripada:',
-      who3: 'Soalan-soalan ini selaras dengan kriteria DSM-IV dan menyentuh bagaimana simptom <span class="adhd-word">ADHD</span> muncul pada orang dewasa. Pemarkahan yang digunakan di sini ialah pemarkahan instrumen itu sendiri: Bahagian A ialah saringan enam soalan, dan sesuatu jawapan dikira apabila ia jatuh dalam julat berlorek soalan itu pada borang bercetak. Bahagian B tidak mempunyai skor langsung — borang itu menyatakan dengan jelas bahawa “tiada jumlah skor atau kebarangkalian diagnosis digunakan” untuk dua belas soalan itu.',
+      who3: 'Soalan-soalan ini selaras dengan kriteria DSM-IV dan menyentuh bagaimana simptom <span class="adhd-word">ADHD</span> muncul pada orang dewasa.',
+      who4: 'Pemarkahan yang digunakan ialah pemarkahan instrumen itu sendiri. Bahagian A ialah saringan enam soalan, dan sesuatu jawapan dikira apabila ia jatuh dalam julat berlorek soalan itu pada borang bercetak.',
+      who5: 'Bahagian B tidak mempunyai skor langsung. Borang itu menyatakan dengan jelas bahawa &ldquo;tiada jumlah skor atau kebarangkalian diagnosis digunakan&rdquo; untuk dua belas soalan itu.',
+      /* The result's own credit line. It stands in for who1/who2 and not2
+         there, which now live on the intro only — the full attribution and
+         the full storage notice are read before anybody answers, not after.
+         The instrument's name is left in English on purpose: it is the
+         title of the instrument, and who1 above already says the English
+         text is the one that scores.
+
+         `anda`, not `awak`, and that is not a slip. This table runs both:
+         the result's own copy speaks in `awak` like the rest of the site,
+         and the attribution and storage lines — who1, not2, the PDPA
+         notice — keep `anda`. This line is the second kind. */
+      rCredit: 'Diskor menggunakan Adult <span class="adhd-word">ADHD</span> Self-Report Scale (ASRS-v1.1), yang dibangunkan bersama <b>Pertubuhan Kesihatan Sedunia (WHO)</b>. Jawapan anda telah disimpan &mdash; <a href="/privacy" target="_blank" rel="noopener">notis privasi</a> menyatakan apa yang disimpan, dan untuk berapa lama.',
+
       notH: 'Apa yang ini bukan',
       not1: '<b>Ini alat saringan, bukan diagnosis.</b> Hanya pakar psikiatri atau ahli psikologi klinikal boleh mendiagnosis <span class="adhd-word">ADHD</span>. Skor yang tinggi ialah sebab untuk membuat temu janji itu, bukan jawapan; skor yang rendah tidak menolak apa-apa.',
-      not2: 'Jawapan anda disimpan, dan inilah maksudnya. Apabila anda selesai, jawapan anda, skor Bahagian A anda dan butiran yang anda berikan &mdash; nama, umur, jantina, dan nombor telefon jika anda memberikannya &mdash; disimpan di bawah akaun Google anda dalam pangkalan data kami di Supabase. Ia untuk tiga perkara sahaja: untuk menghubungi anda tentang sokongan ADHD jika anda memintanya, supaya anda boleh mencari dan memadam rekod anda sendiri, dan, setelah nama dan setiap butiran pengenalan lain dibuang, untuk mengira bagaimana rakyat Malaysia mendapat skor. Kami menyimpannya selama 24 bulan selepas semakan kendiri terakhir anda dan kemudian ia dipadam secara automatik. <a href="/privacy" target="_blank" rel="noopener">Notis privasi</a> menerangkannya sepenuhnya, dalam Bahasa Inggeris dan Bahasa Melayu.',
+      not2: 'Jawapan anda disimpan, dan inilah maksudnya.',
+      nk1: '<b>Apa yang disimpan</b> &mdash; jawapan anda, skor Bahagian A anda, dan butiran yang anda berikan: nama, umur, jantina, dan nombor telefon jika anda memberikannya.',
+      nk2: '<b>Di mana</b> &mdash; di bawah akaun Google anda, dalam pangkalan data kami di Supabase.',
+      nk3: '<b>Untuk apa</b> &mdash; tiga perkara sahaja:',
+      nk3a: 'untuk menghubungi anda tentang sokongan ADHD jika anda memintanya;',
+      nk3b: 'supaya anda boleh mencari dan memadam rekod anda sendiri;',
+      nk3c: 'dan, setelah nama dan setiap butiran pengenalan lain dibuang, untuk mengira bagaimana rakyat Malaysia mendapat skor.',
+      nk4: '<b>Berapa lama</b> &mdash; 24 bulan selepas semakan kendiri terakhir anda, kemudian ia dipadam secara automatik.',
+      not3: '<a href="/privacy" target="_blank" rel="noopener">Notis privasi</a> menerangkannya sepenuhnya, dalam Bahasa Inggeris dan Bahasa Melayu.',
       howOften: 'Berapa kerap',
       back: '← Soalan sebelumnya',
       hint: 'Tekan 1–5 untuk menjawab',
@@ -199,8 +223,10 @@
 
       yKicker: 'Bukan yang ini.',
       yH: 'Yang ini untuk orang dewasa.',
-      yLede: 'ASRS ialah skala laporan kendiri <strong>Dewasa</strong>. Ia ditulis untuk mereka yang berumur 18 tahun ke atas, dan pemarkahannya hanya pernah diuji pada mereka &mdash; jadi angka daripadanya takkan bermakna untuk awak. Ini bukan penolakan. Ini instrumen itu bersikap jujur tentang apa dirinya.',
-      yHelp: 'Kalau tumpuan, keresahan atau nak mula sesuatu terasa berat sekarang, orang yang patut dirujuk ialah doktor atau kaunselor sekolah, yang boleh rujuk awak kepada pihak yang menilai golongan muda. Kalau awak perlu bercakap dengan seseorang hari ini, <strong>Talian Kasih 15999</strong> menjawab 24 jam, percuma, dalam Bahasa Melayu dan Bahasa Inggeris (WhatsApp 019-261 5999).',
+      yLede: 'ASRS ialah skala laporan kendiri <strong>Dewasa</strong>. Ia ditulis untuk mereka yang berumur 18 tahun ke atas, dan pemarkahannya hanya pernah diuji pada mereka.',
+      yLede2: 'Jadi angka daripadanya takkan bermakna untuk awak. Ini bukan penolakan &mdash; ini instrumen itu berlaku jujur tentang apa dirinya.',
+      yHelp: 'Kalau tumpuan, keresahan atau nak mula sesuatu terasa berat sekarang, orang yang patut dirujuk ialah doktor atau kaunselor sekolah. Mereka boleh rujuk awak kepada pihak yang menilai golongan muda.',
+      yHelp2: 'Kalau awak perlu bercakap dengan seseorang hari ini, <strong>Talian Kasih 15999</strong> menjawab 24 jam, percuma, dalam Bahasa Melayu dan Bahasa Inggeris (WhatsApp 019-261 5999).',
       yNothing: 'Takde apa yang awak taip dihantar ke mana-mana, dan takde apa yang disimpan.',
       yHome: 'Kembali ke MyADHD',
 
@@ -270,6 +296,13 @@
     $$('[data-i18n-aria]').forEach(function (el) { el.setAttribute('aria-label', str(el.getAttribute('data-i18n-aria'))); });
     $$('[data-i18n-ph]').forEach(function (el) { el.setAttribute('placeholder', str(el.getAttribute('data-i18n-ph'))); });
     $$('.t-lang button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false'); });
+    /* The PDPA notice is the one thing the switch does not translate: both
+       languages stay on the page, because the Act asks for both. All this
+       moves is which of the two is expanded — see the comment over them in
+       self-check.html. Opening the other by hand is allowed and is not
+       undone until the switch is used again. */
+    var nEn = $('#notice-en'), nMs = $('#notice-ms');
+    if (nEn && nMs) { nEn.open = lang === 'en'; nMs.open = lang === 'ms'; }
     /* whichever screen is up is redrawn in place — the reader keeps
        their place in the questions */
     if (!screens.quiz.hasAttribute('hidden')) render();
@@ -391,6 +424,20 @@
     return n;
   }
 
+  /* One pip per question, the first `filled` of them lit. Rebuilt from
+     scratch each time rather than toggled, because the result screen is
+     also reached by Take it again and a stale pip is a wrong answer. */
+  function paintMeter(el, filled) {
+    if (!el) return;
+    var total = Number(el.getAttribute('data-total')) || 0;
+    el.textContent = '';
+    for (var i = 0; i < total; i++) {
+      var pip = document.createElement('span');
+      pip.className = 'pip' + (i < filled ? ' is-on' : '');
+      el.appendChild(pip);
+    }
+  }
+
   function writeResult() {
     var a = scoreA();
     var consistent = a >= 4;
@@ -404,10 +451,18 @@
        interpolation. */
     $('.r-detail').innerHTML = consistent ? T().detailYes : T().detailNo;
 
+    /* The pips say the same thing as the number beside them. Drawn rather
+       than written because a row of six you can take in at a glance is the
+       difference between reading a result and seeing one — and because the
+       person reading it has just answered eighteen questions. */
+    paintMeter($('.r-meter'), a);
+
     var bWrap = $('.r-partb');
     if (state.withB) {
       bWrap.hidden = false;
-      $('.r-bscore').textContent = scoreB();
+      var b = scoreB();
+      $('.r-bscore').textContent = b;
+      paintMeter($('.r-meter--b'), b);
     } else {
       bWrap.hidden = true;
     }

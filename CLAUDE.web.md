@@ -55,7 +55,15 @@ from this side: a change here must not assume the shell exists, and
   promises said again by someone who speaks Malay, in `awak`.
   `docs/bahasa-melayu-voice.md` is the rules. Keys in `site.ms.js` are hashes of
   the English, so editing English markup silently drops that string back to
-  English — grep the old key before you touch it.
+  English — grep the old key before you touch it, and mint the new one from the
+  exact new markup:
+  `python3 -c "import hashlib,sys;print('i'+hashlib.sha1(sys.stdin.read().strip().encode()).hexdigest()[:7])"`.
+  `self-check.html` is the exception: its keys are hand-named into `test.js`, so
+  editing the English there does not move the key.
+- **A point gets a picture or a short sentence, not a paragraph.** Forty words
+  is a paragraph's ceiling on a site page and every visual must lose information
+  if removed — decoration costs the reader this site is for.
+  `docs/visual-first.md` is the rules, the vocabulary and the checklist.
 - **The eighteen ASRS questions must not be reworded, reordered or trimmed**, and
   Part B is not scored at all. A screening instrument's validity is a property
   of its exact wording. The minimum age of 18 lives in three places that must
@@ -91,6 +99,7 @@ Reach for these rather than guessing; an agent will not infer any of them.
 |---|---|
 | `docs/ui-screens-brief.md` | Every screen and every element on it. A design may restyle anything listed; it may not remove one or invent a new one. |
 | `docs/bahasa-melayu-voice.md` | How the Malay is written, and the failure mode it exists to prevent. |
+| `docs/visual-first.md` | How much a page may ask someone to read, and what a visual has to earn before it ships. |
 | `docs/stripe-setup.md` | Products, webhook, env vars, test cards. Test mode first. |
 | `docs/supabase-setup.md` | Dashboard settings that are in no diff and fail in ways that look like code bugs — including the `pg_cron` retention job and the `myadhd://auth` redirect the iOS shell needs. |
 | `docs/content/*.md` | The user's own copy, verbatim. Do not edit, shorten, translate or improve it. |

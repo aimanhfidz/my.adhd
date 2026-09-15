@@ -269,13 +269,95 @@ h1{
   border:1.5px solid var(--line); border-radius:14px;
   background:var(--wash);
 }
+/* ---------- the figures ----------
+   The same drawing language as the rest of the site (site.css `.cfig`),
+   restated here because this page deliberately does not load site.css —
+   see the head of this file. Same class names on purpose: a figure moved
+   from a site page to this one keeps working, and one drawn here reads as
+   the same hand.
+
+   Every figure on this page carries a fact the prose beside it also
+   states, which is the rule in docs/visual-first.md: take it out and the
+   page loses something. Nothing here is decoration — a screener is the
+   last place to spend a reader's attention on a picture that means
+   nothing. */
+.t-fig{max-width:300px; margin:20px 0 22px}
+.cfig{display:block; width:100%; height:auto; overflow:visible}
+.cfig .w{fill:none; stroke:var(--accent); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.cfig .q{fill:none; stroke:var(--line-strong); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+.cfig .h{fill:none; stroke:var(--accent); stroke-width:3.2; stroke-linecap:round}
+.cfig .d{fill:var(--accent)}
+/* The one dashed shape on the page: the thing this test does NOT give
+   you. Drawn as an outline nobody has filled in, because that is what it
+   is. */
+.cfig .dash{fill:none; stroke:var(--line-strong); stroke-width:2; stroke-dasharray:7 6}
+
+/* ---------- what is kept ----------
+   The storage paragraph used to be one 121-word block. It is four facts —
+   what, where, what for, how long — so it is set as four, each led by the
+   fact it answers. */
+.t-keeps{list-style:none; margin:14px 0 0; padding:0}
+.t-keeps li{
+  position:relative; padding-left:18px; margin-bottom:10px;
+  font-size:15px; line-height:1.6; color:var(--muted);
+}
+.t-keeps li::before{
+  content:""; position:absolute; left:0; top:.62em;
+  width:7px; height:7px; border-radius:2px; background:var(--line-strong);
+}
+.t-keeps li b{color:var(--ink); font-weight:600}
+/* The three purposes, under the label that introduces them. A nested list
+   rather than three clauses in one 44-word sentence — and the label is a
+   <span> with its own key, because applyLang() writes innerHTML and a key
+   on the parent <li> would wipe the children out. */
+.t-keeps-sub{margin:8px 0 0 2px}
+.t-keeps-sub li{margin-bottom:6px; font-size:14.5px}
+.t-keeps-sub li::before{width:5px; height:5px; border-radius:50%; top:.68em}
+
+/* ---------- the notice, in parts ----------
+   A block inside the notice paragraph. The PDPA text is not re-worded —
+   it is the same sentences with air between the five things they say, so
+   somebody who opens the disclosure meets five short blocks instead of a
+   two-hundred-word wall. */
+.c-para{display:block}
+.c-para + .c-para{margin-top:11px}
+
 .c-notice{
   font-size:13.5px; line-height:1.65; color:var(--muted);
   margin-bottom:14px;
 }
 .c-notice strong{color:var(--ink)}
-.c-notice + .c-notice{
-  padding-top:14px; border-top:1px solid var(--line);
+.c-notice:last-child{margin-bottom:0}
+
+/* ---------- the notice, in two languages ----------
+   Both are on the page because the PDPA asks for both. Only one is open:
+   the open one hides its own summary and reads as plain prose, and the
+   closed one is a single line offering itself in its own language. That
+   is why there is no disclosure triangle above the notice you are already
+   reading — there is nothing there to press. */
+.c-notice-wrap + .c-notice-wrap{
+  margin-top:14px; padding-top:14px; border-top:1px solid var(--line);
+}
+.c-notice-wrap[open] > .c-notice-alt{display:none}
+
+.c-notice-alt{
+  display:inline-flex; align-items:center; gap:7px;
+  font-size:13px; font-weight:600; color:var(--accent);
+  cursor:pointer; list-style:none; padding:2px 0;
+}
+.c-notice-alt::-webkit-details-marker{display:none}
+/* Its own caret, because the native one sits outside the text on Safari
+   and inside it on Chrome, and this row has to line up with the prose. */
+.c-notice-alt::before{
+  content:''; width:0; height:0;
+  border-left:5px solid currentColor;
+  border-top:4px solid transparent; border-bottom:4px solid transparent;
+  transition:transform .16s var(--ease);
+}
+.c-notice-alt:hover{text-decoration:underline}
+.c-notice-alt:focus-visible{
+  outline:none; border-radius:6px;
+  box-shadow:0 0 0 3px var(--focus);
 }
 .check{
   display:flex; align-items:flex-start; gap:13px;
@@ -375,11 +457,72 @@ h1{
   border:1px solid var(--line); border-radius:12px;
   font-size:15px; line-height:1.6; color:var(--muted);
 }
-.r-next{list-style:none; margin-top:clamp(26px,4vh,40px); border-top:1px solid var(--line)}
-.r-next li{
-  padding:15px 0; border-bottom:1px solid var(--line);
+/* ---------- the meter ----------
+   Six pips for Part A, twelve for Part B. The same fact as the number
+   beside them, in a form you can read without reading — which is worth
+   something to somebody who has just answered eighteen questions. Orange
+   is the signal colour here exactly as it is everywhere else: a lit pip is
+   an answer in the band, and the unlit ones are the rest of the scale. */
+.r-meter{
+  display:flex; gap:6px; flex-wrap:wrap;
+  margin-top:clamp(14px,2vh,20px);
+}
+.pip{
+  width:34px; height:8px; border-radius:999px;
+  background:var(--line-strong);
+}
+.pip.is-on{background:var(--orange)}
+.r-meter--b{margin-top:14px}
+.r-meter--b .pip{width:18px; height:6px}
+
+/* ---------- what this is not, on the result ----------
+   One line where there used to be two sections. It keeps its own edge so
+   it does not read as another paragraph of the explanation above it. */
+.r-caution{
+  margin-top:clamp(24px,4vh,34px);
+  padding:16px 18px; border-left:3px solid var(--orange);
+  background:var(--wash); border-radius:0 12px 12px 0;
   font-size:15px; line-height:1.6; color:var(--ink-soft);
 }
+.r-caution b{color:var(--ink)}
+
+/* ---------- the next three things ----------
+   Numbered, because they are in an order: take it to someone, bring your
+   own notes, and the day still has to get done. */
+.r-next{
+  list-style:none; counter-reset:step;
+  margin-top:clamp(26px,4vh,40px);
+  display:grid; gap:10px;
+}
+/* Padding and an absolute number, NOT grid or flex. A grid makes every
+   child its own cell, and the third of these rows ends in a link — which
+   landed in a cell of its own, on a line of its own, with the full stop
+   after it stranded in a third. Inline content has to stay inline. */
+.r-next li{
+  counter-increment:step; position:relative;
+  padding:15px 16px 15px 52px;
+  border:1px solid var(--line); border-radius:12px;
+  font-size:15px; line-height:1.6; color:var(--ink-soft);
+}
+.r-next li::before{
+  content:counter(step);
+  position:absolute; left:16px; top:15px;
+  font-family:var(--mono); font-size:12px; color:var(--faint);
+  width:22px; height:22px;
+  display:grid; place-items:center;
+  border:1px solid var(--line-strong); border-radius:999px;
+}
+
+/* ---------- the credit ----------
+   Small, last, and not a wall. The full attribution and the full storage
+   notice are on the intro, where they are read before anything is
+   answered rather than after. */
+.r-credit{
+  margin-top:clamp(26px,4vh,36px);
+  padding-top:16px; border-top:1px solid var(--line);
+  font-size:13px; line-height:1.65; color:var(--faint);
+}
+.r-credit a{color:var(--muted)}
 
 /* ---------- the small print ----------
    Two blocks that are not decoration and must not be treated as such: who
