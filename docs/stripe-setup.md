@@ -162,6 +162,20 @@ Any future expiry, any CVC, any postcode.
 
 ## What is not built yet
 
+**There is a door now, and it is still not a gate.** Settings carries an
+Upgrade to Pro card with a plans screen behind it (`#screen-plans`), wired to
+`billing.checkout()`. What it does not do is lock anything — the copy there
+says a plan pays for what the app costs to run, because that is the only
+honest thing to say while `is_entitled()` has no callers.
+
+Both are behind `window.MYADHD_BILLING_ENABLED` in `config.js`: leave it empty
+and neither renders. That is the switch the iOS shell needs for 3.1.1, and it
+is the same one the donation link already uses.
+
+`POST /api/checkout` also takes an optional `from` now. `'app'` returns to
+`/app?paid=1`, which polls for the webhook the way `/billing` does; anything
+else keeps the `/billing` return described above, so nothing here changed.
+
 **Nothing is gated.** The rail is complete — checkout, webhook,
 entitlement, portal — and `window.billing.entitled()` returns a truthful
 answer, but no feature anywhere reads it yet. The app behaves exactly as

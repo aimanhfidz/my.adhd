@@ -43,6 +43,16 @@ export default async function handler(req, res) {
   if (!userId) return res.status(401).json({ error: 'sign in first' });
 
   const plan = String((req.body && req.body.plan) || '').toLowerCase();
+
+  /* Where to land afterwards. A name, not a URL — the same argument the
+     plan makes one line above: a caller-supplied return address is an
+     open redirect waiting to happen, and there are only two places that
+     ever want one. Anything unrecognised gets /billing, which is what
+     every existing caller already got. */
+  const from = String((req.body && req.body.from) || '').toLowerCase();
+  const back = from === 'app'
+    ? { ok: '/app?paid=1', no: '/app?paid=0' }
+    : { ok: '/billing?ok=1&session_id={CHECKOUT_SESSION_ID}', no: '/billing?cancelled=1' };
   if (!PLANS[plan]) return res.status(400).json({ error: 'unknown plan' });
   if (!planConfigured(plan)) {
     console.error(`[checkout] plan "${plan}" has no price id in env`);
@@ -73,8 +83,8 @@ export default async function handler(req, res) {
     const body = {
       mode: spec.mode,
       line_items: [{ price: spec.price(), quantity: 1 }],
-      success_url: `${base}/billing?ok=1&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${base}/billing?cancelled=1`,
+      success_url: `${base}${back.ok}`,
+      cancel_url: `${base}${back.no}`,
       /* Stamped on the session AND on the object the webhook will see, so
          whichever event arrives first can identify the account without a
          lookup. */

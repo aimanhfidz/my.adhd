@@ -98,15 +98,21 @@
     return state;
   }
 
-  /** Send the browser to Stripe. Nothing is charged in this app. */
-  async function checkout(plan) {
+  /** Send the browser to Stripe. Nothing is charged in this app.
+
+      `from` names where Stripe should return to — 'app' comes back to
+      /app, anything else to /billing, which is what every caller got
+      before the app had a plans screen of its own. A name rather than a
+      URL, because the server will not take a return address from the
+      browser. */
+  async function checkout(plan, from) {
     var access = await token();
     if (!access) { if (window.auth) window.auth.signIn(); return; }
 
     var res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + access },
-      body: JSON.stringify({ plan: plan }),
+      body: JSON.stringify({ plan: plan, from: from || '' }),
     });
     var data = await res.json().catch(function () { return null; });
     if (!res.ok || !data || !data.url) {
