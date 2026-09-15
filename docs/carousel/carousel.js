@@ -30,6 +30,18 @@
   const pad = n => String(n).padStart(2, '0');
   const icon = id => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#${id}"/></svg>`;
 
+  // The mark is inlined rather than <use>d: WebKit does not carry the
+  // document's class styles into a <use> clone, and the mark came out black.
+  const MARK = `<svg class="mark" viewBox="14 14 72 72" aria-hidden="true">
+  <g style="fill:var(--orange)">
+    <rect x="46.5" y="18" width="7" height="64"></rect>
+    <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"></rect>
+    <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"></rect>
+    <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"></rect>
+  </g>
+  <path d="M64.5 64.5l7 7" style="stroke:var(--violet)" stroke-width="7" stroke-linecap="round" fill="none"></path>
+</svg>`;
+
   const total = post.slides.length;
   const label = post.label || 'myadhd.my';
   const org = post.footer || 'MYADHD';
@@ -55,7 +67,7 @@
     return `<section class="slide is-${esc(s.type)}" data-index="${i + 1}" data-blob="${(i % 3) + 1}">
       <header class="head">
         <span class="lockup">
-          <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+          ${MARK}
           <span class="wordmark">my<span class="accent">.adhd</span></span>
         </span>
         <span class="label">${esc(label)}</span>

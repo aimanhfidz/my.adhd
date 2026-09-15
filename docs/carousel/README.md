@@ -26,6 +26,12 @@ Per slide: `kicker` (cover, keep the trailing full stop), `title`, `sub`
 (cover), `body` (point/outro), `cta.label` (outro, optional),
 `react: false` (outro, hides the icon row).
 
+A `ms` post is written in Malay, not translated into it: `awak` and never
+`anda`, sentences that read as speech, and nothing that could open a press
+release. The rules are in `../bahasa-melayu-voice.md` — the carousel takes
+the louder, social end of them. An `en` and an `ms` post of the same idea
+are two posts, and their slides will not match line for line.
+
 In a `title`, `[[word]]` turns violet and `\n` forces a line break. Point
 numbers and the `01 / 07` counter are computed — never type them. Titles
 fit best at three lines or fewer; body copy at three lines.

@@ -1,6 +1,6 @@
 """Turn a post file into a Claude Design canvas: one artboard per slide.
 
-    python3 docs/carousel/build_canvas.py posts/example-en.json
+    python3 docs/carousel/build_canvas.py posts/example-en.json [posts/other.json ...]
 
 Writes docs/carousel/out/canvas/<slug>/{Main,Point01…,Outro}.dc.html and a
 canvas.json, then seeds the canvas page with the design helper if the
@@ -29,14 +29,14 @@ W, H, GAP = 1080, 1350, 80
 FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
          'family=Baloo+2:wght@400..800&family=DM+Mono&family=DM+Sans:wght@100..900&display=swap">')
 
-MARK = '''<svg viewBox="0 0 100 100" aria-hidden="true">
-  <g class="lg-star">
+MARK = '''<svg class="mark" viewBox="14 14 72 72" aria-hidden="true">
+  <g style="fill:var(--orange)">
     <rect x="46.5" y="18" width="7" height="64"></rect>
     <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"></rect>
     <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"></rect>
     <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"></rect>
   </g>
-  <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"></path>
+  <path d="M64.5 64.5l7 7" style="stroke:var(--violet)" stroke-width="7" stroke-linecap="round" fill="none"></path>
 </svg>'''
 
 ICONS = {
@@ -123,32 +123,50 @@ def artboard(post, s, i, total, point_no):
 '''
 
 
-def main(path):
-    post = json.loads(pathlib.Path(path).read_text())
-    slug = post.get('slug') or pathlib.Path(path).stem
+def main(paths):
+    """One post → one page of artboards. Several posts → one canvas with a
+    page per post; the first post's cover is Main (the entry artboard) and
+    later decks get a short prefix so every artboard stem stays unique."""
+    posts = [json.loads(pathlib.Path(p).read_text()) for p in paths]
+    slug = posts[0].get('slug') or pathlib.Path(paths[0]).stem
+    if len(posts) > 1:
+        slug = slug.rsplit('-', 1)[0] + '-all'
     out = HERE / 'out' / 'canvas' / slug
     out.mkdir(parents=True, exist_ok=True)
     for old in out.glob('*.dc.html'):
         old.unlink()
 
-    slides = post['slides']
-    total = len(slides)
-    names, boards, point_no = [], [], 0
-    for i, s in enumerate(slides):
-        if s['type'] == 'cover':
-            name = 'Main'
-        elif s['type'] == 'point':
-            point_no += 1
-            name = f'Point{point_no:02d}'
-        else:
-            name = 'Outro'
-        (out / f'{name}.dc.html').write_text(artboard(post, s, i, total, point_no))
-        names.append(name)
-        boards.append({'file': f'{name}.dc.html', 'title': f'{i + 1:02d} {s["type"]}',
-                       'x': i * (W + GAP), 'y': 0, 'w': W, 'h': H})
-    (out / 'canvas.json').write_text(json.dumps(
-        {'artboards': boards, 'launch': {'view': 'canvas'}}, indent=2))
-    print(f'{len(names)} artboards → {out}')
+    names, boards, pages = [], [], []
+    for pi, post in enumerate(posts):
+        pslug = post.get('slug') or f'post{pi + 1}'
+        prefix = '' if pi == 0 else re.sub(r'[^A-Za-z0-9]', '', post.get('lang', f'p{pi}')).upper()
+        page_id = re.sub(r'[^A-Za-z0-9_-]', '-', pslug)
+        pages.append({'id': page_id, 'name': pslug})
+        slides = post['slides']
+        total = len(slides)
+        point_no = 0
+        for i, s in enumerate(slides):
+            if s['type'] == 'cover':
+                name = 'Main'
+            elif s['type'] == 'point':
+                point_no += 1
+                name = f'Point{point_no:02d}'
+            else:
+                name = 'Outro'
+            name = prefix + name
+            (out / f'{name}.dc.html').write_text(artboard(post, s, i, total, point_no))
+            names.append(name)
+            boards.append({'file': f'{name}.dc.html', 'title': f'{i + 1:02d} {s["type"]}',
+                           'x': i * (W + GAP), 'y': 0, 'w': W, 'h': H, 'page': page_id})
+    manifest = {'artboards': boards, 'launch': {'view': 'canvas', 'page': pages[0]['id']}}
+    if len(pages) > 1:
+        manifest['pages'] = pages
+    else:
+        for b in boards:
+            b.pop('page')
+        manifest['launch'] = {'view': 'canvas'}
+    (out / 'canvas.json').write_text(json.dumps(manifest, indent=2))
+    print(f'{len(names)} artboards, {len(pages)} page(s) → {out}')
 
     skill = os.environ.get('DESIGN_SKILL_DIR')
     if not skill:
@@ -163,4 +181,4 @@ def main(path):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1] if len(sys.argv) > 1 else HERE / 'posts' / 'example-en.json')
+    main(sys.argv[1:] or [HERE / 'posts' / 'example-en.json'])

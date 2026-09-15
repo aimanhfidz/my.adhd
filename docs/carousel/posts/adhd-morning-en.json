@@ -1,0 +1,45 @@
+{
+  "slug": "adhd-morning-en",
+  "lang": "en",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "If you know, you know.",
+      "title": "The [[ADHD]]\nmorning,\nin five [[scenes]].",
+      "sub": "Swipe if any of these are you."
+    },
+    {
+      "type": "point",
+      "title": "Awake, but\nnot [[up]]",
+      "body": "You've been awake for forty minutes. You've planned the whole day in your head. You have not moved."
+    },
+    {
+      "type": "point",
+      "title": "Coffee first.\nThen [[coffee]].",
+      "body": "You make it, put it down, and find it cold at eleven. Making it was the task. Drinking it was a different task."
+    },
+    {
+      "type": "point",
+      "title": "Twelve tabs,\nzero [[starts]]",
+      "body": "Everything feels urgent, so nothing gets picked. You open all of it and do none of it."
+    },
+    {
+      "type": "point",
+      "title": "Getting dressed\nis a [[project]]",
+      "body": "Find the shirt. Get distracted by the drawer. Remember the shirt. Discover the shirt is in the wash."
+    },
+    {
+      "type": "point",
+      "title": "It's 10:40 and\nyou're [[tired]]",
+      "body": "Not from doing things. From deciding things. Every choice cost something, and none of them were the day."
+    },
+    {
+      "type": "outro",
+      "title": "Which one\nis [[you]]?",
+      "body": "Tell us in the comments. Then dump the rest into my.adhd and get back one thing to start with."
+    }
+  ]
+}

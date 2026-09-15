@@ -1,0 +1,45 @@
+{
+  "slug": "adhd-morning-ms",
+  "lang": "ms",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Kalau faham, faham.",
+      "title": "Pagi orang\n[[ADHD]],\ndalam lima [[babak]].",
+      "sub": "Leret kalau ada yang macam awak."
+    },
+    {
+      "type": "point",
+      "title": "Dah jaga,\ntapi belum [[bangun]]",
+      "body": "Empat puluh minit dah jaga. Satu hari dah siap dirancang dalam kepala. Badan tak gerak lagi."
+    },
+    {
+      "type": "point",
+      "title": "Kopi dulu.\nLepas tu [[kopi]].",
+      "body": "Buat, letak, jumpa balik dah sejuk pukul sebelas. Buat kopi tu satu kerja. Minum kopi kerja lain."
+    },
+    {
+      "type": "point",
+      "title": "Dua belas tab,\nsifar [[mula]]",
+      "body": "Semua rasa penting, jadi tak satu pun dipilih. Buka semua, buat tak satu pun."
+    },
+    {
+      "type": "point",
+      "title": "Nak pakai baju\npun satu [[projek]]",
+      "body": "Cari baju. Terleka dengan laci. Teringat baju. Rupanya baju tu dalam basuhan."
+    },
+    {
+      "type": "point",
+      "title": "Pukul 10:40,\ndah [[penat]]",
+      "body": "Bukan sebab buat kerja. Sebab buat keputusan. Tenaga habis kat pilihan, bukan kat hari awak."
+    },
+    {
+      "type": "outro",
+      "title": "Yang mana\n[[awak]]?",
+      "body": "Bagitahu kat komen. Lepas tu buang semuanya dalam my.adhd, dan dapat balik satu benda untuk mula."
+    }
+  ]
+}

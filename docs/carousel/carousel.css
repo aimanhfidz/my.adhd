@@ -125,9 +125,7 @@ body[data-render]{gap:0; padding:0; background:var(--surface)}
   display:flex; align-items:center; justify-content:space-between;
 }
 .lockup{display:flex; align-items:center; gap:12px; color:var(--ink)}
-.lockup svg{width:44px; height:44px; display:block; flex:none}
-.lockup .lg-star{fill:var(--orange)}
-.lockup .lg-pill{stroke:var(--violet)}
+.lockup .mark{width:40px; height:40px; display:block; flex:none}
 .wordmark{
   font-family:var(--display); font-weight:800; font-size:44px; line-height:1;
   letter-spacing:-.02em; color:var(--ink); transform:translateY(-2px);
