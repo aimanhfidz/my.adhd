@@ -1,0 +1,1760 @@
+<meta charset="utf-8">
+<title>my.adhd Brand Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- The three faces. Production self-hosts these as .ttf from /fonts —
+     see theme.css. This page reads them from Google Fonts so it stays a
+     single portable file; the fallback stacks below match the repo's. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=DM+Mono:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,100..900&display=swap">
+
+<style>
+/* ============================================================
+   my.adhd — brand book
+   Every value on this page is lifted from the repo it documents:
+   theme.css (palette, faces, radii), site.css (scale, spine, buttons),
+   favicon.svg + icons/ (the mark). Nothing here is invented; anything
+   the repo does not specify is marked "needs supplying".
+   ============================================================ */
+
+:root{
+  color-scheme:light;
+
+  /* ---- brand constants: these do not move between themes ---- */
+  --blue:#4737FF;
+  --blue-deep:#3529BF;
+  --blue-pale:#ACA5FF;
+  --pale:#D1CDFF;
+  --navy:#202030;
+  --black:#101018;
+  --stone:#5E5E6A;
+  --orange:#F75C03;
+  --violet:#7B3FE4;
+  --violet-deep:#3A1C86;
+  --violet-pale:#DCC9FF;
+  --danger:#D92D20;
+  --tile:#2A2D33;
+
+  /* ---- themed surfaces + ink ---- */
+  --surface:#FFFFFF;
+  --wash:#F4F3FE;
+  --wash-2:#E9E7FD;
+  --ink:#101018;
+  --ink-soft:#202030;
+  --muted:#5E5E6A;
+  --faint:#6B6B7A;
+  --line:#E4E2F5;
+  --line-strong:#CFCBE9;
+  --accent:#4737FF;
+  --on-accent:#FFFFFF;
+  --focus:rgba(71,55,255,.18);
+  --danger-ink:#D92D20;
+  --grad:linear-gradient(103deg,#101018 0%,#3529BF 38%,#4737FF 68%,#ACA5FF 100%);
+
+  /* wave field ramps — waves.js reads these six by name */
+  --wave-ink-ground:#101018;
+  --wave-ink-mid:#3529BF;
+  --wave-ink-hi:#4737FF;
+  --wave-paper-ground:#FFFFFF;
+  --wave-paper-mid:#F0EAFB;
+  --wave-paper-hi:#D8C6F2;
+
+  /* ---- shape ---- */
+  --radius:14px;
+  --radius-lg:22px;
+  --radius-card:34px;
+
+  /* ---- faces ---- */
+  --sans:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --display:"Baloo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --ease:cubic-bezier(.22,.9,.28,1);
+
+  /* ---- this page's own measure ---- */
+  --rail:248px;
+  --gutter:clamp(20px,4.4vw,64px);
+  --band:clamp(44px,7vh,92px);
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --surface:#101018;
+    --wash:#1A1A26;
+    --wash-2:#232333;
+    --ink:#F3F2FB;
+    --ink-soft:#D6D4EA;
+    --muted:#9A98AC;
+    --faint:#8B8AA0;
+    --line:#262636;
+    --line-strong:#3B3A52;
+    --accent:#8B7DFF;
+    --on-accent:#101018;
+    --focus:rgba(139,125,255,.26);
+    --danger-ink:#FF8A7E;
+    --grad:linear-gradient(103deg,#2A1FA6 0%,#3F30E8 38%,#6558FF 68%,#ACA5FF 100%);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --surface:#101018;
+  --wash:#1A1A26;
+  --wash-2:#232333;
+  --ink:#F3F2FB;
+  --ink-soft:#D6D4EA;
+  --muted:#9A98AC;
+  --faint:#8B8AA0;
+  --line:#262636;
+  --line-strong:#3B3A52;
+  --accent:#8B7DFF;
+  --on-accent:#101018;
+  --focus:rgba(139,125,255,.26);
+  --danger-ink:#FF8A7E;
+  --grad:linear-gradient(103deg,#2A1FA6 0%,#3F30E8 38%,#6558FF 68%,#ACA5FF 100%);
+}
+
+*{box-sizing:border-box; margin:0; padding:0}
+html{scroll-behavior:smooth; scroll-padding-top:24px}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation-duration:.001ms !important; transition-duration:.001ms !important}
+}
+
+body{
+  background:var(--surface);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-weight:400;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ============ the rail ============
+   The site has one vertical rule down the left of every page. Here the
+   rule doubles as the navigation: the contents sit against it. */
+.rail{
+  position:fixed; inset:0 auto 0 0; width:var(--rail); z-index:20;
+  display:flex; flex-direction:column; gap:22px;
+  padding:28px 20px 24px var(--gutter);
+  border-right:1px solid var(--line);
+  background:var(--surface);
+  overflow-y:auto;
+}
+.rail-top{display:flex; align-items:center; justify-content:space-between; gap:12px}
+.rail nav{display:flex; flex-direction:column; gap:2px}
+.rail nav a{
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em;
+  color:var(--faint); text-decoration:none;
+  padding:7px 10px 7px 0; border-left:2px solid transparent; padding-left:12px;
+  transition:color .18s var(--ease), border-color .18s var(--ease);
+}
+.rail nav a:hover{color:var(--ink)}
+.rail nav a.is-current{color:var(--ink); border-left-color:var(--orange)}
+.rail nav a:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+.rail-foot{
+  margin-top:auto; font-family:var(--mono); font-weight:300; font-size:11px;
+  line-height:1.7; color:var(--faint);
+}
+.rail-foot a{color:var(--faint)}
+
+/* ============ the page ============ */
+.page{
+  margin-left:var(--rail);
+  padding:0 var(--gutter) var(--band);
+  max-width:1180px;
+}
+section{padding-block:var(--band); scroll-margin-top:24px}
+section + section{border-top:1px solid var(--line)}
+
+/* ============ type ============ */
+.eyebrow{
+  font-family:var(--mono); font-size:11px; font-weight:400;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--faint);
+  display:block; margin-bottom:18px;
+}
+h1{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(38px,7vw,84px); line-height:1.04; letter-spacing:-.02em;
+  text-wrap:balance;
+}
+h2{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(28px,3.6vw,48px); line-height:1.12; letter-spacing:-.02em;
+  text-wrap:balance;
+}
+h3{
+  font-family:var(--sans); font-weight:500;
+  font-size:clamp(18px,2.2vw,23px); line-height:1.35; letter-spacing:-.01em;
+}
+h4{
+  font-family:var(--mono); font-weight:400; font-size:11px;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--faint);
+}
+p{max-width:64ch}
+.lede{
+  font-size:clamp(17px,2vw,22px); line-height:1.55; color:var(--ink-soft);
+  max-width:56ch;
+}
+.body{font-size:clamp(15.5px,1.8vw,17.5px); line-height:1.65; color:var(--ink-soft)}
+.note{
+  font-family:var(--mono); font-weight:300; font-size:12.5px; line-height:1.75;
+  color:var(--faint); max-width:70ch;
+}
+.note strong{font-weight:400; color:var(--muted)}
+code, .kbd{font-family:var(--mono); font-size:.92em; color:var(--muted)}
+
+.stack{display:flex; flex-direction:column; gap:16px}
+.stack-lg{display:flex; flex-direction:column; gap:clamp(28px,4vh,48px)}
+.head{display:flex; flex-direction:column; gap:16px; margin-bottom:clamp(28px,4vh,44px)}
+
+/* ============ the lockup ============ */
+.logo{display:block; flex:none}
+.lg-star{fill:var(--orange)}
+.lg-pill{stroke:var(--violet)}
+.wordmark{
+  font-family:var(--display); font-weight:700; letter-spacing:-.03em;
+  color:var(--ink); line-height:1;
+}
+.wordmark .accent{color:var(--violet)}
+.brand-lockup{display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit}
+
+/* ============ the theme toggle — the site's own control ============
+   Orange ring by day, accent ring by night. This is the one place other
+   than a button that is allowed to borrow orange, and only for the ring. */
+.theme-toggle{
+  --ring:var(--orange); --ring-glow:rgba(247,92,3,.22);
+  flex:none; width:34px; height:34px; display:grid; place-items:center;
+  background:none; border:1.5px solid var(--ring); border-radius:999px;
+  color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+:root[data-theme="dark"] .theme-toggle{--ring:var(--accent); --ring-glow:var(--focus)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .theme-toggle{--ring:var(--accent); --ring-glow:var(--focus)}
+}
+.theme-toggle:hover{color:var(--ring); border-color:var(--ring); background:var(--wash)}
+.theme-toggle:focus-visible{outline:none; border-color:var(--ring); box-shadow:0 0 0 4px var(--ring-glow)}
+.theme-toggle svg{width:17px; height:17px; display:block}
+.theme-toggle .t-moon{display:none}
+:root[data-theme="dark"] .theme-toggle .t-moon{display:block}
+:root[data-theme="dark"] .theme-toggle .t-sun{display:none}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .theme-toggle .t-moon{display:block}
+  :root:not([data-theme="light"]) .theme-toggle .t-sun{display:none}
+}
+
+/* ============ the opener ============ */
+.opener{position:relative; padding-top:clamp(56px,9vh,110px)}
+/* The text sits over the field, so it is lifted — but the field itself is
+   a child too, and `.opener > *` would out-specify its own `absolute` and
+   drop 420px of canvas into the flow. Exclude it by name. */
+.opener > *:not(.opener-field){position:relative; z-index:1}
+/* The field is the page's ground, not a picture on it: it bleeds past both
+   gutters and off the top, and fades out rather than stopping at an edge. */
+.opener > .opener-field{
+  position:absolute; inset:-260px -80px auto -80px; height:min(76vh,660px);
+  z-index:0; overflow:hidden; pointer-events:none;
+}
+.opener-field canvas{width:100%; height:100%; display:block}
+.opener-field::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg,transparent 58%,var(--surface) 100%);
+}
+.opener-meta{
+  display:flex; flex-wrap:wrap; gap:10px 28px; margin-top:34px;
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em; color:var(--faint);
+}
+
+/* ============ principles ============ */
+.principles{display:grid; gap:1px; background:var(--line); border-block:1px solid var(--line)}
+.principle{
+  background:var(--surface); padding:26px 0 28px;
+  display:grid; grid-template-columns:2.2rem 1fr; gap:0 20px; align-items:start;
+}
+.principle .p-mark{
+  font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--faint);
+  padding-top:.45em;
+}
+.principle h3{margin-bottom:8px}
+.principle p{color:var(--muted); font-size:15.5px; line-height:1.6; max-width:58ch}
+
+/* ============ generic specimen frame ============ */
+.frame{
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:var(--wash); padding:clamp(20px,3vw,34px);
+  display:flex; flex-direction:column; gap:18px;
+}
+.frame.on-paper{background:#FFFFFF; border-color:#E4E2F5}
+.frame.on-night{background:#101018; border-color:#262636}
+.frame.on-night .wordmark{color:#F3F2FB}
+.frame.plain{background:var(--surface)}
+.frame-label{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--faint);
+}
+.frame.on-paper .frame-label{color:#6B6B7A}
+.frame.on-night .frame-label{color:#8B8AA0}
+.frame-body{display:flex; align-items:center; justify-content:center; min-height:120px; flex-wrap:wrap; gap:24px}
+
+.grid-2{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px}
+.grid-3{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:20px}
+
+/* ============ logo construction ============ */
+.construct{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:24px; align-items:start;
+}
+.construct svg{width:100%; height:auto; max-width:250px; display:block; margin-inline:auto}
+.c-grid line{stroke:var(--line-strong); stroke-width:.5}
+.c-guide{stroke:var(--accent); stroke-width:.8; stroke-dasharray:3 3; fill:none}
+.c-fill{fill:var(--accent); opacity:.1}
+.c-tick{font-family:var(--mono); font-size:5px; fill:var(--faint)}
+
+/* clear space diagram */
+.clearspace{position:relative; display:inline-flex; padding:18px; background:var(--wash-2); border-radius:8px}
+:root[data-theme="dark"] .clearspace{background:var(--wash-2)}
+.clearspace .cs-inner{display:flex; align-items:center; gap:10px; background:var(--surface); padding:10px}
+
+/* ============ misuse ============ */
+.misuse{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:20px}
+.mis{
+  border:1px solid var(--line); border-radius:var(--radius);
+  overflow:hidden; display:flex; flex-direction:column;
+}
+.mis-vis{
+  background:var(--wash); min-height:104px;
+  display:grid; place-items:center; padding:18px; border-bottom:1px solid var(--line);
+}
+.mis-say{padding:14px 16px 16px; display:flex; gap:10px; align-items:flex-start}
+.mis-x{
+  flex:none; width:17px; height:17px; border-radius:999px; margin-top:1px;
+  display:grid; place-items:center;
+  background:var(--danger); color:#FFFFFF; font-size:11px; line-height:1;
+}
+.mis-say p{font-size:13.5px; line-height:1.5; color:var(--muted); max-width:none}
+
+/* ============ colour ============ */
+.swatches{display:grid; grid-template-columns:repeat(auto-fill,minmax(228px,1fr)); gap:18px}
+.swatch{
+  border:1px solid var(--line); border-radius:var(--radius);
+  overflow:hidden; display:flex; flex-direction:column; background:var(--surface);
+}
+.sw-chip{height:92px; position:relative}
+.sw-chip.is-grad{background:var(--grad)}
+.sw-meta{padding:14px 15px 8px; display:flex; flex-direction:column; gap:3px}
+.sw-name{font-size:14.5px; font-weight:500; color:var(--ink)}
+.sw-role{font-family:var(--mono); font-weight:300; font-size:11.5px; line-height:1.5; color:var(--faint)}
+.sw-vals{display:flex; flex-direction:column; gap:1px; padding:8px 9px 9px; margin-top:auto}
+.sw-val{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  width:100%; text-align:left; cursor:pointer;
+  font-family:var(--mono); font-size:11.5px; color:var(--muted);
+  background:none; border:0; border-radius:7px; padding:6px 7px;
+  transition:background .15s var(--ease), color .15s var(--ease);
+}
+.sw-val:hover{background:var(--wash); color:var(--ink)}
+.sw-val:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+.sw-val .k{font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); flex:none}
+.sw-val .v{font-variant-numeric:tabular-nums}
+.sw-val.copied .v{color:var(--accent)}
+.sw-val.copied .v::after{content:" copied"; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase}
+
+.contrast{
+  width:100%; border-collapse:collapse; font-size:14px;
+}
+.contrast th, .contrast td{
+  text-align:left; padding:11px 14px 11px 0; border-bottom:1px solid var(--line);
+  vertical-align:middle;
+}
+.contrast th{
+  font-family:var(--mono); font-weight:400; font-size:10.5px;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--faint);
+}
+.contrast td{color:var(--ink-soft)}
+.contrast .ratio{font-family:var(--mono); font-variant-numeric:tabular-nums; color:var(--ink)}
+.pass{
+  font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  padding:3px 8px; border-radius:999px; border:1px solid var(--line-strong); color:var(--muted);
+  white-space:nowrap;
+}
+.pass.aa{border-color:var(--accent); color:var(--accent)}
+.scroll-x{overflow-x:auto; -webkit-overflow-scrolling:touch}
+
+/* ============ typography specimens ============ */
+.face{
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:clamp(20px,3vw,30px); display:flex; flex-direction:column; gap:16px;
+}
+.face-sample{line-height:1; color:var(--ink); overflow:hidden}
+.face-sample.f-display{font-family:var(--display); font-weight:600; font-size:clamp(46px,9vw,86px); letter-spacing:-.02em}
+.face-sample.f-sans{font-family:var(--sans); font-weight:400; font-size:clamp(46px,9vw,86px); letter-spacing:-.02em}
+.face-sample.f-mono{font-family:var(--mono); font-weight:400; font-size:clamp(34px,6.4vw,62px)}
+.face-head{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:8px 20px}
+.face-name{font-size:17px; font-weight:500}
+.weights{display:flex; flex-wrap:wrap; gap:6px}
+.wt{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.06em;
+  padding:4px 9px; border:1px solid var(--line); border-radius:999px; color:var(--muted);
+}
+.wt.in-use{border-color:var(--line-strong); color:var(--ink)}
+
+.scale-row{
+  display:grid; grid-template-columns:132px 1fr; gap:8px 24px;
+  align-items:baseline; padding:16px 0; border-bottom:1px solid var(--line);
+}
+.scale-spec{
+  font-family:var(--mono); font-weight:300; font-size:11px; line-height:1.6;
+  color:var(--faint); letter-spacing:.02em;
+}
+.scale-demo{min-width:0; overflow:hidden; text-overflow:ellipsis}
+.d-h1{font-family:var(--display); font-weight:600; font-size:clamp(30px,5.4vw,74px); line-height:1.06; letter-spacing:-.02em}
+.d-h2{font-family:var(--display); font-weight:600; font-size:clamp(26px,3.4vw,44px); line-height:1.12}
+.d-h3{font-family:var(--display); font-weight:600; font-size:clamp(24px,3.6vw,36px); line-height:1.2}
+.d-lede{font-family:var(--sans); font-weight:400; font-size:clamp(17px,2vw,22px); line-height:1.55; color:var(--ink-soft)}
+.d-body{font-family:var(--sans); font-weight:400; font-size:clamp(16px,1.9vw,19px); line-height:1.65; color:var(--ink-soft)}
+.d-small{font-family:var(--sans); font-weight:400; font-size:15px; line-height:1.6; color:var(--muted)}
+.d-label{font-family:var(--mono); font-weight:400; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint)}
+.d-kicker{font-family:var(--mono); font-weight:400; font-size:13px; line-height:1.6; color:var(--faint)}
+.d-word{font-family:var(--display); font-weight:700; font-size:16px; letter-spacing:-.03em}
+
+/* ============ elements ============ */
+.arrow-cta{
+  display:inline-flex; align-items:center; gap:16px;
+  font-size:clamp(17px,2.2vw,21px); color:var(--ink); text-decoration:none;
+  background:none; border:0; cursor:pointer; font-family:var(--sans);
+}
+.arrow-cta i{
+  flex:none; display:grid; place-items:center;
+  width:56px; height:56px; border-radius:999px;
+  background:var(--orange); color:#FFFFFF;
+  transition:width .22s var(--ease), height .22s var(--ease);
+}
+.arrow-cta:hover i{width:62px; height:62px}
+.arrow-cta:focus-visible{outline:none}
+.arrow-cta:focus-visible i{box-shadow:0 0 0 4px var(--focus)}
+.arrow-cta svg{width:20px; height:20px; display:block}
+
+.arrow-link{
+  display:inline-flex; align-items:center; gap:14px;
+  font-size:17px; color:var(--ink); text-decoration:none;
+  background:none; border:0; cursor:pointer; font-family:var(--sans);
+}
+.arrow-link i{
+  flex:none; display:grid; place-items:center;
+  width:40px; height:40px; border-radius:999px;
+  border:1.5px solid var(--line-strong); color:var(--ink);
+  transition:border-color .18s var(--ease), background .18s var(--ease);
+}
+.arrow-link:hover i{border-color:var(--accent); background:var(--wash)}
+.arrow-link:focus-visible{outline:none}
+.arrow-link:focus-visible i{border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.arrow-link svg{width:16px; height:16px; display:block}
+
+.radii{display:flex; flex-wrap:wrap; gap:22px; align-items:flex-end}
+.radius-demo{display:flex; flex-direction:column; gap:9px; align-items:center}
+.radius-box{
+  width:88px; height:66px; background:var(--wash-2); border:1px solid var(--line-strong);
+}
+.radius-box.r-sm{border-radius:14px}
+.radius-box.r-lg{border-radius:22px}
+.radius-box.r-card{border-radius:34px}
+.radius-box.r-pill{border-radius:999px; width:110px; height:44px}
+.radius-cap{font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--faint); text-align:center}
+
+.rule-demo{border-left:1px solid var(--line); padding-left:clamp(20px,2.2vw,32px); display:flex; flex-direction:column; gap:10px}
+
+.field-demo{
+  height:190px; border-radius:var(--radius-lg); overflow:hidden;
+  border:1px solid var(--line); position:relative;
+}
+.field-demo canvas{width:100%; height:100%; display:block}
+
+.grad-bar{height:86px; border-radius:var(--radius); background:var(--grad)}
+
+/* ============ applications ============ */
+.app-bar{
+  display:flex; align-items:center; gap:clamp(12px,2vw,26px); flex-wrap:wrap;
+  padding:12px 16px; border-radius:var(--radius);
+  border:1px solid var(--line); background:var(--surface);
+}
+.app-bar .bar-org{font-family:var(--mono); font-size:12px; color:var(--faint); letter-spacing:.02em}
+.app-bar ul{list-style:none; display:flex; gap:16px; flex-wrap:wrap; margin-left:auto}
+.app-bar ul a{font-size:14px; color:var(--muted); text-decoration:none}
+.app-bar ul a:hover{color:var(--ink)}
+.app-bar .nav-clock{font-family:var(--mono); font-size:12px; color:var(--faint); display:flex; gap:8px}
+
+.tiles{display:flex; flex-wrap:wrap; gap:26px; align-items:flex-start}
+.tile-demo{display:flex; flex-direction:column; gap:10px; align-items:center}
+.tile-demo svg{display:block; box-shadow:0 6px 20px rgba(16,16,24,.14)}
+.tile-cap{font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--faint); text-align:center}
+
+.task-row{
+  display:flex; align-items:center; gap:14px; padding:15px 17px;
+  border:1px solid var(--line); border-radius:var(--radius); background:var(--surface);
+}
+.task-row .t-title{font-family:var(--display); font-weight:600; font-size:16px; color:var(--ink); flex:1; min-width:0}
+.chip{
+  font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  padding:4px 9px; border-radius:999px; white-space:nowrap;
+}
+.chip.late{background:rgba(247,92,3,.12); color:var(--orange); border:1px solid rgba(247,92,3,.3)}
+.chip.calm{background:var(--wash-2); color:var(--muted); border:1px solid var(--line)}
+.dot-check{
+  flex:none; width:22px; height:22px; border-radius:999px;
+  border:1.5px solid var(--line-strong);
+}
+
+.opener-demo{
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:clamp(24px,4vw,44px); display:flex; flex-direction:column; gap:20px;
+  background:var(--surface);
+}
+
+/* ============ needs supplying ============ */
+.gaps{list-style:none; display:flex; flex-direction:column; gap:1px; background:var(--line); border-block:1px solid var(--line)}
+.gaps li{
+  background:var(--surface); padding:18px 0;
+  display:grid; grid-template-columns:minmax(150px,220px) 1fr; gap:6px 26px; align-items:baseline;
+}
+.gaps .g-what{font-family:var(--mono); font-size:12px; letter-spacing:.04em; color:var(--ink)}
+.gaps .g-why{font-size:14.5px; line-height:1.55; color:var(--muted); max-width:60ch}
+
+/* ============ mobile ============ */
+@media (max-width:900px){
+  :root{--rail:0px}
+  .rail{
+    position:sticky; inset:0 auto auto 0; width:auto; height:auto;
+    flex-direction:row; align-items:center; gap:14px; overflow:visible;
+    padding:12px var(--gutter); border-right:0; border-bottom:1px solid var(--line);
+  }
+  .rail-top{order:0; flex:none}
+  .rail nav{
+    order:1; flex-direction:row; gap:0; flex:1; min-width:0;
+    overflow-x:auto; scrollbar-width:none;
+  }
+  .rail nav::-webkit-scrollbar{display:none}
+  .rail nav a{
+    border-left:0; border-bottom:2px solid transparent;
+    padding:4px 12px 6px; white-space:nowrap;
+  }
+  .rail nav a.is-current{border-left-color:transparent; border-bottom-color:var(--orange)}
+  .rail-foot{display:none}
+  .page{margin-left:0}
+  .principle{grid-template-columns:1fr; gap:6px}
+  .principle .p-mark{padding-top:0}
+  .scale-row{grid-template-columns:1fr; gap:6px}
+  .gaps li{grid-template-columns:1fr}
+}
+</style>
+
+<!-- The sprite. Copied to the top of every page's body in the real repo,
+     so the mark is one definition and every use is a <use>. -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Seven orange arms: the eighth (lower-right) is detached and carried
+         by the violet capsule sitting just off the centre. -->
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+    <g id="logo-mark-fixed">
+      <g fill="#F75C03">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path d="M64.5 64.5l7 7" stroke="#7B3FE4" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+    <g id="arrow-r"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </defs>
+</svg>
+
+<aside class="rail">
+  <div class="rail-top">
+    <a class="brand-lockup" href="#top" aria-label="my.adhd brand book, to the top">
+      <svg class="logo" width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="wordmark" style="font-size:16px">my<span class="accent">.adhd</span></span>
+    </a>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark">
+      <svg class="t-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/></svg>
+      <svg class="t-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.6A8.6 8.6 0 019.4 3.5a8.6 8.6 0 1011.1 11.1z"/></svg>
+    </button>
+  </div>
+
+  <nav aria-label="Sections">
+    <a href="#overview">Overview</a>
+    <a href="#logo">The mark</a>
+    <a href="#colour">Colour</a>
+    <a href="#type">Typography</a>
+    <a href="#elements">Elements</a>
+    <a href="#applications">In use</a>
+    <a href="#gaps">Needs supplying</a>
+  </nav>
+
+  <p class="rail-foot">
+    Version 1 · 13 Sep 2026<br>
+    Source of truth: <code>theme.css</code>, <code>site.css</code>, <code>icons/</code><br>
+    <a href="https://myadhd.my">myadhd.my</a>
+  </p>
+</aside>
+
+<main class="page" id="top">
+
+  <!-- ======================= OPENER ======================= -->
+  <section class="opener" id="overview">
+    <div class="opener-field" aria-hidden="true"><canvas id="field-hero"></canvas></div>
+
+    <span class="eyebrow">Brand book · MyADHD Malaysia</span>
+    <h1>A quiet page<br>for a loud head.</h1>
+    <p class="lede" style="margin-top:26px">
+      MyADHD makes ADHD recognisable in everyday Malaysian life. The my.adhd
+      app is one of the things it offers: brain dump, auto-triage, one task.
+      This is how both of them are allowed to look.
+    </p>
+
+    <div class="opener-meta">
+      <span>DM Sans · DM Mono · Baloo 2</span>
+      <span>Vivid Blue #4737FF</span>
+      <span>Light and dark are both the brand</span>
+    </div>
+  </section>
+
+  <!-- ======================= PRINCIPLES ======================= -->
+  <section>
+    <div class="head">
+      <span class="eyebrow">Design principles</span>
+      <h2>Six rules the whole system leans on.</h2>
+      <p class="body">
+        None of these are aspirations. Each one is already enforced somewhere
+        in the code, and the note under it says where.
+      </p>
+    </div>
+
+    <div class="principles">
+      <article class="principle">
+        <span class="p-mark">01</span>
+        <div>
+          <h3>Air, and one idea at a time.</h3>
+          <p>Sections are separated by a whole band of nothing, and an opener takes
+          the window to itself. A page that arrives all at once is the exact
+          experience the product exists to argue against.</p>
+        </div>
+      </article>
+      <article class="principle">
+        <span class="p-mark">02</span>
+        <div>
+          <h3>Three faces, three jobs, no overlap.</h3>
+          <p>Baloo 2 sets display headings and the wordmark. DM Sans sets anything
+          that is a sentence. DM Mono sets anything that is a label. A heading in
+          the wrong face is the most common way this system breaks.</p>
+        </div>
+      </article>
+      <article class="principle">
+        <span class="p-mark">03</span>
+        <div>
+          <h3>Colour is a signal, not decoration.</h3>
+          <p>Orange means press this, or this is late — and nothing else, ever. Red
+          means destructive. Both only work while nothing on the page competes for
+          them, so near-monochrome is the ground they sit on.</p>
+        </div>
+      </article>
+      <article class="principle">
+        <span class="p-mark">04</span>
+        <div>
+          <h3>A hairline grid, and one rule down the left.</h3>
+          <p>Every page is a document with a left edge, not a centred column. A single
+          1px rule runs the height of the page and the content hangs off it.</p>
+        </div>
+      </article>
+      <article class="principle">
+        <span class="p-mark">05</span>
+        <div>
+          <h3>Nothing invented.</h3>
+          <p>No stock photography, no placeholder testimonials, no filler copy. Where
+          a page needs content that does not exist yet, it gets a frame and a visible
+          <code>data-placeholder</code> stamp that looks like scaffolding on purpose.</p>
+        </div>
+      </article>
+      <article class="principle">
+        <span class="p-mark">06</span>
+        <div>
+          <h3>Both themes are the brand.</h3>
+          <p>Dark is not a courtesy mode. Every colour in the system is a token, the
+          night palette re-values them, and no component is ever allowed to name a
+          colour directly.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ======================= LOGO ======================= -->
+  <section id="logo">
+    <div class="head">
+      <span class="eyebrow">The mark</span>
+      <h2>An asterisk with one arm come loose.</h2>
+      <p class="body">
+        Seven orange arms radiate from a centre. The eighth has detached and sits
+        just off it as a violet capsule. That is the whole idea, and it is drawn
+        once — in a 100-unit box, as a sprite every page reuses.
+      </p>
+    </div>
+
+    <div class="stack-lg">
+
+      <!-- construction -->
+      <div>
+        <h4 style="margin-bottom:18px">Construction</h4>
+        <div class="construct">
+          <div class="frame plain">
+            <span class="frame-label">Geometry, 100-unit box</span>
+            <svg viewBox="0 0 100 100" role="img" aria-label="The mark drawn on its construction grid: eight arms radiating from the centre of a 100-unit box.">
+              <g class="c-grid">
+                <line x1="0" y1="50" x2="100" y2="50"/><line x1="50" y1="0" x2="50" y2="100"/>
+                <line x1="14.6" y1="14.6" x2="85.4" y2="85.4"/><line x1="85.4" y1="14.6" x2="14.6" y2="85.4"/>
+              </g>
+              <circle cx="50" cy="50" r="32" class="c-guide"/>
+              <use href="#logo-mark"/>
+              <circle cx="50" cy="50" r="1.6" fill="var(--accent)"/>
+            </svg>
+            <p class="note">
+              Four <strong>7 × 64</strong> bars crossed at 0°, 90°, 45° and −45°,
+              the last one halved to <strong>7 × 32</strong> so its lower-right arm
+              is missing. Cap radius <strong>32</strong> from centre.
+            </p>
+          </div>
+
+          <div class="frame plain">
+            <span class="frame-label">The detached arm</span>
+            <svg viewBox="0 0 100 100" role="img" aria-label="The violet capsule that carries the eighth arm, highlighted away from the centre.">
+              <use href="#logo-mark" opacity=".2"/>
+              <path d="M64.5 64.5l7 7" stroke="var(--violet)" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <circle cx="68" cy="68" r="13" class="c-guide"/>
+            </svg>
+            <p class="note">
+              A round-capped stroke from <strong>64.5, 64.5</strong> to
+              <strong>71.5, 71.5</strong>, weight <strong>7</strong>. It is the only
+              violet in the mark and it never changes colour.
+            </p>
+          </div>
+
+          <div class="frame plain">
+            <span class="frame-label">Optical bearing</span>
+            <svg viewBox="0 0 100 100" role="img" aria-label="The mark's ink spans from 18 to 82 of its 100-unit box, leaving an 18 percent bearing on each side.">
+              <rect x="0" y="0" width="100" height="100" fill="none" stroke="var(--line-strong)" stroke-width=".8"/>
+              <rect x="18" y="18" width="64" height="64" class="c-fill"/>
+              <rect x="18" y="18" width="64" height="64" class="c-guide"/>
+              <use href="#logo-mark"/>
+              <text x="4" y="16" class="c-tick">18</text>
+              <text x="84" y="90" class="c-tick">82</text>
+            </svg>
+            <p class="note">
+              The ink spans <strong>18–82</strong>, so the box carries an
+              <strong>18%</strong> bearing it does not use. A lockup set flush to a
+              gutter therefore <em>looks</em> inset — give that bearing back at the
+              other end of the row.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- variations -->
+      <div>
+        <h4 style="margin-bottom:18px">Variations</h4>
+        <div class="grid-2">
+          <div class="frame on-paper">
+            <span class="frame-label">Primary lockup · on paper</span>
+            <div class="frame-body">
+              <span class="brand-lockup">
+                <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark-fixed"/></svg>
+                <span class="wordmark" style="font-size:16px; color:#101018">my<span style="color:#7B3FE4">.adhd</span></span>
+              </span>
+            </div>
+          </div>
+          <div class="frame on-night">
+            <span class="frame-label">Primary lockup · at night</span>
+            <div class="frame-body">
+              <span class="brand-lockup">
+                <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark-fixed"/></svg>
+                <span class="wordmark" style="font-size:16px; color:#F3F2FB">my<span style="color:#7B3FE4">.adhd</span></span>
+              </span>
+            </div>
+          </div>
+          <div class="frame on-paper">
+            <span class="frame-label">Mark alone</span>
+            <div class="frame-body">
+              <svg width="64" height="64" viewBox="0 0 100 100" role="img" aria-label="The my.adhd mark on white."><use href="#logo-mark-fixed"/></svg>
+            </div>
+          </div>
+          <div class="frame on-night">
+            <span class="frame-label">App tile · ground #2A2D33</span>
+            <div class="frame-body">
+              <svg width="82" height="82" viewBox="0 0 512 512" role="img" aria-label="The app tile: the mark on a dark slate ground with rounded corners.">
+                <rect width="512" height="512" rx="96" fill="#2A2D33"/>
+                <g transform="translate(56 56) scale(4)"><use href="#logo-mark-fixed"/></g>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <p class="note" style="margin-top:16px">
+          The wordmark is <strong>Baloo 2 700</strong>, tracked
+          <strong>−0.03em</strong>, set at <strong>16px</strong> beside a
+          <strong>26px</strong> mark with a <strong>10px</strong> gap.
+          <em>my</em> takes the page's ink; <em>.adhd</em> takes the violet — the
+          same violet as the capsule, which is what makes the lockup read as one
+          object rather than two.
+        </p>
+      </div>
+
+      <!-- clear space + min size -->
+      <div class="grid-2">
+        <div class="frame plain">
+          <span class="frame-label">Clear space</span>
+          <div class="frame-body">
+            <span class="clearspace">
+              <span class="cs-inner">
+                <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+                <span class="wordmark" style="font-size:16px">my<span class="accent">.adhd</span></span>
+              </span>
+            </span>
+          </div>
+          <p class="note">
+            Keep clear on all four sides by the mark's own bearing —
+            <strong>18% of the mark's height</strong>, so 4.7px at the standard
+            26px. Nothing crosses it: no rule, no other logo, no edge of a
+            photograph.
+          </p>
+        </div>
+
+        <div class="frame plain">
+          <span class="frame-label">Minimum size</span>
+          <div class="frame-body" style="align-items:flex-end; gap:32px">
+            <span style="display:flex; flex-direction:column; align-items:center; gap:10px">
+              <svg width="16" height="16" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+              <span class="radius-cap">16px<br>mark alone</span>
+            </span>
+            <span style="display:flex; flex-direction:column; align-items:center; gap:10px">
+              <span class="brand-lockup">
+                <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+                <span class="wordmark" style="font-size:16px">my<span class="accent">.adhd</span></span>
+              </span>
+              <span class="radius-cap">26px<br>full lockup</span>
+            </span>
+          </div>
+          <p class="note">
+            <strong>16px</strong> is the smallest the mark ships at anywhere
+            (<code>icons/favicon-16.png</code>) and is the floor for the mark on its
+            own. Below <strong>26px</strong> the wordmark stops being legible beside
+            it — drop to the mark alone rather than shrink the pair.
+          </p>
+        </div>
+      </div>
+
+      <!-- misuse -->
+      <div>
+        <h4 style="margin-bottom:18px">Incorrect usage</h4>
+        <div class="misuse">
+          <div class="mis">
+            <div class="mis-vis">
+              <span class="brand-lockup">
+                <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true">
+                  <g fill="#F75C03">
+                    <rect x="46.5" y="18" width="7" height="64"/>
+                    <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+                    <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+                    <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+                  </g>
+                  <path d="M64.5 64.5l7 7" stroke="#A97BFF" stroke-width="7" stroke-linecap="round" fill="none"/>
+                </svg>
+                <span class="wordmark" style="font-size:16px">my<span style="color:#7B3FE4">.adhd</span></span>
+              </span>
+            </div>
+            <div class="mis-say">
+              <span class="mis-x" aria-hidden="true">✕</span>
+              <p>Don't let the capsule and the word drift apart in colour. Two purples
+              read as two objects.</p>
+            </div>
+          </div>
+
+          <div class="mis">
+            <div class="mis-vis">
+              <span class="brand-lockup">
+                <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark-fixed"/></svg>
+                <span style="font-family:var(--sans); font-weight:700; font-size:16px; color:var(--ink)">my<span style="color:#7B3FE4">.adhd</span></span>
+              </span>
+            </div>
+            <div class="mis-say">
+              <span class="mis-x" aria-hidden="true">✕</span>
+              <p>Don't reset the wordmark in DM Sans. The wordmark is Baloo 2 and it
+              is drawn, not typed on the fly.</p>
+            </div>
+          </div>
+
+          <div class="mis">
+            <div class="mis-vis" style="background:linear-gradient(120deg,#4737FF,#7B3FE4)">
+              <span class="brand-lockup">
+                <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark-fixed"/></svg>
+                <span class="wordmark" style="font-size:16px; color:#FFFFFF">my<span style="color:#7B3FE4">.adhd</span></span>
+              </span>
+            </div>
+            <div class="mis-say">
+              <span class="mis-x" aria-hidden="true">✕</span>
+              <p>Don't place the lockup on a coloured or busy ground. It belongs on
+              paper, on night, or on the tile.</p>
+            </div>
+          </div>
+
+          <div class="mis">
+            <div class="mis-vis">
+              <svg width="64" height="48" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><use href="#logo-mark-fixed"/></svg>
+            </div>
+            <div class="mis-say">
+              <span class="mis-x" aria-hidden="true">✕</span>
+              <p>Don't stretch, squash or rotate the mark. The arms are at fixed
+              angles and the eye reads the break immediately.</p>
+            </div>
+          </div>
+
+          <div class="mis">
+            <div class="mis-vis">
+              <svg width="52" height="52" viewBox="0 0 100 100" aria-hidden="true">
+                <g fill="#4737FF">
+                  <rect x="46.5" y="18" width="7" height="64"/>
+                  <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+                  <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+                  <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+                </g>
+                <path d="M64.5 64.5l7 7" stroke="#4737FF" stroke-width="7" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
+            <div class="mis-say">
+              <span class="mis-x" aria-hidden="true">✕</span>
+              <p>Don't recolour the mark to fit a layout. Orange arms, violet capsule
+              — including on a blue page.</p>
+            </div>
+          </div>
+
+          <div class="mis">
+            <div class="mis-vis">
+              <svg width="52" height="52" viewBox="0 0 100 100" aria-hidden="true">
+                <g fill="#F75C03">
+                  <rect x="46.5" y="18" width="7" height="64"/>
+                  <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+                  <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+                  <rect x="46.5" y="18" width="7" height="64" transform="rotate(-45 50 50)"/>
+                </g>
+              </svg>
+            </div>
+            <div class="mis-say">
+              <span class="mis-x" aria-hidden="true">✕</span>
+              <p>Don't complete the asterisk. The missing arm is the mark — an
+              eight-armed star is somebody else's logo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= COLOUR ======================= -->
+  <section id="colour">
+    <div class="head">
+      <span class="eyebrow">Colour</span>
+      <h2>Near-monochrome, so two colours can mean something.</h2>
+      <p class="body">
+        Vivid Blue is the accent and carries interactive chrome. Orange has exactly
+        two jobs and red has exactly one. Everything else on a page is paper, ink
+        and a hairline. Click any value to copy it.
+      </p>
+    </div>
+
+    <div class="stack-lg">
+      <div>
+        <h4 style="margin-bottom:16px">Primary</h4>
+        <div class="swatches" id="sw-primary"></div>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:16px">Signal — spend these, don't decorate with them</h4>
+        <div class="swatches" id="sw-signal"></div>
+        <p class="note" style="margin-top:16px">
+          <strong>Orange</strong> fills the circle of every primary button, and
+          backs anything that is late — overdue, urgent, a sync gone stale. It
+          appears in no heading, on no rule, and as no ornament. <strong>Red</strong>
+          is destructive actions only. The two never swap jobs, because a person who
+          has learned that orange means <em>start here</em> should not meet it
+          meaning <em>danger</em>.
+        </p>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:16px">Secondary — the blue and violet ramps</h4>
+        <div class="swatches" id="sw-secondary"></div>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:16px">Surfaces &amp; ink · day</h4>
+        <div class="swatches" id="sw-day"></div>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:16px">Surfaces &amp; ink · night</h4>
+        <div class="swatches" id="sw-night"></div>
+        <p class="note" style="margin-top:16px">
+          Brand blue is far too dark to sit on <code>#101018</code>, so at night the
+          accent lifts to <strong>#8B7DFF</strong> and text on top of it goes back to
+          near-black. The violet deliberately does <em>not</em> move: WCAG 1.4.3
+          exempts logotypes from contrast minimums, and a violet that shifted at night
+          would put a different purple in the nav from the one in the browser tab
+          beside it.
+        </p>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:16px">Branding gradient</h4>
+        <div class="grad-bar"></div>
+        <p class="note" style="margin-top:14px">
+          <code>linear-gradient(103deg, #101018 0%, #3529BF 38%, #4737FF 68%, #ACA5FF 100%)</code><br>
+          Night re-values it to <code>#2A1FA6 → #3F30E8 → #6558FF → #ACA5FF</code> at the
+          same stops. It carries calls to action inside the app. It is not a page
+          background and not a heading fill.
+        </p>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:16px">Contrast</h4>
+        <div class="scroll-x">
+          <table class="contrast">
+            <thead>
+              <tr><th scope="col">Pair</th><th scope="col">Ratio</th><th scope="col">Verdict</th></tr>
+            </thead>
+            <tbody id="contrast-rows"></tbody>
+          </table>
+        </div>
+        <p class="note" style="margin-top:14px">
+          Ratios are computed on this page from the hex values above. The one
+          deliberate exception is the wordmark's violet at night: it is a logotype,
+          which 1.4.3 exempts, and it is held at #7B3FE4 on purpose.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= TYPOGRAPHY ======================= -->
+  <section id="type">
+    <div class="head">
+      <span class="eyebrow">Typography</span>
+      <h2>One face for names, one for sentences, one for labels.</h2>
+      <p class="body">
+        All three are self-hosted in production. A page that has to ask a third
+        party before it can draw its own headline is a page with a flash of the
+        wrong type in it.
+      </p>
+    </div>
+
+    <div class="stack-lg">
+      <div class="face">
+        <div class="face-sample f-display">my.adhd</div>
+        <div class="face-head">
+          <span class="face-name">Baloo 2 <span style="color:var(--faint); font-weight:400">— display &amp; wordmark</span></span>
+          <div class="weights">
+            <span class="wt">400</span><span class="wt">500</span>
+            <span class="wt in-use">600 headings</span><span class="wt in-use">700 wordmark</span>
+            <span class="wt in-use">800 org mark</span>
+          </div>
+        </div>
+        <p class="note">
+          Variable, 400–800. It sets display headings, the wordmark, and the app's
+          own interface type. It sets <strong>nothing else on the public site</strong>
+          — a body paragraph that comes out rounded is a paragraph still inheriting it.
+          Fallback: <code>-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif</code>.
+        </p>
+      </div>
+
+      <div class="face">
+        <div class="face-sample f-sans">Sentences</div>
+        <div class="face-head">
+          <span class="face-name">DM Sans <span style="color:var(--faint); font-weight:400">— everything that is a sentence</span></span>
+          <div class="weights">
+            <span class="wt in-use">400 body</span><span class="wt in-use">500 sub-heads</span>
+            <span class="wt">100–900 available</span>
+          </div>
+        </div>
+        <p class="note">
+          The variable file, so one request covers 100–900 and the site can set
+          <strong>400 everywhere and mean it</strong> — light weight at large sizes
+          is the whole register. Fallback:
+          <code>-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif</code>.
+        </p>
+      </div>
+
+      <div class="face">
+        <div class="face-sample f-mono">LABELS · 09:26</div>
+        <div class="face-head">
+          <span class="face-name">DM Mono <span style="color:var(--faint); font-weight:400">— everything that is a label</span></span>
+          <div class="weights">
+            <span class="wt in-use">300 large grey lines</span><span class="wt in-use">400 working weight</span>
+          </div>
+        </div>
+        <p class="note">
+          No variable cut exists, so only two weights ship. Labels are
+          <strong>uppercase, 10–13px, tracked .06–.16em</strong>. Kickers and captions
+          run at 12–13px in sentence case. Fallback:
+          <code>ui-monospace, SFMono-Regular, Menlo, monospace</code>.
+        </p>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:8px">Hierarchy</h4>
+        <div class="scale-row">
+          <div class="scale-spec">Display 1<br>Baloo 2 600<br>clamp(30, 5.4vw, 74)<br>lh 1.06 · −.02em</div>
+          <div class="scale-demo d-h1">One task at a time.</div>
+        </div>
+        <div class="scale-row">
+          <div class="scale-spec">Display 2<br>Baloo 2 600<br>clamp(26, 3.4vw, 44)<br>lh 1.12</div>
+          <div class="scale-demo d-h2">What the self-check asks</div>
+        </div>
+        <div class="scale-row">
+          <div class="scale-spec">Display 3<br>Baloo 2 600<br>clamp(24, 3.6vw, 36)<br>lh 1.2</div>
+          <div class="scale-demo d-h3">Brain dump, then triage</div>
+        </div>
+        <div class="scale-row">
+          <div class="scale-spec">Lede<br>DM Sans 400<br>clamp(17, 2vw, 22)<br>lh 1.55 · ink-soft</div>
+          <div class="scale-demo d-lede">Too many Malaysians grow up believing they're careless, lazy, or just not trying hard enough.</div>
+        </div>
+        <div class="scale-row">
+          <div class="scale-spec">Body<br>DM Sans 400<br>clamp(16, 1.9vw, 19)<br>lh 1.65 · max 64ch</div>
+          <div class="scale-demo d-body">Write everything down in one go. The app sorts it, and then shows you one thing.</div>
+        </div>
+        <div class="scale-row">
+          <div class="scale-spec">Small<br>DM Sans 400<br>15px · lh 1.6 · muted</div>
+          <div class="scale-demo d-small">Free, no account needed to take the self-check.</div>
+        </div>
+        <div class="scale-row">
+          <div class="scale-spec">Kicker<br>DM Mono 400<br>13px · lh 1.6 · faint</div>
+          <div class="scale-demo d-kicker">A screener, not a diagnosis.</div>
+        </div>
+        <div class="scale-row">
+          <div class="scale-spec">Label<br>DM Mono 400<br>11px · .12em · upper</div>
+          <div class="scale-demo d-label">Self-check</div>
+        </div>
+        <div class="scale-row" style="border-bottom:0">
+          <div class="scale-spec">Wordmark<br>Baloo 2 700<br>16px · −.03em</div>
+          <div class="scale-demo"><span class="d-word">my<span style="color:var(--violet)">.adhd</span></span></div>
+        </div>
+        <p class="note" style="margin-top:18px">
+          Every display size is a <code>clamp()</code>: the small number is the phone,
+          the large number is a 1440 window. Body copy is held to about
+          <strong>64 characters</strong> a line regardless of how wide the window gets.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= ELEMENTS ======================= -->
+  <section id="elements">
+    <div class="head">
+      <span class="eyebrow">Graphic elements</span>
+      <h2>A rule, a circle, and the weather.</h2>
+      <p class="body">
+        There is no component library and no icon set beyond the app's own. What
+        exists is a small vocabulary, used consistently enough that it reads as one
+        thing.
+      </p>
+    </div>
+
+    <div class="stack-lg">
+      <div class="grid-2">
+        <div class="frame plain">
+          <span class="frame-label">The spine</span>
+          <div class="rule-demo" style="margin-block:6px">
+            <span class="d-label">About us</span>
+            <p class="body" style="font-size:16px">Content hangs off a single hairline that runs the height of every page.</p>
+          </div>
+          <p class="note">
+            <code>border-left: 1px solid var(--line)</code>, offset from the window
+            edge by the page gutter — <code>clamp(20px, 4.4vw, 64px)</code> — then
+            <code>clamp(20px, 2.2vw, 32px)</code> of padding before the text starts.
+          </p>
+        </div>
+
+        <div class="frame plain">
+          <span class="frame-label">Corner radii</span>
+          <div class="radii" style="margin-block:6px">
+            <span class="radius-demo"><span class="radius-box r-sm"></span><span class="radius-cap">14px</span></span>
+            <span class="radius-demo"><span class="radius-box r-lg"></span><span class="radius-cap">22px</span></span>
+            <span class="radius-demo"><span class="radius-box r-card"></span><span class="radius-cap">34px</span></span>
+            <span class="radius-demo"><span class="radius-box r-pill"></span><span class="radius-cap">999px</span></span>
+          </div>
+          <p class="note">
+            <code>--radius</code> for controls and rows, <code>--radius-lg</code> for
+            panels, <code>--radius-card</code> for the app's cards, and full round for
+            anything that is a button circle, a chip or a toggle.
+          </p>
+        </div>
+      </div>
+
+      <div class="frame plain">
+        <span class="frame-label">Buttons — the only place colour fills a shape</span>
+        <div class="frame-body" style="justify-content:flex-start; gap:40px; padding-block:10px">
+          <a class="arrow-cta" href="#elements">
+            Take the self-check
+            <i aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#arrow-r"/></svg></i>
+          </a>
+          <a class="arrow-link" href="#elements">
+            Read about us
+            <i aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#arrow-r"/></svg></i>
+          </a>
+        </div>
+        <p class="note">
+          A label, then a circle. <strong>Primary</strong> fills the circle with
+          orange at 56px and grows it to 62px on hover. <strong>Secondary</strong> is
+          the same object at half volume: a 40px outlined circle for a link that
+          continues rather than concludes. The arrow moves, the circle grows, nothing
+          else happens. No pills, no filled rectangles, no drop shadows.
+        </p>
+      </div>
+
+      <div class="frame plain">
+        <span class="frame-label">The wave field</span>
+        <div class="field-demo" style="margin-block:6px"><canvas id="field-demo"></canvas></div>
+        <p class="note">
+          Where a brochure would put a photograph, this system puts weather. The
+          field is drawn from six named ramp values — a ground, a mid and a high, one
+          set for paper and one for night — and it runs behind the page rather than
+          inside a frame. Day runs pale-to-pale so nothing sitting over it picks up a
+          halo; night runs near-black → deep blue → vivid blue under a flat wash.
+          Toggle the theme to see both.
+        </p>
+      </div>
+
+      <div class="frame plain">
+        <span class="frame-label">Mono labels</span>
+        <div class="frame-body" style="justify-content:flex-start; gap:26px; min-height:0; padding-block:8px">
+          <span class="d-label">Activities</span>
+          <span class="chip calm">Today</span>
+          <span class="chip late">Late</span>
+          <span class="d-kicker">Kuala Lumpur 9:26 PM</span>
+        </div>
+        <p class="note">
+          Uppercase and tracked for a section label; sentence case for a kicker or a
+          clock. The <strong>late</strong> chip is the one chip allowed to carry
+          orange, and it carries it as a wash plus an edge — never as a solid fill.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= APPLICATIONS ======================= -->
+  <section id="applications">
+    <div class="head">
+      <span class="eyebrow">In use</span>
+      <h2>The system, assembled.</h2>
+      <p class="body">
+        Five places the vocabulary above turns into something a person actually
+        meets. All of these are live surfaces, rebuilt here from the same tokens.
+      </p>
+    </div>
+
+    <div class="stack-lg">
+      <div>
+        <h4 style="margin-bottom:16px">The bar — identical on every page</h4>
+        <div class="app-bar">
+          <span class="brand-lockup">
+            <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+            <span class="wordmark" style="font-size:16px">my<span class="accent">.adhd</span></span>
+          </span>
+          <span class="bar-org">MyADHD</span>
+          <ul>
+            <li><a href="#applications">Activities</a></li>
+            <li><a href="#applications">About us</a></li>
+            <li><a href="#applications">Testimonials</a></li>
+            <li><a href="#applications">Contact us</a></li>
+          </ul>
+          <span class="nav-clock"><span>Kuala Lumpur</span><span>9:26 PM</span></span>
+          <span class="theme-toggle" aria-hidden="true" style="cursor:default">
+            <svg class="t-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/></svg>
+            <svg class="t-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.6 8.6 0 019.4 3.5a8.6 8.6 0 1011.1 11.1z"/></svg>
+          </span>
+        </div>
+        <p class="note" style="margin-top:14px">
+          Lockup, then the organisation's name in mono, the links, a live local clock,
+          and the theme toggle. The toggle shows <em>where the page is</em> — a sun
+          while it is light — because the clock two elements to its left means a
+          reader takes the pair as one report on the time of day. What pressing it
+          does is in the accessible name, where a screen reader looks.
+        </p>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:16px">Icons</h4>
+        <div class="tiles">
+          <span class="tile-demo">
+            <svg width="104" height="104" viewBox="0 0 512 512" style="border-radius:23px" role="img" aria-label="Home screen app icon.">
+              <rect width="512" height="512" fill="#2A2D33"/>
+              <g transform="translate(-8 -8) scale(5.28)"><use href="#logo-mark-fixed"/></g>
+            </svg>
+            <span class="tile-cap">Home screen<br>512 · mark at 66%</span>
+          </span>
+          <span class="tile-demo">
+            <svg width="72" height="72" viewBox="0 0 512 512" role="img" aria-label="Favicon.">
+              <rect width="512" height="512" rx="96" fill="#2A2D33"/>
+              <g transform="translate(56 56) scale(4)"><use href="#logo-mark-fixed"/></g>
+            </svg>
+            <span class="tile-cap">Favicon<br>rx 96 · mark at 50%</span>
+          </span>
+          <span class="tile-demo">
+            <svg width="32" height="32" viewBox="0 0 512 512" role="img" aria-label="Favicon at 32 pixels.">
+              <rect width="512" height="512" rx="96" fill="#2A2D33"/>
+              <g transform="translate(56 56) scale(4)"><use href="#logo-mark-fixed"/></g>
+            </svg>
+            <span class="tile-cap">32px</span>
+          </span>
+          <span class="tile-demo">
+            <svg width="16" height="16" viewBox="0 0 512 512" role="img" aria-label="Favicon at 16 pixels.">
+              <rect width="512" height="512" rx="96" fill="#2A2D33"/>
+              <g transform="translate(56 56) scale(4)"><use href="#logo-mark-fixed"/></g>
+            </svg>
+            <span class="tile-cap">16px</span>
+          </span>
+        </div>
+        <p class="note" style="margin-top:16px">
+          The home-screen tile is <strong>full-bleed</strong> — iOS and Android mask
+          the corners themselves, so an icon with its own rounding lands on black. The
+          mark fills <strong>66%</strong> of that tile: at 50% it read as lost inside
+          its own ground. Its widest reach is <strong>r = 171</strong> from centre,
+          still inside the 205px maskable safe circle. The favicon keeps its own
+          <strong>rx 96</strong> because nothing masks it.
+        </p>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:16px">A page opener</h4>
+        <div class="opener-demo">
+          <span class="d-label">Self-check</span>
+          <h3 class="d-h2" style="max-width:16ch">Six questions, about four minutes.</h3>
+          <p class="d-lede" style="max-width:46ch">
+            The ASRS-v1.1 screener, in English and Bahasa Melayu. It is not a
+            diagnosis, and it does not ask for your name.
+          </p>
+          <div style="margin-top:8px">
+            <a class="arrow-cta" href="#applications">
+              Start
+              <i aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#arrow-r"/></svg></i>
+            </a>
+          </div>
+          <ul style="list-style:none; display:flex; flex-wrap:wrap; gap:1.15em; margin-top:16px; font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint)">
+            <li>Free</li><li>No account</li><li>Not stored</li>
+          </ul>
+        </div>
+        <p class="note" style="margin-top:14px">
+          Label, heading, lede, one button, and a line of mono reassurances. An opener
+          takes the window to itself and holds one idea — never a heading with a grid
+          of cards under it.
+        </p>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:16px">A task, in the app</h4>
+        <div class="stack" style="gap:10px">
+          <div class="task-row">
+            <span class="dot-check" aria-hidden="true"></span>
+            <span class="t-title">Call the clinic back</span>
+            <span class="chip late">Late</span>
+          </div>
+          <div class="task-row">
+            <span class="dot-check" aria-hidden="true"></span>
+            <span class="t-title">Move the standing desk</span>
+            <span class="chip calm">Today</span>
+          </div>
+          <div class="task-row">
+            <span class="dot-check" aria-hidden="true"></span>
+            <span class="t-title">Renew the road tax</span>
+          </div>
+        </div>
+        <p class="note" style="margin-top:14px">
+          Inside the app the interface type is <strong>Baloo 2</strong>, not DM Sans —
+          this is the one surface where the display face does the everyday work. One
+          orange chip on a screen of near-monochrome is doing a full day's work; three
+          of them would be doing none.
+        </p>
+      </div>
+
+      <div>
+        <h4 style="margin-bottom:16px">Destructive, and why it is a different red</h4>
+        <div class="frame plain">
+          <div class="frame-body" style="justify-content:flex-start; gap:22px; min-height:0; padding-block:6px; flex-direction:column; align-items:flex-start">
+            <p class="body" style="font-size:16px; margin:0">Delete this list and everything in it?</p>
+            <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center">
+              <button type="button" style="font-family:var(--sans); font-size:15px; padding:11px 20px; border-radius:999px; border:0; background:#D92D20; color:#FFFFFF; cursor:pointer">Delete list</button>
+              <button type="button" style="font-family:var(--sans); font-size:15px; padding:11px 20px; border-radius:999px; border:1px solid var(--line-strong); background:none; color:var(--ink); cursor:pointer">Keep it</button>
+            </div>
+          </div>
+          <p class="note">
+            <code>#D92D20</code> carries white text at 4.8:1 on both grounds, so the
+            fill does not move between themes. Red as <em>text</em> is the part that
+            fails on a dark page, which is why night has a separate ink at
+            <code>#FF8A7E</code>. Red is never a border on a valid field, never an
+            accent, never an empty state.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= GAPS ======================= -->
+  <section id="gaps">
+    <div class="head">
+      <span class="eyebrow">Needs supplying</span>
+      <h2>What this book cannot yet say.</h2>
+      <p class="body">
+        Everything above is lifted from the repo. The items below are not specified
+        anywhere in it, so they are listed rather than invented.
+      </p>
+    </div>
+
+    <ul class="gaps">
+      <li>
+        <span class="g-what">Print colour</span>
+        <span class="g-why">No CMYK or Pantone equivalents exist. The palette is screen-only, and Vivid Blue at #4737FF will not survive a four-colour press without a decision about what it becomes.</span>
+      </li>
+      <li>
+        <span class="g-what">Horizontal / stacked lockups</span>
+        <span class="g-why">Only the horizontal lockup is drawn. A stacked version and a mark-with-organisation-name version would both be useful for square formats and print, and neither exists.</span>
+      </li>
+      <li>
+        <span class="g-what">Monochrome lockup</span>
+        <span class="g-why">There is no one-colour or knockout version of the mark for embroidery, stamps, or a partner's logo strip.</span>
+      </li>
+      <li>
+        <span class="g-what">Photography direction</span>
+        <span class="g-why">The system deliberately uses a wave field where a photograph would go. If photography is ever introduced, nothing currently says what it should look like.</span>
+      </li>
+      <li>
+        <span class="g-what">An icon set</span>
+        <span class="g-why">Beyond the app tile and favicon, icons in the interface are drawn ad hoc. No grid, weight or terminal style is specified.</span>
+      </li>
+      <li>
+        <span class="g-what">Bahasa Melayu type</span>
+        <span class="g-why">The site ships a BM switch, but nothing records whether the scale changes for Malay — which runs longer than English and may need the display clamps easing. The <em>words</em> are now written down (see below); the type is not.</span>
+      </li>
+      <li>
+        <span class="g-what">Voice &amp; tone, in English</span>
+        <span class="g-why">The copy has a consistent register — plain, unhurried, never clinical — but it has never been written down as a rule anyone else could follow. <strong>The Malay half now has been:</strong> <code>docs/bahasa-melayu-voice.md</code> sets the register at <em>awak</em>, bans the DBP words, and rules the ASRS questions and the consent copy out of scope. English still has no equivalent page.</span>
+      </li>
+    </ul>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- theme ---------------- */
+  var root = document.documentElement;
+  var toggle = document.getElementById("theme-toggle");
+
+  function isDark(){
+    var stamp = root.getAttribute("data-theme");
+    if (stamp) return stamp === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function syncLabel(){
+    toggle.setAttribute("aria-label", isDark() ? "Switch to light" : "Switch to dark");
+  }
+  toggle.addEventListener("click", function(){
+    root.setAttribute("data-theme", isDark() ? "light" : "dark");
+    syncLabel();
+    paintFields();
+  });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(){
+    if (!root.getAttribute("data-theme")) { syncLabel(); paintFields(); }
+  });
+  syncLabel();
+
+  /* ---------------- colour maths ---------------- */
+  function toRgb(hex){
+    var h = hex.replace("#","");
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+  function toHsl(hex){
+    var c = toRgb(hex).map(function(v){ return v/255; });
+    var max = Math.max.apply(null,c), min = Math.min.apply(null,c);
+    var l = (max+min)/2, d = max-min, s = 0, h = 0;
+    if (d !== 0){
+      s = l > 0.5 ? d/(2-max-min) : d/(max+min);
+      if (max === c[0]) h = ((c[1]-c[2])/d + (c[1] < c[2] ? 6 : 0));
+      else if (max === c[1]) h = (c[2]-c[0])/d + 2;
+      else h = (c[0]-c[1])/d + 4;
+      h *= 60;
+    }
+    return [Math.round(h), Math.round(s*100), Math.round(l*100)];
+  }
+  function lum(hex){
+    return toRgb(hex).map(function(v){
+      v /= 255;
+      return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+    }).reduce(function(a,v,i){ return a + v * [0.2126,0.7152,0.0722][i]; }, 0);
+  }
+  function ratio(a,b){
+    var l1 = lum(a), l2 = lum(b);
+    return (Math.max(l1,l2) + 0.05) / (Math.min(l1,l2) + 0.05);
+  }
+
+  /* ---------------- swatches ---------------- */
+  var PALETTE = {
+    "sw-primary": [
+      {name:"Vivid Blue",   hex:"#4737FF", role:"--blue · the accent. Interactive chrome, focus rings, links."},
+      {name:"Deep Blue",    hex:"#202030", role:"--navy · soft ink, toasts, the night ground's lighter sibling."},
+      {name:"Black",        hex:"#101018", role:"--black · the page's ink by day, its surface by night."},
+      {name:"Stone Gray",   hex:"#5E5E6A", role:"--stone · secondary text."},
+      {name:"Paper White",  hex:"#FFFFFF", role:"--surface · the day ground. Not off-white, not cream."}
+    ],
+    "sw-signal": [
+      {name:"Vivid Orange", hex:"#F75C03", role:"--orange · two jobs only: press this, and this is late."},
+      {name:"Danger",       hex:"#D92D20", role:"--danger · destructive actions. Never decoration."},
+      {name:"Danger ink",   hex:"#FF8A7E", role:"--danger-ink at night · red as text, lifted to survive #101018."}
+    ],
+    "sw-secondary": [
+      {name:"Blue Deep",    hex:"#3529BF", role:"--blue-deep · gradient stop, night wave mid."},
+      {name:"Blue Pale",    hex:"#ACA5FF", role:"--blue-pale · gradient end, night wave high."},
+      {name:"Pale Blue",    hex:"#D1CDFF", role:"--pale"},
+      {name:"Violet",       hex:"#7B3FE4", role:"--violet · the logo capsule and the wordmark accent. Fixed in both themes."},
+      {name:"Violet Deep",  hex:"#3A1C86", role:"--violet-deep · the field's deep end."},
+      {name:"Violet Pale",  hex:"#DCC9FF", role:"--violet-pale · the same field on paper."},
+      {name:"Tile",         hex:"#2A2D33", role:"--tile · the app icon's ground. The one slate in the system."}
+    ],
+    "sw-day": [
+      {name:"Surface",   hex:"#FFFFFF", role:"--surface"},
+      {name:"Wash",      hex:"#F4F3FE", role:"--wash · panels, hover grounds"},
+      {name:"Wash 2",    hex:"#E9E7FD", role:"--wash-2 · chips, the second step in"},
+      {name:"Backdrop",  hex:"#E9E7FB", role:"--backdrop"},
+      {name:"Ink",       hex:"#101018", role:"--ink"},
+      {name:"Ink soft",  hex:"#202030", role:"--ink-soft · body copy"},
+      {name:"Muted",     hex:"#5E5E6A", role:"--muted"},
+      {name:"Faint",     hex:"#6B6B7A", role:"--faint · AA on white and on wash"},
+      {name:"Line",      hex:"#E4E2F5", role:"--line · the hairline"},
+      {name:"Line strong", hex:"#CFCBE9", role:"--line-strong"}
+    ],
+    "sw-night": [
+      {name:"Surface",   hex:"#101018", role:"--surface"},
+      {name:"Wash",      hex:"#1A1A26", role:"--wash"},
+      {name:"Wash 2",    hex:"#232333", role:"--wash-2"},
+      {name:"Backdrop",  hex:"#15151F", role:"--backdrop"},
+      {name:"Ink",       hex:"#F3F2FB", role:"--ink"},
+      {name:"Ink soft",  hex:"#D6D4EA", role:"--ink-soft"},
+      {name:"Muted",     hex:"#9A98AC", role:"--muted"},
+      {name:"Faint",     hex:"#8B8AA0", role:"--faint"},
+      {name:"Line",      hex:"#262636", role:"--line"},
+      {name:"Line strong", hex:"#3B3A52", role:"--line-strong"},
+      {name:"Accent",    hex:"#8B7DFF", role:"--accent · brand blue is too dark on #101018, so it lifts"},
+      {name:"On accent", hex:"#101018", role:"--on-accent · text on top of the lifted accent"}
+    ]
+  };
+
+  function swatchCard(c){
+    var rgb = toRgb(c.hex), hsl = toHsl(c.hex);
+    var el = document.createElement("article");
+    el.className = "swatch";
+
+    var chip = document.createElement("div");
+    chip.className = "sw-chip";
+    chip.style.background = c.hex;
+    if (c.hex.toUpperCase() === "#FFFFFF") chip.style.boxShadow = "inset 0 0 0 1px var(--line)";
+    el.appendChild(chip);
+
+    var meta = document.createElement("div");
+    meta.className = "sw-meta";
+    var n = document.createElement("span"); n.className = "sw-name"; n.textContent = c.name;
+    var r = document.createElement("span"); r.className = "sw-role"; r.textContent = c.role;
+    meta.appendChild(n); meta.appendChild(r);
+    el.appendChild(meta);
+
+    var vals = document.createElement("div");
+    vals.className = "sw-vals";
+    [
+      ["hex", c.hex],
+      ["rgb", "rgb(" + rgb.join(", ") + ")"],
+      ["hsl", "hsl(" + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%)"]
+    ].forEach(function(pair){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "sw-val";
+      b.setAttribute("aria-label", "Copy " + c.name + " as " + pair[0] + ", " + pair[1]);
+      var k = document.createElement("span"); k.className = "k"; k.textContent = pair[0];
+      var v = document.createElement("span"); v.className = "v"; v.textContent = pair[1];
+      b.appendChild(k); b.appendChild(v);
+      b.addEventListener("click", function(){ copy(pair[1], b, v); });
+      vals.appendChild(b);
+    });
+    el.appendChild(vals);
+    return el;
+  }
+
+  function copy(text, btn, valEl){
+    var done = function(){
+      var was = valEl.textContent;
+      btn.classList.add("copied");
+      window.setTimeout(function(){
+        btn.classList.remove("copied");
+        valEl.textContent = was;
+      }, 1100);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done, function(){ fallback(text, done); });
+    } else {
+      fallback(text, done);
+    }
+  }
+  function fallback(text, done){
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.cssText = "position:fixed;top:-100px;opacity:0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); done(); } catch(e){ /* clipboard unavailable */ }
+    document.body.removeChild(ta);
+  }
+
+  Object.keys(PALETTE).forEach(function(id){
+    var host = document.getElementById(id);
+    if (!host) return;
+    PALETTE[id].forEach(function(c){ host.appendChild(swatchCard(c)); });
+  });
+
+  /* ---------------- contrast table ---------------- */
+  var PAIRS = [
+    ["Ink #101018 on Paper #FFFFFF", "#101018", "#FFFFFF"],
+    ["Ink soft #202030 on Paper #FFFFFF", "#202030", "#FFFFFF"],
+    ["Muted #5E5E6A on Paper #FFFFFF", "#5E5E6A", "#FFFFFF"],
+    ["Faint #6B6B7A on Paper #FFFFFF", "#6B6B7A", "#FFFFFF"],
+    ["Faint #6B6B7A on Wash #F4F3FE", "#6B6B7A", "#F4F3FE"],
+    ["Vivid Blue #4737FF on Paper #FFFFFF", "#4737FF", "#FFFFFF"],
+    ["White on Vivid Orange #F75C03", "#FFFFFF", "#F75C03"],
+    ["White on Danger #D92D20", "#FFFFFF", "#D92D20"],
+    ["Ink #F3F2FB on Night #101018", "#F3F2FB", "#101018"],
+    ["Muted #9A98AC on Night #101018", "#9A98AC", "#101018"],
+    ["Accent #8B7DFF on Night #101018", "#8B7DFF", "#101018"],
+    ["On-accent #101018 on Accent #8B7DFF", "#101018", "#8B7DFF"]
+  ];
+  var tbody = document.getElementById("contrast-rows");
+  PAIRS.forEach(function(p){
+    var v = ratio(p[1], p[2]);
+    var tr = document.createElement("tr");
+
+    var td1 = document.createElement("td"); td1.textContent = p[0];
+    var td2 = document.createElement("td"); td2.className = "ratio"; td2.textContent = v.toFixed(2) + ":1";
+    var td3 = document.createElement("td");
+    var tag = document.createElement("span");
+    tag.className = "pass" + (v >= 4.5 ? " aa" : "");
+    tag.textContent = v >= 7 ? "AAA" : v >= 4.5 ? "AA" : v >= 3 ? "AA large only" : "decorative only";
+    td3.appendChild(tag);
+
+    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+    tbody.appendChild(tr);
+  });
+
+  /* ---------------- the wave field ----------------
+     A still frame of what waves.js draws: bands of sine, each filled with
+     a colour stepped along the theme's three-stop ramp. Deliberately not
+     animated — the brand uses it as weather, not as a light show. */
+  function ramp(){
+    var cs = getComputedStyle(root);
+    var dark = isDark();
+    var get = function(n, fb){ return (cs.getPropertyValue(n) || fb).trim() || fb; };
+    return dark
+      ? [get("--wave-ink-ground","#101018"), get("--wave-ink-mid","#3529BF"), get("--wave-ink-hi","#4737FF")]
+      : [get("--wave-paper-ground","#FFFFFF"), get("--wave-paper-mid","#F0EAFB"), get("--wave-paper-hi","#D8C6F2")];
+  }
+  function mix(a, b, t){
+    var A = toRgb(a), B = toRgb(b);
+    return "rgb(" + A.map(function(v,i){ return Math.round(v + (B[i]-v)*t); }).join(",") + ")";
+  }
+  function paintField(canvas){
+    if (!canvas) return;
+    var box = canvas.getBoundingClientRect();
+    if (!box.width || !box.height) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(box.width * dpr);
+    canvas.height = Math.round(box.height * dpr);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.scale(dpr, dpr);
+
+    var w = box.width, h = box.height;
+    var stops = ramp();
+    var dark = isDark();
+
+    ctx.fillStyle = stops[0];
+    ctx.fillRect(0, 0, w, h);
+
+    var bands = 26;
+    for (var i = bands; i >= 0; i--){
+      var t = i / bands;
+      /* t runs top-of-field (0) to bottom (1); the crest is what carries the
+         ramp's high end, so colour steps on the inverse. */
+      var u = 1 - t;
+      var col = u < 0.5 ? mix(stops[0], stops[1], u * 2) : mix(stops[1], stops[2], (u - 0.5) * 2);
+      ctx.fillStyle = col;
+      ctx.globalAlpha = dark ? 0.5 : 0.78;
+      ctx.beginPath();
+      var base = h * (0.30 + t * 0.82);
+      ctx.moveTo(0, h);
+      for (var x = 0; x <= w; x += 5){
+        var k = x / w;
+        var y = base
+              + Math.sin(k * 5.4 + t * 3.1) * (16 + t * 26)
+              + Math.sin(k * 2.1 - t * 1.7) * (11 + t * 16);
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(w, h);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    if (dark){
+      ctx.fillStyle = "rgba(16,16,24,.50)";
+      ctx.fillRect(0, 0, w, h);
+    }
+  }
+  function paintFields(){
+    paintField(document.getElementById("field-hero"));
+    paintField(document.getElementById("field-demo"));
+  }
+  paintFields();
+
+  var rs;
+  window.addEventListener("resize", function(){
+    window.clearTimeout(rs);
+    rs = window.setTimeout(paintFields, 160);
+  });
+
+  /* ---------------- scrollspy ---------------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll(".rail nav a"));
+  var targets = links.map(function(a){ return document.querySelector(a.getAttribute("href")); }).filter(Boolean);
+
+  if ("IntersectionObserver" in window && targets.length){
+    var seen = new Map();
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ seen.set(e.target, e); });
+      var best = null;
+      seen.forEach(function(e){
+        if (!e.isIntersecting) return;
+        if (!best || e.target.offsetTop < best.target.offsetTop) best = e;
+      });
+      if (!best) return;
+      var id = "#" + best.target.id;
+      links.forEach(function(a){ a.classList.toggle("is-current", a.getAttribute("href") === id); });
+    }, { rootMargin: "-10% 0px -70% 0px", threshold: 0 });
+    targets.forEach(function(t){ io.observe(t); });
+  }
+})();
+</script>
