@@ -1,4 +1,4 @@
-# my.adhd — public beta
+# my.adhd
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/morph-dark.gif" />
@@ -7,20 +7,23 @@
 
 **Brain dump → auto-triage → one task.**
 
-Live at **[myadhd.my](https://myadhd.my)** — the app itself is
-at [/app](https://myadhd.my/app).
+Live at **[myadhd.my](https://myadhd.my)**. The app itself, at
+[/app](https://myadhd.my/app), is **held behind `/soon` while it is rebuilt** —
+see [While the app is shut](#while-the-app-is-shut). The site around it is open.
 
 > **This README is the web app.** Two projects live in this repo and ship
 > separately: the web app at the root, which deploys to myadhd.my, and the
 > iOS shell in **[`ios/`](ios/README.md)**, a `WKWebView` case around that
 > deployed page. Everything below is the web app unless it says otherwise.
 
-**The web app is the public beta, and that is where the work goes.**
-myadhd.my is open to anyone now, so the root of this repo is the surface
-being used, broken, and fixed in front of real people — features and fixes
-land here first. The iOS shell is deliberately the quieter half: it is not on
-a release track, it adds only what a browser tab cannot do on an iPhone, and
-it holds no copy of anything below. Its state is its own README's to tell.
+**The web app is where the work goes.** It was the public beta, it is
+behind a curtain for the moment, and it is still the half that ships — features
+and fixes land here first. The iOS shell is deliberately the quieter half: it is
+not on a release track, it adds only what a browser tab cannot do on an iPhone,
+and it holds no copy of anything below. Its state is its own README's to tell.
+
+`CLAUDE.md` is the house rules and the switch that says which half a session is
+working on; `CLAUDE.web.md` is the standing rules for this one.
 
 The whole app does one thing: you empty your head into a box, and it hands back
 a single task with a 2-minute first step. Everything else is parked out of sight.
@@ -31,7 +34,8 @@ a single task with a 2-minute first step. Everything else is parked out of sight
    say it, which is the same funnel with the typing taken out.
 2. **Triage** — Claude (`claude-opus-5`, pinned in `api/triage.js`) turns the
    mess into structured tasks: rewritten title, realistic minutes, energy
-   cost, urgency, and a first step small enough that refusing feels stupid.
+   cost, urgency, importance, and a first step small enough that refusing
+   feels stupid.
 3. **The lists** — everything comes back under four headings, in the order
    the day presses on you: **Late**, **Today**, **Coming up**, **No date
    yet**. Category (work, admin, money, health, home, social, errand) is a
@@ -39,13 +43,41 @@ a single task with a 2-minute first step. Everything else is parked out of sight
    that appears once there are two lists to choose between.
    Tap a task for its first step, "break it down", and **Edit / Remove**.
    Completed items collect in a "N done" row with undo.
+4. **The matrix** — the same open tasks cut a second way, by importance as
+   well as by when. A toggle at the top right swaps between them and the
+   choice is remembered. See [Two ways to read one list](#two-ways-to-read-one-list).
 
 ### Dumps accumulate
 
 A dump **adds** to the lists — it never replaces them. Identical open titles
 are skipped so repeating yourself doesn't create duplicates. Opening the app
-always lands on the dump box; the lists are one tap away via **View my lists**,
-which shows the open count.
+lands on **home**, which is a summary rather than a box: what is next, the
+counts, and a shelf of links. Dumping is the ＋ in the middle of the tab bar,
+which opens the composer over whatever you were reading.
+
+### The shape of a task, and the three places it lives
+
+```js
+{ id, title, minutes, energy, urgency, importance, quadrant,
+  firstStep, category, when, at, steps, local, gcal, done, doneAt }
+```
+
+`when` is a local `YYYY-MM-DD` day and `at` an `HH:MM` clock time, kept as two
+fields rather than one instant: a time with no day is a time on no calendar.
+`urgency` is 1–5 and only 5 shows as a chip; `importance` is `low` or `high`.
+
+**Adding a field means touching three files, and missing one loses it in
+silence:**
+
+| | |
+|---|---|
+| `api/triage.js` | `TASK_SCHEMA` — what the model is asked for. It is `additionalProperties: false`, so a new property must also be named in `required` or the model cannot emit it. |
+| `app.js` | `normalizeTask()` — the gatekeeper. It builds a fresh object literal rather than spreading, so **any field it does not name is dropped**. Add to the schema alone and the model returns the field and the app throws it away. |
+| `app.js` | `parseLocally()` — the offline parser, which has to produce the same shape from regexes when there is no API. |
+
+Nothing else needs to change: `cloud.js` pushes the whole task object into a
+jsonb column and hashes it for change detection, so a new field syncs and
+versions itself with no migration.
 
 ### Why it orders what it orders
 
@@ -71,6 +103,46 @@ round, and the sentence describing it outlived the change by a fortnight.
 **Energy is captured but does not affect ordering.** The model rates every
 task `low` / `medium` / `high` and the chip on the row shows it, but nothing
 sorts on it.
+
+### Two ways to read one list
+
+The headings answer *when*. The matrix answers *when* and *does it matter* at
+once, which is the one thing a deadline alone cannot say. `state.view` holds
+`'list'` or `'matrix'`; a pill in the header names the view you are not in, and
+`goToNext()` paints whichever is current — the split is `paintListBody()` and
+`paintMatrixBody()` under one repaint, so the filter row, the done pile and the
+danger zone below are shared rather than built twice.
+
+The second axis is **`importance`**, `low` or `high`, returned by the model
+beside urgency and defined against it: urgency is how soon, importance is what
+it costs to never do it at all. The prompt says to be sparing, because a list
+where everything is high has stopped rating anything. `quadrantOf()` reads the
+pair — and counts a task whose day has passed as urgent whatever the model
+said, since a date that has gone is not an opinion.
+
+| | Urgent | Not urgent |
+|---|---|---|
+| **Important** | Do now | Plan |
+| **Not important** | Delegate | Drop |
+
+**The model's answer is a starting point, not a verdict.** `t.quadrant` holds a
+placement the person made themselves and always wins — set by holding a row and
+dragging it into another quadrant (the calendar's own drag, pointed at
+quadrants instead of days), or by the `+` in a quadrant's corner, which opens
+the composer and pins whatever comes back into that one.
+
+All four quadrants are drawn even when empty: a 2×2 with a hole in it is not a
+2×2, and an empty **Do now** is worth reading. The rows inside are the ordinary
+task rows, so swipe, expand, first step, break-down, Edit and Remove all work
+there without a second implementation. Below 560px they stack — a task card at
+170px wraps its chips onto three lines, and a matrix you cannot read is worse
+than one you have to scroll.
+
+**A task sorted before importance existed reads as `low`.** `load()` does not
+re-normalise stored tasks — that would mint fresh ids and orphan every calendar
+event and cloud row — so the field is simply absent and fails the `=== 'high'`
+test, which lands it in the unimportant column. That is the honest reading: we
+were never told it mattered, and the drag is the repair.
 
 The *fuel* selector (running on fumes / okay-ish / wired) that once fed it is
 gone, and so is `state.energy` — the markup went first, the wiring followed.
@@ -99,9 +171,16 @@ given as dates (`Fri 11 Sep`, `Tue 15 Sep`), read "today" as today, and left
 "was due yesterday" undated but urgent, which is the honest reading: the bill
 is overdue, not scheduled.
 
-| Dump | Lists |
+| Home | Lists |
 |---|---|
-| <img src="docs/screen-dump.png" alt="The dump screen: a welcome meme, one textarea, a Clear my head button, and View my lists" /> | <img src="docs/screen-lists.png" alt="The lists screen: a category filter row, then tasks under Today, Coming up and No date yet" /> |
+| <img src="docs/screen-dump.png" alt="The home screen: a welcome meme, one textarea and a Clear my head button" /> | <img src="docs/screen-lists.png" alt="The lists screen: a category filter row, then tasks under Today, Coming up and No date yet" /> |
+
+Both shots predate the tab restructure — home is a dashboard now, the ＋ in
+the bar is the way to dump, and the bar reads home / calendar / + / lists /
+notes. They also predate the matrix and the rebuilt notes editor, so neither
+appears in them. The screenshots want retaking; a stale photograph of the real
+thing still beats nothing, which is why they are said to be stale rather than
+quietly deleted.
 
 Same screen on the dark theme, via the header toggle:
 
@@ -334,7 +413,7 @@ because that event was put there by a person.
 
 Press and hold the mic in the composer, say the thing, let go. The text lands
 in the box for you to read and fix before it becomes tasks — this is a second
-way into the dump box, not a second dump box.
+way into the composer, not a second parser.
 
 It exists because typing is the narrowest part of a funnel whose whole purpose
 is getting a thought out of your head before it goes. The thought you have on
@@ -514,8 +593,10 @@ calendar — it cannot read, change or delete anything on the calendars the user
 already had. There is no XSS path to it either: every piece of task text
 reaches the DOM through `textContent`, and every `innerHTML` write in `app.js`
 either clears a node or writes a static SVG — no task text reaches one. (The
-count used to be given here as eight and is now twelve; `grep -c innerHTML
-app.js` is the check, and what matters is that none of them interpolate.) A token that could
+count has been given here as eight and then as twelve, and both went stale —
+no number is given now. `grep -n innerHTML app.js` is the check, and what
+matters is not how many there are but that none of them carry user text. Two
+splice in a value: both are module-level constants holding a static SVG rail.) A token that could
 reach a real diary would not be worth persisting. This one is — and the
 credential that would be worth stealing is the one kept on the far side of the
 service key.
@@ -649,16 +730,16 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | File | What it is |
 |---|---|
 | `index.html` | Landing page — the front door. Full-bleed hero + copy |
-| `landing.css` | Landing-only layout |
-| `app.html` | The app. Six screens: dump, loading, lists, calendar, feedback, profile — plus the composer sheet, the tab bar, and the icon and logo SVG sprite |
+| `chrome.css` | The bar, the footer and the clock, for the pages that are neither the app nor the site: `/privacy`, `/terms`, `/install`, `/admin`, `/waves-lab`. Was `landing.css`, for a landing page deleted in September — most of what is still in it belongs to that page and nothing loads it |
+| `app.html` | The app. Ten screens — `home`, `loading`, `now` (the lists **and** the matrix), `calendar`, `notes`, `note` (the editor), `settings`, `profile`, `feedback`, `plans` — plus the composer sheet, the tab bar, and the icon and logo SVG sprite. Only the four in `TAB_FOR` light a tab; the rest hide the bar entirely, which is how a screen becomes full-screen here |
 | `theme.css` | Palette and type. Loaded by **every** page before its own stylesheet |
 | `favicon.svg` | The logo mark, standalone |
 | `fonts/` | Baloo 2 (variable, wght 400-800), self-hosted |
-| `docs/` | README screenshots and the two theme gifs. Not served by the app |
+| `docs/` | README screenshots and the two theme gifs, plus the documents that are instructions rather than content — `ui-screens-brief.md`, `bahasa-melayu-voice.md`, `stripe-setup.md`, `supabase-setup.md`, `content/*.md`. Not served by the app |
 | `styles.css` | App layout: one white page, content held to `--measure` (720px), gradient pill actions |
-| `app.js` | State, triage call, ordering, rendering, the composer, the calendar, the profile, the calendar sync |
+| `app.js` | State, triage call, ordering, rendering, the composer, the matrix, the notes editor, the calendar, the profile, the calendar sync |
 | `gcal.js` | Google Calendar: the OAuth token dance and the three verbs. Loads before `app.js`, which only ever asks it whether the feature is available |
-| `auth.js` | Signing in, and the whole of it. Optional always — the app opens on the dump box with no account. Hands the Google refresh token straight to `/api/link-google` and never writes it down |
+| `auth.js` | Signing in, and the whole of it. Optional always — the app opens with no account. Hands the Google refresh token straight to `/api/link-google` and never writes it down |
 | `cloud.js` | The lists on every device: a signature per task, and the pass that reconciles this browser against Supabase. Talks to Supabase directly with the publishable key, not through `/api` |
 | `clock.js` | The visitor's city and local time at the end of the nav bar, on the four pages that have one — landing, guide and the two legal pages, not the app. No lookup and no request: the browser's own zone name carries the city |
 | `theme.js` | One theme controller for all seven pages, loaded synchronously from `<head>` so the stamp lands before first paint. Light is the default; the system preference does not decide, the toggle does |
@@ -674,7 +755,7 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `api/gcal-calendar.js` | Settles once, for the whole account, which Google calendar is the my.adhd one — the fix for two devices linking at once and creating two |
 | `api/delete-account.js` | Ends an account from inside the app, and takes the cloud copy of the lists with it. App Store Guideline 5.1.1(v) |
 | `api/admin-feedback.js` | Reads the feedback table. The only route that hands one person another person's writing, so it is the only one gated on `ADMIN_EMAILS` — and it fails closed |
-| `admin.html` / `admin.js` / `admin.css` | The notes page, at `/admin`. Presentation only: the access decision is made server-side by `api/admin-feedback.js`, and hiding the list from a signed-out visitor is politeness rather than security |
+| `admin.html` / `admin.js` / `admin.css` | The feedback page, at `/admin` — not to be confused with the Notes tab in the app. Presentation only: the access decision is made server-side by `api/admin-feedback.js`, and hiding the list from a signed-out visitor is politeness rather than security |
 | `install.html` / `install.css` | The "add to home screen" walkthrough |
 | `privacy.html` / `terms.html` | The legal pages. Written against the code -- if they disagree with it, one of the two is a bug |
 | `legal.css` | Long-form prose: one measured column. The only stylesheet on the site that is about reading |
@@ -802,7 +883,7 @@ landing page; that page was kept at `/landing-page` for two days and
 deleted on 2026-09-11 — everything it said about the app now lives on
 `/tools`.
 
-`site.css` and `site.js` are the public site. `landing.css` is the legal
+`site.css` and `site.js` are the public site. `chrome.css` is the legal
 pages' and `/install`'s and is not edited for the new pages. The copy for
 About and Activities is the user's, kept verbatim in `docs/content/`; the
 design is written down in `docs/loud-redesign-plan.md`.
@@ -891,7 +972,9 @@ The organisation asks you to find out; the app asks you to start. So
 `.ask-org` and its "Take the self-check" pill are on every page except
 `/tools`, which carries `.ask-app` and "Clear my head".
 
-**While the app is shut, every link into it points at `/soon`.** That is
+### While the app is shut
+
+Every link into the app points at `/soon`. That is
 the whole of the change on the site's side: `data-app-link` is off the
 CTAs, the rewrite in `site.js` is commented out with a note saying how to
 put it back, and `/app` and `/install` carry an inline hold at the top of
@@ -900,6 +983,12 @@ first paint. The hold is a curtain, not a lock — the test is in public
 JavaScript. Past it: `localhost` is never held, and `?dev=1` once on
 myadhd.my remembers that browser (`?dev=0` gives the key back). The block
 comment in `app.html` lists everything to undo when the app opens again.
+
+**The hold catches the iOS shell as well, and that is not yet fixed.**
+`AppConfig.home` in `ios/` is `https://myadhd.my/app`; a `WKWebView` is neither
+`localhost` nor carrying the dev key, so the shell currently lands on `/soon`
+too. The fix belongs on the iOS side — inject the key before the page runs —
+and is a decision about the shell, not about this page.
 
 ### Type and colour
 
@@ -1080,7 +1169,7 @@ each needs an edge — a hairline border and a tinted band for the drawing, stil
 no shadow.
 
 The landing page used to be the other exception: deliberately dark, with its
-own hardcoded colours. It is not any more. `landing.css` reads the same tokens
+own hardcoded colours. It is not any more. `chrome.css` reads the same tokens
 as everything else and follows the same toggle, light by default. What it does
 keep for itself is the hero's glow alphas, the wave field's veil and reader
 pool, and the field's two colour ramps — values no other page consumes, and in
@@ -1094,11 +1183,12 @@ Vivid Orange is reserved for one thing — the "start here" first step. It
 means *act now*, and it stops meaning that if it decorates anything else.
 
 Type is Baloo 2, served from `fonts/` — no Google Fonts request, so the app
-still renders correctly offline. `Baloo2-ExtraBold.ttf` is unused; the
-variable file covers 400-800 on its own.
+still renders correctly offline. The variable file covers 400-800 on its own,
+so there is one Baloo file and not two: `Baloo2-ExtraBold.ttf` sat unused
+beside it for months and was deleted rather than left to be cloned for ever.
 
 The interface icons and the logo are inline SVG symbols in a hidden sprite
-at the top of each page (`#logo-mark`, `#icon-lists`, `#icon-calendar` and
+at the top of each page (`#logo-mark`, `#icon-home`, `#icon-calendar` and
 the rest), pulled in with `<use>` and coloured through tokens — so each
 shape is defined once for the whole app.
 
@@ -1188,6 +1278,76 @@ takes two confirmations, and the armed state times out after 20s so a
 half-pressed confirm can't wait around for a stray tap. There is no undo and
 no backup — tasks live only in this browser's `localStorage`, and clearing is
 final. `--danger` is reserved for this; it is never decoration.
+
+## Notes
+
+Deliberately nothing like the lists. A task is a thing the app has an opinion
+about — it gets a length, an energy, a first step, a day, and it wants to be
+finished. A note is a thing you wrote down. Nothing sorts it, nothing triages
+it, nothing asks when it is due, and it never becomes a task. The ＋ in the tab
+bar still points at the dump composer here, because that means "sort this out
+for me", which is the one thing a note is for not doing.
+
+**The index** is a stack of cards, newest edit first, each a title — or the
+first line of the body when there is no title — over a two-line preview and a
+footer carrying a relative time and small tags for a picture count and a
+reminder. Empty, it is the app's only centred empty state: the note glyph in a
+violet outline, *"Nothing written down yet."*, and one button.
+
+**The editor is its own screen** (`#screen-note`), not a panel on the index. It
+is absent from `TAB_FOR`, so the tab bar stands down and the toolbar takes the
+bottom of the screen for as long as you are writing. Its header is
+`.sheet-bar` — the composer's `1fr auto 1fr` grid, generalised when a second
+thing needed a back/title/confirm row. Under it, a sheet of paper on the Pale
+lavender ground with a dotted grain, an oversized title, and the body.
+
+### A note is blocks, not HTML
+
+Each line of the body is a block:
+
+```js
+{ type: 'p' | 'h' | 'ul' | 'ol' | 'check', text, marks, done, align }
+```
+
+`marks` are ranges over that block's own text — `{ s, e, b, i, u, strike }`.
+`n.body` stays as the flattened plain text, so the cards, the previews and
+anything reading the store from Swift keep working unchanged.
+
+**This is a security decision, not a modelling preference.** The reason it is
+acceptable to keep a Google access token in `localStorage` is that no task or
+note text ever reaches `innerHTML` — every write to the DOM in `app.js` goes
+through `textContent` or `createElement`, and the only `innerHTML` calls either
+clear a node or write a static SVG. Storing what `contenteditable` produces
+would end that. So the editor lets the browser do the editing, reads the result
+back out on every keystroke, and keeps only text and offsets. The check is
+`grep -n innerHTML app.js`, and what it has to show is that no task or note
+text is on any of those lines.
+
+Enter splits a line into two blocks rather than dropping a `<br>` into one,
+because a bullet or a checkbox is a property of a line and a line has to be a
+thing before it can carry one. Enter on an empty bullet ends the list.
+Backspace at the start of a line merges it back into the one above, marks and
+all.
+
+### The four tools
+
+| | |
+|---|---|
+| **Aa** | Line type, **B** *I* <u>U</u> S, and alignment. The emphasis buttons go through `execCommand` because the browser already knows how to style a selection across element boundaries — whatever it emits is read straight back out and thrown away. Every toolbar button cancels its own `pointerdown`, or the caret leaves the text and there is nothing left to format. |
+| **Checklist** | A `check` block with a tappable box. Also what makes a note worth looking at on a lock screen. |
+| **Paperclip** | Pictures, downscaled to 1024px JPEG at quality 0.72, three per note. A phone photo straight off the camera would spend the whole `localStorage` budget; going over quota puts the picture back rather than losing the writing. |
+| **Bell** | A day, a time and a repeat on the note, kept as two fields for the same reason a task's are. |
+
+**Notes stay on this device.** They live inside `myadhd.v1` rather than a key
+of their own — the iOS shell watches that key and only that key, so a note
+written anywhere else would be a write the phone never hears — but `cloud.js`
+only ever touches the `tasks` table, so signing in does not carry them. The
+hint under the index says so.
+
+**`normalizeNote()` drops every key it does not name**, exactly as
+`normalizeTask()` does. A field added to a note without being named there is
+stripped on the next `load()`. A note saved before blocks existed is migrated
+to one block per line rather than one block holding newlines.
 
 ## Deliberately not in the beta
 

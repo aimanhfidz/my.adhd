@@ -5,8 +5,8 @@
    measured column, generous leading, and nothing in the margins to look
    at instead.
 
-   Loaded after landing.css and borrows its tokens, its body ground and
-   its nav. The one thing it overrides is the stickiness: landing.css
+   Loaded after chrome.css and borrows its tokens, its body ground and
+   its nav. The one thing it overrides is the stickiness: chrome.css
    pins the bar because that page never scrolls, and a bar with no ground
    behind it would drag a seam through this one. */
 
@@ -28,7 +28,7 @@
 
 .legal{
   /* main is never capped, at any width. It is <main> that carries the
-     page's ground — landing.css paints it --surface so the sticky footer
+     page's ground — chrome.css paints it --surface so the sticky footer
      has something opaque to be revealed from under — and a main narrower
      than the window leaves that footer showing down both sides of the
      page as two bands of the wrong colour, which is what every legal page
@@ -195,7 +195,7 @@
 
   /* The footer follows the page it ends, on the same edges. --foot-measure
      is the outer box including the gutter the band has already spent, so
-     the gutter goes back on here and comes off again in landing.css. The
+     the gutter goes back on here and comes off again in chrome.css. The
      gap is inside the shell rather than added to a constant because it is
      a clamp: hard-code 80 and the two disagree by a few pixels at every
      width between 1160 and 1600, which is exactly where a rule that does

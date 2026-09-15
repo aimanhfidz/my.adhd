@@ -222,7 +222,7 @@
 }
 
 /* ============ the brand lockup ============
-   Defined once. It used to live in both landing.css and styles.css, which
+   Defined once. It used to live in both chrome.css and styles.css, which
    is how the app ended up a pixel tighter than the landing page. */
 /* The asterisk spans 18-82 of its 100-unit viewBox, so the ink starts
    --logo-bearing in from the edge of the box. A lockup sitting flush on the

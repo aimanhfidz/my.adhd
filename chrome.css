@@ -1,9 +1,25 @@
-/* ============ my.adhd — landing ============
-   Full-bleed: no card, no gutter, the page IS the surface.
-   The HERO is exactly one viewport (100dvh), so the first screen is
-   always whole and nothing is cut off on a phone. The copy below it
-   scrolls. Tokens come from theme.css, so the hero follows the same
-   toggle as the app — light by default, dark when asked. */
+/* ============ my.adhd — chrome ============
+   The bar, the footer, the clock and the theme toggle, for the five pages
+   that are neither the app nor the public site: /privacy, /terms, /install,
+   /admin and /waves-lab. Tokens come from theme.css, so all of it follows
+   the same toggle as the app — light by default, dark when asked.
+
+   This was `landing.css` until 2026-09-15, and most of it still is. It was
+   written for the landing page, which was deleted on 2026-09-11; of the 112
+   classes defined below, twenty-two are used by the pages above and ninety
+   are not used by anything. The hero, the bands, the cards, the acts and
+   the scroll reveals are all dead, and every one of those five pages is
+   still downloading them.
+
+   It was renamed rather than cleaned because a rename is safe and a cut is
+   not: some of these classes are added by site.js and by waves.js at
+   runtime, so "no page has this in its markup" is not the same as "nothing
+   needs it". The cut is worth doing and wants its own pass, with the five
+   pages open in both themes. Until then the name at least tells the truth
+   about which fifth of the file is load-bearing.
+
+   Full-bleed, from the page this came from: no card, no gutter, the page IS
+   the surface. */
 
 *{box-sizing:border-box; margin:0; padding:0}
 

@@ -40,6 +40,11 @@ const TASK_SCHEMA = {
             type: 'integer',
             description: '1 = whenever, 3 = this week, 5 = a real deadline or consequence is near.',
           },
+          importance: {
+            type: 'string',
+            enum: ['low', 'high'],
+            description: 'What it costs to never do this at all, ignoring when it is due. high = money lost, health harmed, a person let down, or something that blocks other things. low = it would be nice, and nothing breaks if it never happens. This is NOT urgency: a bill due tomorrow is high and urgent, renewing a passport with no trip booked is high and not urgent, a notification that must be cleared today is low and urgent.',
+          },
           firstStep: {
             type: 'string',
             description: 'A single physical action under 2 minutes that starts this task. Must be so small it feels stupid to refuse. No planning steps.',
@@ -54,7 +59,7 @@ const TASK_SCHEMA = {
             description: 'The clock time as 24-hour HH:MM, ONLY when an actual time is mentioned: "4pm" -> "16:00", "half nine" -> "09:30", "noon" -> "12:00". null otherwise. Never invent a time from a vague word like "morning", "later", or "soon" — those give a day at most.',
           },
         },
-        required: ['title', 'minutes', 'energy', 'urgency', 'firstStep', 'category', 'when', 'at'],
+        required: ['title', 'minutes', 'energy', 'urgency', 'importance', 'firstStep', 'category', 'when', 'at'],
         additionalProperties: false,
       },
     },
@@ -92,6 +97,7 @@ Rules:
 - Every firstStep must be a physical action the person could do in the next 2 minutes without deciding anything: "open the email app", "put the laundry in the dryer", "find the insurance renewal letter". Never "think about", "plan", "decide", or "review".
 - Cap at 20 tasks. If the dump is longer, keep the 20 that matter most.
 - Timing is captured, never invented. A day only becomes a date when the dump gives you one, and a time only becomes a clock time when the dump gives you one. "Sometime this week" is not a date. When something is genuinely tied to a day, the urgency should reflect how close that day is.
+- Urgency and importance are different questions and must be answered separately. Urgency is how soon; importance is what it costs to never do it. A deadline does not make something important, and something important is often not due at all. Be sparing with high: if everything is important then the word has stopped working, and a list where every item is high is worse than no ratings at all. When genuinely unsure, answer low.
 - If the dump contains no actionable items at all, return an empty tasks array.`;
 
 /* Bolted on only when the dump was spoken, and different depending on who

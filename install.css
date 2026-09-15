@@ -2,7 +2,7 @@
    The step between the landing page and the app: it explains how to keep
    my.adhd on the home screen so it opens like an app. Follows the same
    toggle as every other page.
-   Tokens from theme.css; .cta comes from landing.css. */
+   Tokens from theme.css; .cta comes from chrome.css. */
 
 *{box-sizing:border-box; margin:0; padding:0}
 
@@ -13,7 +13,7 @@ body{
   -webkit-font-smoothing:antialiased;
   line-height:1.5;
   min-height:100dvh;
-  /* landing.css pins its hero to one viewport with overflow:hidden — this
+  /* chrome.css pins its hero to one viewport with overflow:hidden — this
      page is a guide, not a hero, so give it back its scrollbar */
   overflow-x:hidden;
   overflow-y:auto;

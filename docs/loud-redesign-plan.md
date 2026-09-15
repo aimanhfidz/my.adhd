@@ -4,6 +4,12 @@
 > wave field is the page ground rather than a framed picture, display
 > headings are set in Baloo 2, and the decode intro on /about is gone.
 > Where this plan and the README disagree, the README is current.
+>
+> **`landing.css` is now `chrome.css`.** Renamed 2026-09-15, once the landing
+> page it was written for had been deleted and the only pages left loading it
+> were `/privacy`, `/terms`, `/install`, `/admin` and `/waves-lab`. The name
+> is left alone below: this file is a record of a plan as it was written, and
+> rewriting it to match the present would make it a worse record.
 
 # myadhd.my in the shape of loudsrl.com — the plan
 

@@ -177,12 +177,12 @@ body{
 
 /* isolate, so the sheet below can sit at z-index -1 and still land in
    front of the screen's own ground instead of behind it */
-#screen-dump{background:var(--loud-ground); isolation:isolate}
+#screen-home{background:var(--loud-ground); isolation:isolate}
 
 /* The sheet. Fixed and oversized, so the drift never walks an edge into
    view, and blurred rather than drawn — three soft lobes passing over one
    another is what reads as poured light. */
-#screen-dump::before{
+#screen-home::before{
   content:""; position:fixed; inset:-25%; z-index:-1; pointer-events:none;
   background:
     radial-gradient(58% 42% at 22% 24%, var(--loud-sheen-1) 0%, transparent 62%),
@@ -197,11 +197,11 @@ body{
   100%{transform:translate3d(-2%,3%,0)  scale(1.08) rotate(-3deg)}
 }
 @media (prefers-reduced-motion:reduce){
-  #screen-dump::before{animation:none}
+  #screen-home::before{animation:none}
 }
 
 /* the header stops being an opaquepanel  and becomes glass over the sheet */
-#screen-dump .brand::before{
+#screen-home .brand::before{
   background:none;
   backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);
@@ -209,35 +209,34 @@ body{
   -webkit-mask-image:linear-gradient(to bottom, #000 68%, transparent);
 }
 
-#screen-dump .dump-welcome{
+#screen-home .dump-welcome{
   background:var(--loud-glass);
   border-color:var(--loud-edge);
   box-shadow:var(--loud-cast);
 }
-#screen-dump .dump-input{
-  background:var(--loud-glass);
-  backdrop-filter:blur(20px) saturate(140%);
-  -webkit-backdrop-filter:blur(20px) saturate(140%);
-  border-color:var(--loud-edge);
-  box-shadow:inset 0 1px 0 var(--loud-top), var(--loud-cast);
-}
-#screen-dump .dump-input:focus{
-  background:var(--loud-glass-strong);
-  border-color:var(--accent);
-  box-shadow:inset 0 1px 0 var(--loud-top), 0 0 0 4px var(--focus);
-}
 /* the one coloured object left on the screen, as on the reference where a
    single element carries the brand and the rest is surface */
-#screen-dump .btn-primary{box-shadow:var(--loud-cast)}
-#screen-dump .btn-lists{
-  background:var(--loud-glass);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border-color:var(--loud-edge);
+#screen-home .btn-primary{box-shadow:var(--loud-cast)}
+
+/* ---------- screen 1: home ---------- */
+/* The dump buffer. Off screen rather than display:none — it still holds the
+   text every dump passes through, and the iOS shell still fills it by id
+   and focuses it, neither of which works on something that is not laid
+   out. Same clip trick as .sr-only, minus the screen-reader part: this one
+   is hidden from everybody, aria included. */
+.is-offscreen{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+  opacity:0; pointer-events:none;
 }
 
-/* ---------- screen 1: dump ---------- */
-.dump-wrap{margin:auto 0; padding:26px 0 0}
+/* The cold start. It floats in the middle of an otherwise empty screen,
+   which is what the box used to do here. */
+.home-empty-wrap{
+  margin:auto 0; padding:26px 0 0;
+  display:flex; flex-direction:column;
+}
+.home-start-hint{margin-top:0; margin-bottom:22px}
 
 /* The welcome meme. Rounded to the same radius as the composer below it so
    the two read as one stack, and it keeps its own aspect box (width/height on
@@ -267,35 +266,8 @@ body{
   text-align:center; margin-bottom:12px;
 }
 
-.dump-input{
-  width:100%;
-  background:var(--wash);
-  border:1.5px solid var(--line);
-  border-radius:var(--radius-lg);
-  color:var(--ink);
-  font:inherit; font-size:15.5px; line-height:1.7;
-  padding:15px 18px;
-  resize:vertical; min-height:112px;
-  margin-bottom:22px;
-  transition:border-color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease);
-}
-/* A short-desktop squeeze: four fewer lines of empty box so a returning
-   user — who also carries the "View my lists" row — still lands the whole
-   composer on a 768px-tall window. Placed after the base rule; a media
-   query adds no specificity. */
-@media (min-width:820px) and (max-height:880px){
-  /* rows="4" sets the height, so min-height alone changes nothing */
-  .dump-input{min-height:96px; height:112px}
-}
-.dump-input::placeholder{color:var(--faint); line-height:1.7}
-.dump-input:focus{
-  outline:none;
-  background:var(--surface);
-  border-color:var(--accent);
-  box-shadow:0 0 0 4px var(--focus);
-}
-
-/* primary CTA — black pill with circular arrow, as in the reference */
+/* primary CTA — the brand gradient, as in the reference. Used by the cold
+   start on home, the composer's send, the notes' New note and the plans. */
 .btn-primary{
   width:100%;
   display:flex; align-items:center; justify-content:center; gap:12px;
@@ -306,18 +278,10 @@ body{
   transition:transform .16s var(--ease), opacity .18s var(--ease);
   box-shadow:0 16px 34px -16px rgba(71,55,255,.85);
 }
-.btn-arrow svg{width:19px; height:19px; display:block}
 .btn-primary:hover{transform:translateY(-1px)}
 .btn-primary:active{transform:translateY(0)}
 .btn-primary:disabled{opacity:.4; cursor:not-allowed; transform:none}
-.kbd{
-  font:inherit; font-size:11px; font-weight:600;
-  background:rgba(255,255,255,.14); padding:4px 8px; border-radius:6px;
-  letter-spacing:.02em; display:none;
-}
-@media (min-width:520px){
-  .kbd{display:inline-block}
-}
+
 /* the typing preview: what the app has already spotted a day in */
 .dump-dates{
   /* The box already carries 22px of floor. The strip borrows the top half
@@ -338,24 +302,6 @@ body{
 .hint{margin-top:14px; font-size:13px; color:var(--faint); text-align:center}
 .hint strong{color:var(--ink); font-weight:600}
 
-/* shortcut from the dump box back into the lists */
-.btn-lists{
-  display:flex; align-items:center; justify-content:center; gap:9px;
-  width:100%; margin-top:14px;
-  background:var(--surface); border:1.5px solid var(--line-strong);
-  color:var(--muted); font:inherit; font-family:var(--display);
-  font-size:14.5px; font-weight:600;
-  padding:12px; border-radius:999px; cursor:pointer;
-  transition:all .18s var(--ease);
-}
-.btn-lists:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
-.btn-lists-count{
-  min-width:21px; height:21px; padding:0 7px; border-radius:999px;
-  background:var(--accent); color:var(--on-accent);
-  font-size:12px; font-weight:700;
-  display:grid; place-items:center;
-}
-
 /* ---------- screen 2: loading ---------- */
 /* The wait is the logo mark morphing through its own states — eight arms
    changing length and radius, never added or removed, so it reads as one
@@ -374,6 +320,575 @@ body{
           mask-image:radial-gradient(closest-side,#000 74%,transparent 99%);
 }
 .loading-text{color:var(--muted); font-size:15px}
+
+/* ---------- home: the widgets ----------
+   Everything under the dump box. They share one recipe with the cards in
+   settings — see .gcal-card, which .acct-card already extends the same way
+   — and then take the glass treatment the rest of this screen wears, so a
+   widget reads as part of the sheet rather than a panel dropped onto it. */
+.home-widgets{
+  width:100%;
+  display:flex; flex-direction:column; gap:14px;
+  margin-top:26px;
+}
+
+.home-card{
+  background:var(--loud-glass);
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  border:1.5px solid var(--loud-edge);
+  border-radius:var(--radius-card);
+  box-shadow:inset 0 1px 0 var(--loud-top), var(--loud-cast);
+  padding:20px 18px;
+}
+
+.home-card-head{
+  display:flex; align-items:baseline; gap:10px;
+  margin-bottom:14px;
+}
+.home-card-title{
+  font-family:var(--display); font-size:17px; font-weight:800;
+  color:var(--ink); margin:0;
+}
+/* The one place on this screen orange is allowed: the heading says "3 late"
+   or it says "Today", and only the first of those is news. */
+.home-card-title.is-late{color:var(--orange)}
+.home-card-more,
+.home-card-head .home-card-more{
+  margin-left:auto;
+  background:none; border:0; padding:0; cursor:pointer;
+  font:inherit; font-family:var(--display);
+  font-size:13px; font-weight:600; color:var(--muted);
+  transition:color .18s var(--ease);
+}
+.home-card-more:hover{color:var(--accent)}
+
+.home-today-rows{display:flex; flex-direction:column; gap:8px}
+/* A signpost, not a task row: no tick, no swipe, no chips. Tapping it goes
+   to the lists, which is where a task can actually be worked on.
+
+   appearance:none because this is a <button> and WebKit paints its own
+   bezel under one otherwise. The rule down the left is a pseudo-element
+   rather than a border-left: a one-sided border under a border-radius is
+   drawn as a taper around all four corners, which reads as four stray
+   arcs rather than one straight mark. */
+.home-today-row{
+  position:relative;
+  display:flex; flex-direction:column; gap:3px;
+  width:100%; text-align:left;
+  -webkit-appearance:none; appearance:none;
+  background:none; border:0; padding:9px 12px 9px 16px; cursor:pointer;
+  border-radius:var(--radius);
+  font:inherit;
+  transition:background .18s var(--ease);
+}
+.home-today-row::before{
+  content:""; position:absolute; left:0; top:9px; bottom:9px;
+  width:2.5px; border-radius:999px;
+  background:var(--line-strong);
+  transition:background .18s var(--ease);
+}
+.home-today-row:hover{background:var(--loud-glass-strong)}
+.home-today-row:hover::before{background:var(--accent)}
+.home-today-row.is-late::before{background:var(--orange)}
+.home-today-title{
+  font-family:var(--display); font-size:14.5px; font-weight:600; color:var(--ink);
+}
+.home-today-meta{font-size:12.5px; color:var(--faint)}
+.home-today-row.is-late .home-today-meta{color:var(--orange)}
+
+.home-empty{margin:0; font-size:14px; color:var(--muted)}
+
+/* The stat tiles came off the profile screen, where they were an auto-fit
+   row that chose its own column count. Here they are pinned to two.
+
+   auto-fit was picking three at 430px and one at 320px off the same rule,
+   which made the same five numbers a different shape on every phone —
+   and three columns leaves a lone tile on the second row with the wide
+   overdue card under it, which reads as a mistake rather than a layout.
+   Two, then two, then overdue across the foot, at every width. */
+#home-widgets .stat-row{
+  margin-top:0;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+}
+
+.discover-rows{display:flex; flex-direction:column; gap:2px}
+.discover-row{
+  display:flex; flex-direction:column; gap:2px;
+  padding:9px 12px; border-radius:var(--radius);
+  text-decoration:none;
+  transition:background .18s var(--ease);
+}
+.discover-row:hover{background:var(--loud-glass-strong)}
+.discover-title{
+  font-family:var(--display); font-size:14.5px; font-weight:600; color:var(--ink);
+}
+.discover-note{font-size:12.5px; color:var(--faint)}
+
+/* Two controls in the header instead of one. The toggle stays hard right,
+   where it has been on every screen since the app existed; the gear tucks in
+   beside it. */
+.brand-tools{
+  margin-left:auto;
+  display:flex; align-items:center; gap:8px;
+}
+.brand .brand-tools .theme-toggle{margin-left:0}
+
+/* The gear. Deliberately not a .theme-toggle — theme.js binds that class by
+   name on every page and would make this switch the theme — so it borrows
+   the shape and leaves the orange ring to the button it sits next to. */
+.icon-btn{
+  flex:none; width:34px; height:34px; display:grid; place-items:center;
+  background:none; border:1.5px solid var(--line-strong); border-radius:999px;
+  color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+.icon-btn svg{width:17px; height:17px; display:block}
+.icon-btn:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
+.icon-btn:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+#screen-home .icon-btn{border-color:var(--loud-edge)}
+
+
+
+/* ---------- the note's own paper ----------
+   A sheet, and the only filled ground in the app besides the plans card.
+   Its own tokens for the same reason the tab bar has its own: the grain and
+   the edge carry alpha, and no shared token does. No new hue enters here —
+   the paper is Pale, which is already in theme.css, and the rest is ink at
+   a percentage. */
+:root{
+  --note-paper:var(--pale);
+  --note-edge:rgba(16,16,24,.09);
+  --note-dot:rgba(16,16,24,.10);
+  --note-ink:var(--black);
+  --note-faint:rgba(16,16,24,.42);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --note-paper:#26233A;
+    --note-edge:rgba(255,255,255,.08);
+    --note-dot:rgba(255,255,255,.10);
+    --note-ink:#F3F2FB;
+    --note-faint:rgba(243,242,251,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --note-paper:#26233A;
+  --note-edge:rgba(255,255,255,.08);
+  --note-dot:rgba(255,255,255,.10);
+  --note-ink:#F3F2FB;
+  --note-faint:rgba(243,242,251,.45);
+}
+
+/* ---------- notes ----------
+   The index. The editor is a screen of its own, below. */
+/* A flex column so the empty state can take the middle of the screen with
+   margin:auto — the reference centres it, and on a block parent that has
+   nothing to push against. */
+.notes-wrap{
+  margin:0; padding-top:clamp(18px,3vh,32px); padding-bottom:8px;
+  flex:1 1 auto; display:flex; flex-direction:column;
+}
+.notes-wrap .btn-primary{margin-top:16px}
+
+.notes-list{display:flex; flex-direction:column; gap:10px; margin-top:20px}
+.note-card{
+  display:flex; flex-direction:column; gap:5px;
+  width:100%; text-align:left;
+  -webkit-appearance:none; appearance:none;
+  background:var(--surface); border:1.5px solid var(--line);
+  border-radius:var(--radius-lg);
+  padding:15px 16px; cursor:pointer; font:inherit;
+  transition:border-color .18s var(--ease), background .18s var(--ease);
+}
+.note-card:hover{border-color:var(--line-strong); background:var(--wash)}
+.note-card-title{
+  font-family:var(--display); font-size:15.5px; font-weight:700; color:var(--ink);
+}
+/* Two lines of the body and no more. A note can be a page long; the card is
+   a way back into it, not a way to read it. */
+.note-card-preview{
+  font-size:13.5px; line-height:1.45; color:var(--muted);
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.note-card-foot{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.note-card-when{font-size:11.5px; color:var(--faint)}
+.note-card-tag{
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:11.5px; color:var(--faint);
+}
+.note-card-tag svg{
+  width:12px; height:12px; display:block;
+  fill:none; stroke:currentColor; stroke-width:2.2;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+
+/* ---------- the empty state ----------
+   Icon, line, reason, one thing to press — centred, which nothing else in
+   this app was. Built here for the notes; home and the calendar keep the
+   one-liners they already had until there is a reason to move them. */
+.empty-state{
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  gap:10px; margin:auto 0; padding:32px 0;
+}
+.empty-mark{
+  width:54px; height:54px; display:grid; place-items:center;
+  border:2px solid var(--violet); border-radius:16px; color:var(--violet);
+  margin-bottom:4px;
+}
+.empty-mark svg{
+  width:26px; height:26px; display:block;
+  fill:none; stroke:currentColor; stroke-width:2.2;
+  stroke-linecap:round; stroke-linejoin:round;
+}
+.empty-title{
+  font-family:var(--display); font-size:17px; font-weight:700;
+  color:var(--ink); margin:0;
+}
+.empty-body{font-size:13.5px; color:var(--muted); margin:0; max-width:30ch; line-height:1.5}
+/* .btn-primary is full-width by design — it is the one CTA on every screen
+   that has one. In here it is sitting under a sentence and wants to be the
+   width of its own word. */
+.empty-go{width:auto; margin-top:8px; padding:13px 28px}
+
+/* ---------- the note editor ----------
+   A screen, not a panel. The bar is the composer's three-slot grid; the
+   canvas is the sheet of paper; the toolbar sits where the tab bar would. */
+.sheet-bar{display:grid; grid-template-columns:1fr auto 1fr; gap:10px}
+.sheet-back{
+  justify-self:start; width:34px; height:34px; display:grid; place-items:center;
+  background:none; border:none; color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease);
+}
+.sheet-back svg{width:20px; height:20px; display:block; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+.sheet-back:hover{color:var(--accent)}
+.sheet-go{
+  justify-self:end; width:36px; height:36px; display:grid; place-items:center;
+  background:var(--ink); border:none; border-radius:999px;
+  color:var(--surface); cursor:pointer; padding:0;
+  transition:transform .12s var(--ease), opacity .18s var(--ease);
+}
+.sheet-go svg{width:18px; height:18px; display:block; fill:none; stroke:currentColor; stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round}
+.sheet-go:active{transform:scale(.94)}
+.sheet-go:focus-visible{outline:none; box-shadow:0 0 0 4px var(--focus)}
+/* .screen-title is absolutely centred on the settings screens, where the
+   left slot is a word-wide back label. Here the grid already centres it. */
+.sheet-bar .screen-title{position:static; transform:none; justify-self:center}
+
+.note-wrap{
+  margin:0; padding-top:14px;
+  padding-bottom:calc(104px + env(safe-area-inset-bottom,0px));
+  flex:1 1 auto; display:flex; flex-direction:column;
+}
+
+/* The sheet of paper. Ground from the theme's own pale, never a new hue,
+   and the dotted grain is one radial-gradient rather than an asset. */
+.note-canvas{
+  flex:1 1 auto;     /* the paper reaches the toolbar, as a sheet would */
+  background:var(--note-paper);
+  border:1.5px solid var(--note-edge);
+  border-radius:var(--radius-card);
+  padding:20px 20px 26px;
+  min-height:46vh;
+  background-image:radial-gradient(var(--note-dot) 1px, transparent 1px);
+  background-size:14px 14px;
+  background-position:10px 12px;
+}
+
+.note-title{
+  width:100%; background:none; border:none; padding:0; margin:0 0 6px;
+  font-family:var(--display); font-size:24px; font-weight:800;
+  letter-spacing:-.02em; color:var(--note-ink);
+}
+.note-title::placeholder{color:var(--note-faint)}
+.note-title:focus{outline:none}
+
+.note-blocks{display:flex; flex-direction:column; gap:2px; min-height:32vh}
+
+.nb{display:flex; align-items:flex-start; gap:8px}
+.nb-lead{
+  flex:none; min-width:16px; padding-top:3px;
+  font-size:15px; color:var(--note-faint); user-select:none;
+}
+.nb-text{
+  flex:1 1 auto; min-width:0;
+  font-family:var(--sans); font-size:15.5px; line-height:1.55;
+  color:var(--note-ink); padding:2px 0; word-break:break-word;
+}
+.nb-text:focus{outline:none}
+.nb--h .nb-text{font-family:var(--display); font-size:19px; font-weight:700; letter-spacing:-.01em}
+.nb-text.is-done{color:var(--note-faint); text-decoration:line-through}
+/* The placeholder on the first empty line, and only there. */
+.nb-text:empty[data-hint]::before{content:attr(data-hint); color:var(--note-faint)}
+
+.nb-box{
+  flex:none; width:18px; height:18px; margin-top:4px;
+  background:none; border:2px solid var(--note-faint); border-radius:5px;
+  cursor:pointer; padding:0;
+  transition:background .16s var(--ease), border-color .16s var(--ease);
+}
+.nb-box.is-done{background:var(--accent); border-color:var(--accent)}
+.nb-box:focus-visible{outline:none; box-shadow:0 0 0 3px var(--focus)}
+
+.note-files{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px}
+.note-file{position:relative; width:84px; height:84px; border-radius:12px; overflow:hidden}
+.note-file img{width:100%; height:100%; object-fit:cover; display:block}
+.note-file-x{
+  position:absolute; top:4px; right:4px; width:20px; height:20px;
+  display:grid; place-items:center; line-height:1;
+  background:rgba(16,16,24,.62); border:none; border-radius:999px;
+  color:#fff; font-size:14px; cursor:pointer; padding:0;
+}
+
+.note-remind{
+  font-size:12.5px; color:var(--accent); margin:12px 0 0;
+  display:flex; align-items:center; gap:6px;
+}
+.note-delete{margin-top:18px; align-self:flex-start}
+
+/* ---------- the note toolbar ----------
+   Where the tab bar would be, because the tab bar is gone while you write.
+   Same pill, same blur, same floor. */
+.note-tools{
+  position:fixed; z-index:40;
+  /* .screen > * puts width:100% on every direct child, which is right for
+     the column and wrong for a pill that should be the width of its own
+     buttons. */
+  width:auto;
+  left:50%; transform:translateX(-50%);
+  bottom:max(8px, calc(env(safe-area-inset-bottom,0px) - 4px));
+  display:flex; align-items:center; gap:4px;
+  background:var(--tab-bg); border:1.5px solid var(--line);
+  border-radius:999px; padding:6px;
+  backdrop-filter:blur(16px) saturate(1.5);
+  -webkit-backdrop-filter:blur(16px) saturate(1.5);
+  box-shadow:var(--tab-shadow);
+}
+.note-tool{
+  width:44px; height:40px; display:grid; place-items:center;
+  background:none; border:none; border-radius:999px;
+  color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease), background .18s var(--ease);
+}
+.note-tool svg{width:19px; height:19px; display:block; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+.note-tool:hover{color:var(--ink); background:var(--wash-2)}
+.note-tool.is-on{color:var(--accent); background:var(--wash-2)}
+.note-tool:focus-visible{outline:none; box-shadow:0 0 0 3px var(--focus)}
+
+/* ---------- the two note sheets ----------
+   Over the toolbar, not over the writing: what you are formatting has to
+   stay visible while you format it. */
+.note-sheet{
+  position:fixed; z-index:45;
+  left:50%; transform:translateX(-50%);
+  bottom:calc(66px + env(safe-area-inset-bottom,0px));
+  width:min(calc(100vw - 32px), 440px);
+  background:var(--surface); border:1.5px solid var(--line);
+  border-radius:var(--radius-lg); padding:14px 16px 18px;
+  box-shadow:0 18px 40px -16px rgba(16,16,24,.55);
+  animation:rise .18s var(--ease) both;
+}
+.note-sheet-bar{display:flex; align-items:center; margin-bottom:12px}
+.note-sheet-title{font-family:var(--display); font-size:14.5px; font-weight:700; color:var(--ink)}
+.note-sheet-x{
+  margin-left:auto; width:28px; height:28px; display:grid; place-items:center;
+  background:none; border:none; color:var(--faint); cursor:pointer; padding:0;
+  transform:rotate(-90deg);
+}
+.note-sheet-x svg{width:17px; height:17px; display:block; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+.note-sheet-x:hover{color:var(--ink)}
+
+.fmt-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px}
+/* Sized to their own words rather than stretched to fill the row: five
+   buttons across two rows leaves one of them a mile wide otherwise. */
+.fmt-btn{
+  flex:0 1 auto; min-width:52px;
+  font-family:inherit; font-size:13px; font-weight:600;
+  background:var(--surface); border:1.5px solid var(--line-strong);
+  color:var(--muted); padding:9px 10px; border-radius:999px;
+  cursor:pointer;
+  transition:border-color .18s var(--ease), background .18s var(--ease), color .18s var(--ease);
+}
+.fmt-btn:hover{border-color:var(--accent); color:var(--ink)}
+.fmt-btn.is-on{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+.fmt-btn:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--focus)}
+.fmt-b{font-weight:800}
+.fmt-i{font-style:italic}
+.fmt-u{text-decoration:underline}
+.fmt-s{text-decoration:line-through}
+
+.rem-foot{display:flex; align-items:center; gap:12px; margin-top:18px}
+.rem-foot .btn-soft{flex:0 0 auto; min-width:0; margin-left:auto; padding:11px 26px}
+
+
+/* ---------- settings ----------
+   Four things nobody opens twice, stacked. The cards inside are the ones
+   that used to be the profile and feedback screens, unchanged. */
+.settings-wrap{margin:0; padding-top:clamp(18px,3vh,32px); padding-bottom:8px}
+.settings-section{width:100%}
+.settings-section + .settings-section{margin-top:26px}
+.settings-wrap .hint{margin-top:18px}
+
+/* The feedback box kept its own screen, so it keeps the centred, unhurried
+   shape it had when it was a tab. */
+.settings-wrap--fb{padding-top:clamp(10px,2vh,22px)}
+
+/* The caption over each group. .eyebrow is already an 11px uppercase
+   micro-caption with the right letterspacing — this only moves it. */
+.settings-cap{margin:0 0 10px 4px}
+
+/* The group. One card, rows inside it, hairlines between them — so
+   overflow is hidden and the rows themselves carry no radius. */
+.settings-group{
+  background:var(--surface);
+  border:1.5px solid var(--line);
+  border-radius:var(--radius-card);
+  overflow:hidden;
+}
+
+.set-row{
+  position:relative;
+  display:flex; align-items:center; gap:13px;
+  width:100%; text-align:left;
+  -webkit-appearance:none; appearance:none;
+  background:none; border:0; padding:14px 16px; cursor:pointer;
+  font:inherit; color:inherit; text-decoration:none;
+  transition:background .18s var(--ease);
+}
+/* The rule between two rows starts where the text does, not at the edge of
+   the card — the glyphs read as a column, and a line drawn through them
+   cuts it in half. Left inset is the row padding plus the glyph plus the
+   gap after it. A pseudo-element rather than a border because a border
+   would sit under the hover wash and flicker at its ends. */
+.set-row + .set-row::before{
+  content:""; position:absolute; top:0; left:63px; right:0; height:1.5px;
+  background:var(--line);
+}
+.set-row:hover{background:var(--wash)}
+.set-row:focus-visible{outline:none; background:var(--wash); box-shadow:inset 0 0 0 2px var(--accent)}
+
+/* Same 34px rounded glyph the cards under these groups already use, so a
+   row and a card read as the same furniture at different sizes. */
+.set-row-mark{
+  flex:none; width:34px; height:34px;
+  display:grid; place-items:center;
+  border-radius:12px; color:var(--accent);
+  background:var(--wash); border:1.5px solid var(--line-strong);
+}
+.set-row:hover .set-row-mark{background:var(--surface)}
+.set-row-mark svg{width:18px; height:18px; display:block}
+/* The profile row wears the chosen face instead of a glyph. */
+.set-row-mark--face{font-size:17px; line-height:1}
+
+.set-row-text{display:flex; flex-direction:column; gap:2px; min-width:0}
+.set-row-title{
+  font-family:var(--display); font-size:15.5px; font-weight:700;
+  letter-spacing:-.015em; line-height:1.2; color:var(--ink);
+}
+.set-row-note{
+  font-size:12.5px; font-weight:600; color:var(--faint);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+
+.set-chev{
+  flex:none; width:17px; height:17px; margin-left:auto;
+  color:var(--line-strong);
+  transition:color .18s var(--ease), transform .18s var(--ease);
+}
+.set-row:hover .set-chev{color:var(--accent); transform:translateX(2px)}
+
+/* The plans card. The one coloured object on the screen — the same rule
+   home follows, and the same gradient the primary button wears, because
+   two different brand gradients in one app is one too many. */
+.set-pro{
+  display:flex; align-items:center; gap:14px;
+  width:100%; text-align:left;
+  -webkit-appearance:none; appearance:none;
+  border:0; cursor:pointer; font:inherit;
+  padding:18px 18px; border-radius:var(--radius-card);
+  background:var(--grad); color:#FFFFFF;
+  box-shadow:0 18px 34px -20px rgba(53,41,191,.75);
+  transition:transform .18s var(--ease), box-shadow .18s var(--ease);
+}
+.set-pro:hover{transform:translateY(-1px); box-shadow:0 22px 40px -20px rgba(53,41,191,.85)}
+.set-pro:active{transform:translateY(0)}
+.set-pro:focus-visible{outline:none; box-shadow:0 0 0 4px var(--focus)}
+.set-pro-badge{
+  flex:none; width:42px; height:42px; border-radius:50%;
+  display:grid; place-items:center;
+  background:#FFFFFF; color:var(--violet);
+}
+.set-pro-badge svg{width:21px; height:21px; display:block}
+.set-pro-text{display:flex; flex-direction:column; gap:3px; min-width:0}
+.set-pro-title{
+  font-family:var(--display); font-size:18px; font-weight:800;
+  letter-spacing:-.02em; line-height:1.15;
+}
+.set-pro-note{font-size:13px; font-weight:600; color:rgba(255,255,255,.82)}
+.set-pro .set-chev{color:rgba(255,255,255,.7)}
+.set-pro:hover .set-chev{color:#FFFFFF}
+
+/* ---------- the plans screen ---------- */
+.plans-title{
+  font-family:var(--display); font-size:clamp(25px,6vw,31px); font-weight:800;
+  letter-spacing:-.03em; line-height:1.1; margin-bottom:12px;
+}
+.plans-lede{font-size:15px; color:var(--muted); line-height:1.6; margin-bottom:8px}
+
+.plans-list{display:flex; flex-direction:column; gap:12px; margin-top:22px}
+.plan-card{
+  background:var(--surface); border:1.5px solid var(--line);
+  border-radius:var(--radius-card); padding:18px;
+}
+/* The one being recommended, and the same one the card on settings names. */
+.plan-card--best{border-color:var(--accent); background:var(--wash)}
+.plan-card-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+.plan-name{
+  font-family:var(--display); font-size:17px; font-weight:800;
+  letter-spacing:-.02em; color:var(--ink);
+}
+.plan-tag{
+  margin-left:6px; padding:3px 8px; border-radius:999px;
+  background:var(--accent); color:var(--on-accent);
+  font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  vertical-align:middle;
+}
+.plan-cost{
+  margin-left:auto;
+  font-family:var(--display); font-size:19px; font-weight:800;
+  letter-spacing:-.02em; color:var(--ink); white-space:nowrap;
+}
+.plan-cost span{font-size:13px; font-weight:600; color:var(--faint)}
+.plan-note{margin-top:8px; font-size:13.5px; line-height:1.5; color:var(--muted)}
+.plan-card .btn-soft,
+.plan-card .btn-primary{margin-top:14px; width:100%; flex:none; min-width:0}
+.plans-manage{margin-top:16px; width:100%; flex:none; min-width:0}
+
+
+/* The way out. Settings is the one screen with no tab lit under it, so it is
+   the one screen that has to say how to leave. */
+.settings-back{
+  display:flex; align-items:center; gap:4px;
+  background:none; border:0; padding:6px 10px 6px 4px; cursor:pointer;
+  font:inherit; font-family:var(--display);
+  font-size:14.5px; font-weight:600; color:var(--muted);
+  border-radius:var(--radius);
+  transition:color .18s var(--ease);
+}
+.settings-back:hover{color:var(--accent)}
+.settings-back svg{width:20px; height:20px; display:block}
+
+/* Where you are, centred; where you came from, at the left. Absolutely
+   positioned rather than a flex child, so the title stays on the middle of
+   the screen instead of the middle of whatever space the back button and
+   the toggle left over — those two are different widths on every screen. */
+.screen-title{
+  position:absolute; left:50%; transform:translateX(-50%);
+  margin:0; pointer-events:none;
+  font-family:var(--display); font-size:17px; font-weight:800;
+  letter-spacing:-.02em; color:var(--ink); white-space:nowrap;
+}
 
 /* ---------- screen 3: now ---------- */
 .now-wrap{margin:0; padding-top:clamp(18px,3vh,32px); padding-bottom:8px}
@@ -522,6 +1037,85 @@ body{
   list-style:none; display:flex; flex-direction:column; gap:8px;
   animation:rise .18s var(--ease) both;
 }
+
+/* ---------- the matrix ----------
+
+   The same open tasks cut by importance as well as by when. It borrows the
+   lists' own row wholesale — .task, its chips, its swipe rails and its
+   detail — so nothing in here is a second implementation of a task.
+
+   No four pastel grounds. The rule on this site is one coloured object per
+   screen, and orange already means late; four decorative fills would spend
+   the whole palette saying what the grid position says for free. What the
+   colour does carry is the one thing position cannot: the important row
+   gets the accent edge, the other two stay quiet. */
+.matrix{display:grid; grid-template-columns:1fr; gap:12px}
+
+/* Two-up only once a column is wide enough to hold a real task row. Below
+   this the four stack: a .task card at ~170px wraps its chips onto three
+   lines and truncates the title to nothing, and a matrix you cannot read
+   is worse than a matrix you have to scroll. */
+@media (min-width:560px){
+  .matrix{grid-template-columns:1fr 1fr; align-items:start}
+}
+
+.quad{
+  display:flex; flex-direction:column; gap:10px;
+  background:var(--wash); border:1.5px solid var(--line);
+  border-left:3px solid var(--line-strong);
+  border-radius:var(--radius-lg); padding:14px 14px 16px;
+}
+.quad--do, .quad--plan{border-left-color:var(--accent)}
+
+.quad-head{display:flex; align-items:flex-start; gap:10px}
+.quad-name{
+  font-family:var(--display); font-size:15px; font-weight:700;
+  letter-spacing:-.01em; color:var(--muted); margin:0;
+}
+.quad--do .quad-name{color:var(--ink)}
+.quad-sub{font-size:11.5px; color:var(--faint); margin:2px 0 0}
+
+.quad-add{
+  flex:none; margin-left:auto; width:28px; height:28px;
+  display:grid; place-items:center;
+  background:var(--surface); border:1.5px solid var(--line-strong);
+  border-radius:999px; color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease), border-color .18s var(--ease);
+}
+.quad-add svg{width:15px; height:15px; display:block}
+.quad-add:hover{color:var(--accent); border-color:var(--accent)}
+.quad-add:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--focus)}
+
+.quad-empty{font-size:13px; color:var(--faint); margin:0; padding:2px 0 4px}
+
+/* The rows sit on --wash, so the card that is normally --surface on white
+   keeps its edge without needing a shadow. */
+.quad .task{background:var(--surface)}
+
+/* Held, lifted and dropped — the calendar's drag, pointed at quadrants
+   instead of days. The row fades in place rather than leaving, so the
+   quadrant does not reflow under the hand mid-drag. */
+.quad .task{transition:opacity .18s var(--ease), transform .14s var(--ease), border-color .18s var(--ease), background .18s var(--ease)}
+.quad .task.is-pressed{transform:scale(.985)}
+.quad .task.is-lifted{opacity:.3}
+
+/* A ring, not a fill: the quadrant already carries a ground and an edge,
+   and two of the four carry the accent on that edge already. */
+.quad.is-drop{box-shadow:0 0 0 3px var(--accent)}
+
+/* ---------- list / matrix ---------- */
+
+.view-toggle{
+  flex:none; display:inline-flex; align-items:center; gap:6px;
+  font-family:inherit; font-size:13px; font-weight:600;
+  background:none; border:1.5px solid var(--line-strong);
+  color:var(--muted); padding:7px 13px 7px 11px; border-radius:999px;
+  cursor:pointer;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+.view-toggle svg{width:15px; height:15px; display:block}
+.view-toggle:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
+.view-toggle:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--focus)}
 
 .task{
   display:flex; gap:13px; align-items:flex-start;
@@ -876,7 +1470,7 @@ body{
    the <use> shadow tree, and only inherited properties do that. The
    calendar is left outlined — a filled one is an unreadable slab. */
 .tab{--icon-fill:none}
-#tab-lists.is-on, #tab-loved.is-on{--icon-fill:currentColor}
+#tab-home.is-on, #tab-notes.is-on{--icon-fill:currentColor}
 
 /* the + never marks itself current — it is an action, not a place */
 .tab--add{color:var(--ink)}
@@ -903,14 +1497,6 @@ body{
 }
 .tab-badge.is-late{background:var(--orange); color:#FFFFFF}
 
-.tab-avatar{
-  width:31px; height:31px; border-radius:50%;
-  display:grid; place-items:center; font-size:17px; line-height:1;
-  background:var(--wash-2); border:1.5px solid var(--line-strong);
-  transition:border-color .18s var(--ease);
-}
-.tab--me.is-on{background:none}
-.tab--me.is-on .tab-avatar{border-color:var(--accent); box-shadow:0 0 0 2px var(--focus)}
 
 /* Room for the bar to hover over, rather than on top of, the last line of
    the page — and the toast has to clear it too. */

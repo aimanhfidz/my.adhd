@@ -42,7 +42,7 @@
       landing page still runs the first one on the original numbers, so
       nothing about the shipping hero moved.
 
-   The legibility work proper is CSS: .hero-waves::after in landing.css
+   The legibility work proper is CSS: .hero-waves::after in chrome.css
    veils the field and hides it entirely under the nav and the footnote.
 
    waves-lab.html drives all of it with sliders. It is a workbench, not a

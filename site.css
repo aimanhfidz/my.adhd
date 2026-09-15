@@ -1,5 +1,5 @@
 /* ============ MyADHD — the site ============
-   Loaded by every public page. landing.css is the other stylesheet in
+   Loaded by every public page. chrome.css is the other stylesheet in
    this repo and it is the legal pages' and /install's, not this site's —
    the landing page it was named for was deleted on 2026-09-11 as
    redundant with /tools. Tokens come from theme.css, so
@@ -21,7 +21,7 @@
 html{
   /* Every in-page link has to clear a bar that is fixed over it, and
      scroll-padding on the scroll container says it once for the keyboard,
-     the anchor and the browser's own restore. Same trick landing.css
+     the anchor and the browser's own restore. Same trick chrome.css
      uses; the bar is the same height. */
   scroll-padding-top:var(--scroll-offset);
 }
@@ -46,7 +46,7 @@ body{
   /* ---------- the wave field's two ramps ----------
      waves.js reads these six by name and falls back to a saturated blue
      when they are missing — which is what a field on a page that did not
-     define them looks like: a graphic, not weather. landing.css carries
+     define them looks like: a graphic, not weather. chrome.css carries
      the same six for the same reason; they live in both files rather than
      in theme.css because waves.js holds BOTH ramps at once and cross-fades
      between them, so it needs the ink colours while the page is still on
@@ -67,7 +67,7 @@ body{
      the crests to #2B238B — a deep indigo, not a graphic. So the ramp goes
      back to the brand and the wash below does the dimming, the same wash
      on every page, which is the only way three pages ever show the same
-     field. landing.css carries the same three, read by name. */
+     field. chrome.css carries the same three, read by name. */
   --wave-ink-ground:var(--black);
   --wave-ink-mid:var(--blue-deep);
   --wave-ink-hi:var(--blue);
@@ -80,7 +80,7 @@ body{
   --wave-paper-mid:#F0EAFB;
   --wave-paper-hi:#D8C6F2;
 
-  /* The bar, written the way landing.css writes it so the two agree on
+  /* The bar, written the way chrome.css writes it so the two agree on
      where the first line of a page can start. --nav-row is the toggle's
      34px circle, which is the tallest thing in the row and cannot be
      measured from CSS. */
@@ -118,7 +118,7 @@ body{
   :root{--bar-top:calc(clamp(16px,3.2vh,28px) + max(env(safe-area-inset-top, 0px), 34px))}
 }
 
-/* The sprite the lockup reads from. Same rule landing.css carries, and
+/* The sprite the lockup reads from. Same rule chrome.css carries, and
    for the same reason: an inline <svg> left visible draws a line box. */
 .sprite{position:absolute; width:0; height:0; overflow:hidden}
 
@@ -919,7 +919,7 @@ body{
 .hero-waves canvas{display:block; width:100%; height:100%}
 
 /* ---------- the veil ----------
-   Three layers, ported from landing.css, and it is three rather than one
+   Three layers, ported from chrome.css, and it is three rather than one
    for reasons all visible the moment you drop one. The pool is what the
    headline sits in; its stops walk a smoothstep rather than a straight
    line, because a plateau running into a linear ramp is continuous in
@@ -955,13 +955,13 @@ body{
    faded — no falloff shape hides a gap that size. The field is quieter at
    night for it, which is also what it should be. */
 :root{--wave-rgb:255 255 255; --wave-veil-a:.46; --wave-reader-h:27rem}
-/* .50 and 16 16 24, the same two numbers landing.css uses, because these
+/* .50 and 16 16 24, the same two numbers chrome.css uses, because these
    two are what set how bright the field reads on every page: the wash is
    the brightness. It was .70 over 12 12 20 here, .50 over 16 16 24 on the
    landing page and a stacked .55 + radial on the sub-pages, and the same
    canvas came out three different fields. One pair, everywhere. */
 :root[data-theme="dark"]{--wave-rgb:16 16 24; --wave-veil-a:.50}
-/* No phone exception. landing.css used to lighten its night wash to .30
+/* No phone exception. chrome.css used to lighten its night wash to .30
    on a phone, and for a moment this file copied it; but that rule was
    written for a hero whose copy sits in a reader pool, and the sub-pages
    have no pool — at .30 the body text on /about landed straight on
@@ -1326,7 +1326,7 @@ body{
 /* ============ THE ARRIVAL ============
    Every section fades up as it reaches the window and stays faded up.
    Nothing travels, nothing scales — the old landing page gave all that
-   away for good reasons written down in landing.css, and this file is not
+   away for good reasons written down in chrome.css, and this file is not
    going to reintroduce it.
 
    [data-anim] is set from JavaScript only. The resting state of this

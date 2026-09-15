@@ -73,7 +73,7 @@ try{
 <link rel="preload" href="fonts/Baloo2-Variable.ttf" as="font" type="font/ttf" crossorigin />
 <link rel="stylesheet" href="theme.css" />
 <script src="theme.js"></script>
-<link rel="stylesheet" href="styles.css?v=6" />
+<link rel="stylesheet" href="styles.css?v=8" />
 </head>
 <body>
 
@@ -94,18 +94,105 @@ try{
          bar reads as one set rather than five borrowed icons. -->
     <!-- fill is a variable so the current tab can fill its glyph solid the
          way the reference bar does; everywhere else it resolves to none. -->
-    <g id="icon-lists" fill="var(--icon-fill,none)" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- This path was called icon-lists for as long as the lists were the
+         first tab, and it has been a house the whole time. Now that there
+         is a home to point at, it has the name it always drew. -->
+    <g id="icon-home" fill="var(--icon-fill,none)" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3.4 10.4 12 3.7l8.6 6.7v7.7a2.3 2.3 0 0 1-2.3 2.3H5.7a2.3 2.3 0 0 1-2.3-2.3z"/>
+    </g>
+    <!-- Three rules with a tick against each: the lists, now that the house
+         has stopped standing in for them. Left outlined on purpose — the
+         same reason the calendar is. Filled, a row of bars is a smear. -->
+    <g id="icon-list" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.2 6.6h9.4M10.2 12h9.4M10.2 17.4h9.4"/>
+      <path d="m4.2 6.5 1.5 1.5 2.4-2.6M4.2 11.9l1.5 1.5 2.4-2.6M4.2 17.3l1.5 1.5 2.4-2.6"/>
     </g>
     <g id="icon-calendar" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="3.2" y="5.4" width="17.6" height="14.4" rx="4.6"/>
       <path d="M3.4 10.4h17.2M8.4 3.4v3.8M15.6 3.4v3.8"/>
     </g>
+    <!-- The two ways of reading the same list, drawn as what they are: rows
+         stacked down the page, and four boxes. They only ever appear inside
+         the toggle on the lists screen, and only one of them at a time — the
+         button names the view you are not in. -->
+    <g id="icon-rows" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4.4 7.2h15.2M4.4 12h15.2M4.4 16.8h15.2"/>
+    </g>
+    <g id="icon-grid" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3.8" y="3.8" width="7" height="7" rx="2.1"/>
+      <rect x="13.2" y="3.8" width="7" height="7" rx="2.1"/>
+      <rect x="3.8" y="13.2" width="7" height="7" rx="2.1"/>
+      <rect x="13.2" y="13.2" width="7" height="7" rx="2.1"/>
+    </g>
     <g id="icon-plus" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round">
       <path d="M12 5v14M5 12h14"/>
     </g>
+    <!-- A page with the corner turned. The fold is drawn as its own stroke
+         so it still reads when the body fills in on the current tab. -->
+    <g id="icon-note" fill="var(--icon-fill,none)" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5.2 4.6a1.6 1.6 0 0 1 1.6-1.6h6.5l5.5 5.5v10.9a1.6 1.6 0 0 1-1.6 1.6H6.8a1.6 1.6 0 0 1-1.6-1.6z"/>
+      <path d="M13.1 3v4.1a1.4 1.4 0 0 0 1.4 1.4h4.3" fill="none"/>
+    </g>
+    <!-- The note editor's toolbar, and the tick that confirms it. The tick
+         is the same path the task rows draw inline; it became a symbol when
+         a second thing needed it. -->
+    <g id="icon-check" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12.5l5 5L19 7"/>
+    </g>
+    <!-- Aa, drawn rather than set: a letterform at two sizes says "text
+         formatting" in a way no other glyph manages. -->
+    <g id="icon-type" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.6 18.4 7.3 6.2l4.7 12.2M4.2 14.6h6.2"/>
+      <path d="M14.4 12.4a3 3 0 0 1 3-1.3c1.8 0 3 1 3 2.8v4.5M20.4 14.9c-3.9 0-5.4.8-5.4 2.1 0 .9.8 1.6 2.1 1.6 1.7 0 3.3-1 3.3-2.5"/>
+    </g>
+    <g id="icon-bell" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18.2 16.2V10.6a6.2 6.2 0 0 0-12.4 0v5.6L4 18.4h16z"/>
+      <path d="M10.2 21.2a2.3 2.3 0 0 0 3.6 0"/>
+    </g>
+    <g id="icon-clip" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 11.3 12.1 19a4.6 4.6 0 0 1-6.5-6.5l8.1-8a3.1 3.1 0 0 1 4.3 4.3l-8 8a1.5 1.5 0 0 1-2.2-2.2l7.4-7.3"/>
+    </g>
+    <!-- The way out of settings. Settings is the one screen with no tab
+         lit under it, so it is the one screen that has to say how to leave. -->
+    <g id="icon-back" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14.5 5.5 8 12l6.5 6.5"/>
+    </g>
+    <!-- The gear, and the only place it appears: the top right of home. -->
+    <g id="icon-gear" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3.1"/>
+      <path d="M19.1 14.6a1.6 1.6 0 0 0 .32 1.76l.06.06a1.9 1.9 0 1 1-2.7 2.7l-.06-.06a1.6 1.6 0 0 0-1.76-.32 1.6 1.6 0 0 0-.97 1.46v.17a1.9 1.9 0 1 1-3.8 0v-.09a1.6 1.6 0 0 0-1.05-1.46 1.6 1.6 0 0 0-1.76.32l-.06.06a1.9 1.9 0 1 1-2.7-2.7l.06-.06a1.6 1.6 0 0 0 .32-1.76 1.6 1.6 0 0 0-1.46-.97h-.17a1.9 1.9 0 1 1 0-3.8h.09a1.6 1.6 0 0 0 1.46-1.05 1.6 1.6 0 0 0-.32-1.76l-.06-.06a1.9 1.9 0 1 1 2.7-2.7l.06.06a1.6 1.6 0 0 0 1.76.32h.08a1.6 1.6 0 0 0 .97-1.46v-.17a1.9 1.9 0 1 1 3.8 0v.09a1.6 1.6 0 0 0 .97 1.46 1.6 1.6 0 0 0 1.76-.32l.06-.06a1.9 1.9 0 1 1 2.7 2.7l-.06.06a1.6 1.6 0 0 0-.32 1.76v.08a1.6 1.6 0 0 0 1.46.97h.17a1.9 1.9 0 1 1 0 3.8h-.09a1.6 1.6 0 0 0-1.46.97z"/>
+    </g>
     <g id="icon-heart" fill="var(--icon-fill,none)" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M12 20.3c-.45 0-.85-.16-1.2-.45-4.1-3.4-7.1-6.2-7.1-9.65A4.55 4.55 0 0 1 8.2 5.6c1.55 0 2.95.72 3.8 1.9.85-1.18 2.25-1.9 3.8-1.9a4.55 4.55 0 0 1 4.5 4.6c0 3.45-3 6.25-7.1 9.65-.35.29-.75.45-1.2.45z"/>
+    </g>
+
+    <!-- ============ settings glyphs ============
+         The grouped list needs a row marker and one glyph per row. Drawn
+         rather than borrowed, on the same 24 grid as everything above, so
+         the settings screen does not arrive looking like another app. -->
+
+    <!-- The chevron at the end of a row that goes somewhere. Drawn rather
+         than icon-back flipped: it is used smaller, and a mirrored path
+         at 16px lands its round caps half a pixel off. -->
+    <g id="icon-chevron" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9.5 5.5 16 12l-6.5 6.5"/>
+    </g>
+    <!-- The plan mark. Four arms, which is the logo's asterisk with half
+         its arms taken away — related to the mark without being it. -->
+    <g id="icon-spark" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3.2v17.6M3.2 12h17.6M5.8 5.8l12.4 12.4M18.2 5.8 5.8 18.2"/>
+    </g>
+    <!-- A box with something leaving it, which is what sharing is. -->
+    <g id="icon-share" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3.6v11.2M8.4 7.2 12 3.6l3.6 3.6"/>
+      <path d="M5.4 13.4v5.4a1.6 1.6 0 0 0 1.6 1.6h10a1.6 1.6 0 0 0 1.6-1.6v-5.4"/>
+    </g>
+    <g id="icon-shield" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3.2 5 6.1v5.4c0 4.1 2.9 7.4 7 9.3 4.1-1.9 7-5.2 7-9.3V6.1z"/>
+    </g>
+    <g id="icon-doc" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 4.6a1.6 1.6 0 0 1 1.6-1.6h5.7l4.7 4.7v11.7a1.6 1.6 0 0 1-1.6 1.6H7.6A1.6 1.6 0 0 1 6 19.4z"/>
+      <path d="M13.1 3.2v4.1a1.4 1.4 0 0 0 1.4 1.4h3.5M9.2 12.6h5.6M9.2 16.4h5.6"/>
     </g>
 
     <!-- ============ logo mark ============
@@ -125,49 +212,120 @@ try{
 
 <div id="app">
 
-  <!-- ============ SCREEN 1: BRAIN DUMP ============ -->
-  <section class="screen" id="screen-dump">
+  <!-- ============ SCREEN 1: HOME ============
+       The dump box and the home screen are the same screen, and that is
+       deliberate twice over.
+
+       Once for the person: the thing you came to do is still the first
+       thing on the page, above anything telling you how you are doing.
+       Nobody opens this app to read a dashboard.
+
+       And once for the iPhone. AppConfig.swift promises that a fresh load
+       of /app lands on the dump box — it is what lets "Hey Siri, dump a
+       thought" and myadhd://dump?text= just fill #dump-input and trust it
+       is the box on screen. Home landing anywhere else would break both
+       of those silently, from the web side, with nothing in ios/ changed
+       to explain it. So home holds the box. -->
+  <section class="screen" id="screen-home">
     <header class="brand">
       <a class="brand-lockup" href="/" aria-label="my.adhd home">
         <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
         <span class="wordmark">my<span class="accent">.adhd</span></span>
       </a>
-      <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
-        <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
-        <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
-      </button>
+      <div class="brand-tools">
+        <!-- The only gear in the app, and the only way to the settings.
+             Everything rare lives behind it.
+
+             Note the class: icon-btn, never theme-toggle. theme.js binds
+             every .theme-toggle on the page by class name and relabels it
+             on each paint — a gear wearing that class would switch the
+             theme and call itself "Switch to dark mode". -->
+        <button class="icon-btn" id="btn-settings" type="button" aria-label="Settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-gear"/></svg>
+        </button>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+          <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
+          <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
+        </button>
+      </div>
     </header>
 
-    <div class="dump-wrap">
+    <!-- ============ the dump buffer ============
+         The box used to be on this screen. It is the composer's now — the
+         + is the one way in — but this textarea stays, off screen, because
+         it was never only a box: it is the staging area the whole pipeline
+         runs through. The composer writes into it on send and triage()
+         reads it, which is why there has only ever been one parser.
 
+         It is also what the phone reaches for. BridgeScript's
+         fillDumpBox() fills #dump-input by id and trusts it is on screen —
+         it no longer is, so the input event below opens the composer over
+         whatever text arrives. "Hey Siri, dump a thought" and
+         myadhd://dump?text= keep working, and nothing in ios/ had to know
+         the box moved. -->
+    <textarea id="dump-input" class="is-offscreen" rows="1" tabindex="-1"
+              aria-hidden="true" spellcheck="false"></textarea>
+
+    <!-- The cold start, and the only thing on this screen until there is
+         something to summarise. The box is gone, so this is the way in. -->
+    <div class="home-empty-wrap is-hidden" id="home-start">
       <figure class="dump-welcome">
         <img src="welcome-meme.jpg" width="642" height="389"
              alt="Morpheus, from The Matrix: what if I told you my ADHD thoughts have a group chat and everyone&#39;s typing." />
       </figure>
 
       <h1 class="headline">What's on your mind?</h1>
-      <textarea
-        id="dump-input"
-        class="dump-input"
-        rows="4"
-        spellcheck="false"
-        placeholder="just tell me, i&#39;ll sort it out."></textarea>
+      <p class="hint home-start-hint">Everything gets sorted into lists.
+        Nothing is thrown away.</p>
 
-      <div class="dump-dates is-hidden" id="dump-dates" aria-live="polite">
-        <span class="dump-dates-label">Heading for the calendar</span>
-        <div class="dump-chips" id="dump-chips"></div>
+      <button class="btn-primary" id="btn-start-dump" type="button">
+        <span class="btn-text">Clear my head</span>
+      </button>
+    </div>
+
+    <!-- ============ the widgets ============
+         Everything below the box, and none of it on a first visit — an
+         empty dashboard is worse than no dashboard, and the cold start
+         should still be one box and one button.
+
+         Every widget is a direct child of this wrapper, so the next one
+         is a block of markup and a paint call and nothing else. -->
+    <div class="home-widgets is-hidden" id="home-widgets">
+
+      <!-- What is actually next. The lists tab is one tap away and says
+           everything; this says the two or three that matter today, so
+           the answer to "what now" is on the screen you opened on. -->
+      <section class="home-card" id="home-today">
+        <div class="home-card-head">
+          <h2 class="home-card-title" id="home-today-title">Next up</h2>
+          <button class="home-card-more" id="home-today-more" type="button">All lists</button>
+        </div>
+        <div class="home-today-rows" id="home-today-rows"></div>
+        <p class="home-empty is-hidden" id="home-today-empty">Head's clear. Nothing waiting.</p>
+      </section>
+
+      <!-- The five numbers. They lived at the top of the profile screen,
+           which is nowhere: a count of what you are carrying is a thing
+           to see on the way in, not something to go looking for. -->
+      <div class="stat-row">
+        <div class="stat"><strong id="stat-open">0</strong><span>on your lists</span></div>
+        <div class="stat"><strong id="stat-done">0</strong><span>done</span></div>
+        <div class="stat"><strong id="stat-lists">0</strong><span>lists</span></div>
+        <div class="stat"><strong id="stat-dated">0</strong><span>on the calendar</span></div>
+        <div class="stat stat--overdue" id="stat-overdue-card">
+          <strong id="stat-overdue">0</strong><span>overdue</span>
+        </div>
       </div>
 
-      <button class="btn-primary" id="btn-triage">
-        <span class="btn-text">Clear my head</span>
-        <kbd class="kbd">⌘ ⏎</kbd>
-      </button>
-      <p class="hint" id="dump-hint">Everything gets sorted into lists. Nothing is thrown away.</p>
+      <!-- The rest of my.adhd, which is mostly not in the app. Quiet on
+           purpose: it is a shelf, not a feed, and it does not move. -->
+      <section class="home-card" id="home-discover">
+        <div class="home-card-head">
+          <h2 class="home-card-title">Worth a look</h2>
+        </div>
+        <div class="discover-rows" id="discover-rows"></div>
+      </section>
 
-      <button class="btn-lists is-hidden" id="btn-view-lists">
-        <span>View my lists</span>
-        <span class="btn-lists-count" id="lists-badge">0</span>
-      </button>
     </div>
   </section>
 
@@ -190,10 +348,22 @@ try{
         <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
         <span class="wordmark">my<span class="accent">.adhd</span></span>
       </a>
-      <button class="theme-toggle" id="btn-theme-2" type="button" aria-label="Switch to dark mode">
-        <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
-        <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
-      </button>
+      <div class="brand-tools">
+        <!-- The same list, read two ways. The button names the view you are
+             NOT in, so its label is the thing pressing it gets you — and it
+             is painted by paintViewToggle(), never written here.
+
+             Same rule as the gear on home: the class is never theme-toggle,
+             because theme.js binds that one by name and relabels it. -->
+        <button class="view-toggle" id="btn-view" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-grid" id="view-icon"/></svg>
+          <span id="view-label">Matrix</span>
+        </button>
+        <button class="theme-toggle" id="btn-theme-2" type="button" aria-label="Switch to dark mode">
+          <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
+          <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
+        </button>
+      </div>
     </header>
 
     <div class="now-wrap">
@@ -227,6 +397,12 @@ try{
       <div class="cat-bar is-hidden" id="cat-bar" role="tablist" aria-label="Filter by list"></div>
 
       <div class="lists" id="lists"></div>
+
+      <!-- The same open tasks as #lists, cut by importance as well as by
+           when. One of the two is always hidden; the category filter above
+           feeds both, and the done pile below serves both, so there is one
+           completed list in this app rather than one per view. -->
+      <div class="matrix is-hidden" id="matrix"></div>
 
       <div class="done-block is-hidden" id="done-block">
         <button class="parked-toggle" id="done-toggle" aria-expanded="false">
@@ -312,20 +488,426 @@ try{
     </div>
   </section>
 
-  <!-- ============ SCREEN 5: FEEDBACK ============ -->
-  <section class="screen is-hidden" id="screen-loved">
+  <!-- ============ SCREEN 5: NOTES ============
+       Not the lists, and deliberately nothing like them. A task is a thing
+       the app has an opinion about — it gets a length, an energy, a first
+       step, a day, and it wants to be finished. A note is a thing you wrote
+       down. Nothing sorts it, nothing triages it, nothing asks it when it
+       is due, and it never becomes a task.
+
+       Which is why the + is not wired to this screen: the + means "sort
+       this out for me", and that is the one thing notes are for not doing.
+       New notes come from the button here. -->
+  <section class="screen is-hidden" id="screen-notes">
     <header class="brand brand--sm">
       <a class="brand-lockup" href="/" aria-label="my.adhd home">
         <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
         <span class="wordmark">my<span class="accent">.adhd</span></span>
       </a>
-      <button class="theme-toggle" id="btn-theme-4" type="button" aria-label="Switch to dark mode">
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
         <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
         <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
       </button>
     </header>
 
-    <div class="fb-wrap">
+    <div class="notes-wrap">
+      <p class="eyebrow" id="notes-eyebrow">Notes.</p>
+      <p class="lists-summary" id="notes-summary"></p>
+
+      <button class="btn-primary" id="btn-note-new" type="button">
+        <span class="btn-text">New note</span>
+      </button>
+
+      <div class="notes-list" id="notes-list"></div>
+
+      <!-- The first thing on an empty screen, centred, with somewhere to
+           press. The line is deliberately not the reference's "turn it into
+           a lock screen" — a note does not reach the lock screen here, and
+           the wallpaper draws the next task instead. -->
+      <div class="empty-state is-hidden" id="notes-empty">
+        <span class="empty-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><use href="#icon-note"/></svg>
+        </span>
+        <p class="empty-title">Nothing written down yet.</p>
+        <p class="empty-body">Notes stay on this device. Nothing here gets sorted.</p>
+        <button class="btn-primary empty-go" id="btn-note-first" type="button">
+          <span class="btn-text">Write one</span>
+        </button>
+      </div>
+
+      <p class="hint" id="notes-note">Notes stay on this device. Signing in carries
+        your lists between browsers; it does not carry these yet.</p>
+    </div>
+  </section>
+
+  <!-- The note, being written. A screen of its own rather than a panel on
+       the index: it is not in TAB_FOR, so the tab bar stands down and the
+       toolbar takes the bottom of the screen for as long as you are in here.
+
+       The bar is the composer's cancel/title/confirm grid, generalised —
+       it was the only three-slot header in the app and now there are two. -->
+  <section class="screen is-hidden" id="screen-note">
+    <header class="brand brand--sm sheet-bar">
+      <button class="sheet-back" id="btn-note-back" type="button" aria-label="Back to notes">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-back"/></svg>
+      </button>
+      <h1 class="screen-title" id="note-heading">Note</h1>
+      <button class="sheet-go" id="btn-note-done" type="button" aria-label="Save and close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-check"/></svg>
+      </button>
+    </header>
+
+    <div class="note-wrap">
+      <div class="note-canvas" id="note-canvas">
+        <input class="note-title" id="note-title" type="text" maxlength="160"
+               spellcheck="false" placeholder="Title" />
+        <div class="note-blocks" id="note-blocks"></div>
+        <div class="note-files is-hidden" id="note-files"></div>
+      </div>
+
+      <p class="note-remind is-hidden" id="note-remind"></p>
+
+      <button class="btn-danger-quiet note-delete" id="btn-note-delete" type="button">Delete note</button>
+    </div>
+
+    <!-- Four tools, and no palette: the note grounds come from the theme
+         and there is nothing to pick. -->
+    <div class="note-tools" id="note-tools">
+      <button class="note-tool" id="tool-type" type="button" aria-label="Text format">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-type"/></svg>
+      </button>
+      <button class="note-tool" id="tool-check" type="button" aria-label="Turn this line into a checkbox">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-list"/></svg>
+      </button>
+      <button class="note-tool" id="tool-clip" type="button" aria-label="Add a picture">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-clip"/></svg>
+      </button>
+      <button class="note-tool" id="tool-bell" type="button" aria-label="Remind me about this note">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-bell"/></svg>
+      </button>
+    </div>
+
+    <input type="file" id="note-file-input" accept="image/*" multiple hidden />
+
+    <!-- Aa. Applies to the line the caret is in, not to a selection: a
+         block model keeps notes out of innerHTML, and per-line formatting is
+         what a sticky note actually wants. -->
+    <div class="note-sheet is-hidden" id="sheet-format" role="dialog" aria-label="Text format">
+      <div class="note-sheet-bar">
+        <span class="note-sheet-title">Text format</span>
+        <button class="note-sheet-x" id="fmt-close" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-back"/></svg>
+        </button>
+      </div>
+      <div class="fmt-row" id="fmt-types" role="group" aria-label="Line type">
+        <button class="fmt-btn" type="button" data-type="p">Body</button>
+        <button class="fmt-btn" type="button" data-type="h">Heading</button>
+        <button class="fmt-btn" type="button" data-type="ul">Bullet</button>
+        <button class="fmt-btn" type="button" data-type="ol">Number</button>
+        <button class="fmt-btn" type="button" data-type="check">Checkbox</button>
+      </div>
+      <div class="fmt-row" id="fmt-marks" role="group" aria-label="Emphasis">
+        <button class="fmt-btn fmt-b" type="button" data-mark="b">B</button>
+        <button class="fmt-btn fmt-i" type="button" data-mark="i">I</button>
+        <button class="fmt-btn fmt-u" type="button" data-mark="u">U</button>
+        <button class="fmt-btn fmt-s" type="button" data-mark="strike">S</button>
+      </div>
+      <div class="fmt-row" id="fmt-align" role="group" aria-label="Alignment">
+        <button class="fmt-btn" type="button" data-align="left">Left</button>
+        <button class="fmt-btn" type="button" data-align="center">Centre</button>
+        <button class="fmt-btn" type="button" data-align="right">Right</button>
+      </div>
+    </div>
+
+    <div class="note-sheet is-hidden" id="sheet-remind" role="dialog" aria-label="Reminder">
+      <div class="note-sheet-bar">
+        <span class="note-sheet-title">Reminder</span>
+        <button class="note-sheet-x" id="rem-close" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-back"/></svg>
+        </button>
+      </div>
+      <label class="field">
+        <span class="field-label">Day</span>
+        <input class="field-input" id="rem-day" type="date" />
+      </label>
+      <label class="field">
+        <span class="field-label">Time</span>
+        <input class="field-input" id="rem-time" type="time" />
+      </label>
+      <label class="field">
+        <span class="field-label">Repeat</span>
+        <select class="field-input" id="rem-repeat">
+          <option value="">Never</option>
+          <option value="daily">Every day</option>
+          <option value="weekly">Every week</option>
+          <option value="monthly">Every month</option>
+        </select>
+      </label>
+      <div class="rem-foot">
+        <button class="btn-danger-quiet" id="rem-clear" type="button">Clear</button>
+        <button class="btn-soft" id="rem-save" type="button">Save</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 6: SETTINGS ============
+       Not a tab, and that is the point of it. Everything in here is
+       something you do once and then never again.
+
+       A grouped list rather than a stack of cards: a caption naming each
+       group, and rows inside it. The long things — your profile, the
+       plans, the feedback box — are one tap deeper on screens of their
+       own, so this screen stays something you can read in one look.
+
+       Reached by the gear on home, which is the only gear in the app. It
+       is absent from TAB_FOR on purpose, along with the three screens it
+       leads to: the bar hides for all four, so there is no lit tab
+       arguing about where you are. -->
+  <section class="screen is-hidden" id="screen-settings">
+    <header class="brand brand--sm">
+      <button class="settings-back" id="btn-settings-back" type="button" aria-label="Back to home">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-back"/></svg>
+        <span>Home</span>
+      </button>
+      <h1 class="screen-title">Settings</h1>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+        <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
+        <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
+      </button>
+    </header>
+
+    <div class="settings-wrap">
+
+      <!-- The plans. The whole group is absent unless a billing URL is
+           configured — the same "leave it empty and the ask never renders"
+           switch config.js already uses for the donation tin, and the same
+           one the iOS shell reaches for when it has to close a payment
+           surface it is not allowed to show. -->
+      <section class="settings-section is-hidden" id="set-sub">
+        <p class="eyebrow settings-cap">Subscription</p>
+        <button class="set-pro" id="set-pro" type="button">
+          <span class="set-pro-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><use href="#icon-spark"/></svg>
+          </span>
+          <span class="set-pro-text">
+            <span class="set-pro-title" id="set-pro-title">Upgrade to Pro</span>
+            <span class="set-pro-note" id="set-pro-note">Annual plan for RM49.90/year</span>
+          </span>
+          <svg class="set-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-chevron"/></svg>
+        </button>
+      </section>
+
+      <section class="settings-section">
+        <p class="eyebrow settings-cap">Account</p>
+
+        <div class="settings-group">
+          <button class="set-row" id="set-row-profile" type="button">
+            <span class="set-row-mark set-row-mark--face" id="set-face" aria-hidden="true">🧔🏻</span>
+            <span class="set-row-text">
+              <span class="set-row-title">Profile</span>
+              <span class="set-row-note" id="set-profile-note">Hey there.</span>
+            </span>
+            <svg class="set-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-chevron"/></svg>
+          </button>
+        </div>
+
+        <!-- Signing in. Optional, and it stays optional: the app opened on
+             the dump box before you got here and works with no account at
+             all. This says what it buys rather than asking for trust up
+             front. -->
+        <div class="gcal-card acct-card is-hidden" id="acct-card">
+          <div class="gcal-head">
+            <span class="acct-face" id="acct-face" aria-hidden="true">👤</span>
+            <div>
+              <p class="gcal-title" id="acct-title">Just this device</p>
+              <p class="gcal-state" id="acct-state">Not signed in</p>
+            </div>
+          </div>
+
+          <p class="gcal-note" id="acct-note"></p>
+
+          <button class="btn-primary gcal-go" id="acct-btn" type="button">Sign in with Google</button>
+
+          <div class="gcal-more">
+            <span class="acct-hint" id="acct-hint"></span>
+            <button class="btn-danger-quiet is-hidden" id="acct-out" type="button">Sign out</button>
+          </div>
+
+          <!-- Ending the account, from inside the app. App Store Review
+               guideline 5.1.1(v) asks for exactly this and names an email
+               address as not enough, which is what privacy.html offered
+               until now.
+
+               Same two-stage shape as Clear everything on the lists screen:
+               a quiet button opens a box that has to be answered, the copy
+               hardens on the second press, and it disarms itself if left
+               alone. Signed out there is no account to end, so the whole
+               block goes with the Sign out button. -->
+          <div class="acct-danger is-hidden" id="acct-danger">
+            <button class="btn-danger-quiet" id="btn-acct-delete" type="button">Delete account</button>
+
+            <div class="clear-confirm is-hidden" id="acct-delete-confirm">
+              <p class="clear-confirm-text" id="acct-delete-text"></p>
+              <div class="clear-confirm-actions">
+                <button class="btn-soft" id="btn-acct-delete-cancel" type="button">Cancel</button>
+                <button class="btn-danger" id="btn-acct-delete-go" type="button"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- The calendar link gets a group of its own rather than a row in the
+           account one. Both are Google and they look alike on purpose, but
+           one is who you are and the other is a wiring decision, and putting
+           them under one caption would say they were the same choice. -->
+      <section class="settings-section">
+        <p class="eyebrow settings-cap">Sync calendars</p>
+
+        <!-- Hidden entirely when no client ID is configured. -->
+        <div class="gcal-card is-hidden" id="gcal-card">
+          <div class="gcal-head">
+            <svg class="gcal-mark" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-calendar"/></svg>
+            <div>
+              <p class="gcal-title">Google Calendar</p>
+              <p class="gcal-state" id="gcal-state">Not linked</p>
+            </div>
+          </div>
+
+          <p class="gcal-note" id="gcal-note"></p>
+
+          <!-- Shown only when there is more than one calendar called my.adhd,
+               which was a bug of ours and is therefore ours to offer to clean
+               up. It is a button rather than something automatic because
+               deleting a calendar out of somebody's Google account is not a
+               thing to do quietly on a background sync. -->
+          <div class="gcal-dupe is-hidden" id="gcal-dupe">
+            <p class="gcal-note" id="gcal-dupe-note"></p>
+            <button class="btn-danger-quiet" id="gcal-dupe-btn" type="button">Remove the spare</button>
+          </div>
+
+          <button class="btn-primary gcal-go" id="gcal-btn" type="button">Link Google Calendar</button>
+
+          <div class="gcal-more">
+            <button class="btn-soft is-hidden" id="gcal-open" type="button">Open in Google</button>
+            <button class="btn-danger-quiet is-hidden" id="gcal-off" type="button">Unlink</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feedback, share and the legal pages. Three of the four leave for
+           somewhere else; the fourth copies a link. -->
+      <section class="settings-section">
+        <p class="eyebrow settings-cap">About</p>
+
+        <div class="settings-group">
+          <button class="set-row" id="set-row-feedback" type="button">
+            <span class="set-row-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><use href="#icon-heart"/></svg>
+            </span>
+            <span class="set-row-text">
+              <span class="set-row-title">Send feedback</span>
+              <span class="set-row-note">Tell us what to fix.</span>
+            </span>
+            <svg class="set-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-chevron"/></svg>
+          </button>
+
+          <button class="set-row" id="set-row-share" type="button">
+            <span class="set-row-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><use href="#icon-share"/></svg>
+            </span>
+            <span class="set-row-text">
+              <span class="set-row-title">Share with friends</span>
+              <span class="set-row-note">Someone you know has this too.</span>
+            </span>
+            <svg class="set-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-chevron"/></svg>
+          </button>
+
+          <a class="set-row" href="/privacy">
+            <span class="set-row-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><use href="#icon-shield"/></svg>
+            </span>
+            <span class="set-row-text">
+              <span class="set-row-title">Privacy policy</span>
+            </span>
+            <svg class="set-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-chevron"/></svg>
+          </a>
+
+          <a class="set-row" href="/terms">
+            <span class="set-row-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><use href="#icon-doc"/></svg>
+            </span>
+            <span class="set-row-text">
+              <span class="set-row-title">Terms</span>
+            </span>
+            <svg class="set-chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-chevron"/></svg>
+          </a>
+        </div>
+      </section>
+
+      <p class="hint" id="local-note">Your tasks live in this browser only &mdash; no account,
+        no server. The calendar link above is the one exception, and only while
+        it is switched on.</p>
+      <p class="version">v0.1.0 <span class="version-tag">Beta</span></p>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 7: PROFILE ============
+       One tap under settings. The name and the face, and nothing else —
+       what ends the account lives beside the account, not here. -->
+  <section class="screen is-hidden" id="screen-profile">
+    <header class="brand brand--sm">
+      <button class="settings-back" id="btn-profile-back" type="button" aria-label="Back to settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-back"/></svg>
+        <span>Settings</span>
+      </button>
+      <h1 class="screen-title">Profile</h1>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+        <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
+        <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
+      </button>
+    </header>
+
+    <div class="settings-wrap">
+      <div class="profile-card">
+        <span class="avatar-big" id="avatar-big" aria-hidden="true">🧔🏻</span>
+        <p class="profile-name-big" id="profile-greeting">Hey there.</p>
+
+        <label class="field">
+          <span class="field-label">What should I call you?</span>
+          <input class="field-input" id="profile-name" type="text" maxlength="24"
+                 autocomplete="nickname" spellcheck="false" placeholder="Your name" />
+        </label>
+
+        <div class="field">
+          <span class="field-label">Pick a face</span>
+          <div class="avatar-picker" id="avatar-picker" role="group" aria-label="Pick an avatar"></div>
+        </div>
+      </div>
+      <p class="hint">This name and face are on this device only. They are not
+        part of an account and they do not travel with your lists.</p>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 8: FEEDBACK ============
+       The same box it has always been — the glyph, the ask, one a day, and
+       the tin if a link is configured. It has moved twice now and not one
+       line of what it does has changed with it. -->
+  <section class="screen is-hidden" id="screen-feedback">
+    <header class="brand brand--sm">
+      <button class="settings-back" id="btn-feedback-back" type="button" aria-label="Back to settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-back"/></svg>
+        <span>Settings</span>
+      </button>
+      <h1 class="screen-title">Feedback</h1>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+        <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
+        <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
+      </button>
+    </header>
+
+    <div class="settings-wrap settings-wrap--fb">
       <span class="fb-glyph" aria-hidden="true">
         <svg viewBox="0 0 24 24"><use href="#icon-heart"/></svg>
       </span>
@@ -389,130 +971,79 @@ try{
     </div>
   </section>
 
-  <!-- ============ SCREEN 6: PROFILE ============ -->
-  <section class="screen is-hidden" id="screen-profile">
+  <!-- ============ SCREEN 9: THE PLANS ============
+       What the subscription card opens. Three plans, the prices they have
+       always had in billing.html, and the one honest thing that can be
+       said about them today: nothing in the app is locked, so a plan pays
+       for what the app costs to run rather than buying a feature back.
+
+       Whole screen is unreachable unless billing is configured. -->
+  <section class="screen is-hidden" id="screen-plans">
     <header class="brand brand--sm">
-      <a class="brand-lockup" href="/" aria-label="my.adhd home">
-        <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
-        <span class="wordmark">my<span class="accent">.adhd</span></span>
-      </a>
-      <button class="theme-toggle" id="btn-theme-5" type="button" aria-label="Switch to dark mode">
+      <button class="settings-back" id="btn-plans-back" type="button" aria-label="Back to settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-back"/></svg>
+        <span>Settings</span>
+      </button>
+      <h1 class="screen-title">my.adhd Pro</h1>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
         <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
         <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
       </button>
     </header>
 
-    <div class="profile-wrap">
-      <div class="profile-card">
-        <span class="avatar-big" id="avatar-big" aria-hidden="true">🧔🏻</span>
-        <p class="profile-name-big" id="profile-greeting">Hey there.</p>
+    <div class="settings-wrap">
+      <h2 class="plans-title">Keep it running.</h2>
+      <p class="plans-lede">Sorting a dump costs money every time — the model
+        reads it, and the voice box transcribes it. Nothing in the app is
+        locked behind this. A plan pays for the part that has a bill.</p>
 
-        <label class="field">
-          <span class="field-label">What should I call you?</span>
-          <input class="field-input" id="profile-name" type="text" maxlength="24"
-                 autocomplete="nickname" spellcheck="false" placeholder="Your name" />
-        </label>
-
-        <div class="field">
-          <span class="field-label">Pick a face</span>
-          <div class="avatar-picker" id="avatar-picker" role="group" aria-label="Pick an avatar"></div>
-        </div>
-      </div>
-
-      <div class="stat-row">
-        <div class="stat"><strong id="stat-open">0</strong><span>on your lists</span></div>
-        <div class="stat"><strong id="stat-done">0</strong><span>done</span></div>
-        <div class="stat"><strong id="stat-lists">0</strong><span>lists</span></div>
-        <div class="stat"><strong id="stat-dated">0</strong><span>on the calendar</span></div>
-        <div class="stat stat--overdue" id="stat-overdue-card">
-          <strong id="stat-overdue">0</strong><span>overdue</span>
-        </div>
-      </div>
-
-
-      <!-- Signing in. Optional, and it stays optional: the app opened on
-           the dump box before you got here and works with no account at
-           all. This says what it buys rather than asking for trust up
-           front. -->
-      <div class="gcal-card acct-card is-hidden" id="acct-card">
+      <!-- Shown instead of the plan list once there is a plan. -->
+      <div class="gcal-card is-on is-hidden" id="plans-current">
         <div class="gcal-head">
-          <span class="acct-face" id="acct-face" aria-hidden="true">👤</span>
+          <svg class="gcal-mark" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-spark"/></svg>
           <div>
-            <p class="gcal-title" id="acct-title">Just this device</p>
-            <p class="gcal-state" id="acct-state">Not signed in</p>
+            <p class="gcal-title" id="plans-current-title">Pro</p>
+            <p class="gcal-state" id="plans-current-state"></p>
           </div>
         </div>
+        <button class="btn-soft plans-manage" id="plans-manage" type="button">Manage billing</button>
+      </div>
 
-        <p class="gcal-note" id="acct-note"></p>
-
-        <button class="btn-primary gcal-go" id="acct-btn" type="button">Sign in with Google</button>
-
-        <div class="gcal-more">
-          <span class="acct-hint" id="acct-hint"></span>
-          <button class="btn-danger-quiet is-hidden" id="acct-out" type="button">Sign out</button>
+      <div class="plans-list" id="plans-list">
+        <div class="plan-card">
+          <div class="plan-card-head">
+            <p class="plan-name">Weekly</p>
+            <p class="plan-cost">RM9.90<span>/week</span></p>
+          </div>
+          <p class="plan-note">First 3 days free. Cancel in a tap and it stops.</p>
+          <button class="btn-soft" data-plan="weekly" type="button">Start the trial</button>
         </div>
 
-        <!-- Ending the account, from inside the app. App Store Review
-             guideline 5.1.1(v) asks for exactly this and names an email
-             address as not enough, which is what privacy.html offered
-             until now.
-
-             Same two-stage shape as Clear everything on the lists screen:
-             a quiet button opens a box that has to be answered, the copy
-             hardens on the second press, and it disarms itself if left
-             alone. Signed out there is no account to end, so the whole
-             block goes with the Sign out button. -->
-        <div class="acct-danger is-hidden" id="acct-danger">
-          <button class="btn-danger-quiet" id="btn-acct-delete" type="button">Delete account</button>
-
-          <div class="clear-confirm is-hidden" id="acct-delete-confirm">
-            <p class="clear-confirm-text" id="acct-delete-text"></p>
-            <div class="clear-confirm-actions">
-              <button class="btn-soft" id="btn-acct-delete-cancel" type="button">Cancel</button>
-              <button class="btn-danger" id="btn-acct-delete-go" type="button"></button>
-            </div>
+        <div class="plan-card plan-card--best">
+          <div class="plan-card-head">
+            <p class="plan-name">Annual <span class="plan-tag">best value</span></p>
+            <p class="plan-cost">RM49.90<span>/year</span></p>
           </div>
+          <p class="plan-note">RM4.16 a month. RM0.96 a week.</p>
+          <button class="btn-primary" data-plan="annual" type="button">
+            <span class="btn-text">Choose annual</span>
+          </button>
+        </div>
+
+        <div class="plan-card">
+          <div class="plan-card-head">
+            <p class="plan-name">Lifetime</p>
+            <p class="plan-cost">RM99.90<span> once</span></p>
+          </div>
+          <p class="plan-note">One payment. No renewal to forget about.</p>
+          <button class="btn-soft" data-plan="lifetime" type="button">Buy lifetime</button>
         </div>
       </div>
 
-      <!-- The one thing on this screen that reaches outside the browser, so
-           it gets its own card rather than a row in the one above: that card
-           is who you are, this is a wiring decision. The whole block is
-           hidden when no client ID is configured. -->
-      <div class="gcal-card is-hidden" id="gcal-card">
-        <div class="gcal-head">
-          <svg class="gcal-mark" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-calendar"/></svg>
-          <div>
-            <p class="gcal-title">Google Calendar</p>
-            <p class="gcal-state" id="gcal-state">Not linked</p>
-          </div>
-        </div>
-
-        <p class="gcal-note" id="gcal-note"></p>
-
-        <!-- Shown only when there is more than one calendar called my.adhd,
-             which was a bug of ours and is therefore ours to offer to clean
-             up. It is a button rather than something automatic because
-             deleting a calendar out of somebody's Google account is not a
-             thing to do quietly on a background sync. -->
-        <div class="gcal-dupe is-hidden" id="gcal-dupe">
-          <p class="gcal-note" id="gcal-dupe-note"></p>
-          <button class="btn-danger-quiet" id="gcal-dupe-btn" type="button">Remove the spare</button>
-        </div>
-
-        <button class="btn-primary gcal-go" id="gcal-btn" type="button">Link Google Calendar</button>
-
-        <div class="gcal-more">
-          <button class="btn-soft is-hidden" id="gcal-open" type="button">Open in Google</button>
-          <button class="btn-danger-quiet is-hidden" id="gcal-off" type="button">Unlink</button>
-        </div>
-      </div>
-
-      <p class="hint" id="local-note">Your tasks live in this browser only &mdash; no account,
-        no server. The calendar link above is the one exception, and only while
-        it is switched on.</p>
-      <p class="hint hint--link"><a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></p>
-      <p class="version">v0.1.0 <span class="version-tag">Beta</span></p>
+      <p class="hint" id="plans-note">A plan needs an account, because it has to
+        follow you rather than this browser &mdash; so the first tap goes to
+        Google. Payment itself is handled by Stripe on their own page; no card
+        detail ever reaches this app.</p>
     </div>
   </section>
 
@@ -520,12 +1051,17 @@ try{
 
 
 <!-- ============ the floating tab bar ============
-     Hovers over every screen past the dump. The middle + goes back to the
-     dump box, which is how a new list gets made. -->
+     Hovers over every screen with something in it. Four places and one
+     action: the middle + opens the composer over wherever you are, which
+     is how something gets added without losing the page you were reading.
+
+     Feedback and the profile used to have a slot each. They were the two
+     things nobody opens twice in a session, and they were taking half the
+     bar — so they live behind the gear on home now, and the room went to
+     the notes. -->
 <nav class="tabbar is-hidden" id="tabbar" aria-label="Sections">
-  <button class="tab" id="tab-lists" type="button" aria-label="My lists">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-lists"/></svg>
-    <span class="tab-dot is-hidden" id="tab-mark-lists"></span>
+  <button class="tab" id="tab-home" type="button" aria-label="Home">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-home"/></svg>
   </button>
   <button class="tab" id="tab-calendar" type="button" aria-label="Calendar">
     <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-calendar"/></svg>
@@ -534,11 +1070,12 @@ try{
   <button class="tab tab--add" id="tab-add" type="button" aria-label="Add to your lists">
     <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-plus"/></svg>
   </button>
-  <button class="tab" id="tab-loved" type="button" aria-label="Feedback">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-heart"/></svg>
+  <button class="tab" id="tab-lists" type="button" aria-label="My lists">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-list"/></svg>
+    <span class="tab-dot is-hidden" id="tab-mark-lists"></span>
   </button>
-  <button class="tab tab--me" id="tab-profile" type="button" aria-label="Profile">
-    <span class="tab-avatar" id="tab-avatar" aria-hidden="true">🧔🏻</span>
+  <button class="tab" id="tab-notes" type="button" aria-label="Notes">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-note"/></svg>
   </button>
 </nav>
 
@@ -599,6 +1136,7 @@ try{
      app.js only ever asks gcal whether the feature is available. -->
 <script src="config.js"></script>
 <script src="auth.js"></script>
+<script src="billing.js"></script>
 <script src="gcal.js"></script>
 <script src="cloud.js"></script>
 <script src="voice.js"></script>

@@ -10,23 +10,31 @@ const STORE_KEY = 'myadhd.v1';
 const $ = (id) => document.getElementById(id);
 
 const el = {
-  screenDump:   $('screen-dump'),
+  screenHome:   $('screen-home'),
   screenLoad:   $('screen-loading'),
   screenNow:    $('screen-now'),
   input:        $('dump-input'),
-  dumpDates:    $('dump-dates'),
-  dumpChips:    $('dump-chips'),
-  triage:       $('btn-triage'),
+  btnSettings:  $('btn-settings'),
+  homeWidgets:  $('home-widgets'),
+  homeTodayTitle: $('home-today-title'),
+  homeTodayMore:  $('home-today-more'),
+  homeTodayRows:  $('home-today-rows'),
+  homeTodayEmpty: $('home-today-empty'),
+  discoverRows: $('discover-rows'),
+  homeStart:    $('home-start'),
+  btnStartDump: $('btn-start-dump'),
   loadingText:  $('loading-text'),
   eyebrow:      $('eyebrow'),
   summary:      $('lists-summary'),
   lists:        $('lists'),
+  matrix:       $('matrix'),
+  btnView:      $('btn-view'),
+  viewIcon:     $('view-icon'),
+  viewLabel:    $('view-label'),
   doneBlock:    $('done-block'),
   doneToggle:   $('done-toggle'),
   doneCount:    $('done-count'),
   doneList:     $('done-list'),
-  btnViewLists: $('btn-view-lists'),
-  listsBadge:   $('lists-badge'),
   catBar:       $('cat-bar'),
   offlineNote:  $('offline-note'),
   offlineCount: $('offline-count'),
@@ -55,7 +63,69 @@ const el = {
   calAgenda:    $('cal-agenda'),
   calTip:       $('cal-tip'),
   calUndated:   $('cal-undated'),
-  screenLoved:  $('screen-loved'),
+  screenNotes:  $('screen-notes'),
+  notesSummary: $('notes-summary'),
+  notesList:    $('notes-list'),
+  notesEmpty:   $('notes-empty'),
+  notesNote:    $('notes-note'),
+  btnNoteNew:   $('btn-note-new'),
+  btnNoteFirst: $('btn-note-first'),
+
+  /* The editor, a screen of its own. Not in TAB_FOR, so the bar stands
+     down while you are writing and the toolbar takes the bottom. */
+  screenNote:   $('screen-note'),
+  noteHeading:  $('note-heading'),
+  noteTitle:    $('note-title'),
+  noteBlocks:   $('note-blocks'),
+  noteFiles:    $('note-files'),
+  noteRemind:   $('note-remind'),
+  btnNoteBack:  $('btn-note-back'),
+  btnNoteDone:  $('btn-note-done'),
+  btnNoteDelete: $('btn-note-delete'),
+  noteFileInput: $('note-file-input'),
+  toolType:     $('tool-type'),
+  toolCheck:    $('tool-check'),
+  toolClip:     $('tool-clip'),
+  toolBell:     $('tool-bell'),
+  sheetFormat:  $('sheet-format'),
+  fmtTypes:     $('fmt-types'),
+  fmtMarks:     $('fmt-marks'),
+  fmtAlign:     $('fmt-align'),
+  fmtClose:     $('fmt-close'),
+  sheetRemind:  $('sheet-remind'),
+  remDay:       $('rem-day'),
+  remTime:      $('rem-time'),
+  remRepeat:    $('rem-repeat'),
+  remSave:      $('rem-save'),
+  remClear:     $('rem-clear'),
+  remClose:     $('rem-close'),
+
+  screenSettings: $('screen-settings'),
+  btnSettingsBack: $('btn-settings-back'),
+  setSub:       $('set-sub'),
+  setPro:       $('set-pro'),
+  setProTitle:  $('set-pro-title'),
+  setProNote:   $('set-pro-note'),
+  setRowProfile: $('set-row-profile'),
+  setFace:      $('set-face'),
+  setProfileNote: $('set-profile-note'),
+  setRowFeedback: $('set-row-feedback'),
+  setRowShare:  $('set-row-share'),
+
+  screenProfile: $('screen-profile'),
+  btnProfileBack: $('btn-profile-back'),
+
+  screenFeedback: $('screen-feedback'),
+  btnFeedbackBack: $('btn-feedback-back'),
+
+  screenPlans:  $('screen-plans'),
+  btnPlansBack: $('btn-plans-back'),
+  plansList:    $('plans-list'),
+  plansCurrent: $('plans-current'),
+  plansCurrentTitle: $('plans-current-title'),
+  plansCurrentState: $('plans-current-state'),
+  plansManage:  $('plans-manage'),
+  plansNote:    $('plans-note'),
   fbForm:       $('fb-form'),
   fbInput:      $('fb-input'),
   fbCount:      $('fb-count'),
@@ -66,16 +136,14 @@ const el = {
   fbGiveBtn:    $('fb-give-btn'),
   fbGiveQuiet:  $('fb-give-quiet'),
   fbGiveQuietLink: $('fb-give-quiet-link'),
-  screenMe:     $('screen-profile'),
   tabbar:       $('tabbar'),
-  tabLists:     $('tab-lists'),
+  tabHome:      $('tab-home'),
   tabCal:       $('tab-calendar'),
   tabAdd:       $('tab-add'),
-  tabLoved:     $('tab-loved'),
-  tabMe:        $('tab-profile'),
+  tabLists:     $('tab-lists'),
+  tabNotes:     $('tab-notes'),
   tabMarkLists: $('tab-mark-lists'),
   tabBadgeCal:  $('tab-badge-cal'),
-  tabAvatar:    $('tab-avatar'),
   composer:     $('composer'),
   compSheet:    document.querySelector('.composer-sheet'),
   compBody:     document.querySelector('.composer-body'),
@@ -135,11 +203,26 @@ const el = {
 
 let state = {
   tasks: [],          // {id,title,minutes,energy,urgency,firstStep,category,steps,done,skipped}
+
+  /* {id,title,body,createdAt,updatedAt}. Inside this store rather than a
+     key of their own, which matters more than it looks: the iOS shell
+     patches Storage.setItem and only listens for 'myadhd.v1', so a note
+     written to myadhd.notes.v1 would be a write the phone never hears.
+     Nothing sorts these, nothing triages them, none of them is a task. */
+  notes: [],
+
   profile: { name: '', avatar: '🧔🏻' },   // this device only — no account behind it
   sentFeedbackOn: null,   // the UTC day of the last note sent from this device
 
   /* The onboarding offer, once turned down, stays turned down. */
   signupOfferHidden: false,
+
+  /* 'list' or 'matrix'. Persisted, unlike the category filter — that one is
+     where you are looking right now, this one is how you think, and somebody
+     who reads their day as four quadrants wants them again tomorrow. It
+     lives on the store rather than a key of its own for the same reason the
+     notes do: the iOS shell only hears writes to 'myadhd.v1'. */
+  view: 'list',
 
   /* Calendar events whose task no longer exists to hang them off. A task
      is deleted from the store the moment you remove it, which would strand
@@ -157,6 +240,16 @@ function load() {
       // A store written before the profile existed has no profile key, and
       // one written by a half-finished edit may be missing a field.
       state.profile = Object.assign({ name: '', avatar: '🧔🏻' }, saved.profile || {});
+
+      /* Same reason, one level up: every store written before the notes
+         existed has no notes key at all, and the assign above would leave
+         whatever was there — including a stray non-array from a hand-edited
+         store — for renderNotes() to fall over on. */
+      state.notes = Array.isArray(saved.notes) ? saved.notes.map(normalizeNote) : [];
+
+      /* A hand-edited store, or one from a build where this meant something
+         else, must not leave the lists screen painting nothing. */
+      if (state.view !== 'matrix') state.view = 'list';
 
       /* The fuel selector is gone, but a store written while it existed still
          carries the choice — and the assign above would copy it straight back
@@ -223,26 +316,38 @@ function pruneDone() {
    when a pull actually moved something, so it cannot loop with the save()
    that goToNext() does on its way through. */
 function repaintLists() {
-  refreshListsButton();
+  /* Ask which screen is up rather than guessing at the end. The old form
+     tested the notes by hand and fell back to home, which was right while
+     there were four screens and starts lighting the wrong tab the moment
+     there are nine. */
+  const on = SCREENS.find(s => !s.classList.contains('is-hidden'));
 
-  if (!el.screenNow.classList.contains('is-hidden')) goToNext();
-  else if (!el.screenCal.classList.contains('is-hidden')) renderCalendar();
-  else if (!el.screenMe.classList.contains('is-hidden')) showProfile();
-  else syncTabs(el.screenDump);   // the dump box: only the tab marks can move
+  if      (on === el.screenNow)      goToNext();
+  else if (on === el.screenCal)      renderCalendar();
+  else if (on === el.screenHome)     renderHome();
+  else if (on === el.screenSettings) paintSettings();
+  /* Notes, profile, feedback, the plans and the wait hold nothing a pull
+     can move — but the marks on the bar over them still do. */
+  else syncTabs(on || el.screenHome);
 }
 
 /* ---------------- screens ---------------- */
 
-const SCREENS = [el.screenDump, el.screenLoad, el.screenNow,
-                el.screenCal, el.screenLoved, el.screenMe];
+const SCREENS = [el.screenHome, el.screenLoad, el.screenNow,
+                el.screenCal, el.screenNotes, el.screenNote, el.screenSettings,
+                el.screenProfile, el.screenFeedback, el.screenPlans];
 
-/* Which tab lights up on which screen. The dump and the wait are not
-   sections — the bar hides for both, so neither gets an entry. */
+/* Which tab lights up on which screen, in the order the bar draws them.
+   The wait is not a section, and neither is settings or any of the three
+   screens under it — the bar hides for all five, so none of them gets an
+   entry. Settings especially: it is reached from home rather than from
+   the bar, and a lit tab under it would be claiming you are somewhere you
+   are not. */
 const TAB_FOR = new Map([
-  [el.screenNow,   el.tabLists],
+  [el.screenHome,  el.tabHome],
   [el.screenCal,   el.tabCal],
-  [el.screenLoved, el.tabLoved],
-  [el.screenMe,    el.tabMe],
+  [el.screenNow,   el.tabLists],
+  [el.screenNotes, el.tabNotes],
 ]);
 
 function show(screen) {
@@ -252,11 +357,14 @@ function show(screen) {
   syncTabs(screen);
 }
 
-/** Show the bar on every section, hide it on the dump and the wait. */
+/** Show the bar on every section, hide it on the wait and on settings and
+    the screens under it. It stays up on a cold start now: the + in the
+    middle of it is the only way to add anything. */
 function syncTabs(screen) {
   const current = TAB_FOR.get(screen);
-  el.tabbar.classList.toggle('is-hidden', !current);
-  document.body.classList.toggle('has-tabbar', !!current);
+  const show = !!current;
+  el.tabbar.classList.toggle('is-hidden', !show);
+  document.body.classList.toggle('has-tabbar', show);
 
   TAB_FOR.forEach(tab => {
     const on = tab === current;
@@ -286,7 +394,7 @@ function syncTabs(screen) {
   mark.classList.toggle('is-hidden', open === 0 || current === el.tabLists);
 
   /* The calendar carries a count rather than a dot: how many things have a
-     day on them, the same number the profile calls "on the calendar".
+     day on them, the same number home counts as "on the calendar".
 
      That number is lit most of the time, so on its own it would say little
      — which is why the urgency lives in the colour instead. Orange the
@@ -300,6 +408,9 @@ function syncTabs(screen) {
   el.tabBadgeCal.classList.toggle('is-late', overdue);
   el.tabBadgeCal.classList.toggle('is-hidden', dated.length === 0 || current === el.tabCal);
 }
+
+/* Set while the app itself writes the dump buffer — see writeBuffer(). */
+let ownWrite = false;
 
 let toastTimer;
 
@@ -372,9 +483,21 @@ function stopLoadingCopy() {
    watching their own sentences get rewritten under them. */
 let spokenDump = null;
 
+/* The app's own way into the buffer. A plain assignment fires no input
+   event, but the shell's does — so this sets a flag around the write and
+   the listener at the bottom of this file knows the difference between the
+   app moving text about and somebody dictating into it. */
+function writeBuffer(text) {
+  ownWrite = true;
+  el.input.value = text;
+  ownWrite = false;
+}
+
 async function triage() {
   const text = el.input.value.trim();
-  if (!text) { el.input.focus(); toast('Give me something to work with.'); return; }
+  /* Only reachable if the buffer was emptied between the composer closing
+     and this running — the composer refuses to send an empty sheet. */
+  if (!text) { toast('Give me something to work with.'); return; }
 
   show(el.screenLoad);
   startLoadingCopy();
@@ -393,7 +516,7 @@ async function triage() {
   stopLoadingCopy();
 
   if (!tasks.length) {
-    show(el.screenDump);
+    show(el.screenHome);
     toast("Couldn't find any tasks in there.");
     return;
   }
@@ -406,10 +529,17 @@ async function triage() {
   const fresh = tasks.filter(t => !seen.has(t.title.trim().toLowerCase()));
   const dupes = tasks.length - fresh.length;
 
+  /* Dumped from a quadrant's +, so that is where it was meant to go —
+     whatever the model made of it. Cleared either way: the pin belongs to
+     one press of one button, not to the next dump from the tab bar. */
+  if (pendingQuadrant) {
+    fresh.forEach(t => { t.quadrant = pendingQuadrant; });
+    pendingQuadrant = null;
+  }
+
   state.tasks = state.tasks.concat(fresh);
   save();
-  el.input.value = '';
-  previewDates();
+  writeBuffer('');
   goToNext();
 
   if (dupes) {
@@ -748,6 +878,13 @@ function parseLocally(text) {
   const URGENT_SOON = /\b(tomorrow|this week|monday|tuesday|wednesday|thursday|friday|saturday|sunday|weekend|soon)\b/i;
   const QUICK  = /\b(email|reply|text|call|book|order|pay|send|renew|confirm|cancel|rsvp)\b/i;
   const BIG    = /\b(write|build|plan|report|design|research|clean|organi[sz]e|prepare|refactor|draft|deep)\b/i;
+  /* Things that cost something real if they never happen. Deliberately
+     narrower than the model's own reading: money and health only, plus the
+     words below. Everything else stays 'low'. A heuristic that called half
+     the list important would fill Do now with everything, and this parser
+     already announces itself as a rough guess. */
+  const WEIGHTY = /\b(bill|rent|tax|insurance|fine|penalty|licen[cs]e|passport|visa|permit|loan|debt|invoice|contract|doctor|dentist|hospital|clinic|medicine|prescription|exam|interview)\b/i;
+  const WEIGHTY_CATS = new Set(['money', 'health']);
 
   return splitDump(text)
     .map(line => {
@@ -765,13 +902,15 @@ function parseLocally(text) {
         if (clean === before) break;
       }
       clean = clean || line;
+      const cat = guessCategory(line);
       return normalizeTask({
         title: clean.charAt(0).toUpperCase() + clean.slice(1),
         minutes: stated !== null ? stated : (QUICK.test(line) ? 10 : BIG.test(line) ? 45 : 20),
         energy:  BIG.test(line) ? 'high' : QUICK.test(line) ? 'low' : 'medium',
         urgency: URGENT_HIGH.test(line) ? 5 : URGENT_SOON.test(line) ? 4 : 3,
+        importance: (WEIGHTY_CATS.has(cat) || WEIGHTY.test(line)) ? 'high' : 'low',
         firstStep: 'Open whatever you need for this and look at it for 2 minutes. Nothing more.',
-        category: guessCategory(line),
+        category: cat,
         when: day,
         // A time with no day is a time on no calendar, so it is dropped
         // rather than parked on today and quietly wrong.
@@ -792,6 +931,12 @@ function normalizeTask(t) {
     minutes: clamp(t.minutes, 2, 240, 20),
     energy: ['low', 'medium', 'high'].includes(t.energy) ? t.energy : 'medium',
     urgency: clamp(t.urgency, 1, 5, 3),
+    /* How soon (urgency) and what it costs to never do it (importance) are
+       different questions, and the matrix needs both. A task sorted before
+       importance existed lands on 'low': we were never told it mattered, and
+       guessing 'high' would fill the Do now quadrant with everything. */
+    importance: ['low', 'high'].includes(t.importance) ? t.importance : 'low',
+    quadrant: QUADRANT_KEYS.includes(t.quadrant) ? t.quadrant : null,   // the user's own placement, or null to derive
     firstStep: String(t.firstStep || t.first_step || 'Open it and look at it for 2 minutes.').slice(0, 240),
     category: String(t.category || 'general').slice(0, 40),
     when: normalizeDay(t.when),   // a day, or null
@@ -841,6 +986,11 @@ const catKey = (t) => String(t.category || 'general').toLowerCase();
    that gets saved: it is where you are looking, not something about the
    tasks, and it should not follow you onto another device. */
 let catFilter = 'all';
+
+/* Set by a quadrant's +, read once when the dump lands, and cleared whether
+   the dump went through or was abandoned. Not on the store: it describes
+   one press of one button, and it must not outlive the composer. */
+let pendingQuadrant = null;
 
 /* A deadline as one sortable number. No day means no deadline, which sorts
    last and not first — an undated task is not due now, it is undated. A day
@@ -892,6 +1042,44 @@ function bucketize(tasks) {
     .map(([k, label]) => [k, label, sortBucket(k, by.get(k))]);
 }
 
+/* The other way of cutting the same list, and the reason `importance`
+   exists. The headings answer "when"; these four answer "when" and "does it
+   matter" at once, which is the one thing a deadline alone cannot say.
+   Unlike the headings, all four are always drawn: an empty Do now is worth
+   seeing, and a 2x2 with a hole in it stops being a 2x2. */
+const QUADRANTS = [
+  ['do',       'Do now',   'Important & urgent'],
+  ['plan',     'Plan',     'Important, not urgent'],
+  ['delegate', 'Delegate', 'Urgent, not important'],
+  ['drop',     'Drop',     'Neither'],
+];
+
+const QUADRANT_KEYS = QUADRANTS.map(([k]) => k);
+
+/* A placement the person made themselves always wins — the model splits and
+   rewrites and it gets things wrong, and `quadrant` is the repair, the same
+   way Edit and Remove are. Lateness counts as urgent whatever the model
+   said about it: a day that has passed is not an opinion. */
+function quadrantOf(t, today) {
+  if (t.quadrant) return t.quadrant;
+  const urgent = t.urgency >= 5 || (t.when && t.when <= today);
+  return t.importance === 'high'
+    ? (urgent ? 'do' : 'plan')
+    : (urgent ? 'delegate' : 'drop');
+}
+
+/* Inside a quadrant the clock leads and undated falls in behind, which is
+   what the dated headings already do — dueAt() returns Infinity for an
+   undated task, so their comparator needs no special case here. */
+const sortQuadrant = (items) => sortBucket('quad', items);
+
+function quadrantize(tasks) {
+  const today = dayKey();
+  const by = new Map(QUADRANT_KEYS.map(k => [k, []]));
+  tasks.forEach(t => by.get(quadrantOf(t, today)).push(t));
+  return QUADRANTS.map(([k, label, sub]) => [k, label, sub, sortQuadrant(by.get(k))]);
+}
+
 function groupByCategory(tasks) {
   const groups = new Map();
   tasks.forEach(t => {
@@ -921,6 +1109,8 @@ function goToNext() {
 
   if (!open.length) {
     el.lists.classList.add('is-hidden');
+    el.matrix.classList.add('is-hidden');
+    el.btnView.classList.add('is-hidden');
     el.eyebrow.classList.add('is-hidden');
     el.summary.classList.add('is-hidden');
     el.doneBlock.classList.add('is-hidden');
@@ -930,7 +1120,6 @@ function goToNext() {
     return;
   }
 
-  el.lists.classList.remove('is-hidden');
   el.eyebrow.textContent = state.profile.name
     ? `Sorted, ${state.profile.name}.`
     : 'Sorted into lists.';
@@ -960,13 +1149,43 @@ function goToNext() {
 
   const shown = catFilter === 'all' ? open : open.filter(t => catKey(t) === catFilter);
 
-  el.lists.innerHTML = '';
-  bucketize(shown).forEach(([key, label, items]) =>
-    el.lists.appendChild(renderBucket(key, label, items)));
+  const matrix = state.view === 'matrix';
+  el.btnView.classList.remove('is-hidden');
+  paintViewToggle();
+  el.lists.classList.toggle('is-hidden', matrix);
+  el.matrix.classList.toggle('is-hidden', !matrix);
+  if (matrix) paintMatrixBody(shown); else paintListBody(shown);
 
   renderDone(done);
   el.dangerZone.classList.toggle('is-hidden', state.tasks.length === 0);
   resetClear();
+}
+
+/* Grouped by when, which is the default and the argument the app makes. */
+function paintListBody(shown) {
+  el.lists.innerHTML = '';
+  bucketize(shown).forEach(([key, label, items]) =>
+    el.lists.appendChild(renderBucket(key, label, items)));
+}
+
+/* Grouped by when AND whether it matters. All four are drawn even when
+   empty — a 2x2 with a hole in it is not a 2x2, and an empty Do now is
+   worth reading. */
+function paintMatrixBody(shown) {
+  el.matrix.innerHTML = '';
+  quadrantize(shown).forEach(([key, label, sub, items]) =>
+    el.matrix.appendChild(renderQuadrant(key, label, sub, items)));
+}
+
+/* The button names the view you are not in, because that is what pressing
+   it gets you. The label and the icon are the same decision said twice. */
+function paintViewToggle() {
+  const toMatrix = state.view !== 'matrix';
+  el.viewLabel.textContent = toMatrix ? 'Matrix' : 'List';
+  el.viewIcon.setAttribute('href', toMatrix ? '#icon-grid' : '#icon-rows');
+  el.btnView.setAttribute('aria-label', toMatrix
+    ? 'Show the matrix'
+    : 'Show the lists');
 }
 
 function renderBucket(key, label, items) {
@@ -991,6 +1210,54 @@ function renderBucket(key, label, items) {
   items.forEach(t => ul.appendChild(renderTask(t)));
 
   section.append(head, ul);
+  return section;
+}
+
+/* One quadrant of the matrix. The rows inside are the ordinary task rows,
+   so everything they can already do — swipe, expand, first step, break it
+   down, Edit, Remove — works here without a second implementation.
+
+   The + adds straight into this quadrant: it opens the composer and pins
+   whatever comes back, which is the quickest way to overrule the model. */
+function renderQuadrant(key, label, sub, items) {
+  const section = document.createElement('section');
+  section.className = `quad quad--${key}`;
+  section.dataset.quad = key;   // the drop target, read by overCell()
+
+  const head = document.createElement('div');
+  head.className = 'quad-head';
+
+  const text = document.createElement('div');
+  const name = document.createElement('h2');
+  name.className = 'quad-name';
+  name.textContent = label;
+  const note = document.createElement('p');
+  note.className = 'quad-sub';
+  note.textContent = sub;
+  text.append(name, note);
+
+  const add = document.createElement('button');
+  add.className = 'quad-add';
+  add.type = 'button';
+  add.setAttribute('aria-label', `Add something to ${label}`);
+  add.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-plus"/></svg>';
+  add.addEventListener('click', () => { pendingQuadrant = key; openComposer(); });
+
+  head.append(text, add);
+  section.append(head);
+
+  if (!items.length) {
+    const empty = document.createElement('p');
+    empty.className = 'quad-empty';
+    empty.textContent = 'Nothing here.';
+    section.append(empty);
+    return section;
+  }
+
+  const ul = document.createElement('ul');
+  ul.className = 'list-items';
+  items.forEach(t => ul.appendChild(renderTask(t)));
+  section.append(ul);
   return section;
 }
 
@@ -1153,6 +1420,14 @@ function renderTask(task) {
     const open = detail.classList.toggle('is-hidden');
     card.classList.toggle('is-open', !open);
   });
+
+  /* Hold a row and drag it into another quadrant. Only in the matrix: on
+     the lists a lifted row has nowhere to land, and a long-press that picks
+     something up and then puts it back is worse than one that never fires.
+     Swipe still owns the horizontal — the calendar's rows carry both. */
+  if (state.view === 'matrix') {
+    card.addEventListener('pointerdown', (e) => watchPress(e, task, card));
+  }
 
   return swipeRow(card, task, () => keepPlace(goToNext));
 }
@@ -1652,9 +1927,9 @@ function cancelComposer() {
      be transcribed is a round trip nobody is waiting for the answer to. */
   Voice.abandon();
   restMic();
-  el.input.value = el.compInput.value;
-  previewDates();
-  refreshListsButton();
+  pendingQuadrant = null;   // the quadrant was this sheet's, and the sheet is going
+  writeBuffer(el.compInput.value);
+  renderHome();
   closeComposer(true);
 }
 
@@ -1837,18 +2112,11 @@ function dragEnd(e) {
 function sendComposer() {
   const text = el.compInput.value.trim();
   if (!text) { el.compInput.focus(); return; }
-  el.input.value = el.compInput.value;
+  writeBuffer(el.compInput.value);
   // Closed before triage, so the loading screen is what comes up behind it
   // rather than the sheet sitting over the morph.
   closeComposer();
   triage();
-}
-
-/** The shortcut back into the lists — only worth showing when there are some. */
-function refreshListsButton() {
-  const open = state.tasks.filter(t => !t.done).length;
-  el.btnViewLists.classList.toggle('is-hidden', open === 0);
-  el.listsBadge.textContent = open;
 }
 
 /* ---------------- the calendar ----------------
@@ -2274,11 +2542,6 @@ function feedbackSentToday() {
   return state.sentFeedbackOn === utcDay();
 }
 
-function showFeedback() {
-  paintFeedback();
-  show(el.screenLoved);
-}
-
 function paintFeedback() {
   const spent = feedbackSentToday();
   el.fbForm.classList.toggle('is-hidden', spent);
@@ -2410,11 +2673,14 @@ function placeGhost(x, y) {
   drag.ghost.style.top  = `${y - g.height - 18}px`;
 }
 
+/* Two things a row can be dropped on, and they never share a screen: a day
+   on the calendar's grid, or a quadrant on the lists screen. Same lift, same
+   ghost, same held-still page — only the commit differs. */
 function overCell(x, y) {
   /* The ghost is pointer-events:none, so it does not shadow the cell it is
      sitting on top of. */
   const el = document.elementFromPoint(x, y);
-  return el ? el.closest('.cal-day[data-day]') : null;
+  return el ? el.closest('.cal-day[data-day], .quad[data-quad]') : null;
 }
 
 document.addEventListener('pointermove', (e) => {
@@ -2461,6 +2727,19 @@ function endDrag(commit) {
   drag = null;
 
   if (!commit || !cell) return;
+
+  if (cell.dataset.quad) {
+    const to = cell.dataset.quad;
+    /* Dropped where it already sits — including where it sits because the
+       model put it there. Saying nothing is right either way. */
+    if (to === quadrantOf(task, dayKey())) return;
+    task.quadrant = to;             // from here on this is the person's call
+    save();
+    keepPlace(goToNext);
+    const label = (QUADRANTS.find(([k]) => k === to) || [, to])[1];
+    toast(`Moved to ${label}.`);
+    return;
+  }
 
   const day = cell.dataset.day;
   if (day === task.when) return;    // dropped back where it started
@@ -2941,7 +3220,7 @@ function markSync(next) {
   if (next !== 'error' && next !== 'stale') syncError = null;
   if (syncState === next) return;
   syncState = next;
-  if (el.screenMe && !el.screenMe.classList.contains('is-hidden')) {
+  if (el.screenSettings && !el.screenSettings.classList.contains('is-hidden')) {
     paintGoogle();
     paintAccount();   // it owns the button that drives this now
   }
@@ -3506,9 +3785,10 @@ const AVATARS = ['🧔🏻', '🧔🏻‍♂️', '👨🏻', '👱🏻‍♂️
    the name beside it.
 
    A function rather than a line in each painter, because three places
-   draw this face — the tab bar, the profile card and the composer — and a
-   guard written into one of them is a guard the other two do not have.
-   Anything that shows the avatar goes through here.
+   draw this face — the row on settings, the profile card behind it, and
+   the composer — and a guard written into one of them is a guard the
+   other two do not have. Anything that shows the avatar goes through
+   here.
 
    The substitution is at the point of drawing and nowhere else. Writing a
    corrected value back to the store would be the tidier-looking fix and
@@ -3523,7 +3803,11 @@ function paintProfile() {
   const { name, avatar } = state.profile;
   const face = avatarFace(avatar);
 
-  el.tabAvatar.textContent = face;
+  /* The row on settings wears the face too, so the way into the profile
+     screen looks like the thing it opens. */
+  if (el.setFace) el.setFace.textContent = face;
+  if (el.setProfileNote) el.setProfileNote.textContent = name ? `Hey ${name}.` : 'Hey there.';
+
   el.avatarBig.textContent = face;
   el.greeting.textContent = name ? `Hey ${name}.` : 'Hey there.';
   if (el.nameInput.value !== name) el.nameInput.value = name;
@@ -3551,7 +3835,292 @@ function buildAvatarPicker() {
   });
 }
 
-function showProfile() {
+/* Everything settings draws, without showing it. Split out so a cloud pull
+   can repaint the screen underneath somebody rather than navigating them
+   to it. paintFeedback() comes along because the feedback box lives here
+   now — moving it did not change a line of what it does, the donate guard
+   included. */
+function paintSettings() {
+  paintSubscription();
+  paintProfile();
+  paintGoogle();
+  paintAccount();
+  paintFeedback();
+}
+
+function showSettings() {
+  paintSettings();
+  show(el.screenSettings);
+
+  /* Behind the screen, like everything else on this card. One list call,
+     and in the ordinary case it finds nothing and says nothing. */
+  checkDuplicateCalendars();
+}
+
+
+/* ---------------- the plans ----------------
+   The subscription rail has existed since b34b0e0 and has never had a
+   door. This is the door: a card on settings, and a screen behind it.
+
+   Two things worth knowing before reading the rest.
+
+   The whole thing is behind MYADHD_BILLING_ENABLED, which is the same
+   switch config.js uses for the donation tin and it is here for the same
+   reason — Apple wants In-App Purchase for anything unlocked inside an
+   app, and the iOS shell needs to be able to close this from its own
+   side without touching a line of web code.
+
+   And billing.js fails closed on purpose: a read that could not happen
+   reports not-entitled, which is indistinguishable from a free account.
+   So nothing here may say "Upgrade" until a read has actually landed.
+   state().loaded is the difference between "you have not paid" and "I do
+   not know yet", and showing the first when you mean the second is how
+   you tell somebody who paid that the app forgot. */
+
+function billingOn() {
+  return !!window.billing && !!window.MYADHD_BILLING_ENABLED;
+}
+
+/** What a plan is called once it is bought. */
+function planLabel(plan) {
+  return plan === 'lifetime' ? 'Lifetime'
+       : plan === 'annual'   ? 'Annual'
+       : plan === 'weekly'   ? 'Weekly'
+       : 'Pro';
+}
+
+function paintSubscription() {
+  if (!el.setSub) return;
+
+  if (!billingOn()) {
+    el.setSub.classList.add('is-hidden');
+    return;
+  }
+  el.setSub.classList.remove('is-hidden');
+
+  const s = billing.state();
+
+  /* Not known yet. Say so plainly rather than guessing downwards. */
+  if (!s.loaded) {
+    el.setProTitle.textContent = 'my.adhd Pro';
+    el.setProNote.textContent = 'Checking your plan…';
+    return;
+  }
+
+  if (s.entitled) {
+    el.setProTitle.textContent = planLabel(s.plan);
+    el.setProNote.textContent = s.currentPeriodEnd
+      ? (s.cancelAtPeriodEnd ? 'Ends ' : 'Renews ') + dayLabel(dayKey(s.currentPeriodEnd))
+      : 'Yours, for good.';
+    return;
+  }
+
+  el.setProTitle.textContent = 'Upgrade to Pro';
+  el.setProNote.textContent = 'Annual plan for RM49.90/year';
+}
+
+function paintPlans() {
+  if (!billingOn()) return;
+  const s = billing.state();
+  const has = s.loaded && s.entitled;
+
+  el.plansCurrent.classList.toggle('is-hidden', !has);
+  el.plansList.classList.toggle('is-hidden', has);
+
+  if (has) {
+    el.plansCurrentTitle.textContent = planLabel(s.plan);
+    el.plansCurrentState.textContent = s.currentPeriodEnd
+      ? (s.cancelAtPeriodEnd ? 'Ends ' : 'Renews ') + dayLabel(dayKey(s.currentPeriodEnd))
+      : 'Lifetime — nothing to renew';
+    /* The portal only opens for somebody Stripe has a customer for. */
+    el.plansManage.classList.toggle('is-hidden', s.plan === null);
+  }
+
+  el.plansNote.classList.toggle('is-hidden', has);
+}
+
+function showPlans() {
+  paintPlans();
+  show(el.screenPlans);
+  /* The card on settings may have been painted from a stale read, and
+     this is the screen where being wrong actually costs something. */
+  if (billingOn()) billing.refresh().then(() => { paintPlans(); paintSubscription(); });
+}
+
+/** Hand the browser to Stripe. Everything that can go wrong here is worth
+    saying out loud: an unconfigured plan answers 503, and signing out
+    mid-tap answers 401, and both are silent failures otherwise. */
+async function buyPlan(plan, btn) {
+  if (!billingOn()) return;
+
+  const was = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Opening…';
+
+  try {
+    await billing.checkout(plan, 'app');   // leaves the page when it works
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = was;
+    toast(/50\d/.test(err.message)
+      ? 'Plans are not switched on yet. Nothing was charged.'
+      : 'Could not open checkout. Nothing was charged.');
+  }
+}
+
+async function manageBilling() {
+  try {
+    await billing.portal();
+  } catch (_) {
+    toast('Nothing to manage yet.');
+  }
+}
+
+
+/* ---------------- settings, one tap deeper ----------------
+   Three screens rather than three panes inside one. They each want the
+   scroll reset and the hidden bar that show() already does, and a pane
+   would have meant three mutually exclusive classes on one screen to get
+   the same thing worse. */
+
+function showProfileScreen() {
+  paintProfile();
+  show(el.screenProfile);
+}
+
+function showFeedbackScreen() {
+  paintFeedback();
+  show(el.screenFeedback);
+}
+
+/* The one row that does not go anywhere. Three ways down, because the
+   share sheet is the newest of the three APIs here and the oldest browser
+   that opens this app has none of them.
+
+   A cancelled share rejects with AbortError, which is a person changing
+   their mind and not an error — so nothing is said about it. */
+async function shareApp() {
+  const url = 'https://myadhd.my';
+  const text = 'my.adhd — dump everything on your mind, get back one thing to do.';
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'my.adhd', text, url });
+      return;
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;
+      /* Anything else falls through to the clipboard. */
+    }
+  }
+
+  try {
+    await navigator.clipboard.writeText(url);
+    toast('Link copied.');
+  } catch (_) {
+    window.open(url, '_blank', 'noopener');
+  }
+}
+
+
+/* ---------------- home ----------------
+   The dump box and everything under it. The box is first and stays first:
+   it is what people came for, and it is also the thing the iOS shell
+   reaches for by id on a fresh load.
+
+   Everything below it is a widget, and every widget is one entry in
+   HOME_WIDGETS. Adding the next one is a block of markup in app.html, a
+   paint function here, and a line in that array — nothing else in the app
+   knows how many there are or what order they come in. */
+
+const HOME_WIDGETS = [paintToday, paintStats, paintDiscover];
+
+/* A first visit has nothing to show, and an empty dashboard is worse than
+   no dashboard — five zeroes and a heading that says "nothing" is a worse
+   welcome than a blank page. So the widgets wait until there is something
+   to be a summary of, and the cold start gets the meme, the question and
+   one button instead.
+
+   The bar no longer waits with them. It used to hide here, back when the
+   box was on this screen and a first visit had something to do without
+   it; now the + is the only way anything gets added, and hiding it would
+   leave a new arrival on a page with no way in.
+
+   Clearing everything puts you back here, which is right: there is nothing
+   to summarise then either. */
+function coldStart() {
+  return state.tasks.length === 0 && state.notes.length === 0;
+}
+
+function renderHome() {
+  const cold = coldStart();
+  el.homeWidgets.classList.toggle('is-hidden', cold);
+  el.homeStart.classList.toggle('is-hidden', !cold);
+  if (!cold) HOME_WIDGETS.forEach(fn => fn());
+}
+
+function showHome() {
+  renderHome();
+  show(el.screenHome);
+}
+
+/* What is actually next, in the order the day presses on you: anything
+   late, then anything dated today, then whatever is simply open. Three at
+   most — this is the answer to "what now", and a list of ten is the
+   question again. The lists tab is one tap away and says everything. */
+function paintToday() {
+  const today = dayKey();
+  const open = state.tasks.filter(t => !t.done);
+  const late = overdueTasks(today);
+  const now = tasksOn(today);
+
+  const seen = new Set();
+  const next = [];
+  [late, now, [...open].sort((a, b) => dueAt(a) - dueAt(b) || b.urgency - a.urgency)]
+    .forEach(group => group.forEach(t => {
+      if (next.length < 3 && !seen.has(t.id)) { seen.add(t.id); next.push(t); }
+    }));
+
+  /* The heading carries the bad news, because it is the line that gets
+     read whether or not the rows below it do. */
+  el.homeTodayTitle.textContent = late.length
+    ? (late.length === 1 ? '1 late' : `${late.length} late`)
+    : now.length ? 'Today' : 'Next up';
+  el.homeTodayTitle.classList.toggle('is-late', late.length > 0);
+
+  el.homeTodayRows.textContent = '';
+  next.forEach(t => el.homeTodayRows.appendChild(homeTaskRow(t, today)));
+
+  el.homeTodayEmpty.classList.toggle('is-hidden', next.length > 0);
+  el.homeTodayMore.classList.toggle('is-hidden', open.length <= next.length);
+}
+
+/* Read-only on purpose. A tick here would be a second .task-check with a
+   second undo path behind it, and the row is a signpost — tapping it takes
+   you to the place where the task can actually be worked on. */
+function homeTaskRow(t, today) {
+  const row = document.createElement('button');
+  row.type = 'button';
+  row.className = 'home-today-row';
+  if (t.when && t.when < today) row.classList.add('is-late');
+
+  const title = document.createElement('span');
+  title.className = 'home-today-title';
+  title.textContent = t.title;
+  row.appendChild(title);
+
+  const meta = document.createElement('span');
+  meta.className = 'home-today-meta';
+  const when = whenLabel(t, today);
+  meta.textContent = [when, `${t.minutes} min`].filter(Boolean).join(' · ');
+  row.appendChild(meta);
+
+  row.addEventListener('click', goToNext);
+  return row;
+}
+
+/* The five numbers, lifted out of the profile screen unchanged. They are a
+   thing to see on the way in, not something to go looking for. */
+function paintStats() {
   const open = state.tasks.filter(t => !t.done);
   const done = state.tasks.filter(t => t.done);
   el.statOpen.textContent = open.length;
@@ -3569,14 +4138,770 @@ function showProfile() {
   const late = overdueTasks().length;
   el.statOverdue.textContent = late;
   el.statOverdueCard.classList.toggle('is-late', late > 0);
-  paintProfile();
-  paintGoogle();
-  paintAccount();
-  show(el.screenMe);
+}
 
-  /* Behind the screen, like everything else on this card. One list call,
-     and in the ordinary case it finds nothing and says nothing. */
-  checkDuplicateCalendars();
+/* The rest of my.adhd, which is mostly not in the app. A shelf, not a
+   feed: it is the same four every time and nothing here ranks or rotates.
+
+   They open in a new tab rather than in place. In a browser that is
+   politeness; in the iOS shell it is the whole point, because an own-host
+   link loaded in the web view replaces the app and the only way back is
+   whatever nav that page happens to have. */
+const DISCOVER = [
+  ['/self-check',  'Am I actually like this?', 'The ASRS-v1.1 screener, six questions.'],
+  ['/tools',       'The tools',                'Six things, free, no account.'],
+  ['/activities',  'Things to try',            'Small experiments that tend to work.'],
+  ['/about',       'Why this exists',          'Who made it, and what for.'],
+];
+
+function paintDiscover() {
+  if (el.discoverRows.children.length) return;   // static: build it once
+  DISCOVER.forEach(([href, title, note]) => {
+    const a = document.createElement('a');
+    a.className = 'discover-row';
+    a.href = href;
+    a.target = '_blank';
+    a.rel = 'noopener';
+
+    const t = document.createElement('span');
+    t.className = 'discover-title';
+    t.textContent = title;
+    a.appendChild(t);
+
+    const n = document.createElement('span');
+    n.className = 'discover-note';
+    n.textContent = note;
+    a.appendChild(n);
+
+    el.discoverRows.appendChild(a);
+  });
+}
+
+
+/* ---------------- notes ----------------
+   Not the lists, and nothing like them. A task is a thing the app has an
+   opinion about: it gets a length, an energy, a first step, a day, and it
+   wants to be finished. A note is a thing you wrote down. Nothing sorts
+   it, nothing triages it, nothing asks it when it is due, and it never
+   becomes a task.
+
+   They live in state.notes, inside the same store as everything else,
+   because the iOS shell listens for writes to 'myadhd.v1' and a note
+   written anywhere else would be a write the phone never hears.
+
+   A note is a list of BLOCKS, not a string of HTML, and that is a security
+   decision rather than a modelling preference. The reason it is acceptable
+   to keep a Google access token in localStorage is that no task or note
+   text ever reaches innerHTML — every write to the DOM in this file goes
+   through textContent or createElement. Storing what contenteditable
+   produces would end that, so the editor serialises back out to
+
+     { type, text, marks, done, align }
+
+   on every keystroke, and paints it again from createElement on the way
+   in. n.body stays as the flattened plain text so the cards, the search
+   and anything reading the store from Swift keep working unchanged. */
+
+const BLOCK_TYPES = ['p', 'h', 'ul', 'ol', 'check'];
+const NOTE_FILE_MAX = 3;        // pictures per note
+const NOTE_FILE_EDGE = 1024;    // longest side, px
+const NOTE_FILE_Q = 0.72;       // jpeg quality
+
+function normalizeBlock(b) {
+  const text = String(b && b.text || '').slice(0, 2000);
+  const marks = Array.isArray(b && b.marks) ? b.marks
+    .map(m => ({
+      s: Math.max(0, Math.min(text.length, Number(m.s) | 0)),
+      e: Math.max(0, Math.min(text.length, Number(m.e) | 0)),
+      b: m.b === true, i: m.i === true, u: m.u === true, strike: m.strike === true,
+    }))
+    .filter(m => m.e > m.s && (m.b || m.i || m.u || m.strike))
+    .slice(0, 60) : [];
+  return {
+    type: BLOCK_TYPES.includes(b && b.type) ? b.type : 'p',
+    text,
+    marks,
+    done: b && b.done === true,
+    align: ['center', 'right'].includes(b && b.align) ? b.align : 'left',
+  };
+}
+
+function normalizeNote(n) {
+  const now = Date.now();
+  const body = String(n && n.body || '').slice(0, 20000);
+
+  /* A note written before blocks existed has only a body. It becomes one
+     block per line rather than one block holding newlines, because that is
+     what the editor would have made of it had it always been there. */
+  const blocks = Array.isArray(n && n.blocks) && n.blocks.length
+    ? n.blocks.slice(0, 300).map(normalizeBlock)
+    : body.split('\n').map(line => normalizeBlock({ text: line }));
+
+  return {
+    id: String(n && n.id || ('n_' + Math.random().toString(36).slice(2, 9))),
+    title: String(n && n.title || '').slice(0, 160),
+    body: blocks.map(b => b.text).join('\n').slice(0, 20000),
+    blocks,
+    /* A day and a clock time, kept apart for the same reason a task keeps
+       them apart: a time with no day is a time on no calendar. */
+    remindOn: normalizeDay(n && n.remindOn),
+    remindAt: normalizeTime(n && n.remindAt),
+    repeat: ['daily', 'weekly', 'monthly'].includes(n && n.repeat) ? n.repeat : '',
+    files: Array.isArray(n && n.files)
+      ? n.files.slice(0, NOTE_FILE_MAX)
+          .filter(f => f && typeof f.src === 'string' && f.src.startsWith('data:image/'))
+          .map(f => ({ id: String(f.id || ('f_' + Math.random().toString(36).slice(2, 9))), src: f.src }))
+      : [],
+    createdAt: Number(n && n.createdAt) || now,
+    updatedAt: Number(n && n.updatedAt) || Number(n && n.createdAt) || now,
+  };
+}
+
+let openNoteId = null;
+let fmtBlock = 0;        // which block the format sheet is pointed at
+
+/* Newest edit first. There is no pinning and no sorting to choose: the
+   thing you touched last is the thing you are most likely to want. */
+function notesByRecent() {
+  return [...state.notes].sort((a, b) => b.updatedAt - a.updatedAt);
+}
+
+function noteTitleOf(n) {
+  return n.title.trim() || firstLine(n.body) || 'Untitled';
+}
+
+function firstLine(body) {
+  const line = body.trim().split('\n', 1)[0].trim();
+  return line.length > 80 ? line.slice(0, 79) + '…' : line;
+}
+
+function noteIsBlank(n) {
+  return !n.title.trim() && !n.body.trim() && !n.files.length;
+}
+
+/* ---- the index ---- */
+
+function renderNotes() {
+  const notes = notesByRecent();
+
+  el.notesSummary.textContent = notes.length
+    ? (notes.length === 1 ? '1 note' : `${notes.length} notes`)
+    : '';
+
+  el.notesList.textContent = '';
+  notes.forEach(n => el.notesList.appendChild(noteCard(n)));
+
+  const empty = notes.length === 0;
+  el.notesEmpty.classList.toggle('is-hidden', !empty);
+  el.notesList.classList.toggle('is-hidden', empty);
+  el.btnNoteNew.classList.toggle('is-hidden', empty);
+  el.notesNote.classList.toggle('is-hidden', empty);
+  el.notesSummary.classList.toggle('is-hidden', empty);
+}
+
+function noteCard(n) {
+  const card = document.createElement('button');
+  card.type = 'button';
+  card.className = 'note-card';
+
+  const title = document.createElement('span');
+  title.className = 'note-card-title';
+  title.textContent = noteTitleOf(n);
+  card.appendChild(title);
+
+  /* The first couple of lines of the body, minus whatever is already
+     serving as the title — repeating it is a card that says one thing
+     twice and tells you nothing about what is inside. */
+  const rest = n.title.trim() ? n.body : n.body.trim().split('\n').slice(1).join('\n');
+  const preview = rest.trim();
+  if (preview) {
+    const p = document.createElement('span');
+    p.className = 'note-card-preview';
+    p.textContent = preview;
+    card.appendChild(p);
+  }
+
+  const foot = document.createElement('span');
+  foot.className = 'note-card-foot';
+
+  const when = document.createElement('span');
+  when.className = 'note-card-when';
+  when.textContent = noteWhen(n.updatedAt);
+  foot.appendChild(when);
+
+  if (n.files.length) foot.appendChild(noteCardTag('icon-clip', String(n.files.length)));
+  if (n.remindOn)     foot.appendChild(noteCardTag('icon-bell', whenLabel({ when: n.remindOn, at: n.remindAt })));
+
+  card.appendChild(foot);
+  card.addEventListener('click', () => openNote(n.id));
+  return card;
+}
+
+function noteCardTag(icon, label) {
+  const tag = document.createElement('span');
+  tag.className = 'note-card-tag';
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttribute('href', '#' + icon);
+  svg.appendChild(use);
+  tag.appendChild(svg);
+  const t = document.createElement('span');
+  t.textContent = label;
+  tag.appendChild(t);
+  return tag;
+}
+
+/* Relative for the first week, because "3 days ago" is what you actually
+   remember about a note, and a date after that, because "23 days ago" is
+   not. */
+function noteWhen(ms) {
+  const at = new Date(ms);
+  const day = dayKey(at);
+  const today = dayKey();
+  if (day === today) return timeLabel(at.toTimeString().slice(0, 5)) || 'Today';
+
+  const gap = Math.round((keyToDate(today) - keyToDate(day)) / 86400000);
+  if (gap === 1) return 'Yesterday';
+  if (gap > 1 && gap < 7) return `${gap} days ago`;
+  return dayLabel(day, today);
+}
+
+/* ---- painting a block, without innerHTML ----
+
+   Marks are ranges over the block's own text, so the same character can be
+   covered by more than one. Cutting at every boundary turns overlapping
+   ranges into a flat run of segments, and each segment is then wrapped in
+   whichever tags cover it. Text only ever arrives as a TextNode. */
+
+function paintBlockText(host, text, marks) {
+  host.textContent = '';
+  if (!text) return;
+  if (!marks.length) { host.textContent = text; return; }
+
+  const cuts = new Set([0, text.length]);
+  marks.forEach(m => { cuts.add(m.s); cuts.add(m.e); });
+  const pts = [...cuts].sort((a, b) => a - b);
+
+  for (let i = 0; i < pts.length - 1; i++) {
+    const s = pts[i], e = pts[i + 1];
+    if (e <= s) continue;
+    const on = marks.filter(m => m.s <= s && m.e >= e);
+    let node = document.createTextNode(text.slice(s, e));
+    [['strike', 's'], ['u', 'u'], ['i', 'i'], ['b', 'b']].forEach(([flag, tag]) => {
+      if (!on.some(m => m[flag])) return;
+      const wrap = document.createElement(tag);
+      wrap.appendChild(node);
+      node = wrap;
+    });
+    host.appendChild(node);
+  }
+}
+
+/* ---- reading a block back out ----
+
+   The browser is allowed to produce whatever it likes inside the editable
+   — execCommand emits <b> on one engine and <span style="font-weight:700">
+   on another — and none of it is stored. The walk turns any of it back
+   into text plus offsets, and that is the only thing that reaches the
+   store. */
+
+function readBlockText(host) {
+  const out = [];
+  const marks = [];
+  let at = 0;
+
+  (function walk(node, flags) {
+    node.childNodes.forEach(child => {
+      if (child.nodeType === 3) {
+        const s = child.nodeValue || '';
+        if (!s) return;
+        out.push(s);
+        if (flags.b || flags.i || flags.u || flags.strike) {
+          marks.push({ s: at, e: at + s.length, b: !!flags.b, i: !!flags.i, u: !!flags.u, strike: !!flags.strike });
+        }
+        at += s.length;
+        return;
+      }
+      if (child.nodeType !== 1) return;
+
+      const tag = child.tagName.toLowerCase();
+      if (tag === 'br') { out.push('\n'); at += 1; return; }
+
+      const next = Object.assign({}, flags);
+      if (tag === 'b' || tag === 'strong') next.b = true;
+      if (tag === 'i' || tag === 'em') next.i = true;
+      if (tag === 'u' || tag === 'ins') next.u = true;
+      if (tag === 's' || tag === 'strike' || tag === 'del') next.strike = true;
+
+      const st = child.style;
+      if (st) {
+        const dec = `${st.textDecoration || ''} ${st.textDecorationLine || ''}`;
+        if (/bold|^[6-9]00$/.test(String(st.fontWeight || ''))) next.b = true;
+        if (st.fontStyle === 'italic') next.i = true;
+        if (/underline/.test(dec)) next.u = true;
+        if (/line-through/.test(dec)) next.strike = true;
+      }
+      walk(child, next);
+    });
+  })(host, {});
+
+  return { text: out.join(''), marks: mergeMarks(marks) };
+}
+
+/* Adjacent runs wearing the same flags are one mark. Without this a note
+   grows a mark per keystroke and the store fills with fragments. */
+function mergeMarks(marks) {
+  const out = [];
+  marks.forEach(m => {
+    const last = out[out.length - 1];
+    if (last && last.e === m.s && last.b === m.b && last.i === m.i && last.u === m.u && last.strike === m.strike) {
+      last.e = m.e;
+      return;
+    }
+    out.push(m);
+  });
+  return out;
+}
+
+/* ---- the editor ---- */
+
+function currentNote() {
+  return state.notes.find(x => x.id === openNoteId) || null;
+}
+
+function paintNoteEditor() {
+  const n = currentNote();
+  if (!n) return;
+
+  el.noteTitle.value = n.title;
+  el.noteHeading.textContent = n.title.trim() || 'Note';
+
+  el.noteBlocks.textContent = '';
+  let ordinal = 0;
+  n.blocks.forEach((b, i) => {
+    if (b.type === 'ol') ordinal += 1; else ordinal = 0;
+    el.noteBlocks.appendChild(renderBlock(b, i, ordinal));
+  });
+
+  paintNoteFiles(n);
+  paintNoteRemind(n);
+}
+
+function renderBlock(b, i, ordinal) {
+  const row = document.createElement('div');
+  row.className = `nb nb--${b.type}`;
+  row.dataset.i = String(i);
+
+  if (b.type === 'check') {
+    const box = document.createElement('button');
+    box.type = 'button';
+    box.className = 'nb-box' + (b.done ? ' is-done' : '');
+    box.setAttribute('aria-label', b.done ? 'Tick off' : 'Not done');
+    box.addEventListener('click', () => {
+      const n = currentNote();
+      if (!n) return;
+      n.blocks[i].done = !n.blocks[i].done;
+      touchNote(n);
+      paintNoteEditor();
+    });
+    row.appendChild(box);
+  } else if (b.type === 'ul') {
+    const dot = document.createElement('span');
+    dot.className = 'nb-lead';
+    dot.textContent = '•';
+    row.appendChild(dot);
+  } else if (b.type === 'ol') {
+    const num = document.createElement('span');
+    num.className = 'nb-lead';
+    num.textContent = `${ordinal}.`;
+    row.appendChild(num);
+  }
+
+  const text = document.createElement('div');
+  text.className = 'nb-text';
+  text.contentEditable = 'true';
+  text.spellcheck = true;
+  text.dataset.i = String(i);
+  text.style.textAlign = b.align;
+  if (b.done) text.classList.add('is-done');
+  if (i === 0 && !b.text) text.dataset.hint = 'Write something';
+  paintBlockText(text, b.text, b.marks);
+
+  text.addEventListener('input', () => readNoteFromDom());
+  text.addEventListener('keydown', (e) => blockKey(e, i));
+  text.addEventListener('focus', () => { fmtBlock = i; paintFormatSheet(); });
+
+  row.appendChild(text);
+  return row;
+}
+
+/* Every keystroke reads every block back. A note is a few hundred
+   characters and this is cheaper than tracking which one changed and
+   getting it wrong — and it is the only place the store is written from,
+   so there is one path in and one path out. */
+function readNoteFromDom() {
+  const n = currentNote();
+  if (!n) return;
+  el.noteBlocks.querySelectorAll('.nb-text').forEach(host => {
+    const i = Number(host.dataset.i);
+    const b = n.blocks[i];
+    if (!b) return;
+    const { text, marks } = readBlockText(host);
+    b.text = text.slice(0, 2000);
+    b.marks = marks;
+  });
+  touchNote(n);
+}
+
+/* Typing writes straight through, so nothing is ever lost to a closed tab
+   — but through persistOnly() rather than save(). save() stamps the tasks
+   for the cloud and pokes both sync timers, none of which has anything to
+   do with a note, and running it on every keystroke would make the iOS
+   shell rebuild its reminders once per letter. save() happens when the
+   editor closes. */
+function touchNote(n) {
+  n.body = n.blocks.map(b => b.text).join('\n').slice(0, 20000);
+  n.updatedAt = Date.now();
+  persistOnly();
+}
+
+/* Enter splits the line into two blocks rather than dropping a <br> into
+   one, because a checkbox or a bullet is a property of a line and a line
+   has to be a thing before it can carry one. Backspace at the start of an
+   empty line takes it away again. */
+function blockKey(e, i) {
+  const n = currentNote();
+  if (!n) return;
+
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    const host = e.currentTarget;
+    const at = caretOffset(host);
+    const b = n.blocks[i];
+    const head = b.text.slice(0, at);
+    const tail = b.text.slice(at);
+
+    const carry = (b.type === 'ul' || b.type === 'ol' || b.type === 'check');
+    /* Enter on an empty bullet ends the list rather than making another
+       one, which is what every editor does and what the hand expects. */
+    if (carry && !b.text) {
+      b.type = 'p';
+      b.done = false;
+      touchNote(n);
+      paintNoteEditor();
+      focusBlock(i, 0);
+      return;
+    }
+
+    b.text = head;
+    b.marks = b.marks.filter(m => m.s < head.length).map(m => ({ ...m, e: Math.min(m.e, head.length) }));
+    n.blocks.splice(i + 1, 0, normalizeBlock({
+      text: tail,
+      type: carry ? b.type : 'p',
+      align: b.align,
+    }));
+    touchNote(n);
+    paintNoteEditor();
+    focusBlock(i + 1, 0);
+    return;
+  }
+
+  if (e.key === 'Backspace' && i > 0 && caretOffset(e.currentTarget) === 0) {
+    e.preventDefault();
+    const prev = n.blocks[i - 1];
+    const here = n.blocks[i];
+    const at = prev.text.length;
+    prev.text = (prev.text + here.text).slice(0, 2000);
+    here.marks.forEach(m => prev.marks.push({ ...m, s: m.s + at, e: m.e + at }));
+    prev.marks = mergeMarks(prev.marks);
+    n.blocks.splice(i, 1);
+    touchNote(n);
+    paintNoteEditor();
+    focusBlock(i - 1, at);
+  }
+}
+
+/* How many characters sit before the caret in this block. Measured with a
+   range rather than by counting nodes, so it is right whatever shape the
+   browser left the markup in. */
+function caretOffset(host) {
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount) return 0;
+  const r = sel.getRangeAt(0).cloneRange();
+  r.selectNodeContents(host);
+  r.setEnd(sel.getRangeAt(0).endContainer, sel.getRangeAt(0).endOffset);
+  return r.toString().length;
+}
+
+function focusBlock(i, offset) {
+  const host = el.noteBlocks.querySelector(`.nb-text[data-i="${i}"]`);
+  if (!host) return;
+  host.focus();
+  fmtBlock = i;
+
+  const sel = window.getSelection();
+  const r = document.createRange();
+  let left = offset;
+  let placed = false;
+
+  (function walk(node) {
+    if (placed) return;
+    node.childNodes.forEach(child => {
+      if (placed) return;
+      if (child.nodeType === 3) {
+        const len = (child.nodeValue || '').length;
+        if (left <= len) { r.setStart(child, left); placed = true; return; }
+        left -= len;
+      } else if (child.nodeType === 1) {
+        walk(child);
+      }
+    });
+  })(host);
+
+  if (!placed) r.selectNodeContents(host), r.collapse(false);
+  else r.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(r);
+}
+
+/* ---- the format sheet ---- */
+
+function paintFormatSheet() {
+  const n = currentNote();
+  const b = n && n.blocks[fmtBlock];
+  if (!b) return;
+  el.fmtTypes.querySelectorAll('[data-type]').forEach(btn =>
+    btn.classList.toggle('is-on', btn.dataset.type === b.type));
+  el.fmtAlign.querySelectorAll('[data-align]').forEach(btn =>
+    btn.classList.toggle('is-on', btn.dataset.align === b.align));
+}
+
+function setBlockType(type) {
+  const n = currentNote();
+  const b = n && n.blocks[fmtBlock];
+  if (!b) return;
+  b.type = b.type === type ? 'p' : type;
+  if (b.type !== 'check') b.done = false;
+  touchNote(n);
+  paintNoteEditor();
+  focusBlock(fmtBlock, b.text.length);
+  paintFormatSheet();
+}
+
+function setBlockAlign(align) {
+  const n = currentNote();
+  const b = n && n.blocks[fmtBlock];
+  if (!b) return;
+  b.align = align;
+  touchNote(n);
+  paintNoteEditor();
+  focusBlock(fmtBlock, b.text.length);
+  paintFormatSheet();
+}
+
+/* B/I/U/S go through execCommand because the browser already knows how to
+   apply a style to a selection across element boundaries, and whatever it
+   emits is read straight back out by readBlockText and thrown away. The
+   buttons cancel their own pointerdown so the caret never leaves the text
+   — a toolbar that steals focus has nothing to format. */
+function applyMark(kind) {
+  const cmd = { b: 'bold', i: 'italic', u: 'underline', strike: 'strikeThrough' }[kind];
+  if (!cmd) return;
+  try {
+    document.execCommand('styleWithCSS', false, 'false');
+    document.execCommand(cmd, false, null);
+  } catch (_) { /* nothing to format */ }
+  readNoteFromDom();
+}
+
+/* ---- pictures ---- */
+
+function paintNoteFiles(n) {
+  el.noteFiles.textContent = '';
+  el.noteFiles.classList.toggle('is-hidden', !n.files.length);
+  n.files.forEach(f => {
+    const wrap = document.createElement('div');
+    wrap.className = 'note-file';
+
+    const img = document.createElement('img');
+    img.src = f.src;
+    img.alt = '';
+    wrap.appendChild(img);
+
+    const x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'note-file-x';
+    x.setAttribute('aria-label', 'Remove this picture');
+    x.textContent = '×';
+    x.addEventListener('click', () => {
+      const cur = currentNote();
+      if (!cur) return;
+      cur.files = cur.files.filter(o => o.id !== f.id);
+      touchNote(cur);
+      paintNoteFiles(cur);
+    });
+    wrap.appendChild(x);
+
+    el.noteFiles.appendChild(wrap);
+  });
+}
+
+/* Downscaled and re-encoded before it is kept, because a note lives in
+   localStorage and localStorage is about five megabytes for everything the
+   app owns. A phone photo straight off the camera would spend the lot. */
+function shrinkImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, NOTE_FILE_EDGE / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.width * scale));
+      c.height = Math.max(1, Math.round(img.height * scale));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      resolve(c.toDataURL('image/jpeg', NOTE_FILE_Q));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('not an image')); };
+    img.src = url;
+  });
+}
+
+async function addNoteFiles(files) {
+  const n = currentNote();
+  if (!n) return;
+  const room = NOTE_FILE_MAX - n.files.length;
+  if (room <= 0) { toast(`A note holds ${NOTE_FILE_MAX} pictures.`); return; }
+
+  const take = [...files].slice(0, room);
+  for (const file of take) {
+    try {
+      const src = await shrinkImage(file);
+      n.files.push({ id: 'f_' + Math.random().toString(36).slice(2, 9), src });
+    } catch (_) { /* not something we can draw — skip it quietly */ }
+  }
+
+  try {
+    touchNote(n);
+  } catch (_) {
+    /* Over quota. Put it back rather than leaving a note that cannot be
+       written, and say so — a silent failure here loses the writing too. */
+    n.files = n.files.slice(0, n.files.length - take.length);
+    toast('No room left on this device for that picture.');
+  }
+  paintNoteFiles(n);
+  if (files.length > room) toast(`A note holds ${NOTE_FILE_MAX} pictures.`);
+}
+
+/* ---- the reminder ---- */
+
+function paintNoteRemind(n) {
+  const on = !!n.remindOn;
+  el.noteRemind.classList.toggle('is-hidden', !on);
+  el.toolBell.classList.toggle('is-on', on);
+  if (!on) return;
+  const when = whenLabel({ when: n.remindOn, at: n.remindAt });
+  const every = { daily: ', every day', weekly: ', every week', monthly: ', every month' }[n.repeat] || '';
+  el.noteRemind.textContent = `Reminder ${when}${every}`;
+}
+
+function openRemindSheet() {
+  const n = currentNote();
+  if (!n) return;
+  el.remDay.value = n.remindOn || dayKey();
+  el.remTime.value = n.remindAt || '09:00';
+  el.remRepeat.value = n.repeat || '';
+  el.sheetRemind.classList.remove('is-hidden');
+}
+
+function saveRemind() {
+  const n = currentNote();
+  if (!n) return;
+  n.remindOn = normalizeDay(el.remDay.value);
+  n.remindAt = n.remindOn ? normalizeTime(el.remTime.value) : null;
+  n.repeat = n.remindOn ? el.remRepeat.value : '';
+  touchNote(n);
+  save();
+  paintNoteRemind(n);
+  el.sheetRemind.classList.add('is-hidden');
+}
+
+function clearRemind() {
+  const n = currentNote();
+  if (!n) return;
+  n.remindOn = null;
+  n.remindAt = null;
+  n.repeat = '';
+  touchNote(n);
+  save();
+  paintNoteRemind(n);
+  el.sheetRemind.classList.add('is-hidden');
+}
+
+/* ---- open, close, new, delete ---- */
+
+function openNote(id) {
+  const n = state.notes.find(x => x.id === id);
+  if (!n) return;
+  openNoteId = id;
+  fmtBlock = 0;
+  el.sheetFormat.classList.add('is-hidden');
+  el.sheetRemind.classList.add('is-hidden');
+  paintNoteEditor();
+  show(el.screenNote);
+  if (!n.title.trim() && !n.body.trim()) el.noteTitle.focus();
+  else focusBlock(n.blocks.length - 1, n.blocks[n.blocks.length - 1].text.length);
+}
+
+/* Leaving the editor. A note nobody typed anything into is not a note —
+   it is the button press that opened it, and keeping it would fill the
+   screen with blanks for anyone who taps New and changes their mind. */
+function closeNote() {
+  if (!openNoteId) return;
+  const n = currentNote();
+  if (n && noteIsBlank(n)) state.notes = state.notes.filter(x => x.id !== openNoteId);
+  openNoteId = null;
+  save();
+}
+
+function leaveNote() {
+  closeNote();
+  renderNotes();
+  show(el.screenNotes);
+}
+
+function newNote() {
+  const n = normalizeNote({});
+  state.notes.push(n);
+  save();
+  openNote(n.id);
+}
+
+function deleteNote() {
+  const id = openNoteId;
+  const n = state.notes.find(x => x.id === id);
+  if (!n) return;
+
+  const at = state.notes.indexOf(n);
+  state.notes.splice(at, 1);
+  openNoteId = null;
+  save();
+  renderNotes();
+  show(el.screenNotes);
+
+  toast('Note deleted', { label: 'Undo', fn: () => {
+    state.notes.splice(at, 0, n);
+    save();
+    renderNotes();
+  }});
+}
+
+function showNotes() {
+  closeNote();      // tapping the tab while editing always lands on the index
+  renderNotes();
+  show(el.screenNotes);
 }
 
 /* ---------------- the typing preview ----------------
@@ -3593,7 +4918,7 @@ function showProfile() {
 
 const PREVIEW_MAX = 4;
 
-function previewDates(src = el.input, box = el.dumpDates, chips = el.dumpChips) {
+function previewDates(src, box, chips) {
   // Cheap on any realistic dump, but the reader runs a fistful of regexes
   // per line and this fires on every keystroke, so the input is capped.
   const text = src.value.slice(0, 4000);
@@ -3628,24 +4953,35 @@ function previewDates(src = el.input, box = el.dumpDates, chips = el.dumpChips) 
     const more = document.createElement('span');
     more.className = 'dump-more';
     more.textContent = `+${found.length - PREVIEW_MAX} more`;
-    el.dumpChips.appendChild(more);
+    chips.appendChild(more);
   }
 }
 
 /* ---------------- wiring ---------------- */
 
-el.triage.addEventListener('click', triage);
-el.btnViewLists.addEventListener('click', goToNext);
+/* The cold start's one button. It opens the composer rather than running
+   triage: there is nothing in the buffer yet to sort. */
+el.btnStartDump.addEventListener('click', openComposer);
 el.btnResort.addEventListener('click', resortLocal);
+
+/* The view is a standing preference, so it goes through save() like any
+   other change to the store — and keepPlace holds the scroll, because
+   swapping how the same tasks are grouped should not also move the page. */
+el.btnView.addEventListener('click', () => {
+  state.view = state.view === 'matrix' ? 'list' : 'matrix';
+  keepPlace(goToNext);
+});
 el.btnClearAll.addEventListener('click', stepClear);
 el.btnClearGo.addEventListener('click', stepClear);
 el.btnClearNo.addEventListener('click', resetClear);
 el.btnDumpAgain.addEventListener('click', openComposer);
 
-/* The bar. The + opens the composer over whatever is on screen — the dump
-   box is still the only place a new list gets made, but reaching it should
-   not cost you the page you were on. */
-el.tabLists.addEventListener('click', goToNext);
+/* The bar, wired in the order it is drawn. The + opens the composer over
+   whatever is on screen — the dump box is still the only place a new list
+   gets made, but reaching it should not cost you the page you were on. It
+   stays pointed at the composer on the notes screen too: the + means "sort
+   this out for me", which is the one thing a note is for not doing. */
+el.tabHome.addEventListener('click', showHome);
 el.tabCal.addEventListener('click', showCalendar);
 el.calPrev.addEventListener('click', () => slideMonth(-1));
 el.calNext.addEventListener('click', () => slideMonth(1));
@@ -3655,6 +4991,121 @@ el.calToday.addEventListener('click', () => {
   renderCalendar();
 });
 el.tabAdd.addEventListener('click', openComposer);
+el.tabLists.addEventListener('click', goToNext);
+el.tabNotes.addEventListener('click', showNotes);
+
+/* The gear, and the way back out of it. Settings has no tab under it, so
+   this button is the only exit — see TAB_FOR. */
+el.btnSettings.addEventListener('click', showSettings);
+el.btnSettingsBack.addEventListener('click', showHome);
+
+/* The rows that go one tap deeper, and the three ways back. Every back
+   button lands on settings rather than on history: the app has no router,
+   so there is no history to go back through. */
+el.setRowProfile.addEventListener('click', showProfileScreen);
+el.setRowFeedback.addEventListener('click', showFeedbackScreen);
+el.setRowShare.addEventListener('click', shareApp);
+el.btnProfileBack.addEventListener('click', showSettings);
+el.btnFeedbackBack.addEventListener('click', showSettings);
+el.btnPlansBack.addEventListener('click', showSettings);
+
+/* The plans, and only if there are any. Wiring a dead card would leave a
+   row that looks tappable and is not. */
+if (window.billing && window.MYADHD_BILLING_ENABLED) {
+  el.setPro.addEventListener('click', showPlans);
+  el.plansManage.addEventListener('click', manageBilling);
+  el.plansList.querySelectorAll('[data-plan]').forEach(btn => {
+    btn.addEventListener('click', () => buyPlan(btn.dataset.plan, btn));
+  });
+
+  /* The card and the screen both read the same state, and it arrives
+     late — once on load, and again whenever the account changes. */
+  billing.onChange(() => {
+    paintSubscription();
+    if (!el.screenPlans.classList.contains('is-hidden')) paintPlans();
+  });
+}
+
+/* The notes. Typing writes through on every keystroke; see touchNote(). */
+el.btnNoteNew.addEventListener('click', newNote);
+el.btnNoteFirst.addEventListener('click', newNote);
+el.btnNoteBack.addEventListener('click', leaveNote);
+el.btnNoteDone.addEventListener('click', leaveNote);
+el.btnNoteDelete.addEventListener('click', deleteNote);
+
+el.noteTitle.addEventListener('input', () => {
+  const n = currentNote();
+  if (!n) return;
+  n.title = el.noteTitle.value.slice(0, 160);
+  el.noteHeading.textContent = n.title.trim() || 'Note';
+  touchNote(n);
+});
+/* Enter in the title drops into the writing rather than submitting
+   anything — there is no form here and nothing to submit to. */
+el.noteTitle.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  focusBlock(0, 0);
+});
+
+/* Tapping under the last line puts the caret at the end of it, the way a
+   sheet of paper behaves. Without this the bottom half of the canvas is
+   dead space on a phone. */
+el.noteBlocks.addEventListener('pointerdown', (e) => {
+  if (e.target !== el.noteBlocks) return;
+  const n = currentNote();
+  if (!n || !n.blocks.length) return;
+  e.preventDefault();
+  const last = n.blocks.length - 1;
+  focusBlock(last, n.blocks[last].text.length);
+});
+
+/* ---- the note toolbar ----
+   Every button cancels its own pointerdown. A toolbar that takes focus
+   has nothing left to format, and on a phone it would also shut the
+   keyboard under itself between one tap and the next. */
+[el.toolType, el.toolCheck, el.toolClip, el.toolBell].forEach(b =>
+  b.addEventListener('pointerdown', (e) => e.preventDefault()));
+
+el.toolType.addEventListener('click', () => {
+  const open = !el.sheetFormat.classList.contains('is-hidden');
+  el.sheetFormat.classList.toggle('is-hidden', open);
+  el.sheetRemind.classList.add('is-hidden');
+  if (!open) paintFormatSheet();
+});
+el.toolCheck.addEventListener('click', () => setBlockType('check'));
+el.toolClip.addEventListener('click', () => el.noteFileInput.click());
+el.toolBell.addEventListener('click', () => {
+  el.sheetFormat.classList.add('is-hidden');
+  openRemindSheet();
+});
+
+el.noteFileInput.addEventListener('change', () => {
+  if (el.noteFileInput.files && el.noteFileInput.files.length) addNoteFiles(el.noteFileInput.files);
+  el.noteFileInput.value = '';   // so the same picture can be picked twice
+});
+
+el.fmtClose.addEventListener('click', () => el.sheetFormat.classList.add('is-hidden'));
+el.sheetFormat.addEventListener('pointerdown', (e) => {
+  if (e.target.closest('button')) e.preventDefault();
+});
+el.fmtTypes.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-type]');
+  if (b) setBlockType(b.dataset.type);
+});
+el.fmtMarks.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-mark]');
+  if (b) applyMark(b.dataset.mark);
+});
+el.fmtAlign.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-align]');
+  if (b) setBlockAlign(b.dataset.align);
+});
+
+el.remClose.addEventListener('click', () => el.sheetRemind.classList.add('is-hidden'));
+el.remSave.addEventListener('click', saveRemind);
+el.remClear.addEventListener('click', clearRemind);
+el.homeTodayMore.addEventListener('click', goToNext);
 /* ---- tap the empty space to get the keyboard ----
    The textarea is one line tall at the top of a full-height sheet, so
    aiming for it is a two-handed job. The whole body is the target
@@ -3926,12 +5377,25 @@ el.compInput.addEventListener('keydown', (e) => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); sendComposer(); }
 });
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !el.composer.classList.contains('is-hidden')) cancelComposer();
+  if (e.key !== 'Escape') return;
+  if (!el.composer.classList.contains('is-hidden')) { cancelComposer(); return; }
+  /* In the editor, Escape shuts whichever sheet is over it before it
+     shuts the note — otherwise the one press does two things at once. */
+  if (!el.screenNote.classList.contains('is-hidden')) {
+    if (!el.sheetFormat.classList.contains('is-hidden')) { el.sheetFormat.classList.add('is-hidden'); return; }
+    if (!el.sheetRemind.classList.contains('is-hidden')) { el.sheetRemind.classList.add('is-hidden'); return; }
+    leaveNote();
+    return;
+  }
+  /* One level up rather than out. Escape on a screen under settings means
+     the same thing the back button does. */
+  if (!el.screenProfile.classList.contains('is-hidden')
+   || !el.screenFeedback.classList.contains('is-hidden')
+   || !el.screenPlans.classList.contains('is-hidden')) { showSettings(); return; }
+  if (!el.screenSettings.classList.contains('is-hidden')) showHome();
 });
-el.tabLoved.addEventListener('click', showFeedback);
 el.fbSend.addEventListener('click', sendFeedback);
 el.fbInput.addEventListener('input', paintFeedback);
-el.tabMe.addEventListener('click', showProfile);
 
 if (el.acctBtn) {
   el.acctBtn.addEventListener('click', acctAction);
@@ -3980,10 +5444,32 @@ document.addEventListener('visibilitychange', () => {
 });
 window.addEventListener('online', syncSoon);
 
-el.input.addEventListener('input', () => { spokenDump = null; previewDates(); });
+/* Nobody can type into the buffer — it is off screen. So an input event on
+   it is somebody else's writing, and there is only one of those: the iOS
+   shell's fillDumpBox(), which is how "Hey Siri, dump a thought" and
+   myadhd://dump?text= arrive. It fills the box and trusts it is on screen,
+   which stopped being true when the box left home — so this opens the
+   composer over the text instead, and the promise holds without a line of
+   ios/ changing.
 
-el.input.addEventListener('keydown', (e) => {
-  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); triage(); }
+   ownWrite guards the app's own passes through the buffer: the composer
+   writes into it on send and on cancel, and neither of those is somebody
+   asking for the composer to open. It is declared with the other module
+   state near the top, because writeBuffer() is defined long before here. */
+
+el.input.addEventListener('input', () => {
+  if (ownWrite) return;
+  spokenDump = null;
+  const text = el.input.value;
+  if (!text.trim()) return;
+  if (el.composer.classList.contains('is-hidden')) openComposer();
+  /* openComposer() copies the buffer in by itself; this only covers text
+     that lands while the sheet is already up. */
+  if (el.compInput.value !== text) {
+    el.compInput.value = text;
+    previewDates(el.compInput, el.compDates, el.compChips);
+  }
+  el.compInput.focus();
 });
 
 el.doneToggle.addEventListener('click', () => {
@@ -4045,7 +5531,7 @@ if (window.cloud) {
   });
   cloud.onChange(() => {
     // Only the account card reads this, and only while it is on screen.
-    if (!el.screenMe.classList.contains('is-hidden')) paintAccount();
+    if (!el.screenSettings.classList.contains('is-hidden')) paintAccount();
   });
   if (cloud.stamp()) persistOnly();
 }
@@ -4053,13 +5539,50 @@ if (window.cloud) {
 pruneDone();
 paintMorph();
 
-// Opening the app always lands on the dump box — that is the thing you came
-// to do. The lists are one tap away when you want them.
-refreshListsButton();
+/* Opening the app always lands on home, and the dump box is the first
+   thing on it — that is the thing you came to do, and everything else on
+   the screen is underneath it.
+
+   It is also a promise to the phone. ios/MyADHD/AppConfig.swift says a
+   fresh load of /app lands on the dump box, and BridgeScript's
+   fillDumpBox() switches no screen: it fills #dump-input and trusts that
+   is the one on view. "Hey Siri, dump a thought" and myadhd://dump?text=
+   are both built on that. Landing anywhere else here breaks both of them
+   from this side, silently, with nothing in ios/ changed to explain it. */
 buildAvatarPicker();
 paintProfile();
-show(el.screenDump);
-el.input.focus();
+showHome();
+
+/* Back from Stripe. The webhook is what grants the entitlement and it
+   lands a second or two behind the redirect, so one read here would
+   usually be a read of the old row — /billing already learned this and
+   polls; this does the same, quietly, and stops early once the answer
+   changes. The parameter is dropped from the URL either way, so a reload
+   or a shared link does not replay it. */
+(function absorbCheckout() {
+  const q = new URLSearchParams(location.search);
+  if (!q.has('paid')) return;
+
+  const paid = q.get('paid') === '1';
+  history.replaceState(null, '', location.pathname);
+
+  if (!paid) { toast('Nothing was charged.'); return; }
+  if (!window.billing || !window.MYADHD_BILLING_ENABLED) return;
+
+  showSettings();
+  toast('Thank you. Sorting out your plan…');
+
+  let tries = 0;
+  (function poll() {
+    billing.refresh().then((s) => {
+      paintSubscription();
+      if (!el.screenPlans.classList.contains('is-hidden')) paintPlans();
+      if (s.entitled) { toast('You are on ' + planLabel(s.plan) + '.'); return; }
+      if (++tries < 6) setTimeout(poll, 1500);
+      else toast('Payment went through. The plan will show up shortly.');
+    });
+  })();
+})();
 
 /* The account and the calendar both catch up in the background, behind the
    screen the user actually came for. Nothing here is allowed to hold up the

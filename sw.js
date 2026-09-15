@@ -7,10 +7,32 @@
    the cache is the parachute, not the source of truth. The triage API is
    never cached — a stale answer is worse than an honest failure. */
 
-/* v47: the app is shut behind /soon — every cached copy of /app and
+/* v50: the lists screen reads two ways — the four deadline headings, and
+   an Eisenhower matrix behind a toggle in the header, fed by a new
+   `importance` field on the task. Notes were rebuilt: the editor is a
+   screen of its own now, a note is a list of blocks rather than a string,
+   and it carries pictures and a reminder. app.html, app.js and styles.css
+   all moved, so the stylesheet goes to v8 — bumped in app.html and in the
+   SHELL entry below together, or one of them asks for a file nobody kept.
+   landing.css became chrome.css in the same pass, which is the other reason
+   this had to move: a cached shell listing a filename that no longer exists
+   fails its install and takes the whole precache with it.
+
+   v49: settings became a grouped list — subscription, account, sync,
+   about — with the profile, the feedback box and the plans on screens of
+   their own under it. billing.js is loaded by the app now; it was already
+   in the shell below, cached and never executed.
+
+   v48: the bar is home / calendar / + / lists / notes. The dump box moved
+   onto home, the profile and feedback screens became one settings screen
+   behind the gear on it, and the stylesheet went to v7 with them — which
+   is cached with its query string, so app.html and the SHELL entry below
+   have to be bumped together or one of them asks for a file nobody kept.
+
+   v47: the app is shut behind /soon — every cached copy of /app and
    /install carries the hold now, and /soon has to be cached with them or
    a home-screen copy opened offline redirects into nothing. */
-const CACHE = 'myadhd-v47';
+const CACHE = 'myadhd-v50';
 
 const SHELL = [
   '/',
@@ -40,7 +62,7 @@ const SHELL = [
   '/theme.js',
   '/clock.js',
   '/waves.js',
-  '/styles.css?v=6',
+  '/styles.css?v=8',
   '/theme.css',
   '/site.css',
   '/site.js',
@@ -49,7 +71,7 @@ const SHELL = [
      head of test.css for why it shares nothing with the site */
   '/test.css',
   '/test.js',
-  '/landing.css',
+  '/chrome.css',
   '/legal.css',
   '/install.css',
   '/favicon.svg?v=3',
