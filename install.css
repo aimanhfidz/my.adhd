@@ -146,7 +146,14 @@ body{
 }
 
 /* Launched from the home screen there is no browser chrome to hold the
-   status bar off, and iOS does not always report an inset — so floor it. */
+   status bar off, and iOS does not always report an inset — so floor it.
+
+   The air on top of that inset is halved here for the same reason it is
+   in site.css and chrome.css: the inset already clears the status bar, so
+   what was clamp(16px,3.2vh,28px) read as a gap under it rather than as
+   breathing room. This page holds the offset on .page instead of a token,
+   because its nav is in the flow — but it has to land on the same line as
+   every other page's lockup, so the number has to move with them. */
 @media (display-mode:standalone){
-  .page{padding-top:calc(clamp(16px,3.2vh,28px) + max(env(safe-area-inset-top, 0px), 34px))}
+  .page{padding-top:calc(clamp(6px,1.2vh,12px) + max(env(safe-area-inset-top, 0px), 34px))}
 }

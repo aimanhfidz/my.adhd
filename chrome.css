@@ -879,9 +879,15 @@ body{
 /* Launched from the home screen there is no browser chrome to hold the
    status bar off, and iOS does not always report an inset — so floor it.
    On the token rather than on the hero, so the bar comes down with it
-   instead of the two of them parting company under the status bar. */
+   instead of the two of them parting company under the status bar.
+
+   The air on top of that inset was clamp(16px,3.2vh,28px), which on a
+   Dynamic Island phone put 29px between the status bar and the lockup —
+   the inset already clears the status bar, so all of it read as a gap.
+   Halved. The floor stays: it is what keeps the row off a short viewport
+   where 1.2vh is nothing. */
 @media (display-mode:standalone){
-  :root{--bar-top:calc(clamp(16px,3.2vh,28px) + max(env(safe-area-inset-top, 0px), 34px))}
+  :root{--bar-top:calc(clamp(6px,1.2vh,12px) + max(env(safe-area-inset-top, 0px), 34px))}
 }
 
 /* The sprite the two lockups read from. index.html has no stylesheet of the
