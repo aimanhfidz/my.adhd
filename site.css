@@ -121,11 +121,13 @@ body{
 
    The air on top of that inset was clamp(16px,3.2vh,28px), which on a
    Dynamic Island phone put 29px between the status bar and the lockup —
-   the inset already clears the status bar, so all of it read as a gap.
-   Halved. The floor stays: it is what keeps the row off a short viewport
-   where 1.2vh is nothing. */
+   the inset already clears the status bar, so all of that read as a gap
+   rather than as breathing room. It is now a fifth of that: about 5px on
+   a 393x852 phone, so the row sits just under the island instead of
+   floating below it. The floor stays — max(inset, 34px) is what holds the
+   row off a device that reports no inset at all, where 0.6vh is nothing. */
 @media (display-mode:standalone){
-  :root{--bar-top:calc(clamp(6px,1.2vh,12px) + max(env(safe-area-inset-top, 0px), 34px))}
+  :root{--bar-top:calc(clamp(2px,0.6vh,6px) + max(env(safe-area-inset-top, 0px), 34px))}
 }
 
 /* The sprite the lockup reads from. Same rule chrome.css carries, and
