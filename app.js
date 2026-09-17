@@ -288,7 +288,34 @@ const DONE_TTL = 7 * 24 * 60 * 60 * 1000;
 const DONE_SHOWN = 20;
 
 /* Called once at startup, before anything is drawn.
-   A store written before doneAt existed has finished tasks with no stamp.
+
+   Tasks stored before `when` and `at` were settled together: the model
+   heard "eat at 8am", returned the time and no day, and normalizeTask kept
+   the two as independent fields. The result sat under "No date yet" with
+   the hour invisible, because every reader downstream keys off `when`.
+
+   They are stamped rather than left, because a time is timing and the
+   whole point of this app is not making somebody re-enter what they
+   already said. Anything already done is left alone — moving a finished
+   task onto tomorrow would be a lie about a thing that has happened.
+
+   Idempotent: once stamped, `when` is set and this never sees them again. */
+function stampTimeOnly() {
+  let stamped = 0;
+
+  state.tasks.forEach(t => {
+    if (t.done || t.when || !t.at) return;
+    const day = dayForTime(t.at);
+    if (!day) return;
+    t.when = day;
+    stamped++;
+  });
+
+  if (stamped) persistOnly();
+  return stamped;
+}
+
+/* A store written before doneAt existed has finished tasks with no stamp.
    They are stamped now rather than dropped: a missing timestamp means we
    do not know when it happened, and guessing "long ago" would silently
    delete the pile the first time someone opened the updated app. */
@@ -595,6 +622,33 @@ function addDays(d, n) {
   const out = new Date(d);
   out.setDate(out.getDate() + n);
   return out;
+}
+
+/* A clock time on no day at all. The model returns one for "eat at 8am" —
+   it heard the time, there was simply no day to attach it to — and until
+   this it stayed that way: `at` set, `when` null. Everything downstream
+   keys off `when`, so dueAt() called it Infinity, bucketOf() filed it under
+   "No date yet", and whenLabel() refused to print the time it did have. A
+   task with an hour on it was displayed as a task with no timing at all.
+
+   The next one, not today's. "8am" written at five in the afternoon means
+   tomorrow morning; dating it to this morning hands somebody a task that
+   arrives already late. Same rule parseDay() uses for a bare time, so the
+   two paths cannot disagree. */
+function dayForTime(at, now = new Date()) {
+  const mins = clockMinutes(at);
+  if (mins === null) return null;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const when = new Date(today);
+  when.setHours(Math.floor(mins / 60), mins % 60, 0, 0);
+  return dayKey(when > now ? today : addDays(today, 1));
+}
+
+/** Minutes past midnight for a normalised "HH:MM", or null. */
+function clockMinutes(at) {
+  if (!at) return null;
+  const [h, m] = String(at).split(':').map(Number);
+  return Number.isFinite(h) && Number.isFinite(m) ? h * 60 + m : null;
 }
 
 /** Real date, real calendar day — rejects "2026-02-31" and anything malformed. */
@@ -941,6 +995,12 @@ function parseLocally(text) {
     });
 }
 
+/** `when` and `at` settled together: a clock time with no day is given the
+    next occurrence of that time, and a day with no time stays dateless. */
+function timing(when, at) {
+  return { when: when || dayForTime(at), at };
+}
+
 function normalizeTask(t) {
   const clamp = (n, lo, hi, d) => {
     const v = Number(n);
@@ -960,8 +1020,10 @@ function normalizeTask(t) {
     quadrant: QUADRANT_KEYS.includes(t.quadrant) ? t.quadrant : null,   // the user's own placement, or null to derive
     firstStep: String(t.firstStep || t.first_step || 'Open it and look at it for 2 minutes.').slice(0, 240),
     category: String(t.category || 'general').slice(0, 40),
-    when: normalizeDay(t.when),   // a day, or null
-    at:   normalizeTime(t.at),    // a clock time on that day, or null
+    /* A time with no day gets one. Written as a pair rather than two
+       independent fields because that is what they are: `at` without
+       `when` is not "sometime", it is a time nobody wrote the day of. */
+    ...timing(normalizeDay(t.when), normalizeTime(t.at)),
     steps: Array.isArray(t.steps) ? t.steps.slice(0, 7).map(String) : null,
     local: t.local === true,   // sorted by the offline parser, not the model
     gcal: null,   // { id, sig } once this one has been pushed to Google
@@ -5558,6 +5620,9 @@ if (window.cloud) {
 }
 
 pruneDone();
+/* After pruneDone, so a task that was about to be deleted is not first
+   given a date it will never see. */
+stampTimeOnly();
 paintMorph();
 
 /* Opening the app always lands on home, and the dump box is the first
