@@ -5,9 +5,10 @@ the full picture: the dump → triage → lists loop and why it orders what it
 orders, the voice pipeline, Google Calendar, the design system, billing, and a
 file-by-file map. This file is standing rules for working in here.
 
-`CLAUDE.md` holds the boundary with the iOS shell. The half that matters most
+`CLAUDE.md` holds what is true of this repo whatever you are doing. The half that matters most
 from this side: a change here must not assume the shell exists, and
-`ios/README.md` lists what it is quietly depending on.
+The iOS shell is [a separate repo](https://github.com/aimanhfidz/myadhd.my_IOS) now, and its README lists what it
+is quietly depending on here.
 
 ## Hard rules
 
@@ -76,7 +77,8 @@ from this side: a change here must not assume the shell exists, and
 
 **The app is held behind `/soon`** while it is rebuilt. `localhost` is never
 held. The block comment at the top of `app.html` lists everything to undo when
-it opens again. Note this also catches the iOS shell — see `CLAUDE.md`.
+it opens again. It also catches the iOS shell, which injects the dev key at
+document start to get past it — that is the shell's business, not this repo's.
 
 ## Running it
 

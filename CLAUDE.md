@@ -1,38 +1,49 @@
 # my.adhd
 
-Two things live in this repo and they are not the same project.
+The web app. `app.html`, `app.js`, `auth.js`, `config.js`, `styles.css`,
+`api/`, and everything beside them. This is what deploys to myadhd.my.
 
-- **The web app** — the repo root. `app.html`, `app.js`, `auth.js`,
-  `config.js`, `styles.css`, `api/`, and everything beside them. This is
-  what deploys to myadhd.my.
-- **The iOS shell** — `ios/`. A `WKWebView` that opens
-  `https://myadhd.my/app` and adds what a browser tab cannot do on an
-  iPhone. It is a case around the web app, not a copy of it.
+Standing rules are in **`CLAUDE.web.md`**; the whole picture is in
+**`README.md`**. This file is what is true whatever you are doing in here.
 
-Each half has a file of standing rules beside this one, and a README with the
-whole picture. This file is only what is true of both.
+## The iOS shell is a different repository now
 
-| | standing rules | the whole picture |
-|---|---|---|
-| **web app** | `CLAUDE.web.md` | `README.md` |
-| **iOS shell** | `CLAUDE.ios.md` | `ios/README.md` |
+It used to be `ios/`, in this tree. It is
+**[aimanhfidz/myadhd.my_IOS](https://github.com/aimanhfidz/myadhd.my_IOS)**
+as of 2026-09-18, and nothing about it is in this checkout any more.
 
-## Focus: iOS
+That direction of the old boundary now enforces itself — there is no iOS code
+here to edit for a web reason. **The reverse still needs saying, and needs it
+more than before:**
 
-<!-- THE SWITCH. One surface's rules load per session, and this is where it is
-     chosen. An @import is skipped when it sits inside backticks, so the parked
-     line below reads as a path and does not load. To swap focus, move the
-     backticks from one line to the other and say so in your first reply.
-     `/context` lists the memory files that actually loaded, if in doubt. -->
+> **A change to the web app must not assume the shell exists, and must not
+> break the things it silently depends on.**
 
-@CLAUDE.ios.md
+The shell reaches this app two ways, both of which work against whatever is
+deployed rather than against this source:
 
-Parked: `@CLAUDE.web.md` — open it by hand if a question crosses the line.
+- **Injection.** It pushes JavaScript into the page at load — the haptics hang
+  off `.task-check`, `#btn-triage` and `#composer-mic`; the composer is found
+  by `#dump-input`; the store is watched by patching `Storage.prototype.setItem`
+  for `myadhd.v1`; ticking a task off a widget calls `window.markDone` and
+  `window.repaintLists` by name, which only works because `app.js` is a classic
+  script with no module wrapper.
+- **The snapshot.** It reads `myadhd.v1` and mirrors a trimmed copy into the
+  keychain for its widgets and wallpaper, picking task fields out **by name** —
+  including `doneAt`, which `pruneDone()` ages on.
 
-**The web app is still the one that ships.** myadhd.my is the public surface
-and the iOS shell is not on a release track, so when the two compete for the
-same hour the web app wins. Focus says what this session is *doing*, not which
-half matters more.
+None of that is checkable from here. There is no build that fails and no test
+that goes red: a rename lands, the deploy is green, and a widget on somebody's
+home screen quietly draws a blank day.
+
+**The full list lives in that repo's README, under the promises section.**
+Read it there rather than trusting this summary — it has grown, and a count
+written down in prose goes stale. Before renaming a selector, an id, a store
+key, a task field or one of the two globals above, go and look.
+
+Two files here are also copied into that repo and drift silently:
+`fonts/Baloo2-Variable.ttf` (twice) and `icons/render.py`'s `draw_icon()`.
+Change either and it changes in one place only until somebody does the other.
 
 ## Right now
 
@@ -41,37 +52,7 @@ half matters more.
 and a browser that has been given the dev key. The block comment in `app.html`
 lists everything to undo when it opens again.
 
-**That hold reaches the iOS shell too, and nobody has fixed it.**
-`AppConfig.home` is `https://myadhd.my/app`; the `WKWebView` is not localhost
-and carries no dev key, so the shell currently loads `/soon` rather than the
-app. The fix belongs on the iOS side — inject the key from `BridgeScript`
-before the page runs — and it is not done.
-
-## The boundary, which is what this file is really for
-
-**Work on the iOS shell stays inside `ios/`.** The shell reaches the page two
-ways, and neither is a licence to edit the site:
-
-- **Injection.** `ios/MyADHD/BridgeScript.swift` pushes JavaScript into the
-  page at load, so the shell works against whatever is deployed — including a
-  version that has never heard of it. That property is the point.
-- **The snapshot.** Anything running headless — a widget's timeline provider,
-  the wallpaper intent — has no web view to ask, so the app writes a keychain
-  snapshot (`ios/Shared/TaskSnapshot.swift`) for them to read. That is a second
-  coupling to the web app's store, by field name.
-
-**If an iOS change looks like it needs a file outside `ios/` edited, stop and
-ask first.** Say what the web change would be and why neither route above will
-do it. Changing the website is a decision about the website, not a step in an
-iOS task — even when the iOS task is blocked without it.
-
-**The reverse holds too: a change to the web app must not assume the shell
-exists.** `ios/README.md` lists the values the shell treats as promises about
-the page, and they break quietly when either side moves. Read the list there
-rather than trusting a summary — it has grown, and a count written down in
-prose goes stale. Grep `ios/` before renaming anything it might name.
-
-## Both halves
+## House rules
 
 - **Never stage whole files.** Unfinished work lives in the same files as
   finished work here; `git add <file>` and `commit -am` have shipped something

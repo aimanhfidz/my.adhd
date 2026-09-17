@@ -11,10 +11,12 @@ Live at **[myadhd.my](https://myadhd.my)**. The app itself, at
 [/app](https://myadhd.my/app), is **held behind `/soon` while it is rebuilt** —
 see [While the app is shut](#while-the-app-is-shut). The site around it is open.
 
-> **This README is the web app.** Two projects live in this repo and ship
-> separately: the web app at the root, which deploys to myadhd.my, and the
-> iOS shell in **[`ios/`](ios/README.md)**, a `WKWebView` case around that
-> deployed page. Everything below is the web app unless it says otherwise.
+> **This repo is the web app**, and since September 2026 it is only the web
+> app. The iOS shell — a `WKWebView` case around the deployed page — moved to
+> its own repository at **[aimanhfidz/myadhd.my_IOS](https://github.com/aimanhfidz/myadhd.my_IOS)**. It talks to
+> myadhd.my over HTTPS and never reads a file from here, so the two ship
+> independently. What it quietly depends on is listed in
+> [its README](https://github.com/aimanhfidz/myadhd.my_IOS#readme), not in this one.
 
 **The web app is where the work goes.** It was the public beta, it is
 behind a curtain for the moment, and it is still the half that ships — features
@@ -767,7 +769,7 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `waves-lab.html` | A bench for the wave field: the shader's switches on sliders. Reached only from the hidden `waves` link in the admin nav, and deliberately not in the service worker |
 | `package.json` / `vercel.json` | The one dependency and the `dev` script; `cleanUrls`, the two function timeouts, and the security headers |
 | `serve.py` | Local preview that applies the same `cleanUrls` rule Vercel does, so `/app` resolves without a build. `npm run dev` runs it. It does not run the functions |
-| `ios/` | **Not the web app.** The `WKWebView` shell that opens `/app` on an iPhone and adds haptics, reminders, the share sheet, Siri and Google sign-in. Ships separately, edits nothing above it — [`ios/README.md`](ios/README.md) |
+| ~~`ios/`~~ | Moved out on 2026-09-18 to [aimanhfidz/myadhd.my_IOS](https://github.com/aimanhfidz/myadhd.my_IOS). The `WKWebView` shell that opens `/app` on an iPhone and adds haptics, reminders, widgets, the share sheet, Siri and Google sign-in. It reads the deployed page, never this tree |
 
 ## The loading animation
 
