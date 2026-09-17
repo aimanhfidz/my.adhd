@@ -52,7 +52,7 @@ const TASK_SCHEMA = {
           category: { type: 'string', description: 'One word: admin, work, health, home, social, money, or errand.' },
           when: {
             type: ['string', 'null'],
-            description: 'The day this is tied to, as YYYY-MM-DD, ONLY when the dump names or implies a specific day: "tomorrow", "Friday", "9 March", "tonight", "next week Tuesday". null when no day is mentioned. Resolve every relative day against the current date given in the prompt, and never return a past date — a bare weekday or day-of-month that has already gone means the next one.',
+            description: 'The day this is tied to, as YYYY-MM-DD, ONLY when the dump names or implies a specific day: "tomorrow", "Friday", "9 March", "tonight", "next week Tuesday". A bare clock time with no day counts as implying one — "eat at 8am", "gym 1pm" mean the NEXT 8am and the next 1pm, so give the day as well as the time. null only when there is neither a day nor a clock time. Resolve every relative day against the current date given in the prompt, and never return a past date — a bare weekday, day-of-month or clock time that has already gone means the next one.',
           },
           at: {
             type: ['string', 'null'],
@@ -96,7 +96,7 @@ Rules:
 - Rewrite each task in plain, concrete language. Never moralize, never add encouragement, never add emoji.
 - Every firstStep must be a physical action the person could do in the next 2 minutes without deciding anything: "open the email app", "put the laundry in the dryer", "find the insurance renewal letter". Never "think about", "plan", "decide", or "review".
 - Cap at 20 tasks. If the dump is longer, keep the 20 that matter most.
-- Timing is captured, never invented. A day only becomes a date when the dump gives you one, and a time only becomes a clock time when the dump gives you one. "Sometime this week" is not a date. When something is genuinely tied to a day, the urgency should reflect how close that day is.
+- Timing is captured, never invented. A day only becomes a date when the dump gives you one, and a time only becomes a clock time when the dump gives you one. "Sometime this week" is not a date. A clock time IS timing, though: "eat at 8am" names the next 8am, so it gets both a day and a time rather than being filed under no date with the hour left sitting in its title. Vague words are still not times — "morning", "later" and "soon" give a day at most. When something is genuinely tied to a day, the urgency should reflect how close that day is.
 - Urgency and importance are different questions and must be answered separately. Urgency is how soon; importance is what it costs to never do it. A deadline does not make something important, and something important is often not due at all. Be sparing with high: if everything is important then the word has stopped working, and a list where every item is high is worse than no ratings at all. When genuinely unsure, answer low.
 - If the dump contains no actionable items at all, return an empty tasks array.`;
 

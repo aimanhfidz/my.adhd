@@ -724,6 +724,27 @@ function parseDay(line, now = new Date()) {
       if (d.getMonth() === mon) return dayKey(d);                        // rejects 31 February
     }
   }
+
+  /* A clock time and no day named at all. "dentist 3pm" is not someday —
+     the time IS the timing, and dropping it put three perfectly scheduled
+     things under "No date yet" with the hour stranded in the title.
+
+     The next one, not today's: "8am" written at five in the afternoon
+     means tomorrow morning, and dating it to this morning would hand
+     somebody a task that arrives already late. Anything still ahead today
+     stays today.
+
+     Deliberately last. Every named day above wins, so "Friday 9am" is
+     still Friday. And parseClock only reads a time with am/pm or a colon
+     in it, so "RM9.30" and "30 min" cannot trip this. */
+  const clock = parseClock(line);
+  if (clock) {
+    const [h, mi] = clock.split(':').map(Number);
+    const at = new Date(today);
+    at.setHours(h, mi, 0, 0);
+    return dayKey(at > now ? today : addDays(today, 1));
+  }
+
   return null;
 }
 
