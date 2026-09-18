@@ -229,6 +229,11 @@ let state = {
      its event in Google for ever — so the event id is dropped here on the
      way out and the sync clears it on the next pass. */
   gcalOrphans: [],
+  /* How many tasks were finished on each day, "YYYY-MM-DD" -> n, counted by
+     pruneDone() at the moment it deletes them. The tasks themselves only
+     live seven days after they are done, so without this the Done widget
+     could never show more than a week. Device-local, like the notes. */
+  doneCounts: {},
 };
 
 function load() {
@@ -329,11 +334,20 @@ function pruneDone() {
 
   const before = state.tasks.length;
   const keep = [];
+  if (!state.doneCounts || typeof state.doneCounts !== 'object') state.doneCounts = {};
   state.tasks.forEach(t => {
     if (!t.done || now - t.doneAt < DONE_TTL) { keep.push(t); return; }
+    /* Counted on its way out, on the day it was finished. This is the only
+       record of it once the row is gone. */
+    const day = dayKey(new Date(t.doneAt));
+    state.doneCounts[day] = (state.doneCounts[day] || 0) + 1;
     orphanEvent(t);   // it is about to stop existing; its event must not outlive it
   });
   state.tasks = keep;
+
+  /* Bounded: a year and change of small integers, oldest days dropped. */
+  const days = Object.keys(state.doneCounts).sort();
+  while (days.length > 400) delete state.doneCounts[days.shift()];
 
   if (stamped || state.tasks.length !== before) save();
 }
