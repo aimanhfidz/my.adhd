@@ -45,22 +45,19 @@ a single task with a 2-minute first step. Everything else is parked out of sight
    that appears once there are two lists to choose between.
    Tap a task for its first step, "break it down", and **Edit / Remove**.
    Completed items collect in a "N done" row with undo.
-4. **The matrix** — the same open tasks cut a second way, by importance as
-   well as by when. A toggle at the top right swaps between them and the
-   choice is remembered. See [Two ways to read one list](#two-ways-to-read-one-list).
 
 ### Dumps accumulate
 
 A dump **adds** to the lists — it never replaces them. Identical open titles
 are skipped so repeating yourself doesn't create duplicates. Opening the app
-lands on **home**, which is a summary rather than a box: what is next, the
-counts, and a shelf of links. Dumping is the ＋ in the middle of the tab bar,
+lands on **home**, which is a summary rather than a box: what is next and
+the counts. Dumping is the ＋ in the middle of the tab bar,
 which opens the composer over whatever you were reading.
 
 ### The shape of a task, and the three places it lives
 
 ```js
-{ id, title, minutes, energy, urgency, importance, quadrant,
+{ id, title, minutes, energy, urgency, importance,
   firstStep, category, when, at, steps, local, gcal, done, doneAt }
 ```
 
@@ -106,45 +103,24 @@ round, and the sentence describing it outlived the change by a fortnight.
 task `low` / `medium` / `high` and the chip on the row shows it, but nothing
 sorts on it.
 
-### Two ways to read one list
+### Importance, which nothing sorts on
 
-The headings answer *when*. The matrix answers *when* and *does it matter* at
-once, which is the one thing a deadline alone cannot say. `state.view` holds
-`'list'` or `'matrix'`; a pill in the header names the view you are not in, and
-`goToNext()` paints whichever is current — the split is `paintListBody()` and
-`paintMatrixBody()` under one repaint, so the filter row, the done pile and the
-danger zone below are shared rather than built twice.
+The model returns **`importance`**, `low` or `high`, beside urgency and defined
+against it: urgency is how soon, importance is what it costs to never do it at
+all. The prompt says to be sparing, because a list where everything is high has
+stopped rating anything.
 
-The second axis is **`importance`**, `low` or `high`, returned by the model
-beside urgency and defined against it: urgency is how soon, importance is what
-it costs to never do it at all. The prompt says to be sparing, because a list
-where everything is high has stopped rating anything. `quadrantOf()` reads the
-pair — and counts a task whose day has passed as urgent whatever the model
-said, since a date that has gone is not an opinion.
-
-| | Urgent | Not urgent |
-|---|---|---|
-| **Important** | Do now | Plan |
-| **Not important** | Delegate | Drop |
-
-**The model's answer is a starting point, not a verdict.** `t.quadrant` holds a
-placement the person made themselves and always wins — set by holding a row and
-dragging it into another quadrant (the calendar's own drag, pointed at
-quadrants instead of days), or by the `+` in a quadrant's corner, which opens
-the composer and pins whatever comes back into that one.
-
-All four quadrants are drawn even when empty: a 2×2 with a hole in it is not a
-2×2, and an empty **Do now** is worth reading. The rows inside are the ordinary
-task rows, so swipe, expand, first step, break-down, Edit and Remove all work
-there without a second implementation. Below 560px they stack — a task card at
-170px wraps its chips onto three lines, and a matrix you cannot read is worse
-than one you have to scroll.
-
-**A task sorted before importance existed reads as `low`.** `load()` does not
-re-normalise stored tasks — that would mint fresh ids and orphan every calendar
-event and cloud row — so the field is simply absent and fails the `=== 'high'`
-test, which lands it in the unimportant column. That is the honest reading: we
-were never told it mattered, and the drag is the repair.
+Nothing reads it now. It once fed an Eisenhower matrix — the same open tasks
+cut by importance as well as by when, behind a toggle in the lists header, with
+a hold-and-drag between quadrants and a `+` in each corner — and that came out
+on 18 September 2026, along with the calendar's hold-and-drag onto a day: a 2×2
+that asks "is this important?" hands the person the very sorting the app exists
+to do for them. The field stays because the model already answers it and a
+rating given is cheaper to keep than to ask for again. A task sorted before it
+existed has no field at all — `load()` does not re-normalise stored tasks, since
+that would mint fresh ids and orphan every calendar event and cloud row — and a
+fresh one with no answer lands on `low`. `state.view` and `t.quadrant` went with
+the matrix; `load()` deletes a stored `view` the same way it deletes `energy`.
 
 The *fuel* selector (running on fumes / okay-ish / wired) that once fed it is
 gone, and so is `state.energy` — the markup went first, the wiring followed.
@@ -179,8 +155,8 @@ is overdue, not scheduled.
 
 Both shots predate the tab restructure — home is a dashboard now, the ＋ in
 the bar is the way to dump, and the bar reads home / calendar / + / lists /
-notes. They also predate the matrix and the rebuilt notes editor, so neither
-appears in them. The screenshots want retaking; a stale photograph of the real
+notes. They also predate the rebuilt notes editor, which does not
+appear in them. The screenshots want retaking; a stale photograph of the real
 thing still beats nothing, which is why they are said to be stale rather than
 quietly deleted.
 
@@ -733,13 +709,13 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 |---|---|
 | `index.html` | Landing page — the front door. Full-bleed hero + copy |
 | `chrome.css` | The bar, the footer and the clock, for the pages that are neither the app nor the site: `/privacy`, `/terms`, `/install`, `/admin`, `/waves-lab`. Was `landing.css`, for a landing page deleted in September — most of what is still in it belongs to that page and nothing loads it |
-| `app.html` | The app. Ten screens — `home`, `loading`, `now` (the lists **and** the matrix), `calendar`, `notes`, `note` (the editor), `settings`, `profile`, `feedback`, `plans` — plus the composer sheet, the tab bar, and the icon and logo SVG sprite. Only the four in `TAB_FOR` light a tab; the rest hide the bar entirely, which is how a screen becomes full-screen here |
+| `app.html` | The app. Ten screens — `home`, `loading`, `now` (the lists), `calendar`, `notes`, `note` (the editor), `settings`, `profile`, `feedback`, `plans` — plus the composer sheet, the tab bar, and the icon and logo SVG sprite. Only the four in `TAB_FOR` light a tab; the rest hide the bar entirely, which is how a screen becomes full-screen here |
 | `theme.css` | Palette and type. Loaded by **every** page before its own stylesheet |
 | `favicon.svg` | The logo mark, standalone |
 | `fonts/` | Baloo 2 (variable, wght 400-800), self-hosted |
 | `docs/` | README screenshots and the two theme gifs, plus the documents that are instructions rather than content — `ui-screens-brief.md`, `bahasa-melayu-voice.md`, `stripe-setup.md`, `supabase-setup.md`, `content/*.md`. Not served by the app |
 | `styles.css` | App layout: one white page, content held to `--measure` (720px), gradient pill actions |
-| `app.js` | State, triage call, ordering, rendering, the composer, the matrix, the notes editor, the calendar, the profile, the calendar sync |
+| `app.js` | State, triage call, ordering, rendering, the composer, the notes editor, the calendar, the profile, the calendar sync |
 | `gcal.js` | Google Calendar: the OAuth token dance and the three verbs. Loads before `app.js`, which only ever asks it whether the feature is available |
 | `auth.js` | Signing in, and the whole of it. Optional always — the app opens with no account. Hands the Google refresh token straight to `/api/link-google` and never writes it down |
 | `cloud.js` | The lists on every device: a signature per task, and the pass that reconciles this browser against Supabase. Talks to Supabase directly with the publishable key, not through `/api` |

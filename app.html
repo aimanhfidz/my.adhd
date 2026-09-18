@@ -81,19 +81,6 @@
       <rect x="3.2" y="5.4" width="17.6" height="14.4" rx="4.6"/>
       <path d="M3.4 10.4h17.2M8.4 3.4v3.8M15.6 3.4v3.8"/>
     </g>
-    <!-- The two ways of reading the same list, drawn as what they are: rows
-         stacked down the page, and four boxes. They only ever appear inside
-         the toggle on the lists screen, and only one of them at a time — the
-         button names the view you are not in. -->
-    <g id="icon-rows" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4.4 7.2h15.2M4.4 12h15.2M4.4 16.8h15.2"/>
-    </g>
-    <g id="icon-grid" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="3.8" y="3.8" width="7" height="7" rx="2.1"/>
-      <rect x="13.2" y="3.8" width="7" height="7" rx="2.1"/>
-      <rect x="3.8" y="13.2" width="7" height="7" rx="2.1"/>
-      <rect x="13.2" y="13.2" width="7" height="7" rx="2.1"/>
-    </g>
     <g id="icon-plus" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round">
       <path d="M12 5v14M5 12h14"/>
     </g>
@@ -287,15 +274,6 @@
         </div>
       </div>
 
-      <!-- The rest of my.adhd, which is mostly not in the app. Quiet on
-           purpose: it is a shelf, not a feed, and it does not move. -->
-      <section class="home-card" id="home-discover">
-        <div class="home-card-head">
-          <h2 class="home-card-title">Worth a look</h2>
-        </div>
-        <div class="discover-rows" id="discover-rows"></div>
-      </section>
-
     </div>
   </section>
 
@@ -319,16 +297,6 @@
         <span class="wordmark">my<span class="accent">.adhd</span></span>
       </a>
       <div class="brand-tools">
-        <!-- The same list, read two ways. The button names the view you are
-             NOT in, so its label is the thing pressing it gets you — and it
-             is painted by paintViewToggle(), never written here.
-
-             Same rule as the gear on home: the class is never theme-toggle,
-             because theme.js binds that one by name and relabels it. -->
-        <button class="view-toggle" id="btn-view" type="button">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-grid" id="view-icon"/></svg>
-          <span id="view-label">Matrix</span>
-        </button>
         <button class="theme-toggle" id="btn-theme-2" type="button" aria-label="Switch to dark mode">
           <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-moon"/></svg>
           <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sun"/></svg>
@@ -367,12 +335,6 @@
       <div class="cat-bar is-hidden" id="cat-bar" role="tablist" aria-label="Filter by list"></div>
 
       <div class="lists" id="lists"></div>
-
-      <!-- The same open tasks as #lists, cut by importance as well as by
-           when. One of the two is always hidden; the category filter above
-           feeds both, and the done pile below serves both, so there is one
-           completed list in this app rather than one per view. -->
-      <div class="matrix is-hidden" id="matrix"></div>
 
       <div class="done-block is-hidden" id="done-block">
         <button class="parked-toggle" id="done-toggle" aria-expanded="false">
@@ -451,7 +413,6 @@
 
       <button class="cal-today is-hidden" id="cal-today" type="button">Back to today</button>
 
-      <p class="cal-tip is-hidden" id="cal-tip">Hold a row and drag it onto a day to move it. Swipe it left to finish, right to remove.</p>
       <div class="cal-agenda" id="cal-agenda"></div>
 
       <p class="cal-undated is-hidden" id="cal-undated"></p>
