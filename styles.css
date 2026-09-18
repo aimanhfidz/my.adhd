@@ -584,6 +584,47 @@ body{
 
 /* The sheet of paper. Ground from the theme's own pale, never a new hue,
    and the dotted grain is one radial-gradient rather than an asset. */
+/* The papers. Each is a wash of a token from theme.css, so a note can only
+   ever be a colour the rest of the app already is — and because they are
+   mixed against --surface, the same seven names read on both grounds.
+   Lavender is the paper a note has always had and stays the default; it is
+   the one with no data-paper at all. */
+[data-paper="violet"]{--note-paper:color-mix(in srgb,var(--violet) 22%,var(--surface))}
+[data-paper="blue"]{--note-paper:color-mix(in srgb,var(--accent) 18%,var(--surface))}
+[data-paper="orange"]{--note-paper:color-mix(in srgb,var(--orange) 20%,var(--surface))}
+[data-paper="red"]{--note-paper:color-mix(in srgb,var(--danger) 15%,var(--surface))}
+[data-paper="stone"]{--note-paper:color-mix(in srgb,var(--stone) 16%,var(--surface))}
+[data-paper="white"]{--note-paper:var(--surface); --note-edge:var(--line-strong)}
+
+/* The faces. The three the app pages already load; a fourth would be a
+   font file, and these three cover plain, display and typewriter. */
+.note-canvas[data-font="sans"]{font-family:var(--sans)}
+.note-canvas[data-font="mono"]{font-family:var(--mono)}
+.note-canvas[data-font="mono"] .note-title{font-family:var(--mono); letter-spacing:-.01em}
+.note-canvas[data-font="sans"] .note-title{font-family:var(--sans)}
+
+.fmt-font--sans{font-family:var(--sans)}
+.fmt-font--mono{font-family:var(--mono)}
+
+/* The card wears its paper too, at half strength so the list stays a list
+   and not a fruit bowl. */
+.note-card[data-paper]{background:color-mix(in srgb,var(--note-paper) 55%,var(--surface))}
+
+/* The rail's swatch shows the paper the open note has. */
+.note-tool--paper .paper-dot{
+  width:20px; height:20px; border-radius:50%;
+  background:var(--note-paper); border:2px solid var(--note-edge);
+  display:block;
+}
+.paper-row{display:flex; flex-wrap:wrap; gap:12px; padding:4px 0 2px}
+.paper-swatch{
+  width:36px; height:36px; border-radius:50%; padding:0; cursor:pointer;
+  background:var(--note-paper); border:2px solid var(--note-edge);
+  transition:transform .14s var(--ease), box-shadow .14s var(--ease);
+}
+.paper-swatch.is-on{box-shadow:0 0 0 3px var(--surface), 0 0 0 5px var(--ink); transform:scale(1.04)}
+.paper-swatch:focus-visible{outline:none; box-shadow:0 0 0 3px var(--focus)}
+
 .note-canvas{
   flex:1 1 auto;     /* the paper reaches the toolbar, as a sheet would */
   background:var(--note-paper);

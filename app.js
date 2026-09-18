@@ -88,6 +88,11 @@ const el = {
   toolClip:     $('tool-clip'),
   toolBell:     $('tool-bell'),
   sheetFormat:  $('sheet-format'),
+  sheetPaper:   $('sheet-paper'),
+  paperClose:   $('paper-close'),
+  paperRow:     $('paper-row'),
+  toolPaper:    $('tool-paper'),
+  fmtFont:      $('fmt-font'),
   fmtTypes:     $('fmt-types'),
   fmtMarks:     $('fmt-marks'),
   fmtAlign:     $('fmt-align'),
@@ -4349,9 +4354,35 @@ function normalizeNote(n) {
           .filter(f => f && typeof f.src === 'string' && f.src.startsWith('data:image/'))
           .map(f => ({ id: String(f.id || ('f_' + Math.random().toString(36).slice(2, 9))), src: f.src }))
       : [],
+    /* How the note looks: which paper, which face. Nothing about the
+       words. A note from before this existed gets the paper and the face
+       every note has always had. */
+    look: normalizeLook(n && n.look),
     createdAt: Number(n && n.createdAt) || now,
     updatedAt: Number(n && n.updatedAt) || Number(n && n.createdAt) || now,
   };
+}
+
+const PAPERS = ['lavender', 'violet', 'blue', 'orange', 'red', 'stone', 'white'];
+const FONTS  = ['baloo', 'sans', 'mono'];
+
+function normalizeLook(l) {
+  return {
+    paper: PAPERS.includes(l && l.paper) ? l.paper : 'lavender',
+    font:  FONTS.includes(l && l.font)   ? l.font  : 'baloo',
+  };
+}
+
+/* The canvas and the rail's swatch wear the open note's look. Lavender and
+   Baloo are the defaults and are spelled as "no attribute", so a note that
+   has never been touched renders exactly as it did before looks existed. */
+function applyLook(n) {
+  const canvas = document.getElementById('note-canvas');
+  const dot = document.getElementById('tool-paper');
+  if (!canvas) return;
+  if (n.look.paper === 'lavender') delete canvas.dataset.paper; else canvas.dataset.paper = n.look.paper;
+  if (n.look.font === 'baloo')     delete canvas.dataset.font;  else canvas.dataset.font  = n.look.font;
+  if (dot) { if (n.look.paper === 'lavender') delete dot.dataset.paper; else dot.dataset.paper = n.look.paper; }
 }
 
 let openNoteId = null;
@@ -4400,6 +4431,7 @@ function noteCard(n) {
   const card = document.createElement('button');
   card.type = 'button';
   card.className = 'note-card';
+  if (n.look && n.look.paper !== 'lavender') card.dataset.paper = n.look.paper;
 
   const title = document.createElement('span');
   title.className = 'note-card-title';
@@ -4584,6 +4616,7 @@ function paintNoteEditor() {
 
   paintNoteFiles(n);
   paintNoteRemind(n);
+  applyLook(n);
 }
 
 function renderBlock(b, i, ordinal) {
@@ -4771,6 +4804,8 @@ function paintFormatSheet() {
   if (!b) return;
   el.fmtTypes.querySelectorAll('[data-type]').forEach(btn =>
     btn.classList.toggle('is-on', btn.dataset.type === b.type));
+  el.fmtFont.querySelectorAll('[data-font]').forEach(btn =>
+    btn.classList.toggle('is-on', btn.dataset.font === (currentNote() || { look: { font: 'baloo' } }).look.font));
   el.fmtAlign.querySelectorAll('[data-align]').forEach(btn =>
     btn.classList.toggle('is-on', btn.dataset.align === b.align));
 }
@@ -5164,15 +5199,49 @@ el.noteBlocks.addEventListener('pointerdown', (e) => {
 [el.toolType, el.toolCheck, el.toolClip, el.toolBell].forEach(b =>
   b.addEventListener('pointerdown', (e) => e.preventDefault()));
 
+function paintPaperSheet() {
+  const n = currentNote();
+  el.paperRow.querySelectorAll('[data-paper]').forEach(btn =>
+    btn.classList.toggle('is-on', !!n && btn.dataset.paper === n.look.paper));
+}
+el.toolPaper.addEventListener('click', () => {
+  const open = !el.sheetPaper.classList.contains('is-hidden');
+  el.sheetPaper.classList.toggle('is-hidden', open);
+  el.sheetFormat.classList.add('is-hidden');
+  el.sheetRemind.classList.add('is-hidden');
+  if (!open) paintPaperSheet();
+});
+el.paperClose.addEventListener('click', () => el.sheetPaper.classList.add('is-hidden'));
+el.paperRow.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-paper]');
+  const n = currentNote();
+  if (!b || !n) return;
+  n.look.paper = b.dataset.paper;
+  applyLook(n);
+  paintPaperSheet();
+  touchNote(n);
+});
+el.fmtFont.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-font]');
+  const n = currentNote();
+  if (!b || !n) return;
+  n.look.font = b.dataset.font;
+  applyLook(n);
+  paintFormatSheet();
+  touchNote(n);
+});
+
 el.toolType.addEventListener('click', () => {
   const open = !el.sheetFormat.classList.contains('is-hidden');
   el.sheetFormat.classList.toggle('is-hidden', open);
   el.sheetRemind.classList.add('is-hidden');
+  el.sheetPaper.classList.add('is-hidden');
   if (!open) paintFormatSheet();
 });
 el.toolCheck.addEventListener('click', () => setBlockType('check'));
 el.toolClip.addEventListener('click', () => el.noteFileInput.click());
 el.toolBell.addEventListener('click', () => {
+  el.sheetPaper.classList.add('is-hidden');
   el.sheetFormat.classList.add('is-hidden');
   openRemindSheet();
 });

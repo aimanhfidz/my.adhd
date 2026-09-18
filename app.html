@@ -573,6 +573,11 @@ try{
     <!-- Four tools, and no palette: the note grounds come from the theme
          and there is nothing to pick. -->
     <div class="note-tools" id="note-tools">
+      <!-- The paper. A swatch, not a gear: the colour is the note's own
+           and the button should look like the thing it changes. -->
+      <button class="note-tool note-tool--paper" id="tool-paper" type="button" aria-label="Paper colour">
+        <span class="paper-dot" aria-hidden="true"></span>
+      </button>
       <button class="note-tool" id="tool-type" type="button" aria-label="Text format">
         <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-type"/></svg>
       </button>
@@ -612,10 +617,36 @@ try{
         <button class="fmt-btn fmt-u" type="button" data-mark="u">U</button>
         <button class="fmt-btn fmt-s" type="button" data-mark="strike">S</button>
       </div>
+      <div class="fmt-row" id="fmt-font" role="group" aria-label="Typeface">
+        <button class="fmt-btn fmt-font--baloo" type="button" data-font="baloo">Baloo</button>
+        <button class="fmt-btn fmt-font--sans" type="button" data-font="sans">Sans</button>
+        <button class="fmt-btn fmt-font--mono" type="button" data-font="mono">Mono</button>
+      </div>
       <div class="fmt-row" id="fmt-align" role="group" aria-label="Alignment">
         <button class="fmt-btn" type="button" data-align="left">Left</button>
         <button class="fmt-btn" type="button" data-align="center">Centre</button>
         <button class="fmt-btn" type="button" data-align="right">Right</button>
+      </div>
+    </div>
+
+    <div class="note-sheet is-hidden" id="sheet-paper" role="dialog" aria-label="Paper colour">
+      <div class="note-sheet-bar">
+        <span class="note-sheet-title">Paper</span>
+        <button class="note-sheet-x" id="paper-close" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-back"/></svg>
+        </button>
+      </div>
+      <!-- Washes of the app's own hues, not a rainbow: every one of these is
+           a token from theme.css at a fraction, so a note never carries a
+           colour the rest of the app cannot. -->
+      <div class="paper-row" id="paper-row" role="group" aria-label="Paper colour">
+        <button class="paper-swatch" type="button" data-paper="lavender" aria-label="Lavender"></button>
+        <button class="paper-swatch" type="button" data-paper="violet" aria-label="Violet"></button>
+        <button class="paper-swatch" type="button" data-paper="blue" aria-label="Blue"></button>
+        <button class="paper-swatch" type="button" data-paper="orange" aria-label="Orange"></button>
+        <button class="paper-swatch" type="button" data-paper="red" aria-label="Red"></button>
+        <button class="paper-swatch" type="button" data-paper="stone" aria-label="Stone"></button>
+        <button class="paper-swatch" type="button" data-paper="white" aria-label="Plain"></button>
       </div>
     </div>
 
