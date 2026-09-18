@@ -32,7 +32,7 @@
    v47: the app is shut behind /soon — every cached copy of /app and
    /install carries the hold now, and /soon has to be cached with them or
    a home-screen copy opened offline redirects into nothing. */
-const CACHE = 'myadhd-v50';
+const CACHE = 'myadhd-v51';   // v51: /app no longer carries the hold; cached copies must not either
 
 const SHELL = [
   '/',
