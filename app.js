@@ -9,6 +9,19 @@
 const STORE_KEY = 'myadhd.v1';
 const $ = (id) => document.getElementById(id);
 
+/* The iOS shell, or not. The shell appends "MyADHD-iOS/<version>" to its
+   web view's user agent (AppConfig.userAgentSuffix in the iOS repo), and
+   that is the only way this page can tell it is inside the app rather than
+   in Safari — including Safari with the site saved to the home screen,
+   which is standalone but not the shell.
+
+   What hangs off it: the matrix. It came out of the web on 18 September
+   2026 — a 2x2 that asks "is this important?" hands the person the very
+   sorting the app exists to do for them — and came back for the shell
+   alone, whose four-card layout and "?" help page are built on it. Rename
+   the suffix there and the matrix quietly disappears from the app. */
+const IN_SHELL = /MyADHD-iOS\//.test(navigator.userAgent);
+
 const el = {
   screenHome:   $('screen-home'),
   screenLoad:   $('screen-loading'),
@@ -26,6 +39,10 @@ const el = {
   eyebrow:      $('eyebrow'),
   summary:      $('lists-summary'),
   lists:        $('lists'),
+  matrix:       $('matrix'),
+  btnView:      $('btn-view'),
+  viewIcon:     $('view-icon'),
+  viewLabel:    $('view-label'),
   doneBlock:    $('done-block'),
   doneToggle:   $('done-toggle'),
   doneCount:    $('done-count'),
@@ -216,6 +233,16 @@ let state = {
   /* The onboarding offer, once turned down, stays turned down. */
   signupOfferHidden: false,
 
+  /* 'list' or 'matrix'. Persisted, unlike the category filter — that one is
+     where you are looking right now, this one is how you think, and somebody
+     who reads their day as four quadrants wants them again tomorrow. It
+     lives on the store rather than a key of its own for the same reason the
+     notes do: the iOS shell only hears writes to 'myadhd.v1'.
+
+     Only the shell can be in 'matrix'. In a browser this is always 'list' —
+     see IN_SHELL. */
+  view: 'list',
+
   /* Calendar events whose task no longer exists to hang them off. A task
      is deleted from the store the moment you remove it, which would strand
      its event in Google for ever — so the event id is dropped here on the
@@ -244,12 +271,17 @@ function load() {
          store — for renderNotes() to fall over on. */
       state.notes = Array.isArray(saved.notes) ? saved.notes.map(normalizeNote) : [];
 
-      /* The fuel selector and the matrix are gone, but a store written while
-         they existed still carries the choices — and the assign above would
-         copy them straight back in and write them out again on the next save.
-         They come off once, here. */
+      /* A hand-edited store, or one from a build where this meant something
+         else, must not leave the lists screen painting nothing. And outside
+         the shell there is no matrix to be in, whatever the store says: a
+         store carried over from the shell, or from the build where the web
+         had one too, opens on the list. */
+      if (!IN_SHELL || state.view !== 'matrix') state.view = 'list';
+
+      /* The fuel selector is gone, but a store written while it existed still
+         carries the choice — and the assign above would copy it straight back
+         in and write it out again on the next save. It comes off once, here. */
       delete state.energy;
-      delete state.view;
     }
   } catch (_) { /* corrupt store — start fresh rather than crash */ }
 }
@@ -559,6 +591,14 @@ async function triage() {
   );
   const fresh = tasks.filter(t => !seen.has(t.title.trim().toLowerCase()));
   const dupes = tasks.length - fresh.length;
+
+  /* Dumped from a quadrant's +, so that is where it was meant to go —
+     whatever the model made of it. Cleared either way: the pin belongs to
+     one press of one button, not to the next dump from the tab bar. */
+  if (pendingQuadrant) {
+    fresh.forEach(t => { t.quadrant = pendingQuadrant; });
+    pendingQuadrant = null;
+  }
 
   state.tasks = state.tasks.concat(fresh);
   save();
@@ -1009,10 +1049,11 @@ function normalizeTask(t) {
     energy: ['low', 'medium', 'high'].includes(t.energy) ? t.energy : 'medium',
     urgency: clamp(t.urgency, 1, 5, 3),
     /* How soon (urgency) and what it costs to never do it (importance) are
-       different questions. The model still answers both, and a rating it has
-       given is kept — but nothing sorts on importance since the matrix came
-       out. Unknown lands on 'low': we were never told it mattered. */
+       different questions, and the matrix needs both. A task sorted before
+       importance existed lands on 'low': we were never told it mattered, and
+       guessing 'high' would fill the Do now quadrant with everything. */
     importance: ['low', 'high'].includes(t.importance) ? t.importance : 'low',
+    quadrant: QUADRANT_KEYS.includes(t.quadrant) ? t.quadrant : null,   // the user's own placement, or null to derive
     firstStep: String(t.firstStep || t.first_step || 'Open it and look at it for 2 minutes.').slice(0, 240),
     category: String(t.category || 'general').slice(0, 40),
     /* A time with no day gets one. Written as a pair rather than two
@@ -1065,6 +1106,11 @@ const catKey = (t) => String(t.category || 'general').toLowerCase();
    tasks, and it should not follow you onto another device. */
 let catFilter = 'all';
 
+/* Set by a quadrant's +, read once when the dump lands, and cleared whether
+   the dump went through or was abandoned. Not on the store: it describes
+   one press of one button, and it must not outlive the composer. */
+let pendingQuadrant = null;
+
 /* A deadline as one sortable number. No day means no deadline, which sorts
    last and not first — an undated task is not due now, it is undated. A day
    with no time on it is treated as the end of that day, so it falls in
@@ -1115,6 +1161,44 @@ function bucketize(tasks) {
     .map(([k, label]) => [k, label, sortBucket(k, by.get(k))]);
 }
 
+/* The other way of cutting the same list, and the reason `importance`
+   exists. The headings answer "when"; these four answer "when" and "does it
+   matter" at once, which is the one thing a deadline alone cannot say.
+   Unlike the headings, all four are always drawn: an empty Do now is worth
+   seeing, and a 2x2 with a hole in it stops being a 2x2. */
+const QUADRANTS = [
+  ['do',       'Do now',   'Important & urgent'],
+  ['plan',     'Plan',     'Important, not urgent'],
+  ['delegate', 'Delegate', 'Urgent, not important'],
+  ['drop',     'Drop',     'Neither'],
+];
+
+const QUADRANT_KEYS = QUADRANTS.map(([k]) => k);
+
+/* A placement the person made themselves always wins — the model splits and
+   rewrites and it gets things wrong, and `quadrant` is the repair, the same
+   way Edit and Remove are. Lateness counts as urgent whatever the model
+   said about it: a day that has passed is not an opinion. */
+function quadrantOf(t, today) {
+  if (t.quadrant) return t.quadrant;
+  const urgent = t.urgency >= 5 || (t.when && t.when <= today);
+  return t.importance === 'high'
+    ? (urgent ? 'do' : 'plan')
+    : (urgent ? 'delegate' : 'drop');
+}
+
+/* Inside a quadrant the clock leads and undated falls in behind, which is
+   what the dated headings already do — dueAt() returns Infinity for an
+   undated task, so their comparator needs no special case here. */
+const sortQuadrant = (items) => sortBucket('quad', items);
+
+function quadrantize(tasks) {
+  const today = dayKey();
+  const by = new Map(QUADRANT_KEYS.map(k => [k, []]));
+  tasks.forEach(t => by.get(quadrantOf(t, today)).push(t));
+  return QUADRANTS.map(([k, label, sub]) => [k, label, sub, sortQuadrant(by.get(k))]);
+}
+
 function groupByCategory(tasks) {
   const groups = new Map();
   tasks.forEach(t => {
@@ -1144,6 +1228,8 @@ function goToNext() {
 
   if (!open.length) {
     el.lists.classList.add('is-hidden');
+    el.matrix.classList.add('is-hidden');
+    el.btnView.classList.add('is-hidden');
     el.eyebrow.classList.add('is-hidden');
     el.summary.classList.add('is-hidden');
     el.doneBlock.classList.add('is-hidden');
@@ -1182,8 +1268,12 @@ function goToNext() {
 
   const shown = catFilter === 'all' ? open : open.filter(t => catKey(t) === catFilter);
 
-  el.lists.classList.remove('is-hidden');
-  paintListBody(shown);
+  const matrix = state.view === 'matrix';
+  el.btnView.classList.toggle('is-hidden', !IN_SHELL);
+  paintViewToggle();
+  el.lists.classList.toggle('is-hidden', matrix);
+  el.matrix.classList.toggle('is-hidden', !matrix);
+  if (matrix) paintMatrixBody(shown); else paintListBody(shown);
 
   renderDone(done);
   el.dangerZone.classList.toggle('is-hidden', state.tasks.length === 0);
@@ -1195,6 +1285,26 @@ function paintListBody(shown) {
   el.lists.innerHTML = '';
   bucketize(shown).forEach(([key, label, items]) =>
     el.lists.appendChild(renderBucket(key, label, items)));
+}
+
+/* Grouped by when AND whether it matters. All four are drawn even when
+   empty — a 2x2 with a hole in it is not a 2x2, and an empty Do now is
+   worth reading. */
+function paintMatrixBody(shown) {
+  el.matrix.innerHTML = '';
+  quadrantize(shown).forEach(([key, label, sub, items]) =>
+    el.matrix.appendChild(renderQuadrant(key, label, sub, items)));
+}
+
+/* The button names the view you are not in, because that is what pressing
+   it gets you. The label and the icon are the same decision said twice. */
+function paintViewToggle() {
+  const toMatrix = state.view !== 'matrix';
+  el.viewLabel.textContent = toMatrix ? 'Matrix' : 'List';
+  el.viewIcon.setAttribute('href', toMatrix ? '#icon-grid' : '#icon-rows');
+  el.btnView.setAttribute('aria-label', toMatrix
+    ? 'Show the matrix'
+    : 'Show the lists');
 }
 
 function renderBucket(key, label, items) {
@@ -1219,6 +1329,54 @@ function renderBucket(key, label, items) {
   items.forEach(t => ul.appendChild(renderTask(t)));
 
   section.append(head, ul);
+  return section;
+}
+
+/* One quadrant of the matrix. The rows inside are the ordinary task rows,
+   so everything they can already do — swipe, expand, first step, break it
+   down, Edit, Remove — works here without a second implementation.
+
+   The + adds straight into this quadrant: it opens the composer and pins
+   whatever comes back, which is the quickest way to overrule the model. */
+function renderQuadrant(key, label, sub, items) {
+  const section = document.createElement('section');
+  section.className = `quad quad--${key}`;
+  section.dataset.quad = key;   // the drop target, read by overCell()
+
+  const head = document.createElement('div');
+  head.className = 'quad-head';
+
+  const text = document.createElement('div');
+  const name = document.createElement('h2');
+  name.className = 'quad-name';
+  name.textContent = label;
+  const note = document.createElement('p');
+  note.className = 'quad-sub';
+  note.textContent = sub;
+  text.append(name, note);
+
+  const add = document.createElement('button');
+  add.className = 'quad-add';
+  add.type = 'button';
+  add.setAttribute('aria-label', `Add something to ${label}`);
+  add.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-plus"/></svg>';
+  add.addEventListener('click', () => { pendingQuadrant = key; openComposer(); });
+
+  head.append(text, add);
+  section.append(head);
+
+  if (!items.length) {
+    const empty = document.createElement('p');
+    empty.className = 'quad-empty';
+    empty.textContent = 'Nothing here.';
+    section.append(empty);
+    return section;
+  }
+
+  const ul = document.createElement('ul');
+  ul.className = 'list-items';
+  items.forEach(t => ul.appendChild(renderTask(t)));
+  section.append(ul);
   return section;
 }
 
@@ -1381,6 +1539,14 @@ function renderTask(task) {
     const open = detail.classList.toggle('is-hidden');
     card.classList.toggle('is-open', !open);
   });
+
+  /* Hold a row and drag it into another quadrant. Only in the matrix: on
+     the lists a lifted row has nowhere to land, and a long-press that picks
+     something up and then puts it back is worse than one that never fires.
+     Swipe still owns the horizontal — the calendar's rows carry both. */
+  if (state.view === 'matrix') {
+    card.addEventListener('pointerdown', (e) => watchPress(e, task, card));
+  }
 
   return swipeRow(card, task, () => keepPlace(goToNext));
 }
@@ -1880,6 +2046,7 @@ function cancelComposer() {
      be transcribed is a round trip nobody is waiting for the answer to. */
   Voice.abandon();
   restMic();
+  pendingQuadrant = null;   // the quadrant was this sheet's, and the sheet is going
   writeBuffer(el.compInput.value);
   renderHome();
   closeComposer(true);
@@ -2556,6 +2723,143 @@ async function sendFeedback() {
   }
 }
 
+/* ---------------- drag a row into a quadrant ----------------
+   Overruling the model without a form: hold a row in the matrix, drag it
+   into another quadrant, let go. Nothing else about the task changes.
+
+   Built on pointer events rather than HTML5 drag-and-drop, which does not
+   exist on iOS Safari — and the matrix only exists in the iOS shell.
+
+   The press has to be held before it lifts, because the lists live in a
+   scroller: a drag that started instantly would steal every upward swipe.
+   Move further than a few pixels before the hold is up and it is read as
+   what it almost certainly was — a scroll — and the lift is called off.
+
+   This used to carry the calendar too (a row dragged onto a day). That went
+   with the web's matrix; a day is changed through Edit now. */
+
+const LIFT_MS = 320;
+const SLOP = 8;
+
+let press = null;   // a finger down, not yet committed to either reading
+let drag = null;    // a row in the air
+
+function watchPress(e, task, row) {
+  if (e.button > 0) return;                       // right-click and friends
+  if (e.target.closest('.task-check')) return;    // ticking off is not dragging
+  if (press || drag) return;
+
+  press = {
+    task, row, x: e.clientX, y: e.clientY,
+    timer: setTimeout(() => lift(), LIFT_MS),
+  };
+  row.classList.add('is-pressed');
+}
+
+function dropPress() {
+  if (!press) return;
+  clearTimeout(press.timer);
+  press.row.classList.remove('is-pressed');
+  press = null;
+}
+
+function lift() {
+  if (!press) return;
+  const { task, row, x, y } = press;
+  press.row.classList.remove('is-pressed');
+  press = null;
+
+  /* A compact chip rather than a clone of the row. A full-width copy is
+     wider than the whole week and sits straight on top of the cells you
+     are aiming at, hiding the very ring that says where it would land. */
+  const ghost = document.createElement('div');
+  ghost.className = 'cal-ghost';
+  ghost.textContent = task.at ? `${timeLabel(task.at)} · ${task.title}` : task.title;
+  document.body.appendChild(ghost);
+
+  drag = { task, row, ghost, cell: null };
+  document.addEventListener('touchmove', holdPageStill, { passive: false });
+  placeGhost(x, y);
+  row.classList.add('is-lifted');
+  document.body.classList.add('is-dragging');
+  navigator.vibrate?.(8);   // only some phones; never fatal
+}
+
+/* Centred on the pointer and lifted clear of it, so a fingertip is not
+   parked on top of the answer. */
+function placeGhost(x, y) {
+  const g = drag.ghost.getBoundingClientRect();
+  drag.ghost.style.left = `${x - g.width / 2}px`;
+  drag.ghost.style.top  = `${y - g.height - 18}px`;
+}
+
+/* The one thing a row can be dropped on: a quadrant. */
+function overCell(x, y) {
+  /* The ghost is pointer-events:none, so it does not shadow the cell it is
+     sitting on top of. */
+  const el = document.elementFromPoint(x, y);
+  return el ? el.closest('.quad[data-quad]') : null;
+}
+
+document.addEventListener('pointermove', (e) => {
+  if (press) {
+    // Enough movement before the hold is up means this was a scroll.
+    if (Math.hypot(e.clientX - press.x, e.clientY - press.y) > SLOP) dropPress();
+    return;
+  }
+  if (!drag) return;
+
+  placeGhost(e.clientX, e.clientY);
+  const cell = overCell(e.clientX, e.clientY);
+  if (cell !== drag.cell) {
+    drag.cell?.classList.remove('is-drop');
+    drag.cell = cell;
+    cell?.classList.add('is-drop');
+  }
+});
+
+/* Pointer events cannot call off a scroll on their own, and touch-action set
+   mid-gesture comes too late. Killing touchmove while a row is in the air is
+   what actually holds the page still under it.
+
+   Bound only for as long as a row IS in the air. A non-passive touchmove
+   listener on the document is a promise that some JavaScript might cancel
+   the gesture, and the browser has to keep it: it cannot scroll or composite
+   a touch anywhere on the page until that handler has run and declined. Left
+   bound for the life of the app, this one was putting a main-thread round
+   trip in front of every touch in every screen — including the drag on the
+   composer, which is why that stayed a step behind the finger however much
+   was taken out of the drag itself. */
+function holdPageStill(e) {
+  if (drag) e.preventDefault();
+}
+
+function endDrag(commit) {
+  if (!drag) return;
+  document.removeEventListener('touchmove', holdPageStill, { passive: false });
+  const { task, row, ghost, cell } = drag;
+  ghost.remove();
+  row.classList.remove('is-lifted');
+  document.body.classList.remove('is-dragging');
+  cell?.classList.remove('is-drop');
+  drag = null;
+
+  if (!commit || !cell) return;
+
+  const to = cell.dataset.quad;
+  /* Dropped where it already sits — including where it sits because the
+     model put it there. Saying nothing is right either way. */
+  if (to === quadrantOf(task, dayKey())) return;
+  task.quadrant = to;             // from here on this is the person's call
+  save();
+  keepPlace(goToNext);
+  const label = (QUADRANTS.find(([k]) => k === to) || [, to])[1];
+  toast(`Moved to ${label}.`);
+}
+
+document.addEventListener('pointerup',     () => { dropPress(); endDrag(true); });
+document.addEventListener('pointercancel', () => { dropPress(); endDrag(false); });
+
 /* ---------------- swipe a row ----------------
 
    Two exits, moved under the thumb. Left is the tick the row already had.
@@ -2683,6 +2987,7 @@ function swipeMove(e) {
     swipe.live = true;
     swipe.x += Math.sign(dx) * SWIPE_SLOP;    // carry on from here, not from a jump
     dx -= Math.sign(dx) * SWIPE_SLOP;
+    dropPress();                              // a swipe is not a hold
     /* A touch captures to the row on its own; a mouse does not, and
        without this a fast drag leaves the card and the row stops
        following the pointer. Not worth a gesture if the pointer has
@@ -4757,6 +5062,16 @@ function previewDates(src, box, chips) {
    triage: there is nothing in the buffer yet to sort. */
 el.btnStartDump.addEventListener('click', openComposer);
 el.btnResort.addEventListener('click', resortLocal);
+
+/* The view is a standing preference, so it goes through save() like any
+   other change to the store — and keepPlace holds the scroll, because
+   swapping how the same tasks are grouped should not also move the page.
+   The button is only ever shown in the shell, so this only ever fires
+   there. */
+el.btnView.addEventListener('click', () => {
+  state.view = state.view === 'matrix' ? 'list' : 'matrix';
+  keepPlace(goToNext);
+});
 
 /* Saved to the home screen, the app is the whole window. There is no tab
    to come back on, so a lockup that leaves for the site would replace the

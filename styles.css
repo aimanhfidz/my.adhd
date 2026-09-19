@@ -1071,6 +1071,88 @@ body{
   animation:rise .18s var(--ease) both;
 }
 
+/* ---------- the matrix ----------
+
+   Only the iOS shell shows it (IN_SHELL in app.js); a browser never sees
+   the toggle. The rules below still ship to everyone — they are inert
+   without the elements.
+
+   The same open tasks cut by importance as well as by when. It borrows the
+   lists' own row wholesale — .task, its chips, its swipe rails and its
+   detail — so nothing in here is a second implementation of a task.
+
+   No four pastel grounds. The rule on this site is one coloured object per
+   screen, and orange already means late; four decorative fills would spend
+   the whole palette saying what the grid position says for free. What the
+   colour does carry is the one thing position cannot: the important row
+   gets the accent edge, the other two stay quiet. */
+.matrix{display:grid; grid-template-columns:1fr; gap:12px}
+
+/* Two-up only once a column is wide enough to hold a real task row. Below
+   this the four stack: a .task card at ~170px wraps its chips onto three
+   lines and truncates the title to nothing, and a matrix you cannot read
+   is worse than a matrix you have to scroll. */
+@media (min-width:560px){
+  .matrix{grid-template-columns:1fr 1fr; align-items:start}
+}
+
+.quad{
+  display:flex; flex-direction:column; gap:10px;
+  background:var(--wash); border:1.5px solid var(--line);
+  border-left:3px solid var(--line-strong);
+  border-radius:var(--radius-lg); padding:14px 14px 16px;
+}
+.quad--do, .quad--plan{border-left-color:var(--accent)}
+
+.quad-head{display:flex; align-items:flex-start; gap:10px}
+.quad-name{
+  font-family:var(--display); font-size:15px; font-weight:700;
+  letter-spacing:-.01em; color:var(--muted); margin:0;
+}
+.quad--do .quad-name{color:var(--ink)}
+.quad-sub{font-size:11.5px; color:var(--faint); margin:2px 0 0}
+
+.quad-add{
+  flex:none; margin-left:auto; width:28px; height:28px;
+  display:grid; place-items:center;
+  background:var(--surface); border:1.5px solid var(--line-strong);
+  border-radius:999px; color:var(--muted); cursor:pointer; padding:0;
+  transition:color .18s var(--ease), border-color .18s var(--ease);
+}
+.quad-add svg{width:15px; height:15px; display:block}
+.quad-add:hover{color:var(--accent); border-color:var(--accent)}
+.quad-add:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--focus)}
+
+.quad-empty{font-size:13px; color:var(--faint); margin:0; padding:2px 0 4px}
+
+/* The rows sit on --wash, so the card that is normally --surface on white
+   keeps its edge without needing a shadow. */
+.quad .task{background:var(--surface)}
+
+/* Held, lifted and dropped. The row fades in place rather than leaving, so the
+   quadrant does not reflow under the hand mid-drag. */
+.quad .task{transition:opacity .18s var(--ease), transform .14s var(--ease), border-color .18s var(--ease), background .18s var(--ease)}
+.quad .task.is-pressed{transform:scale(.985)}
+.quad .task.is-lifted{opacity:.3}
+
+/* A ring, not a fill: the quadrant already carries a ground and an edge,
+   and two of the four carry the accent on that edge already. */
+.quad.is-drop{box-shadow:0 0 0 3px var(--accent)}
+
+/* ---------- list / matrix ---------- */
+
+.view-toggle{
+  flex:none; display:inline-flex; align-items:center; gap:6px;
+  font-family:inherit; font-size:13px; font-weight:600;
+  background:none; border:1.5px solid var(--line-strong);
+  color:var(--muted); padding:7px 13px 7px 11px; border-radius:999px;
+  cursor:pointer;
+  transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
+}
+.view-toggle svg{width:15px; height:15px; display:block}
+.view-toggle:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
+.view-toggle:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--focus)}
+
 .task{
   display:flex; gap:13px; align-items:flex-start;
   background:var(--surface); border:1.5px solid var(--line);
@@ -1672,6 +1754,25 @@ body.has-tabbar .toast{
 }
 
 .cal-agenda{margin-top:14px; display:flex; flex-direction:column; gap:22px}
+
+/* ---- the chip a lifted row becomes ----
+   Named for the calendar, where the drag was born; the calendar no longer
+   drags, and the only rows that lift now are the matrix's. */
+.cal-ghost{
+  position:fixed; z-index:60; margin:0;
+  pointer-events:none;          /* so elementFromPoint sees the cell beneath */
+  max-width:min(230px, 62vw);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  background:var(--surface);
+  border:1.5px solid var(--accent); border-radius:999px;
+  padding:9px 15px;
+  font-family:var(--display); font-size:13.5px; font-weight:600; color:var(--ink);
+  box-shadow:0 18px 36px -12px rgba(16,16,24,.6);
+  transform:rotate(-1.2deg);
+}
+
+body.is-dragging{cursor:grabbing}
+body.is-dragging *{user-select:none; -webkit-user-select:none}
 
 .cal-group{animation:rise .18s var(--ease) both}
 .cal-group-head{
