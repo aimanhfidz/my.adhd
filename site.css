@@ -728,29 +728,28 @@ body{
 
    As the ground it does what it was always for. Fixed rather than
    scrolled, so it reads as the weather the page is happening in rather
-   than as an object travelling past. The veil is the whole trick: without
-   it the shader's highlight is a saturated brand blue at full strength
-   and every paragraph sits on top of a graphic. */
+   than as an object travelling past.
+
+   The field itself is four static radials shared with the hero — see
+   "the field" further down. It was a WebGL shader until 2026-09-21,
+   which is why the box below still has a rule for a canvas. */
 .page-wave{
   position:fixed; inset:0; z-index:0; pointer-events:none;
 }
 .page-wave .panel-wave{position:absolute; inset:0}
 .page-wave canvas{display:block; width:100%; height:100%}
-/* The same wash as the hero, at the same strength, so the field on
+/* The same field as the hero, at the same strength, so the field on
    /about is the field on the front page and not a dimmer cousin of it.
-   It was heavier here on purpose — three thousand words over a field
-   instead of one sentence — but "heavier" was done as a second radial
-   stacked on a second flat wash, and the sub-pages came out a different
-   brightness from the scene they link back to. What keeps the column
-   legible is the wash itself — at .50 the crests composite to #2B238B,
-   which is ink-dark by any contrast measure — and the reading measure,
-   which never reaches the corners where the field is loudest. .spine has
-   a z-index and no ground of its own; the words sit on the washed field
-   directly, on every page, which is the point. */
-.page-wave::after{
-  content:""; position:absolute; inset:0;
-  background:rgb(var(--wave-rgb) / var(--wave-veil-a));
-}
+   One pair of tokens, everywhere: it was .70 over 12 12 20 in chrome.css,
+   .50 over 16 16 24 on the landing page and a stacked .55 plus a radial
+   on the sub-pages, and the same canvas came out three different fields.
+
+   The flat wash that used to sit over the shader is not a layer any more.
+   It is the first of the four radials, and it comes up at the edges
+   rather than down over the middle — so the column of reading sits in the
+   quietest part of the field rather than under a pool drawn to rescue it.
+   .spine has a z-index and no ground of its own; the words sit on the
+   field directly, on every page, which is the point. */
 /* Everything the reader came for sits above it. main and footer get a
    layer of their own; the bar already has one. */
 .spine, .foot, .ask, .pager{position:relative; z-index:1}
@@ -931,58 +930,64 @@ body{
 }
 .scene > *:where(:not(.bar):not(.pill)){position:relative; z-index:1}
 .hero-waves{position:absolute; inset:0; z-index:0}
+/* Kept for the day the shader comes back: it is a child, so it paints over
+   the ground below rather than fighting it. */
 .hero-waves canvas{display:block; width:100%; height:100%}
 
-/* ---------- the veil ----------
-   Three layers, ported from chrome.css, and it is three rather than one
-   for reasons all visible the moment you drop one. The pool is what the
-   headline sits in; its stops walk a smoothstep rather than a straight
-   line, because a plateau running into a linear ramp is continuous in
-   value but not in slope and the eye finds that break and draws an edge
-   on it. The linear pass gives the bar something to sit on and eases the
-   bottom out so the field ends rather than being cut off at a line. The
-   flat wash under both keeps the loud corners reading as weather behind a
-   page instead of a picture on it. */
-.hero-waves::after{
-  content:""; position:absolute; inset:0; pointer-events:none;
+/* ---------- the field ----------
+   This was a WebGL shader in waves.js with a three-layer veil over it —
+   a reader pool on a smoothstep, a linear pass to give the bar something
+   to sit on, and a flat wash under both to stop the loud corners reading
+   as a picture rather than as weather.
+
+   It is four static radials now, and the veil is not a layer on top any
+   more: it is the first of them. The blobs sit off-centre and the wash
+   comes UP at the edges, so the middle of the screen — where the headline
+   is, and where a sub-page's column of reading is — stays the quietest
+   part of the field by construction rather than by a pool drawn over it.
+
+   The colours are the brand's, as tokens, so the two themes are one
+   gradient read twice rather than two gradients kept in step by hand.
+   Blob stops fade to `rgb(... / 0)` and never to `transparent`, which is
+   rgba(0,0,0,0) and interpolates through grey. */
+.hero-waves,
+.page-wave .panel-wave{
   background:
-    radial-gradient(ellipse 36rem var(--wave-reader-h) at 50% 46%,
-      rgb(var(--wave-rgb) / .92) 0%,
-      rgb(var(--wave-rgb) / .92) 44%,
-      rgb(var(--wave-rgb) / .80) 56%,
-      rgb(var(--wave-rgb) / .58) 68%,
-      rgb(var(--wave-rgb) / .31) 79%,
-      rgb(var(--wave-rgb) / .09) 90%,
-      rgb(var(--wave-rgb) / 0)  100%),
-    linear-gradient(to bottom,
-      rgb(var(--wave-rgb) / 1) 0%,
-      rgb(var(--wave-rgb) / .32) 11%,
-      rgb(var(--wave-rgb) / 0) 22%,
-      rgb(var(--wave-rgb) / 0) 74%,
-      rgb(var(--wave-rgb) / .34) 86%,
-      rgb(var(--wave-rgb) / .72) 94%,
-      rgb(var(--wave-rgb) / 1) 100%),
-    rgb(var(--wave-rgb) / var(--wave-veil-a));
+    radial-gradient(120% 90% at 50% 40%,
+      rgb(var(--wave-rgb) / 0) 0%,
+      rgb(var(--wave-rgb) / var(--field-wash-mid)) 62%,
+      rgb(var(--wave-rgb) / var(--field-wash-edge)) 100%),
+    radial-gradient(70% 55% at 18% 22%,
+      rgb(var(--field-a) / var(--field-a-o)) 0%,
+      rgb(var(--field-a) / 0) 70%),
+    radial-gradient(65% 55% at 82% 30%,
+      rgb(var(--field-b) / var(--field-b-o)) 0%,
+      rgb(var(--field-b) / 0) 72%),
+    radial-gradient(80% 60% at 50% 96%,
+      rgb(var(--field-c) / var(--field-c-o)) 0%,
+      rgb(var(--field-c) / 0) 70%);
 }
-/* On ink the surround comes UP to meet the pool rather than the pool
-   going down to meet the page. A 0.92 pool over a field two stops
-   brighter is a dark ellipse sitting on the screen however gently it is
-   faded — no falloff shape hides a gap that size. The field is quieter at
-   night for it, which is also what it should be. */
-:root{--wave-rgb:255 255 255; --wave-veil-a:.46; --wave-reader-h:27rem}
-/* .50 and 16 16 24, the same two numbers chrome.css uses, because these
-   two are what set how bright the field reads on every page: the wash is
-   the brightness. It was .70 over 12 12 20 here, .50 over 16 16 24 on the
-   landing page and a stacked .55 + radial on the sub-pages, and the same
-   canvas came out three different fields. One pair, everywhere. */
-:root[data-theme="dark"]{--wave-rgb:16 16 24; --wave-veil-a:.50}
-/* No phone exception. chrome.css used to lighten its night wash to .30
-   on a phone, and for a moment this file copied it; but that rule was
-   written for a hero whose copy sits in a reader pool, and the sub-pages
-   have no pool — at .30 the body text on /about landed straight on
-   unwashed crests. The wash is the brightness, and the brightness is the
-   same on every page at every width, or it is not the same field. */
-@media (max-width:700px){ :root{--wave-reader-h:max(18rem, 34vh)} }
+
+/* --wave-rgb is still the page's own ground and still what .bar::after
+   fills with, so it stays whatever the veil does. --wave-veil-a and
+   --wave-reader-h went with the pool that used them. */
+:root{
+  --wave-rgb:255 255 255;
+  --field-a:172 165 255;  --field-a-o:.55;   /* blue-pale   #ACA5FF */
+  --field-b:220 201 255;  --field-b-o:.62;   /* violet-pale #DCC9FF */
+  --field-c:209 205 255;  --field-c-o:.50;   /* pale-blue   #D1CDFF */
+  --field-wash-mid:.55;   --field-wash-edge:.85;
+}
+/* Night runs the brand's own three — deep blue, vivid blue, deep violet —
+   and washes a shade lighter, because on ink the surround has to come up
+   to meet the middle rather than the middle going down to meet the page. */
+:root[data-theme="dark"]{
+  --wave-rgb:16 16 24;
+  --field-a:53 41 191;    --field-a-o:.55;   /* blue-deep   #3529BF */
+  --field-b:71 55 255;    --field-b-o:.38;   /* blue        #4737FF */
+  --field-c:58 28 134;    --field-c-o:.55;   /* violet-deep #3A1C86 */
+  --field-wash-mid:.45;   --field-wash-edge:.80;
+}
 
 /* The index over the headline: which value is showing, out of how many. */
 .index{

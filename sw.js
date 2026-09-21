@@ -61,7 +61,6 @@ const SHELL = [
   '/config.js',
   '/theme.js',
   '/clock.js',
-  '/waves.js',
   '/styles.css?v=8',
   '/theme.css',
   '/site.css',
