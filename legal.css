@@ -136,6 +136,20 @@
 .legal-back a{text-decoration:none; font-weight:600}
 .legal-back a:hover{text-decoration:underline}
 
+/* privacy and terms: a quiet foot that stays on the legal pages rather
+   than the landing page's band, which leads out to the website */
+.legal-foot{
+  max-width:var(--legal-measure); margin:0 auto;
+  padding:22px var(--legal-gutter) calc(28px + env(safe-area-inset-bottom, 0px));
+  display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:10px 20px;
+  border-top:1.5px solid var(--line);
+  font-size:13.5px; color:var(--faint);
+}
+.legal-foot-links{display:flex; flex-wrap:wrap; gap:6px 18px}
+.legal-foot-links a{color:var(--muted); text-decoration:none; font-weight:600}
+.legal-foot-links a:hover{color:var(--accent)}
+.legal-foot-links a[aria-current="page"]{color:var(--ink)}
+
 /* ---------- the wide layout ----------
    One measured column is right for a phone and wrong for a 1400px screen,
    where it leaves two thirds of the page empty and reads as an unfinished

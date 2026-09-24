@@ -59,6 +59,9 @@ window.MYADHD_DONATE_URL = 'https://donate.stripe.com/00w9ATcWR3EGaOugv718c00';
 
    Note what it does NOT do: it is a switch on the ask, not on access.
    Nothing in the app is gated today — is_entitled() has no callers — so
-   turning this off removes an offer and takes nothing away. */
+   turning this off removes an offer and takes nothing away.
 
-window.MYADHD_BILLING_ENABLED = true;
+   Off on purpose since 2026-09-24: the web app does not sell anything.
+   The rail stays wired, so bringing the plans back is this one line. */
+
+window.MYADHD_BILLING_ENABLED = false;

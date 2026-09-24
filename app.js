@@ -2424,11 +2424,9 @@ function agendaGroup(heading, items, today, late) {
     check.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l5 5L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     check.addEventListener('click', () => markDone(task.id, renderCalendar));
 
-    const slot = document.createElement('span');
-    slot.className = 'cal-slot';
     // A day with no time is not a 00:00 appointment, and should not read as one.
-    slot.textContent = timeLabel(task.at) || 'any time';
-    if (!task.at) slot.classList.add('is-loose');
+    // It leads the meta line rather than taking a column, so the title gets the row.
+    const slot = timeLabel(task.at) || 'any time';
 
     const body = document.createElement('div');
     body.className = 'cal-item-body';
@@ -2438,11 +2436,11 @@ function agendaGroup(heading, items, today, late) {
     const meta = document.createElement('p');
     meta.className = 'cal-item-meta';
     meta.textContent = late
-      ? `${dayLabel(task.when, today)} · ${minutesLabel(task.minutes)}`
-      : `${minutesLabel(task.minutes)} · ${task.energy} energy`;
+      ? `${dayLabel(task.when, today)} · ${slot} · ${minutesLabel(task.minutes)}`
+      : `${slot} · ${minutesLabel(task.minutes)} · ${task.energy} energy`;
     body.append(title, meta);
 
-    card.append(check, slot, body);
+    card.append(check, body);
     list.appendChild(swipeRow(card, task, renderCalendar));
   });
 
@@ -3616,7 +3614,7 @@ function paintAccount() {
       + 'each keep a separate one. Sign in and they become the same list — and '
       + 'the calendar link stops asking you to reconnect.';
     el.acctBtn.textContent = 'Sign in with Google';
-    el.acctBtn.classList.remove('is-hidden');
+    el.acctBtn.classList.remove('is-hidden', 'acct-btn--quiet');
     el.acctHint.textContent = '';
     el.acctCard.classList.remove('is-stale');
     paintLocalNote();
@@ -3650,7 +3648,10 @@ function paintAccount() {
   const listsBusy = window.cloud && cloud.state() === 'working';
   const calBusy = syncState === 'working';
 
+  /* Quiet once signed in: syncing happens by itself, and this is the
+     nudge for when it has not, not the point of the card. */
   el.acctBtn.classList.remove('is-hidden');
+  el.acctBtn.classList.add('acct-btn--quiet');
   el.acctBtn.disabled = listsBusy || calBusy;
   el.acctBtn.textContent = listsBusy || calBusy ? 'Syncing…' : 'Sync now';
 

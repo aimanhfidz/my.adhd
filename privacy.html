@@ -17,29 +17,7 @@
 </head>
 <body>
 
-<!-- The mark, written once: the bar wears it at the top and the footer wears
-     it again at the bottom. Same sprite as index.html and the app. -->
-<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <!-- Seven orange arms: the eighth (lower-right) is detached and carried
-         by the violet capsule sitting just off the centre. -->
-    <g id="logo-mark">
-      <g class="lg-star">
-        <rect x="46.5" y="18" width="7" height="64"/>
-        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
-        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
-        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
-      </g>
-      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
-    </g>
-  </defs>
-</svg>
-
 <nav class="nav legal-nav">
-  <a class="brand-lockup" href="/" aria-label="my.adhd home">
-    <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
-    <span class="wordmark">my<span class="accent">.adhd</span></span>
-  </a>
   <!-- filled in by clock.js, and hidden until it is -->
   <p class="nav-clock" hidden><span class="nc-place"></span><span class="nc-time"></span></p>
   <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
@@ -522,76 +500,21 @@
     </p>
   </div>
 
-  <p class="legal-back"><a href="/">&larr; Back to my.adhd</a></p>
 
   </div>
 </main>
 
 <!-- ============ the footer ============
-     The same band as the landing page, off the same stylesheet. Its measure
-     follows the page it sits under — see --foot-measure in chrome.css. -->
-<footer class="site-foot">
-
-  <div class="foot-inner">
-
-    <div class="foot-brand">
-      <a class="brand-lockup" href="/" aria-label="my.adhd home">
-        <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
-        <span class="wordmark">my<span class="accent">.adhd</span></span>
-      </a>
-      <p class="foot-blurb">
-        A brain dump that answers back. No account, nothing to set up, and
-        your lists stay on your device.
-      </p>
-    </div>
-
-    <nav class="foot-cols" aria-label="Footer">
-      <div class="foot-col">
-        <h2>The app</h2>
-        <ul>
-          <li><a href="/soon">Open my.adhd</a></li>
-          <li><a href="/soon">Add to home screen</a></li>
-        </ul>
-      </div>
-      <div class="foot-col">
-        <h2>The small print</h2>
-        <ul>
-          <li><a href="/privacy" aria-current="page">Privacy</a></li>
-          <li><a href="/terms">Terms</a></li>
-        </ul>
-      </div>
-      <div class="foot-col">
-        <h2>Say hello</h2>
-        <ul>
-          <li><a href="mailto:hello@myadhd.my">hello@myadhd.my</a></li>
-        </ul>
-        <ul class="foot-social">
-          <li><a href="https://www.threads.com/@myadhd.my" aria-label="my.adhd on Threads" rel="me noopener" target="_blank">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17.6 7.3C16.4 5 14.4 3.9 11.8 3.9 7.3 3.9 4.4 7 4.4 12s2.9 8.1 7.4 8.1c2.9 0 5-1.5 5-3.9 0-1.9-1.4-3.2-3.9-3.4"/>
-              <path d="M12.9 12.8c-2 0-3.3.8-3.3 2.1 0 1.2 1 2 2.6 2 2.2 0 3.6-1.4 3.6-4.2 0-2.4-1.1-4-3-4.6"/>
-            </svg>
-          </a></li>
-          <li><a href="https://www.instagram.com/myadhd.my/" aria-label="my.adhd on Instagram" rel="me noopener" target="_blank">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9">
-              <rect x="3.6" y="3.6" width="16.8" height="16.8" rx="5"/>
-              <circle cx="12" cy="12" r="4"/>
-              <circle cx="17.1" cy="6.9" r="1.15" fill="currentColor" stroke="none"/>
-            </svg>
-          </a></li>
-        </ul>
-      </div>
-    </nav>
-
-  </div>
-
-  <div class="foot-base">
-    <p class="foot-note">
-      A tool for getting started — not treatment, therapy, or medical advice.
-    </p>
-    <p class="foot-copy">&copy; <span data-year>2026</span> my.adhd</p>
-  </div>
-
+     Deliberately not the landing page's band: these pages are opened from
+     inside the app, and nothing on them leads out to the website. The
+     browser's Back is the way home. -->
+<footer class="legal-foot">
+  <nav class="legal-foot-links" aria-label="Footer">
+    <a href="/privacy" aria-current="page">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="mailto:hello@myadhd.my">hello@myadhd.my</a>
+  </nav>
+  <p class="legal-foot-copy">&copy; <span data-year>2026</span> my.adhd</p>
 </footer>
 
 <script>
