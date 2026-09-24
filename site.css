@@ -1108,6 +1108,18 @@ body{
   --field-c:58 28 134;    --field-c-o:.55;   /* violet-deep #3A1C86 */
   --field-wash-mid:.45;   --field-wash-edge:.80;
 }
+/* Night accents, a step brighter than the shared theme's. On a field that
+   runs to deep blue and violet the app's tokens sank into it: the violet
+   kicker, ".adhd" in the bar and the grey labels all read as dim. The
+   website only — the app keeps theme.css's values. The wordmark leaves
+   the favicon's #7B3FE4 here on purpose; legibility won over the match. */
+:root[data-theme="dark"]{
+  --accent:#B4ABFF;
+  --focus:rgba(180,171,255,.30);
+  --wordmark-accent:#B08CFF;
+  --muted:#B7B5CA;
+  --faint:#A6A5BB;
+}
 
 /* The index over the headline: which value is showing, out of how many. */
 .index{
@@ -1227,9 +1239,9 @@ body{
 }
 :root[data-theme="dark"]{
   --door-a:247 92 3;     --door-a-hi:.20;  --door-a-lo:.06;  /* orange      #F75C03 */
-  /* On the night ground the real one already measures 4.60:1, so night
-     gets Vivid Orange itself and only daylight needs the deeper cut. */
-  --orange-ink:var(--orange);
+  /* Vivid Orange measures 4.60:1 here but reads dim on the warm card, so
+     night lifts it the other way — lighter, same hue family. */
+  --orange-ink:#FF8A3D;
   --door-b:53 41 191;    --door-b-hi:.45;  --door-b-lo:.18;  /* blue-deep   #3529BF */
 }
 .doors{
