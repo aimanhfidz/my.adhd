@@ -3610,9 +3610,8 @@ function paintAccount() {
     el.acctTitle.textContent = 'Just this device';
     el.acctState.textContent = 'Not signed in';
     el.acctNote.textContent =
-      'Your lists live in this browser alone, so your phone and your laptop '
-      + 'each keep a separate one. Sign in and they become the same list — and '
-      + 'the calendar link stops asking you to reconnect.';
+      'Your lists stay on this device. Sign in and your phone and laptop '
+      + 'share one list, with the calendar still connected.';
     el.acctBtn.textContent = 'Sign in with Google';
     el.acctBtn.classList.remove('is-hidden', 'acct-btn--quiet');
     el.acctHint.textContent = '';

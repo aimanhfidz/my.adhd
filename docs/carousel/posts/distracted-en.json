@@ -1,0 +1,53 @@
+{
+  "slug": "distracted-en",
+  "lang": "en",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Opened the laptop. Gone.",
+      "title": "Why do you get\n[[distracted]] by\neverything?",
+      "sub": "It's not that you've got no discipline. It's that everything's calling you at once."
+    },
+    {
+      "type": "point",
+      "title": "Your brain's\nhunting for [[fuel]],\nnot running away",
+      "body": "The second a task goes boring, an ADHD brain goes looking for something with a pulse. That's not you being stubborn. It's hungry, and your phone's always got snacks."
+    },
+    {
+      "type": "point",
+      "title": "\"One sec\"\nis never\n[[one sec]]",
+      "body": "One notification, one reply, back to work. But every switch, your brain needs a few minutes to find where it was. Ten quick looks and an hour's just gone."
+    },
+    {
+      "type": "point",
+      "title": "The loudest\ndistraction\nis [[in your head]]",
+      "body": "Honestly, it's usually not the phone. It's the thought. \"Wait, did I pay that bill?\" Feels urgent. It can wait an hour. It almost always can."
+    },
+    {
+      "type": "point",
+      "title": "Catch it, [[write]]\nit down, get\nback to it",
+      "body": "That thought doesn't need dealing with now. It just needs somewhere to sit. One line, somewhere fixed, and it stops knocking. Back to the task, not the bill."
+    },
+    {
+      "type": "point",
+      "title": "Give your brain\na [[break]] before\nit steals one",
+      "body": "A brain that's never promised a break will just take one. Twenty minutes on, five minutes off. A distraction with its own slot isn't a distraction anymore."
+    },
+    {
+      "type": "point",
+      "title": "Just come back.\nSkip the\n[[lecture]]",
+      "body": "You notice you drifted, you get annoyed at yourself, you drift again to get away from the annoyed. Just come back. The lecture is distraction number two, and it lasts longer."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext time you\n[[snap back]]",
+      "body": "You don't get distracted because you don't care. You get distracted because everything's invited. Dump it all into my.adhd, get one thing back to start on.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

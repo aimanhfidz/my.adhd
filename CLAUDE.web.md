@@ -54,7 +54,7 @@ is quietly depending on here.
   on a third thing and it stops meaning anything.
 - **The Malay is not a translation and must not read like one.** It is the same
   promises said again by someone who speaks Malay, in `awak`.
-  `docs/bahasa-melayu-voice.md` is the rules. Keys in `site.ms.js` are hashes of
+  `docs/bahasa-melayu-reference.md` is the rules. Keys in `site.ms.js` are hashes of
   the English, so editing English markup silently drops that string back to
   English — grep the old key before you touch it, and mint the new one from the
   exact new markup:
@@ -100,8 +100,10 @@ Reach for these rather than guessing; an agent will not infer any of them.
 | | |
 |---|---|
 | `docs/ui-screens-brief.md` | Every screen and every element on it. A design may restyle anything listed; it may not remove one or invent a new one. |
-| `docs/bahasa-melayu-voice.md` | How the Malay is written, and the failure mode it exists to prevent. |
+| `docs/bahasa-melayu-reference.md` | How the Malay is written: the PMX / MADANI baku register, templates and checklist. Main reference since 2026-09-18. |
+| `docs/bahasa-melayu-voice.md` | The earlier `awak` register, kept for its mechanics (keys, ASRS, clinical claims); superseded on tone. |
 | `docs/visual-first.md` | How much a page may ask someone to read, and what a visual has to earn before it ships. |
+| `docs/polls/README.md` | The WhatsApp community group and the rules for polls posted to it: kinds, limits, the `awak` register, what is off limits, and the log in `docs/polls/log.md`. The `community-poll` skill reads it first. |
 | `docs/stripe-setup.md` | Products, webhook, env vars, test cards. Test mode first. |
 | `docs/supabase-setup.md` | Dashboard settings that are in no diff and fail in ways that look like code bugs — including the `pg_cron` retention job and the `myadhd://auth` redirect the iOS shell needs. |
 | `docs/content/*.md` | The user's own copy, verbatim. Do not edit, shorten, translate or improve it. |

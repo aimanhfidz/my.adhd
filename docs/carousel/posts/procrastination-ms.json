@@ -1,0 +1,53 @@
+{
+  "slug": "procrastination-ms",
+  "lang": "ms",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa yang\n[[penting]] paling\nsukar dimulakan?",
+      "sub": "Kami faham keresahan itu. Bukan malas. Bukan tidak peduli."
+    },
+    {
+      "type": "point",
+      "title": "Semakin penting,\nsemakin [[berat]]\nuntuk dimulakan",
+      "body": "Tugas remeh tidak membawa akibat. Tugas penting datang bersama akibat, dan minda membaca beban itu sebagai bahaya."
+    },
+    {
+      "type": "point",
+      "title": "Memulakan itu\nsatu [[kemahiran]],\nbukan kemahuan",
+      "body": "Ingin bermula dan mampu bermula ialah dua perkara berbeza. Bagi minda ADHD, suis permulaan itu tidak selalu menyala. Ini soal fungsi, bukan soal niat."
+    },
+    {
+      "type": "point",
+      "title": "Menangguh hari ini,\nesok [[lebih berat]]",
+      "body": "Tangguh, lega seketika, kemudian cemas dan bersalah. Esok, tugas yang sama memikul semua itu. Sebab itu hari keempat lebih sukar."
+    },
+    {
+      "type": "point",
+      "title": "Kecilkan langkah\nsehingga tiada\n[[alasan]] menolak",
+      "body": "Bukan \"siapkan cukai\", tetapi buka folder. Bukan \"balas mesej\", tetapi taip nama penerima. Langkah pertama mesti terlalu kecil untuk ditolak."
+    },
+    {
+      "type": "point",
+      "title": "Letakkan permulaan\ndi tempat anda\n[[pasti nampak]]",
+      "body": "Keluarkan dari kepala, letakkan di dalam bilik. Fail dibiarkan terbuka. Kasut di depan pintu. Jangan harapkan ingatan untuk memulakan."
+    },
+    {
+      "type": "point",
+      "title": "Pinjam isyarat\n[[mula]] daripada\norang lain",
+      "body": "Rakan dalam panggilan. Pemasa lima minit. Ruang yang orang lain sedang bekerja. Arahan dari luar lebih mudah dipatuhi daripada arahan kepada diri sendiri."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini untuk\nhari anda\n[[tersekat]] lagi",
+      "body": "Anda tidak gagal untuk peduli, anda cuma belum bermula. Luahkan segalanya dalam my.adhd, dapatkan kembali satu perkara. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

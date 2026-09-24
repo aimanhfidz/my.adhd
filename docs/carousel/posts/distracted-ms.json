@@ -1,0 +1,53 @@
+{
+  "slug": "distracted-ms",
+  "lang": "ms",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Baru buka laptop. Dah hilang.",
+      "title": "Kenapa awak\nsenang sangat\n[[terganggu]]?",
+      "sub": "Bukan tak disiplin. Cuma semua benda ajak awak serentak."
+    },
+    {
+      "type": "point",
+      "title": "Otak awak cari\n[[rangsangan]],\nbukan nak lari",
+      "body": "Bila kerja jadi hambar, otak ADHD pergi cari benda yang lebih hidup. Bukan degil. Dia lapar, dan telefon selalu ada makanan."
+    },
+    {
+      "type": "point",
+      "title": "\"Kejap je\"\ntak pernah\n[[kejap]]",
+      "body": "Satu notifikasi, satu reply, balik kerja. Tapi setiap kali tukar, otak ambil beberapa minit nak cari balik tempat berhenti. Sepuluh kali kejap, sejam lesap."
+    },
+    {
+      "type": "point",
+      "title": "Gangguan paling\nkuat datang dari\n[[dalam]]",
+      "body": "Selalunya bukan telefon yang curi awak. Fikiran sendiri. \"Eh, bil belum bayar.\" Rasa macam urgent, padahal boleh tunggu sejam lagi."
+    },
+    {
+      "type": "point",
+      "title": "Tangkap, [[tulis]],\nlepas tu balik",
+      "body": "Fikiran yang datang tak perlu dilayan sekarang. Dia cuma nak tempat duduk. Tulis satu baris, dia berhenti ketuk. Awak balik ke kerja, bukan ke bil."
+    },
+    {
+      "type": "point",
+      "title": "Bagi otak [[rehat]]\nsebelum dia\ncuri sendiri",
+      "body": "Otak yang tak dijanjikan rehat akan ambil sendiri. Set dua puluh minit kerja, lima minit bebas. Gangguan yang ada slot dalam jadual bukan gangguan lagi."
+    },
+    {
+      "type": "point",
+      "title": "Balik je,\ntak payah\n[[marah]] diri",
+      "body": "Sedar dah hanyut, marah diri sendiri, lepas tu hanyut lagi sebab nak lari dari marah tu. Balik je. Marah tu gangguan kedua, dan dia lagi lama dari yang pertama."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ni untuk\nhari awak\n[[terganggu]] lagi",
+      "body": "Bukan awak tak peduli. Cuma semua benda ajak awak serentak. Luah semua dalam my.adhd, dapat balik satu benda untuk mula.",
+      "cta": {
+        "label": "Follow kami di myadhd.my"
+      }
+    }
+  ]
+}

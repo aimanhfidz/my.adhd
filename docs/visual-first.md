@@ -117,7 +117,7 @@ this file reopens them.
      ```
 
      Then add the Malay under the new key and delete the old one. The Malay is
-     rewritten, not re-translated — `bahasa-melayu-voice.md` is the rules.
+     rewritten, not re-translated — `bahasa-melayu-reference.md` is the rules.
 
    - **`self-check.html`** is the exception. Its keys are hand-named (`lede`,
      `who3`, `not2`) into `test.js`'s own table, so editing the English does

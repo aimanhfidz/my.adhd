@@ -725,7 +725,8 @@ code, .kbd{font-family:var(--mono); font-size:.92em; color:var(--muted)}
             <p class="note">
               Four <strong>7 × 64</strong> bars crossed at 0°, 90°, 45° and −45°,
               the last one halved to <strong>7 × 32</strong> so its lower-right arm
-              is missing. Cap radius <strong>32</strong> from centre.
+              is missing. Cap radius <strong>32</strong> from centre. All four are
+              Vivid Orange, <code>#F75C03</code>.
             </p>
           </div>
 
@@ -739,7 +740,8 @@ code, .kbd{font-family:var(--mono); font-size:.92em; color:var(--muted)}
             <p class="note">
               A round-capped stroke from <strong>64.5, 64.5</strong> to
               <strong>71.5, 71.5</strong>, weight <strong>7</strong>. It is the only
-              violet in the mark and it never changes colour.
+              violet in the mark, <code>#7B3FE4</code>, and it never changes colour
+              — not at night, not on the tile, not in print.
             </p>
           </div>
 
@@ -974,6 +976,24 @@ code, .kbd{font-family:var(--mono); font-size:.92em; color:var(--muted)}
     </div>
 
     <div class="stack-lg">
+      <div>
+        <h4 style="margin-bottom:16px">The logo and the submark &mdash; five values, and no others</h4>
+        <div class="swatches" id="sw-logo"></div>
+        <p class="note" style="margin-top:16px">
+          The <strong>submark</strong> is the mark alone &mdash; the seven orange arms
+          and the violet capsule, on the slate tile or on nothing. It uses
+          <code>#F75C03</code> and <code>#7B3FE4</code>, and <code>#2A2D33</code> only
+          when it needs a ground. The <strong>logo</strong> is that submark plus the
+          word, which adds <code>#101018</code> for <em>my</em> on paper or
+          <code>#FFFFFF</code> for <em>my</em> at night; <em>.adhd</em> takes the
+          capsule&rsquo;s <code>#7B3FE4</code> in both themes, and that is the whole
+          point &mdash; the word and the capsule have to be the same purple or the
+          lockup stops reading as one object. No blue appears in either. No gradient
+          appears in either. A one-colour setting uses the mono file and takes the
+          colour of the type around it.
+        </p>
+      </div>
+
       <div>
         <h4 style="margin-bottom:16px">Primary</h4>
         <div class="swatches" id="sw-primary"></div>
@@ -1509,6 +1529,13 @@ code, .kbd{font-family:var(--mono); font-size:.92em; color:var(--muted)}
 
   /* ---------------- swatches ---------------- */
   var PALETTE = {
+    "sw-logo": [
+      {name:"Vivid Orange", hex:"#F75C03", role:"The seven arms. Submark and logo alike."},
+      {name:"Violet",       hex:"#7B3FE4", role:"The detached eighth arm \u2014 and, in the logo, \u201C.adhd\u201D. Fixed in both themes."},
+      {name:"Tile",         hex:"#2A2D33", role:"The submark\u2019s ground where it needs one: app icon, favicon, consent screen."},
+      {name:"Black",        hex:"#101018", role:"\u201Cmy\u201D on a light ground."},
+      {name:"Paper White",  hex:"#FFFFFF", role:"\u201Cmy\u201D on a dark ground. The only value that swaps between themes."}
+    ],
     "sw-primary": [
       {name:"Vivid Blue",   hex:"#4737FF", role:"--blue · the accent. Interactive chrome, focus rings, links."},
       {name:"Deep Blue",    hex:"#202030", role:"--navy · soft ink, toasts, the night ground's lighter sibling."},

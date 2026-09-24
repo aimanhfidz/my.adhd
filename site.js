@@ -19,40 +19,97 @@
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
-  /* ---------- 1. the phone menu ----------
-     Lifted from the old landing page. The sheet starts [hidden], so a
-     page whose script never arrived has a button that does nothing
-     rather than a menu stuck open over the content. */
-  (function menu() {
+  /* ---------- 1. the disclosures ----------
+     One controller for every [aria-expanded][aria-controls] in the bar:
+     the phone's hamburger and, on a wide screen, each dropdown in the
+     link row. They are the same object — a button that shows a panel —
+     so they are one piece of code rather than two that drift.
+
+     Every panel ships [hidden] in the markup, so a page whose script
+     never arrived has buttons that do nothing rather than menus stuck
+     open over the content.
+
+     These are navigation links inside a disclosure, not a menubar: no
+     role="menu", no arrow-key roving. Tab walks them, which is what a
+     reader expects of a nav and what the markup already says. */
+  (function disclosures() {
     var bar = document.querySelector('.bar');
     if (!bar) return;
-    var btn = bar.querySelector('.bar-toggle');
-    var sheet = document.getElementById('bar-sheet');
-    if (!btn || !sheet) return;
 
-    function setOpen(open) {
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      sheet.toggleAttribute('hidden', !open);
-      document.documentElement.toggleAttribute('data-nav-open', open);
+    var all = [].slice.call(bar.querySelectorAll('[aria-expanded][aria-controls]'))
+      .map(function (btn) {
+        var panel = document.getElementById(btn.getAttribute('aria-controls'));
+        return panel ? { btn: btn, panel: panel, sheet: panel.classList.contains('bar-sheet') } : null;
+      })
+      .filter(Boolean);
+    if (!all.length) return;
+
+    function isOpen(d) { return d.btn.getAttribute('aria-expanded') === 'true'; }
+
+    function setOpen(d, open) {
+      d.btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      d.panel.toggleAttribute('hidden', !open);
+      /* The sheet covers the page, so it locks scrolling; a dropdown
+         hangs off the bar and must not. */
+      if (d.sheet) document.documentElement.toggleAttribute('data-nav-open', open);
     }
-    btn.addEventListener('click', function () {
-      setOpen(btn.getAttribute('aria-expanded') !== 'true');
+
+    /* One at a time. Two panels open at once on a bar this narrow is two
+       panels overlapping. */
+    function closeOthers(keep) {
+      all.forEach(function (d) {
+        if (d === keep || !isOpen(d)) return;
+        /* ...but a panel holding the button being pressed is that
+           button's container, not its peer. The sheet is the case: its
+           two groups live inside it, and closing it on the way to
+           opening one took the whole menu down with it. */
+        if (d.panel.contains(keep.btn)) return;
+        setOpen(d, false);
+      });
+    }
+
+    all.forEach(function (d) {
+      d.btn.addEventListener('click', function () {
+        var open = !isOpen(d);
+        if (open) closeOthers(d);
+        setOpen(d, open);
+      });
+      /* Any link inside closes it — the destination is behind the panel,
+         so leaving it up lands the reader on a covered page. */
+      d.panel.addEventListener('click', function (e) {
+        if (e.target.closest('a')) setOpen(d, false);
+      });
     });
-    /* Any link in the sheet closes it — the destination is behind the
-       sheet, so leaving it up lands the reader on a covered page. */
-    sheet.addEventListener('click', function (e) {
-      if (e.target.closest('a')) setOpen(false);
-    });
+
+    /* Escape closes the innermost thing that is open and hands focus
+       back to whatever opened it. */
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') {
-        setOpen(false); btn.focus();
+      if (e.key !== 'Escape') return;
+      for (var i = all.length - 1; i >= 0; i--) {
+        if (isOpen(all[i])) { setOpen(all[i], false); all[i].btn.focus(); return; }
       }
     });
-    /* Widening past the breakpoint puts the row back and would otherwise
-       leave the sheet covering a page that no longer needs it. */
+
+    /* Press anywhere that is not a panel or its own button and the
+       panels go away. The sheet does not need this — it covers the page,
+       so there is no outside to press — but a dropdown does, and this is
+       the first thing in the repo to want it. */
+    document.addEventListener('pointerdown', function (e) {
+      all.forEach(function (d) {
+        if (!isOpen(d) || d.sheet) return;
+        if (d.panel.contains(e.target) || d.btn.contains(e.target)) return;
+        setOpen(d, false);
+      });
+    });
+
+    /* Crossing the breakpoint swaps the row for the hamburger. Either
+       one left open is a panel covering a page that no longer has it. */
     var wide = window.matchMedia('(min-width:1024px)');
-    var onWide = function () { if (wide.matches) setOpen(false); };
+    var onWide = function () {
+      all.forEach(function (d) {
+        if (isOpen(d) && (wide.matches ? d.sheet : !d.sheet)) setOpen(d, false);
+      });
+    };
     wide.addEventListener ? wide.addEventListener('change', onWide) : wide.addListener(onWide);
   })();
 

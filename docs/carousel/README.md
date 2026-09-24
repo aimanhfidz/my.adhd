@@ -26,11 +26,14 @@ Per slide: `kicker` (cover, keep the trailing full stop), `title`, `sub`
 (cover), `body` (point/outro), `cta.label` (outro, optional),
 `react: false` (outro, hides the icon row).
 
-A `ms` post is written in Malay, not translated into it: `awak` and never
-`anda`, sentences that read as speech, and nothing that could open a press
-release. The rules are in `../bahasa-melayu-voice.md` — the carousel takes
-the louder, social end of them. An `en` and an `ms` post of the same idea
-are two posts, and their slides will not match line for line.
+A `ms` post is written in Malay, not translated into it, in the baku
+register of `../bahasa-melayu-reference.md`: `anda` and a sapaan, `tidak`
+not `tak`, full spellings, no pasar. The deck follows the four-step
+structure there — the cover's `kicker` is the sapaan and its `sub` the line
+of empathy, the early points are prinsip, the later ones ikhtiar, and the
+outro is the khatimah with its hope and Insya-Allah. An `en` and an `ms`
+post of the same idea are two posts, and their slides will not match line
+for line.
 
 In a `title`, `[[word]]` turns violet and `\n` forces a line break. Point
 numbers and the `01 / 07` counter are computed — never type them. Titles
@@ -54,6 +57,13 @@ Writes `01.png … NN.png` at 1080 × 1350 and `example-en.pdf` (one page per
 slide, text selectable). Add a trailing `2` for 2160 × 2700 files. Bump the
 server port between rounds if a CSS edit does not show — the server sends
 `no-store` but the renderer is belt-and-braces about it anyway.
+
+## Once it is posted
+
+Move the rendered folder into `out/Posted/` (`out/Posted/<slug>/`) when the
+deck has gone up on Instagram. The post JSON stays in `posts/` — it is the
+source, and a re-render writes back to `out/<slug>/`, so a folder in
+`Posted/` is the exact set of files that went live.
 
 ## Hand-tweak in a canvas
 

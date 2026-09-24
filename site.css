@@ -272,6 +272,139 @@ body{
 }
 .bar-links a:focus-visible{outline:none; color:var(--ink); box-shadow:0 0 0 4px var(--focus); border-radius:6px}
 
+/* ---------- the dropdowns ----------
+   Two groups in the row — what we offer, and about — each one button that
+   opens the rest. It was two controls, a link and a chevron beside it,
+   because the label was a real destination: /activities WAS the list of
+   five, and swallowing it into a button would have stranded the page it
+   named. That page is deleted, so there is nothing left to strand and the
+   whole control is the toggle — which is where the press was landing.
+
+   The label sits in a <span data-i18n> with the chevron beside it, never
+   inside: site.js rewrites a data-i18n element's innerHTML whole on a
+   language switch, and its ICON_RE only rescues a bare
+   <i aria-hidden="true">, which this classed one is not.
+
+   A disclosure, not a menubar. role="menu" is for commands and brings a
+   keyboard contract with it that nobody wants on nav links: Tab walks
+   these, which is what the markup already promises. */
+.bar-group-item{
+  /* The panel is a sibling of .bar-group inside this li, so the li is the
+     positioned ancestor. .bar-links is itself position:absolute and
+     centred, so without this the panel anchors to the middle of the row
+     instead of to its own item. */
+  position:relative;
+  display:flex; align-items:center;
+}
+/* The button has to say out loud everything `.bar-links a` was giving the
+   label above, because a <button> inherits none of the page's type. Same
+   reset as `.bar-lang button` further down. */
+.bar-group{
+  display:flex; align-items:center; gap:2px;
+  padding:0; background:none; border:0;
+  font:inherit; font-size:15px; font-weight:500; white-space:nowrap;
+  color:var(--faint); cursor:pointer;
+  transition:color .18s var(--ease);
+}
+.bar-chev{
+  flex:none; display:grid; place-items:center;
+  width:20px; height:20px;
+  transition:transform .22s var(--ease);
+}
+.bar-chev svg{display:block; width:14px; height:14px}
+.bar-group:hover{color:var(--ink)}
+/* Open state off the attribute, no state class — the same way
+   .bar-toggle draws its X further down. */
+.bar-group[aria-expanded="true"]{color:var(--ink)}
+.bar-group[aria-expanded="true"] .bar-chev{transform:rotate(180deg)}
+.bar-group:focus-visible{outline:none; color:var(--ink); box-shadow:0 0 0 4px var(--focus); border-radius:6px}
+/* A group reads as lit when the page you are on lives inside it. Quietly,
+   in ink — not the orange dot, which is the site's "act now" colour and
+   is spent on the pill already. The [aria-current] is on a link inside
+   the closed panel now, which is the only place the current page is
+   named, so the group reaches in for it. */
+.bar-group-item:has([aria-current]) .bar-group{color:var(--ink)}
+
+.bar-menu{
+  position:absolute; top:calc(100% + 12px); left:50%; translate:-50% 0;
+  /* Positive, so it sits over the bar's blur pane at -1. Copying the
+     sheet's -2 would bury it behind that pane. */
+  z-index:1;
+  min-width:max(180px, 100%);
+  padding:8px;
+  /* The bar's ground is a ::after clipped to inset:0, so a panel hanging
+     below it gets nothing and has to bring its own. */
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+  box-shadow:0 22px 50px -24px rgba(16,16,40,.40);
+}
+/* Opaque, and deliberately not translucent like the bar's own pane. The
+   bar is a thin strip and a blur behind it reads as glass; a panel is a
+   block sitting over a page of reading, and at 86% with the blur not
+   applied — which is what happens in any engine that skips
+   backdrop-filter, and in an offscreen snapshot — the headline behind it
+   reads straight through the menu. Measured that way round: it did. */
+/* Required: the panel sets a display type, which would otherwise beat
+   the hidden attribute — the same reason .bar-sheet[hidden] exists. */
+.bar-menu[hidden]{display:none}
+.bar-menu ul{list-style:none; display:grid; gap:1px}
+.bar-menu a{
+  display:block; white-space:nowrap;
+  padding:9px 14px; border-radius:10px;
+  font-size:14.5px; font-weight:500;
+  color:var(--muted); text-decoration:none;
+  transition:color .18s var(--ease), background .18s var(--ease);
+}
+.bar-menu a:hover{color:var(--ink); background:var(--wash)}
+.bar-menu a[aria-current]{color:var(--ink); background:var(--wash-2)}
+.bar-menu a[aria-current]::after{display:none}
+.bar-menu a:focus-visible{outline:none; color:var(--ink); background:var(--wash); box-shadow:0 0 0 3px var(--focus)}
+
+/* ---------- the same two groups inside the phone sheet ----------
+   Same controller, same markup shape; only the dress differs. Full
+   width, stacked, no floating ground — it is already on one. */
+.bar-sheet .bar-group{
+  /* A button is shrink-to-fit even at display:flex, so space-between only
+     reaches the row's right edge once the width is said out loud. */
+  width:100%; justify-content:space-between;
+  /* Everything `.bar-sheet ul a` below gave this label while it was a
+     link — the row's height and the sheet's larger voice. It stopped
+     being an <a>, so it stopped inheriting any of it. */
+  padding:clamp(12px,2vh,16px) 2px;
+  font-size:clamp(19px,5.2vw,24px); font-weight:500; letter-spacing:-.02em;
+  color:var(--ink);
+}
+/* ...including the accent on the row holding the page you are on, which
+   the label used to get from `.bar-sheet ul a[aria-current]`. The
+   [aria-current] now sits on a link inside the panel, so the row has to
+   reach in for it. */
+.bar-sheet .bar-row:has([aria-current]) > .bar-group{color:var(--accent)}
+.bar-sheet .bar-group:focus-visible{
+  outline:2px solid var(--accent); outline-offset:2px;
+  border-radius:6px; box-shadow:none;
+}
+.bar-sheet .bar-chev{width:44px; height:44px}
+.bar-sheet .bar-chev svg{width:18px; height:18px}
+.bar-sheet .bar-menu{
+  position:static; translate:none; min-width:0;
+  padding:0 0 10px 14px;
+  background:none; border:0; border-radius:0; box-shadow:none;
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+}
+.bar-sheet .bar-menu a{
+  font-size:clamp(15px,3.6vw,17px); padding:9px 2px;
+  border-radius:6px; background:none;
+}
+.bar-sheet .bar-menu a:hover{background:none; color:var(--ink)}
+/* the group's own row keeps the list's hairline; its panel must not add
+   a second one under the last child */
+.bar-sheet li.bar-row{border-top:1px solid var(--line)}
+.bar-sheet li.bar-row:first-child{border-top:0}
+/* ...and the sheet's own `li + li` hairline must not carry on into the
+   rows inside a group. */
+.bar-sheet .bar-menu li + li{border-top:0}
+
 /* The clock keeps its own auto margin, exactly as it had in the old bar,
    which is what holds the right-hand group against the window's edge. */
 .nav-clock{
@@ -362,16 +495,6 @@ body{
    rather than a sixth row — and their links need styling of their own, or
    they arrive as the browser's underlined blue, which is the one thing on
    this site that would look like a mistake. */
-.bar-sheet .sheet-sub{
-  margin-top:-4px; line-height:2;
-  font-family:var(--mono); font-size:11px; letter-spacing:.12em;
-  text-transform:uppercase; color:var(--faint);
-}
-.bar-sheet .sheet-sub a{
-  color:var(--muted); text-decoration:none;
-  border-bottom:1px solid var(--line-strong);
-}
-.bar-sheet .sheet-sub a:hover{color:var(--ink); border-bottom-color:var(--accent)}
 :root[data-nav-open], :root[data-nav-open] body{overflow:hidden}
 
 
@@ -690,31 +813,15 @@ body{
 :root[data-theme="dark"]{--fig-run:#48466A}
 
 
-/* ============ THE OFFER ROWS ============
-   /activities is five of these stacked. LOUD's Think page sets its
-   services out the same way — numeral, name, one grey line, two
-   paragraphs, a link — and the hairline between rows is what stops five
-   long blocks reading as one undifferentiated wall. */
-/* The list starts under the opener without a second helping of air: the
-   section's own band is already between them, and the first row was
-   adding 80px more on top of it. */
-.offers{list-style:none; margin-top:calc(var(--band) * -0.5)}
-.offer{padding-block:clamp(30px,5vh,58px)}
-.offer + .offer{border-top:1px solid var(--line)}
-.offer .num{display:block; margin-bottom:clamp(16px,2.4vh,26px)}
-.offer h2{
-  font-family:var(--display); font-weight:600;
-  font-size:clamp(26px,3.4vw,44px);
-  line-height:1.16; letter-spacing:-.02em; color:var(--ink);
-  max-width:22ch; text-wrap:balance;
-}
-.offer .offer-sub{
-  margin-top:14px;
-  font-family:var(--mono); font-size:13px; line-height:1.6; color:var(--faint);
-  max-width:60ch;
-}
-.offer .body-copy{margin-top:clamp(20px,2.8vh,30px)}
-.offer .arrow-link{margin-top:clamp(24px,3.4vh,38px)}
+/* The offer rows lived here — /activities was five of them stacked. The
+   page is deleted and nothing else ever carried `.offers`/`.offer`, so
+   the block went with it.
+
+   One loose end it leaves: blog/habits/reading-list/tools each open on a
+   <p class="offer-sub">, but none of them has a `.offer` ancestor, so the
+   mono 13px rule here never reached them — they have been rendering on
+   their inline margin-top alone this whole time, not since the delete.
+   Styling them is a change to four live pages and is not this one. */
 
 
 /* ============ THE PAGE'S WEATHER ============
@@ -751,8 +858,16 @@ body{
    .spine has a z-index and no ground of its own; the words sit on the
    field directly, on every page, which is the point. */
 /* Everything the reader came for sits above it. main and footer get a
-   layer of their own; the bar already has one. */
-.spine, .foot, .ask, .pager{position:relative; z-index:1}
+   layer of their own; the bar already has one.
+
+   This is not optional decoration: the field is position:fixed with
+   z-index 0, so it paints ABOVE any static content that has not claimed a
+   layer. The front page's own two screens were left off this list when it
+   gained the page-wide field and both headlines came out washed grey —
+   the scene looked right only because it is position:relative already and
+   stacks its children at 1. Anything that holds words goes here. */
+.spine, .foot, .ask, .pager,
+.doors, .ending{position:relative; z-index:1}
 /* ...and the bar's ground has to go, or it paints a band across a field
    that now runs the full height of the window. */
 .bar{background:none; border-bottom:0}
@@ -775,6 +890,11 @@ body{
     backdrop-filter:blur(14px) saturate(1.2);
   }
 }
+/* The scene keeps the exception because nothing ever travels under its
+   bar: it is one non-scrolling stage. The front page's bar lives in
+   .doors now, and .doors is followed by two more screens — so it takes
+   the blurred pane every other page has, or the nav prints straight
+   through the card headings on the way past. Measured: it did. */
 .scene .bar::after{display:none}
 
 /* ============ THE MARQUEE ============
@@ -1075,6 +1195,152 @@ body{
 @keyframes cue{0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)}}
 @media (max-width:820px){ .scroll-cue{display:none} }
 
+/* ============ THE TWO DOORS ============
+   The fork between the scene and the ask. A reader arrives not knowing
+   which of two people they are — still wondering, or already told — and
+   until this was here the ask below only ever spoke to the first of them.
+
+   Its own screen, because the question is the only thing that should be
+   on it, and `min-height` rather than `height`: over-tall beats clipped,
+   and the two cards grow with their copy in Malay, which runs longer.
+
+   The front door is tinted orange and the other blue. Orange is the
+   site's signal colour and normally it is spent only on the thing to
+   press — which is what this card is, whole: the entire surface is one
+   button. It is held at .16 falling to .05 so it reads as a warm ground
+   rather than as a fill, because Vivid Orange at strength is a colour
+   for a 56px circle and not for the size of a hand.
+
+   START HERE is orange too, but not Vivid Orange: see --orange-ink
+   below. The arrow keeps the true colour, because a mark answers to
+   3:1 rather than 4.5:1 and passes. */
+:root{
+  --door-a:247 92 3;     --door-a-hi:.16;  --door-a-lo:.05;  /* orange      #F75C03 */
+  /* Orange you can set words in. Vivid Orange is 2.54:1 at label size on
+     the card it belongs to, and the brand book has no darker one — the
+     nearest thing in the palette is the destructive red, which means
+     something else. This is the same hue (21.9deg) at the same
+     saturation, dropped in lightness until it clears 4.5:1 and no
+     further, so it is still the brand's orange and not a brown. */
+  --orange-ink:#B14202;
+  --door-b:172 165 255;  --door-b-hi:.42;  --door-b-lo:.16;  /* blue-pale   #ACA5FF */
+}
+:root[data-theme="dark"]{
+  --door-a:247 92 3;     --door-a-hi:.20;  --door-a-lo:.06;  /* orange      #F75C03 */
+  /* On the night ground the real one already measures 4.60:1, so night
+     gets Vivid Orange itself and only daylight needs the deeper cut. */
+  --orange-ink:var(--orange);
+  --door-b:53 41 191;    --door-b-hi:.45;  --door-b-lo:.18;  /* blue-deep   #3529BF */
+}
+.doors{
+  min-height:100dvh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+  /* The top padding clears the fixed bar, so centring in what is left
+     already sits low; the heavier floor lifts the whole block by about
+     half the difference without moving it off centre. */
+  padding:calc(var(--bar-h) + clamp(24px,5vh,56px)) var(--gutter) clamp(86px,17vh,190px);
+}
+/* The hairline belongs between the two screens, and the doors are the
+   first of them — so it goes on the scene's top edge and not the doors'. */
+.doors + .scene{border-top:1px solid var(--line)}
+.doors .kicker{margin-bottom:clamp(14px,2vh,22px)}
+.doors-line{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(28px,4.6vw,60px); line-height:1.06; letter-spacing:-.025em;
+  color:var(--ink); max-width:20ch; text-wrap:balance;
+}
+.doors-lede{
+  margin-top:clamp(18px,2.6vh,30px);
+  font-size:clamp(15px,1.6vw,19px); line-height:1.55; color:var(--muted);
+  max-width:58ch; text-wrap:balance;
+}
+.doors-grid{
+  margin-top:clamp(28px,4.6vh,56px);
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(16px,2vw,28px);
+  width:100%; max-width:1000px;
+}
+/* One above the other before the two columns get narrower than their
+   own headings. */
+@media (max-width:760px){ .doors-grid{grid-template-columns:minmax(0,1fr)} }
+
+/* The whole card presses, not just the line at the bottom of it. The card
+   stays an <article> and the control stays the one <button>, which then
+   throws a pseudo-element over the card to take the clicks: a <button>
+   wrapped round the heading and the paragraph would be invalid — its
+   content model is phrasing content — and a screen reader would read the
+   whole card out as one long label. This way the heading is still a
+   heading, there is still exactly one thing in the tab order, and the
+   focus ring is drawn round the card rather than round the text. The one
+   cost is that text inside a card can no longer be selected, which is
+   what asking for the whole thing to be a button buys. */
+.door{
+  position:relative;
+  display:flex; flex-direction:column; text-align:left;
+  padding:clamp(24px,3vw,38px);
+  border-radius:var(--radius-lg);
+  cursor:pointer;
+  transition:translate .18s var(--ease);
+}
+.door:hover{translate:0 -2px}
+.door--start{
+  background:linear-gradient(158deg,
+    rgb(var(--door-a) / var(--door-a-hi)) 0%,
+    rgb(var(--door-a) / var(--door-a-lo)) 100%);
+}
+.door--known{
+  background:linear-gradient(158deg,
+    rgb(var(--door-b) / var(--door-b-hi)) 0%,
+    rgb(var(--door-b) / var(--door-b-lo)) 100%);
+}
+.door-kicker{
+  font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.door--start .door-kicker{color:var(--orange-ink)}
+.door--known .door-kicker{color:var(--accent)}
+.door-title{
+  margin-top:clamp(12px,1.6vh,18px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(20px,2.2vw,29px); line-height:1.15; letter-spacing:-.02em;
+  color:var(--ink); max-width:15ch;
+}
+.door-body{
+  margin-top:clamp(12px,1.6vh,18px);
+  font-size:clamp(14px,1.4vw,17px); line-height:1.6; color:var(--ink-soft);
+  max-width:40ch;
+}
+/* A real <button>, and empty on purpose: it goes nowhere yet, and an <a>
+   with a dead href would look like a destination and drop out of the tab
+   order. margin-top:auto puts both on the same line however unevenly the
+   two bodies wrap. */
+.door-cta{
+  margin-top:auto; padding:clamp(18px,2.6vh,30px) 0 0;
+  align-self:flex-start;
+  display:inline-flex; align-items:center; gap:10px;
+  background:none; border:0; cursor:pointer;
+  font:inherit; font-size:clamp(14px,1.4vw,17px); font-weight:500;
+}
+/* the card-sized hit area, and the card-sized focus ring */
+.door-cta::after{
+  content:""; position:absolute; inset:0;
+  border-radius:var(--radius-lg);
+}
+.door-cta i{display:block; transition:transform .18s var(--ease)}
+.door-cta svg{width:18px; height:18px; display:block}
+.door:hover .door-cta i{transform:translateX(4px)}
+/* The label is ink and only the arrow is orange. Orange text at this size
+   measured 2.92:1 on the card's own warm ground — it was already 3.24:1 on
+   paper, which is what visual-first.md means by "heading, edge, dot, mark
+   only". The arrow is a mark, so it keeps the colour and the card keeps
+   its meaning. */
+.door-cta{color:var(--ink)}
+.door--start .door-cta i{color:var(--orange)}
+.door-cta:focus-visible{outline:none}
+.door-cta:focus-visible::after{box-shadow:0 0 0 3px var(--focus)}
+
+
 /* The front page's last screen. The ask and the sign-off are one
    composition, not two blocks that happen to be adjacent: the ask takes
    whatever height is left and centres in it, the footer sits on the
@@ -1174,9 +1440,10 @@ body{
   font-size:clamp(16px,1.9vw,20px); line-height:1.55; color:var(--ink-soft);
   max-width:52ch; text-wrap:balance;
 }
-/* Two ways on, and they are not equal: the organisation's front door is
-   the self-check, and the app is the thing you reach for once you know.
-   So one is the orange button and the other is a plain link beside it. */
+/* One way on. There were two, the self-check and a plain link to the
+   offers page beside it; that page is gone and the menu is how you reach
+   the five now, so the front door is the only thing left standing here.
+   Still a flex row — wrap and centring hold a single child fine. */
 .funnel-actions{
   margin-top:clamp(26px,4.4vh,54px);
   display:flex; flex-wrap:wrap; align-items:center; justify-content:center;

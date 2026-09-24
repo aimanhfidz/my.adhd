@@ -1,0 +1,58 @@
+{
+  "slug": "sleep-ms",
+  "lang": "ms",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa sukar\nuntuk [[tidur]]\nwalaupun penat?",
+      "sub": "Kami faham. Bukan malas, bukan tidak berdisiplin."
+    },
+    {
+      "type": "point",
+      "title": "Jam badan anda\n[[lewat]], dan\nmemang begitu",
+      "body": "Bagi ramai yang ADHD, isyarat mengantuk tiba sejam dua lebih lewat. Pukul dua belas bagi anda ialah pukul sepuluh bagi orang lain. Ini soal masa, bukan degil."
+    },
+    {
+      "type": "point",
+      "title": "Malam ialah waktu\npertama yang\n[[milik anda]]",
+      "body": "Sepanjang hari anda diganggu, diarah, diperlukan. Apabila rumah sunyi, barulah hari itu terasa milik sendiri. Wajarlah anda enggan melepaskannya."
+    },
+    {
+      "type": "point",
+      "title": "Lampu padam,\n[[fikiran]] pula\nbermula",
+      "body": "Tiada yang dilihat, tiada yang dibuat, dan semua perkara yang belum selesai tiba serentak. Minda yang berlari waktu tidur ialah minda yang tiada masukan."
+    },
+    {
+      "type": "point",
+      "title": "Tetapkan waktu\n[[bangun]], bukan\nwaktu tidur",
+      "body": "Waktu tidur ialah peraturan yang anda bantah pukul satu pagi. Waktu bangun ialah jam yang ditetapkan sekali. Sama setiap hari, dan malam akan mengikut."
+    },
+    {
+      "type": "point",
+      "title": "Pasang penggera\nuntuk [[mula]]\nberehat",
+      "body": "Penat tidak terasa sehingga pukul tiga pagi, jadi isyaratnya mesti dari luar. Penggera pukul sepuluh setengah bukan bermakna tidur, tetapi yang terakhir."
+    },
+    {
+      "type": "point",
+      "title": "Kosongkan kepala\n[[sebelum]]\nberbaring",
+      "body": "Tuliskan apa yang akan anda ulang dalam gelap. Tugas pertama esok, balasan yang tertunggak, yang terlupa. Di atas kertas, ia bukan lagi beban anda."
+    },
+    {
+      "type": "point",
+      "title": "Letakkan telefon\n[[jauh]] daripada\nkatil",
+      "body": "Bukan ditelangkupkan. Bukan dicas di sisi katil. Di bilik lain. Tabiat menatal tidak dipatahkan dengan kemahuan pada tengah malam. Ia hanya dijauhkan."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini untuk\nmalam ini, sekitar\n[[pukul satu]]",
+      "body": "Anda tidak rosak, cuma jam anda berjalan lewat. Luahkan esok ke dalam my.adhd sebelum tidur, dan biar bantal tidak menanggung apa-apa. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "slug": "focus-ms",
+  "lang": "ms",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa sukar\nuntuk [[fokus]],\nmudah terganggu?",
+      "sub": "Kami faham. Bukan kurang usaha, bukan kurang peduli."
+    },
+    {
+      "type": "point",
+      "title": "Tumpuan bukan\n[[suis]] yang\nboleh dipaksa",
+      "body": "Sejak sekolah rendah anda disuruh tumpukan perhatian. Jika usaha semata-mata mencukupi, ia sudah lama berhasil. Ini soal cara minda bekerja."
+    },
+    {
+      "type": "point",
+      "title": "Bukan kurang fokus,\ntetapi kurang\n[[penapis]]",
+      "body": "Bunyi peti sejuk, notifikasi, fikiran tentang makan tengah hari. Semuanya tiba sama kuat. Tiada yang disenyapkan, jadi semuanya bersaing."
+    },
+    {
+      "type": "point",
+      "title": "Yang menarik\nmengatasi yang\n[[penting]]",
+      "body": "Minda ADHD bergerak dengan minat, kebaruan dan desakan, bukan keutamaan. Sebab itu tiga jam hilang pada perkara remeh, tiga minit pada laporan."
+    },
+    {
+      "type": "point",
+      "title": "Jadikan tugas\n[[lebih nyaring]]\ndaripada bilik",
+      "body": "Satu tetingkap. Satu tab. Telefon di bilik lain, bukan ditelangkupkan. Gangguan tidak dapat dilawan dengan kemahuan, tetapi boleh dijauhkan."
+    },
+    {
+      "type": "point",
+      "title": "Beri tumpuan\nsatu [[sandaran]]\ndari luar",
+      "body": "Pemasa yang berjalan. Rakan bekerja di sebelah. Tarikh akhir yang benar-benar hari ini. Tekanan dari luar ialah apa yang minda anda tunggu."
+    },
+    {
+      "type": "point",
+      "title": "Sedari hanyut\n[[lebih awal]],\nbukan kemudian",
+      "body": "Anda pasti hanyut. Kemahirannya ialah sedar lebih cepat. Satu nota di meja tentang apa yang sedang dibuat menukar sejam hilang kepada seminit."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini untuk\nhari tumpuan anda\n[[hanyut]] lagi",
+      "body": "Tumpuan anda tidak rosak, ia cuma perlukan ruang lebih kecil. Luahkan segalanya dalam my.adhd, dapatkan kembali satu perkara. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

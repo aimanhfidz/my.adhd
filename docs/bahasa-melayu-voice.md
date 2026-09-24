@@ -1,5 +1,13 @@
 # The Malay voice
 
+> **Superseded on register, 2026-09-18.** The main reference for every
+> Malay string is now **`bahasa-melayu-reference.md`** — the PMX / MADANI
+> baku register: `anda` and a sapaan, not `awak`; `tidak`, not `tak`; no
+> shortenings, no pasar. What survives from this file is the mechanics:
+> the `site.ms.js` keys, the ASRS and consent copy being off limits, and
+> the ban on clinical claims. Read the new file first; treat the register
+> advice below as history.
+
 Every Malay string on this site is in `site.ms.js`, keyed by a hash of the
 English it replaces. That arrangement makes one mistake very easy: open the
 English, translate the sentence, paste it in. Do that across a hundred and

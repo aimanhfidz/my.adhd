@@ -1,0 +1,58 @@
+{
+  "slug": "procrastination-en",
+  "lang": "en",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "You wrote it down. Again.",
+      "title": "Why can't I start\nthe thing that\n[[actually matters]]?",
+      "sub": "You are not lazy. You are stuck on the start."
+    },
+    {
+      "type": "point",
+      "title": "The important ones\nare the [[hardest]]\nto start",
+      "body": "A task that does not matter costs nothing to get wrong. An important one arrives loaded with consequence, and your brain reads that load as danger."
+    },
+    {
+      "type": "point",
+      "title": "Starting is its own\n[[job]] — and it\ncan fail",
+      "body": "Task initiation is an executive function, like working memory. In ADHD it fires unreliably. Wanting to start and being able to start are different jobs."
+    },
+    {
+      "type": "point",
+      "title": "Knowing what to do\nis [[not]] the same\nas doing it",
+      "body": "You can name the task, break it into steps, put it in three different apps and still not move. The plan was never the missing piece. The first second is."
+    },
+    {
+      "type": "point",
+      "title": "Avoiding it makes\nit [[heavier]]",
+      "body": "Put it off, feel relief, then dread, then shame. Tomorrow the task carries all of that on top of the work. That is why day four is harder than day one."
+    },
+    {
+      "type": "point",
+      "title": "Shrink it until it is\n[[not worth]]\narguing with",
+      "body": "Not \"do the taxes\" — open the folder. Not \"write the email\" — type the name in the To field. Make the first move so small that refusing it feels silly."
+    },
+    {
+      "type": "point",
+      "title": "Leave the start\nwhere you will\n[[trip over it]]",
+      "body": "Out of your head and into the room. The file left open. The shoes by the door. Do not ask yourself to remember to begin."
+    },
+    {
+      "type": "point",
+      "title": "Borrow someone\nelse's [[starting]]\nsignal",
+      "body": "A friend on a call. A timer set for five minutes. A room where other people are working. An external start is easier to obey than one you generate."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext time you are\n[[stuck]]",
+      "body": "You did not fail to care. You failed to start — and starting is the part you can fix. Dump the rest into my.adhd and get one thing back.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

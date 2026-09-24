@@ -1,0 +1,58 @@
+{
+  "slug": "time-blindness-ms",
+  "lang": "ms",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa masa\n[[hilang]] tanpa\ndisedari?",
+      "sub": "Kami faham keresahan itu. Bukan cuai. Bukan tidak menghargai masa."
+    },
+    {
+      "type": "point",
+      "title": "Hanya ada dua masa:\n[[sekarang]] dan\nbukan sekarang",
+      "body": "Bagi minda ADHD, apa sahaja selepas \"sekarang\" terasa jauh. Tarikh akhir minggu depan tiada beratnya, sehinggalah ia menjadi esok."
+    },
+    {
+      "type": "point",
+      "title": "Masa berlalu\n[[tanpa terasa]]",
+      "body": "Ramai orang dapat merasai berapa lama sesuatu telah berlalu. Bagi minda ADHD, rasa itu samar. Sejam dan lima minit boleh terasa sama."
+    },
+    {
+      "type": "point",
+      "title": "Setiap tugas\nkelihatan lebih\n[[singkat]]",
+      "body": "\"Mandi sekejap\" melupakan tuala, pakaian dan rambut. Kita merancang bahagian tengah sesuatu tugas, lalu terlupa hujung dan pangkalnya."
+    },
+    {
+      "type": "point",
+      "title": "Jadikan masa\nsesuatu yang\n[[boleh dilihat]]",
+      "body": "Jam di setiap bilik. Pemasa visual yang menunjukkan minit semakin berkurang. Jika masa tidak terasa, letakkan ia di depan mata."
+    },
+    {
+      "type": "point",
+      "title": "[[Gandakan]]\nanggaran pertama\nanda",
+      "body": "Buat anggaran, kemudian gandakan. Tiba awal secara tidak sengaja lebih baik daripada lewat sekali lagi."
+    },
+    {
+      "type": "point",
+      "title": "Pasang penggera\nuntuk [[beralih]],\nbukan untuk acara",
+      "body": "Bukan 3:00 untuk mesyuarat, tetapi 2:40 untuk berhenti. Meninggalkan kerja semasa ialah bahagian paling sukar. Tandakan detik itu."
+    },
+    {
+      "type": "point",
+      "title": "Kira [[mundur]]\ndari tarikh akhir",
+      "body": "Perlu keluar jam 8:30? Kasut 8:25, beg 8:20, siap mandi 8:00. Satu masa yang jauh menjadi beberapa masa dekat yang dapat dirasai."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini untuk\nhari masa anda\n[[hilang]] lagi",
+      "body": "Jam anda tidak rosak, cuma senyap. Dengan ikhtiar kecil, masa boleh dilihat. Luahkan segalanya dalam my.adhd, dapatkan kembali satu perkara. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

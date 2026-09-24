@@ -26,7 +26,11 @@ class CleanUrls(http.server.SimpleHTTPRequestHandler):
 
     def translate_path(self, path):
         found = super().translate_path(path)
-        if not os.path.exists(found) and not path.endswith('/') and os.path.exists(found + '.html'):
+        # The .html sibling wins over a directory of the same name. /tools
+        # is both tools.html and tools/, which holds bar.py — and testing
+        # existence first handed the directory the route and served a file
+        # listing. Vercel resolves this the other way round, so this did.
+        if not path.endswith('/') and os.path.exists(found + '.html'):
             return found + '.html'
         return found
 

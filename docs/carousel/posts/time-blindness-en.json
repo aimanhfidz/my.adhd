@@ -1,0 +1,58 @@
+{
+  "slug": "time-blindness-en",
+  "lang": "en",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "It said five minutes. It was an hour.",
+      "title": "Why does time\n[[disappear]] when\nI am not looking?",
+      "sub": "You are not careless. Your sense of time is just quiet."
+    },
+    {
+      "type": "point",
+      "title": "There are only two\ntimes: [[now]] and\nnot now",
+      "body": "Anything past \"now\" feels far away. A deadline next week has no weight at all — until the moment it becomes tomorrow."
+    },
+    {
+      "type": "point",
+      "title": "You do not [[feel]]\ntime passing",
+      "body": "Most people carry a background sense of how long something has taken. With ADHD that sense is faint. An hour and five minutes can feel the same."
+    },
+    {
+      "type": "point",
+      "title": "Every task looks\n[[shorter]] than\nit is",
+      "body": "\"A quick shower\" forgets the towel, the clothes, the hair. You plan for the middle of a task and lose the edges on either side."
+    },
+    {
+      "type": "point",
+      "title": "Make time something\nyou can [[see]]",
+      "body": "A clock in every room. A visual timer that shows the minutes shrinking. If you cannot feel time, put it where your eyes already are."
+    },
+    {
+      "type": "point",
+      "title": "[[Double]] your\nfirst guess",
+      "body": "Estimate, then double it. Arriving early by accident is kinder to you than arriving late again."
+    },
+    {
+      "type": "point",
+      "title": "Set the alarm for\nthe [[switch]], not\nthe event",
+      "body": "Not 3:00 for the meeting — 2:40 to stop what you are doing. Leaving the current thing is the hard part, so that is the moment to mark."
+    },
+    {
+      "type": "point",
+      "title": "Count [[backwards]]\nfrom the deadline",
+      "body": "Out the door at 8:30? Shoes at 8:25, bag at 8:20, showered by 8:00. One far-off time becomes several near ones you can actually feel."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext time an hour\n[[vanishes]]",
+      "body": "Your clock is not broken, it is quiet. Make time loud enough to see. Dump the rest into my.adhd and get one thing back.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

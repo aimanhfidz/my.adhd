@@ -1,0 +1,58 @@
+{
+  "slug": "focus-en",
+  "lang": "en",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Twelve tabs open. None of them the one.",
+      "title": "Why can't I just\n[[focus]] on\nthe thing?",
+      "sub": "You are not unfocused. You are focused on everything."
+    },
+    {
+      "type": "point",
+      "title": "Attention is not\na [[dial]] you\nturn up",
+      "body": "You have heard \"concentrate harder\" since primary school. If effort alone worked, it would have by now. Attention in ADHD is not low. It is unregulated."
+    },
+    {
+      "type": "point",
+      "title": "You do not lack\nfocus. You lack\na [[filter]]",
+      "body": "The fridge hum, the notification, the thought about lunch: they all arrive at the same volume as the task. Nothing is muted, so everything competes."
+    },
+    {
+      "type": "point",
+      "title": "Interesting beats\n[[important]],\nevery time",
+      "body": "Your brain runs on interest, novelty and urgency, not on priority. That is why you can lose three hours to a rabbit hole and three minutes to a report."
+    },
+    {
+      "type": "point",
+      "title": "The distraction\nis usually a\n[[relief]]",
+      "body": "A task that is boring or unclear is uncomfortable to hold. Your attention leaves it the way a hand leaves a hot pan. It is escape, not failure."
+    },
+    {
+      "type": "point",
+      "title": "Make the task\n[[louder]] than\nthe room",
+      "body": "One window. One tab. Phone in another room, not face down. You cannot out-will a distraction, but you can make it walk further to reach you."
+    },
+    {
+      "type": "point",
+      "title": "Give your focus\nan [[edge]] to\nlean on",
+      "body": "A timer running. A person working beside you. A deadline that is real today, not next month. External pressure is what your brain was waiting for."
+    },
+    {
+      "type": "point",
+      "title": "Catch the drift\n[[early]], not\nan hour later",
+      "body": "You will drift. The skill is noticing sooner. A note on the desk saying what you were doing turns an hour lost into a minute lost."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext time you\n[[wander off]]",
+      "body": "Your attention is not broken. It just needs a smaller room. Dump everything into my.adhd and get one thing back to point it at.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

@@ -36,6 +36,9 @@ ios/Local.xcconfig
 # Carousel renders and seeded canvases are output, not source.
 docs/carousel/out/
 
+# The compiled SVG rasteriser — a binary, not source.
+icons/out/
+
 # Reference captures and design exports — input to the redesign, not
 # source, and 116MB of PNGs in a public repo. They stay on disk here.
 loudsrl_website_screenshots/

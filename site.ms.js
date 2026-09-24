@@ -6,9 +6,9 @@
    where an arrow-icon sits inside a link; site.js puts the original back.
 
    THIS IS NOT A TRANSLATION. It is the same thing said again by someone
-   who speaks Malay — `awak`, short sentences, no DBP register — and it
+   who speaks Malay — baku, `anda`, short sentences (see the reference) — and it
    will not line up clause for clause with the English. The rules, the
-   word bank and the checklist are in docs/bahasa-melayu-voice.md; read
+   register, templates and checklist are in docs/bahasa-melayu-reference.md; read
    them before adding a string, and keep the legal pages and the medical
    disclaimer formal where they already are.
 
@@ -17,11 +17,9 @@
    about translation vs instrument: they get no voice pass. */
 window.MYADHD_MS = {
   strings: {
-  "ie58f7f8": "Aktiviti",
   "i3ffb811": "Tentang kami",
   "i2c2cd2a": "Testimoni",
   "i4832e45": "Hubungi kami",
-  "ib226a42": "Apa yang kami tawarkan: <a href=\"/self-check\">Semakan kendiri</a> · <a href=\"/blog\">Blog</a> · <a href=\"/habits\">Tabiat</a> · <a href=\"/reading-list\">Senarai bacaan</a> · <a href=\"/tools\">Alatan</a>",
   "ia9dfd3a": "SEMAKAN KENDIRI",
   "i00e97c0": "BLOG",
   "i6307583": "TABIAT",
@@ -32,36 +30,23 @@ window.MYADHD_MS = {
   "i5abc5dd": "Kalau ada yang terasa macam awak, itu belum tentu <span class=\"adhd-word\">ADHD</span>. Tapi mungkin ia berbaloi untuk awak tahu.",
   "i6fcbae3": "Sepuluh minit dan satu log masuk Google. Percuma. Ia takkan diagnos awak &mdash; ia cuma beritahu sama ada perbualan itu berbaloi.",
   "ia8ac426": "Buat semakan kendiri {icon}",
-  "i3ace36a": "{icon} Lihat semua yang kami ada",
   "ide9430f": "Alat untuk mula &mdash; bukan rawatan, terapi, atau nasihat perubatan.",
-  "i08a28d8": "Apa yang kami tawarkan.",
-  "i3c58793": "Apa Yang Kami Tawarkan",
-  "i05157ae": "Nak faham <span class=\"adhd-word\">ADHD</span> tak sepatutnya perlukan surat rujukan dan tunggu enam bulan. Semua di bawah ni percuma, bahasa senang, dan dibuat untuk orang Malaysia.",
-  "i375a488": "Mula Dengan Semakan Kendiri Percuma",
-  "ie3b5bf4": "Berdasarkan soal selidik saringan yang digunakan perkhidmatan kesihatan Malaysia",
-  "ia903da2": "Sepuluh minit dan satu log masuk Google. Percuma. Jawab jujur, dan awak dapat gambaran jelas sama ada ciri-ciri awak cukup kuat untuk pergi buat penilaian penuh.",
-  "i35c7d01": "Ini alat saringan, bukan diagnosis &mdash; yang boleh bagi diagnosis cuma pakar psikiatri atau ahli psikologi klinikal. Tapi ia beritahu awak sama ada perbualan itu berbaloi, dan ia bagi awak sesuatu yang kukuh untuk dibawa ke temu janji &mdash; bukan sekadar &ldquo;doktor, saya rasa saya ada masalah fokus.&rdquo;",
-  "i22ee5b3": "{icon} Buat semakan kendiri",
   "ie81a7c0": "Kenali <span class=\"adhd-word\">ADHD</span> Yang Sebenar",
   "ic800ad6": "Artikel, penerangan, dan pengalaman sebenar &mdash; dalam Bahasa Inggeris dan Bahasa Malaysia",
   "i15be1dc": "Kebanyakan apa yang orang Malaysia tahu tentang <span class=\"adhd-word\">ADHD</span> datang dari kandungan luar &mdash; sistem kesihatan orang, sekolah orang, jangkaan keluarga orang. Kami tak macam tu.",
   "icceb581": "Kami tulis tentang <span class=\"adhd-word\">ADHD</span> macam mana ia muncul di sini: sesi KPI, kenduri keluarga, sistem sekolah, perkahwinan, rasa malu. Laluan diagnosis di Malaysia. Apa yang rawatan tu sebenarnya libatkan. Apa nak cakap dengan mak ayah yang fikir ini semua alasan.",
-  "i637156e": "{icon} Baca blog",
   "i4e2cf72": "Bina Sistem Yang Sejalan Dengan Otak Awak",
   "i2679c89": "Tabiat yang boleh dibuat, bukan nasihat kuatkan semangat",
   "iecbfe17": "Awak dah pun cuba lebih keras. Tak jadi &mdash; bukan sebab awak lemah, tapi sebab &ldquo;fokus je lah&rdquo; bukan strategi untuk otak yang memang tak makan ayat tu.",
   "ifea22d0": "Bahagian ni tentang apa yang betul-betul membantu: struktur di luar kepala, body doubling, memecah tembok kerja yang awak asyik elak, mengurus masa bila masa tak terasa nyata, dan habiskan hari tanpa bateri kosong menjelang 3 petang. Perubahan kecil yang boleh diuji. Mula dengan satu.",
-  "i2125929": "{icon} Teroka tabiat",
   "id2640b3": "Buku Yang Berbaloi Masa Awak",
   "ia7fd532": "Dipilih, jujur, dan realistik tentang tumpuan awak",
   "i2ea04e4": "Rak <span class=\"adhd-word\">ADHD</span> sesak, dan banyak yang bunyi je. Kami syorkan apa yang kami betul-betul dah baca, dengan nota buku itu untuk siapa &mdash; orang dewasa yang baru didiagnos, ibu bapa, pasangan, atau orang yang nak sains dia je.",
   "i6084309": "Kalau ada versi audio, kami bagitahu. Kalau buku tu panjang dan berulang-ulang, kami bagitahu juga.",
-  "i3d1ca79": "{icon} Lihat senarai bacaan",
   "i8899c05": "Alatan Yang Meringankan Beban",
   "i807b8c9": "Aplikasi, pemasa, dan sistem yang ingat bagi pihak awak",
   "iafd634e": "Alat yang tepat tak baiki <span class=\"adhd-word\">ADHD</span>. Ia cuma angkat beban tu keluar dari kepala awak, letak kat benda yang tak lupa.",
   "ie4a2411": "Kami uji apa yang kami syorkan, dan kami bagitahu harganya, sama ada versi percuma dah cukup, dan &mdash; jujur &mdash; sama ada ia masih ada dalam telefon awak sebulan lagi.",
-  "i24377e4": "{icon} Tengok alatan",
   "ibc98198": "Seterusnya",
   "id3c7ae2": "{icon} Blog",
   "i53ac30e": "Luah fikiran, ia balas balik. Tanpa akaun, tak payah set apa-apa, dan senarai awak kekal dalam peranti awak.",
@@ -107,7 +92,6 @@ window.MYADHD_MS = {
   "i5c9bc44": "Perkataan dalam aplikasi yang buat awak berhenti dan baca dua kali",
   "i2514534": "Benda yang buat awak asyik buka aplikasi lain",
   "id4ad5f6": "Takde sistem tiket di sebalik ni. E-mel sampai kepada manusia.",
-  "ie778b83": "{icon} Aktiviti",
   "i51c59b0": "Apa yang kami tawarkan &middot; 02.",
   "i6e3d0e4": "Blog.",
   "ie468aa8": "<span class=\"adhd-word\">ADHD</span> macam mana ia muncul di sini.",
@@ -221,7 +205,25 @@ window.MYADHD_MS = {
   "i1dc3f38": "Nak kami bagitahu bila dia buka?",
   "i916ff37": "Hantar satu baris ke alamat kat bawah tu, nanti kami balas bila dia dah buka. Takde senarai, takde borang, takde newsletter &mdash; cuma orang, dan satu jawapan.",
   "i3bc2e39": "Tempat buang isi kepala tu tutup buat masa ni. Semakan kendiri tak tutup, dan itu bahagian yang bagi awak jawapan.",
-  "i5b065b3": "Kalau fokus, mula benda, atau habiskan benda tu sebabnya awak datang sini, saringan tu memang bahagian yang lagi berguna pun."
+  "i5b065b3": "Kalau fokus, mula benda, atau habiskan benda tu sebabnya awak datang sini, saringan tu memang bahagian yang lagi berguna pun.",
+
+  /* the two doors, index.html. The page says `awak`; the two card
+     headings are the reader's own sentence about themselves, so those
+     two are `saya`. "Take the self-check" is the same English as the
+     funnel's button, so it hashes to the same key and is already above. */
+  "i4ebeda0": "Dua jalan masuk.",
+  "if310a6d": "Memahami ADHD pada dewasa.<br />Awak bukan seorang diri.",
+  "if5d23ed": "Semakan kendiri sepuluh minit, dan apa yang boleh dibuat dengan jawapannya &mdash; untuk orang dewasa di Malaysia yang baru mula terfikir, dan yang memang sudah tahu.",
+  "i54acc28": "Mula di sini",
+  "i9a5c579": "Saya rasa saya mungkin ADHD",
+  "iaf79f97": "Saringan ringkas berdasarkan ASRS, alat yang digunakan pakar kesihatan mental. Sepuluh minit, percuma, dan ia takkan diagnos awak.",
+  "i2def595": "Saya memang dah tahu",
+  "ia734bda": "Saya sudah didiagnos",
+  "i9299d0a": "Tabiat, senarai bacaan dan alatan untuk lalui hari &mdash; dan my.adhd, yang tukar semua yang bersepah dalam kepala jadi satu benda untuk buat sekarang.",
+  "i89441a0": "Hidup dengan ADHD {icon}",
+
+  /* the nav groups */
+  "i6b21fb7": "Tentang"
 },
   aria: {
   "197101e": "Buka menu",

@@ -749,7 +749,7 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `theme.css` | Palette and type. Loaded by **every** page before its own stylesheet |
 | `favicon.svg` | The logo mark, standalone |
 | `fonts/` | Baloo 2 (variable, wght 400-800), self-hosted |
-| `docs/` | README screenshots and the two theme gifs, plus the documents that are instructions rather than content — `ui-screens-brief.md`, `bahasa-melayu-voice.md`, `stripe-setup.md`, `supabase-setup.md`, `content/*.md`. Not served by the app |
+| `docs/` | README screenshots and the two theme gifs, plus the documents that are instructions rather than content — `ui-screens-brief.md`, `bahasa-melayu-reference.md`, `bahasa-melayu-voice.md`, `taglines.md`, `stripe-setup.md`, `supabase-setup.md`, `content/*.md`. Not served by the app |
 | `styles.css` | App layout: one white page, content held to `--measure` (720px), gradient pill actions |
 | `app.js` | State, triage call, ordering, rendering, the composer, the matrix (shell only), the notes editor, the calendar, the profile, the calendar sync |
 | `gcal.js` | Google Calendar: the OAuth token dance and the three verbs. Loads before `app.js`, which only ever asks it whether the feature is available |
@@ -773,7 +773,7 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `install.html` / `install.css` | The "add to home screen" walkthrough |
 | `privacy.html` / `terms.html` | The legal pages. Written against the code -- if they disagree with it, one of the two is a bug |
 | `legal.css` | Long-form prose: one measured column. The only stylesheet on the site that is about reading |
-| `sw.js` / `site.webmanifest` / `icons/` | The PWA shell: service worker, manifest, and the icon set behind it |
+| `sw.js` / `site.webmanifest` / `icons/` | The PWA shell: service worker, manifest, and the icon set behind it — plus the wordmark lockup (`wordmark*.svg`, outlined by `wordmark.py`) and `snap.swift`, which turns an SVG into a transparent PNG |
 | `animation/` | Logo morph exports — self-animating svg, mp4, gif. For social and this README |
 | `animation/app/` | The loading screen's mp4, one per theme. **Loaded by the app** |
 | `animation/source/` | `gen.py` (svg), `render.py` (gif + mp4), the four beats, the motion sheet |
@@ -905,7 +905,6 @@ design is written down in `docs/loud-redesign-plan.md`.
 | URL | What it is |
 |---|---|
 | `/` | The scene — one screen that plays itself, then the funnel. No full footer |
-| `/activities` | **What We Offer** — the five offers, each linking to its own page |
 | `/self-check` | **The test.** A standalone page, outside the site. Google sign-in + a PDPA intake since 2026-09-13 — see below |
 | `/blog` | Offer 02. Empty index, placeholder |
 | `/habits` | Offer 03. Five named habits, explanations placeholder |
@@ -915,10 +914,20 @@ design is written down in `docs/loud-redesign-plan.md`.
 | `/testimonials` | Three real quotes, in the words the people used |
 | `/contact` | Email, Threads, Instagram. No form |
 
-The bar carries four of these: Activities, About us, Testimonials,
-Contact us. The five offer pages are children of Activities
-and show it as the current link. Every page ends on an Ask and a pager,
-and the pagers form one loop through all nine.
+The bar carries all of them, under two dropdowns — What we offer, and
+About. Each is one button that opens its menu; neither label is a link,
+which is why there is no longer an Activities page for the offers to be
+children of. The page you are on is named by the `aria-current` on its
+link inside the menu, and the group it sits in lights up.
+
+**The bar is generated.** Every page's `<nav class="bar">` is written by
+`tools/bar.py` from one table — the desktop row and the phone sheet both,
+so they cannot drift. Edit the markup there and run `python3 tools/bar.py`
+from the repo root; it asserts the old block matched before writing, so a
+page whose bar has drifted fails loudly instead of being overwritten.
+
+Every page ends on an Ask and a pager, and the pagers form one loop
+through all eight.
 
 ### The Malay
 
@@ -937,9 +946,11 @@ the old string's key before you touch the English.
 
 **The Malay is not a translation and must not read like one**, which is the
 one rule about it that is easy to lose. It is the same promises said again
-by someone who speaks Malay, in `awak`, in this brand's voice — the rules,
-the word bank and the checklist are in `docs/bahasa-melayu-voice.md`, and
-the whole file was rewritten against them on 2026-09-13. The screener is
+by someone who speaks Malay, in this brand's voice — the register,
+templates and checklist are in `docs/bahasa-melayu-reference.md` (the PMX /
+MADANI baku register, main reference since 2026-09-18). The file was last
+rewritten wholesale on 2026-09-13, against the earlier `awak` register, and
+has not yet been brought over. The screener is
 the exception in both directions: the eighteen ASRS questions in `test.js`
 are an instrument, not copy, and they get no voice pass at all.
 

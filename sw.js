@@ -32,7 +32,7 @@
    v47: the app is shut behind /soon — every cached copy of /app and
    /install carries the hold now, and /soon has to be cached with them or
    a home-screen copy opened offline redirects into nothing. */
-const CACHE = 'myadhd-v53';   // v53: the matrix is back, for the iOS shell only
+const CACHE = 'myadhd-v54';   // v54: /activities is gone; evict it from v53
 
 const SHELL = [
   '/',
@@ -43,7 +43,6 @@ const SHELL = [
   '/terms',
   /* The public site. '/' above is the scene; these are the pages under
      it. */
-  '/activities',
   '/about',
   '/testimonials',
   '/contact',

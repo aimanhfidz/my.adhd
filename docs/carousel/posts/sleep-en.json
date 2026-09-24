@@ -1,0 +1,58 @@
+{
+  "slug": "sleep-en",
+  "lang": "en",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "It is 2 a.m. Not tired. Wired.",
+      "title": "Why can't I just\n[[go to sleep]]\nlike everyone else?",
+      "sub": "You are not bad at sleep. Your clock runs late."
+    },
+    {
+      "type": "point",
+      "title": "Your body clock\n[[runs late]],\nand always has",
+      "body": "Many ADHD brains send the sleepy signal an hour or two after everyone else's. Midnight to you is ten o'clock to them. That is timing, not stubbornness."
+    },
+    {
+      "type": "point",
+      "title": "The night is the\nfirst hour that\nis [[yours]]",
+      "body": "All day you were interrupted, managed, needed. Then the house goes quiet and the day finally feels like your own. Of course you do not want to hand it back."
+    },
+    {
+      "type": "point",
+      "title": "Lights off is\nwhen the [[thoughts]]\nclock in",
+      "body": "Nothing to look at, nothing to do, and every unfinished thing from the day arrives at once. A racing mind at bedtime is a brain with no input."
+    },
+    {
+      "type": "point",
+      "title": "Anchor the\n[[morning]], not\nthe bedtime",
+      "body": "A bedtime is a rule you will argue with at 1 a.m. A wake time is a clock you set once. Same time every day, weekends too, and the night slowly follows."
+    },
+    {
+      "type": "point",
+      "title": "Set an alarm to\n[[start]] winding\ndown, not to sleep",
+      "body": "You do not notice tired until it is 3 a.m., so make the signal external. An alarm at 10:30 does not mean lights out. It means the next thing you open is the last."
+    },
+    {
+      "type": "point",
+      "title": "Empty your head\n[[before]] the\npillow does it",
+      "body": "Write down what you would otherwise rehearse in the dark. Tomorrow's first task, the reply you owe, the thing you forgot. On paper, it is not yours to hold."
+    },
+    {
+      "type": "point",
+      "title": "Put the phone\nsomewhere you\n[[have to walk]]",
+      "body": "Not face down. Not on charge by the bed. Another room. The scroll is not a habit you break with willpower at midnight. You just make it further away."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for\ntonight, around\n[[1 a.m.]]",
+      "body": "You are not broken at sleep. You are running late on a clock nobody set with you. Dump tomorrow into my.adhd before bed, and let the pillow hold nothing.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

@@ -1,0 +1,265 @@
+<!doctype html>
+<!-- my.adhd — Hari Malaysia poster, 1080×1080.
+
+     The layout of the reference (brushed flag over a pale ground, a small
+     caps line above one huge word, a date under it, a footer strip) in the
+     brand: the lilac wash instead of the pale blue, orange for the caps
+     line, violet for the word, Baloo 2 and DM Mono and nothing else.
+
+     The flag is drawn, not an image: fourteen stripes, the canton, the
+     crescent and the fourteen-point star, all clipped by a mask of brush
+     strokes that feTurbulence displaces into bristles. Nothing here loads
+     off the network — the faces come from ../../fonts. -->
+<meta charset="utf-8" />
+<title>Selamat Hari Malaysia — my.adhd</title>
+<style>
+@font-face{
+  font-family:"DM Sans";
+  src:url("../../fonts/DMSans-Variable.ttf") format("truetype-variations"),
+      url("../../fonts/DMSans-Variable.ttf") format("truetype");
+  font-weight:100 900; font-style:normal; font-display:block;
+}
+@font-face{
+  font-family:"DM Mono";
+  src:url("../../fonts/DMMono-Regular.ttf") format("truetype");
+  font-weight:400; font-style:normal; font-display:block;
+}
+@font-face{
+  font-family:"Baloo 2";
+  src:url("../../fonts/Baloo2-Variable.ttf") format("truetype-variations"),
+      url("../../fonts/Baloo2-Variable.ttf") format("truetype");
+  font-weight:400 800; font-style:normal; font-display:block;
+}
+
+:root{
+  --sans:"DM Sans",-apple-system,sans-serif;
+  --mono:"DM Mono",ui-monospace,Menlo,monospace;
+  --display:"Baloo 2",-apple-system,sans-serif;
+
+  --orange:#F75C03;
+  --violet:#7B3FE4;
+  --surface:#FFFFFF;
+  --ink:#101018;
+  --muted:#5E5E6A;
+  --blob-a:rgba(209,205,255,.55);
+  --blob-b:rgba(233,231,253,.95);
+  --blob-c:rgba(217,213,246,.70);
+  --vignette:rgba(16,16,24,.045);
+}
+
+html,body{margin:0;padding:0}
+body{
+  background:#8E8CA0; font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  display:flex; justify-content:center; padding:24px;
+}
+body[data-render]{padding:0; background:var(--surface)}
+
+.poster{
+  position:relative; overflow:hidden; isolation:isolate;
+  width:1080px; height:1080px;
+  background:var(--surface); color:var(--ink);
+}
+.poster::before{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:
+    radial-gradient(560px 560px at 46% 26%, var(--blob-a), transparent 70%),
+    radial-gradient(760px 700px at 104% 100%, var(--blob-b), transparent 68%),
+    radial-gradient(560px 560px at -6% 94%, var(--blob-c), transparent 70%),
+    linear-gradient(180deg, var(--vignette), transparent 22%, transparent 78%, var(--vignette)),
+    var(--surface);
+}
+
+/* ---------- the lockup ---------- */
+.lockup{
+  position:absolute; top:52px; left:0; right:0;
+  display:flex; align-items:center; justify-content:center; gap:14px;
+}
+.lockup .mark{width:44px; height:44px; flex:none}
+.lockup .word{
+  font-family:var(--display); font-weight:800; font-size:42px;
+  letter-spacing:-.02em; color:var(--ink); line-height:1;
+}
+.lockup .word i{font-style:normal; color:var(--violet)}
+
+/* ---------- the flag ---------- */
+.flag{position:absolute; top:108px; left:118px; width:844px; height:422px}
+.flag svg{width:100%; height:100%; display:block; overflow:visible}
+
+/* ---------- the words ---------- */
+.words{position:absolute; left:0; right:0; top:606px; text-align:center}
+.kicker{
+  font-family:var(--display); font-weight:800; font-size:64px;
+  letter-spacing:.11em; color:var(--orange);
+  margin:0; line-height:1; text-indent:.10em;
+}
+.big{
+  font-family:var(--display); font-weight:800; font-size:176px;
+  letter-spacing:.005em; color:var(--violet);
+  margin:4px 0 0; line-height:1;
+}
+.date{
+  font-family:var(--mono); font-size:32px; letter-spacing:.22em;
+  color:var(--orange); margin:16px 0 0; line-height:1; text-indent:.22em;
+}
+.line{
+  font-family:var(--sans); font-weight:400; font-size:26px;
+  color:var(--muted); margin:18px 0 0; line-height:1;
+}
+.line b{font-weight:500; color:var(--ink)}
+
+/* ---------- the footer strip ---------- */
+.strip{
+  position:absolute; left:0; right:0; bottom:0; height:78px;
+  background:var(--surface);
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  box-shadow:0 -1px 0 rgba(16,16,24,.07);
+}
+.strip svg{width:30px; height:30px; flex:none}
+.strip span{
+  font-family:var(--mono); font-size:25px; letter-spacing:.06em; color:var(--ink);
+}
+</style>
+
+<div class="poster">
+
+  <div class="lockup">
+    <svg class="mark" viewBox="0 0 100 100" aria-hidden="true">
+      <g fill="#F75C03">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path d="M64.5 64.5l7 7" stroke="#7B3FE4" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </svg>
+    <span class="word">my<i>.adhd</i></span>
+  </div>
+
+  <div class="flag">
+    <svg viewBox="0 0 1400 700" aria-label="Jalur Gemilang">
+      <defs>
+        <!-- bristles: one displacement for the body, a finer one for the
+             flecks that fly off the ends -->
+        <filter id="bristle" x="-30%" y="-40%" width="160%" height="180%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.006 0.022"
+                        numOctaves="4" seed="17" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="66"
+                             xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+        <filter id="fleck" x="-40%" y="-60%" width="180%" height="220%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.02 0.05"
+                        numOctaves="3" seed="4" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="34"
+                             xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+
+        <mask id="brush">
+          <!-- the body of the stroke -->
+          <g filter="url(#bristle)">
+            <g transform="rotate(-7 700 350)">
+              <rect x="52" y="34" width="1300" height="626" rx="36" fill="#fff"/>
+              <!-- strokes running past the ends -->
+              <rect x="-40" y="86"  width="1470" height="54" rx="27" fill="#fff"/>
+              <rect x="-30" y="240" width="1450" height="42" rx="21" fill="#fff"/>
+              <rect x="-46" y="430" width="1480" height="60" rx="30" fill="#fff"/>
+              <rect x="-20" y="574" width="1440" height="46" rx="23" fill="#fff"/>
+              <!-- and the splits the bristles leave behind -->
+              <rect x="700" y="120" width="820" height="15" rx="8" fill="#000"/>
+              <rect x="860" y="196" width="700" height="11" rx="6" fill="#000"/>
+              <rect x="-120" y="470" width="640" height="14" rx="7" fill="#000"/>
+              <rect x="-140" y="556" width="520" height="10" rx="5" fill="#000"/>
+              <rect x="1010" y="500" width="520" height="12" rx="6" fill="#000"/>
+            </g>
+          </g>
+          <!-- flecks thrown clear of the stroke -->
+          <g filter="url(#fleck)" fill="#fff">
+            <g transform="rotate(-7 700 350)">
+              <rect x="1330" y="150" width="120" height="13" rx="7"/>
+              <rect x="1360" y="300" width="86" height="10" rx="5"/>
+              <rect x="1300" y="452" width="150" height="16" rx="8"/>
+              <rect x="-60" y="196" width="110" height="12" rx="6"/>
+              <rect x="-70" y="380" width="86" height="10" rx="5"/>
+              <rect x="-30" y="612" width="130" height="14" rx="7"/>
+            </g>
+          </g>
+        </mask>
+      </defs>
+
+      <g mask="url(#brush)">
+        <g transform="rotate(-7 700 350)">
+          <!-- fourteen stripes, red first -->
+          <rect x="-160" y="-60" width="1720" height="820" fill="#FFFFFF"/>
+          <g fill="#CC0001">
+            <rect x="-160" y="0"   width="1720" height="50"/>
+            <rect x="-160" y="100" width="1720" height="50"/>
+            <rect x="-160" y="200" width="1720" height="50"/>
+            <rect x="-160" y="300" width="1720" height="50"/>
+            <rect x="-160" y="400" width="1720" height="50"/>
+            <rect x="-160" y="500" width="1720" height="50"/>
+            <rect x="-160" y="600" width="1720" height="50"/>
+          </g>
+          <!-- above and below the flag proper, so the overhang keeps painting -->
+          <rect x="-160" y="-60" width="1720" height="60" fill="#CC0001"/>
+          <rect x="-160" y="700" width="1720" height="60" fill="#FFFFFF"/>
+
+          <!-- the canton -->
+          <rect x="-160" y="-60" width="860" height="460" fill="#010066"/>
+
+          <!-- crescent and the fourteen-point star -->
+          <!-- The canton proper is 700 × 400 with its top-left at 0,0 — the
+               rect above it starts at -160,-60 only so the brush has paint to
+               tear at. Both devices are centred on that canton's middle line,
+               y 200: the crescent an outer circle r140 at x255 with an inner
+               r122 at x310 cut out of it, which puts the horns at x325 and
+               opens the mouth 120°, and the star just clear of them. -->
+          <g fill="#FFCC00">
+            <path d="M255 200 m-140,0 a140,140 0 1,0 280,0 a140,140 0 1,0 -280,0
+                     M310 200 m-122,0 a122,122 0 1,1 244,0 a122,122 0 1,1 -244,0"
+                  fill-rule="evenodd"/>
+            <path id="star" d=""/>
+          </g>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="words">
+    <p class="kicker">SELAMAT HARI</p>
+    <h1 class="big">MALAYSIA</h1>
+    <p class="date">16 SEPTEMBER 2026</p>
+    <p class="line">Satu negara, banyak kepala. <b>Satu tugas dalam satu masa.</b></p>
+  </div>
+
+  <div class="strip">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#7B3FE4" stroke-width="1.8"
+         stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9.2"/>
+      <path d="M2.8 12h18.4"/>
+      <path d="M12 2.8c2.6 2.8 3.9 6 3.9 9.2s-1.3 6.4-3.9 9.2c-2.6-2.8-3.9-6-3.9-9.2S9.4 5.6 12 2.8z"/>
+    </svg>
+    <span>myadhd.my</span>
+  </div>
+</div>
+
+<script>
+// The fourteen-point star, computed rather than typed: fourteen spikes from
+// an outer radius to an inner one, first point straight up.
+(function(){
+  const cx = 467, cy = 200, R = 130, r = 56, N = 14;
+  let d = "";
+  for (let i = 0; i < N * 2; i++){
+    const rad = (i % 2 ? r : R);
+    const a = -Math.PI / 2 + i * Math.PI / N;
+    d += (i ? "L" : "M") + (cx + rad * Math.cos(a)).toFixed(2) + "," +
+         (cy + rad * Math.sin(a)).toFixed(2);
+  }
+  document.getElementById("star").setAttribute("d", d + "Z");
+})();
+
+// render.swift waits on this.
+(async function(){
+  try { await document.fonts.ready; } catch (e) {}
+  window.__ready = true;
+})();
+</script>

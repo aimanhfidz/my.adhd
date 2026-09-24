@@ -64,11 +64,44 @@
     </a>
     <p class="bar-org">MyADHD</p>
 
+    <!-- Two groups, each one button that opens the rest. It used to be a
+         link plus a separate chevron, because the label was a real
+         destination and swallowing it into a button would have stranded
+         the page it named. /activities is gone, so there is nothing left
+         to strand and the whole control is the toggle — which is where
+         everyone was pressing anyway.
+
+         The label sits in a <span> of its own with the chevron beside it,
+         never inside it: site.js rewrites a data-i18n element's innerHTML
+         whole when the language changes, and its ICON_RE only rescues a
+         bare <i aria-hidden="true">, not this classed one. -->
     <ul class="bar-links">
-      <li><a href="/activities" data-i18n="ie58f7f8">Activities</a></li>
-      <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
-      <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
-      <li><a href="/contact" aria-current="page" data-i18n="i4832e45">Contact us</a></li>
+    <li class="bar-group-item">
+      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-offer">
+        <span data-i18n="ib953849">What we offer</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+      </button>
+      <div class="bar-menu" id="menu-offer" hidden>
+        <ul>
+            <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+            <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
+            <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+            <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
+            <li><a href="/reading-list" data-i18n="id80f6ec">Reading list</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="bar-group-item">
+      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-about">
+        <span data-i18n="i6b21fb7">About</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+      </button>
+      <div class="bar-menu" id="menu-about" hidden>
+        <ul>
+            <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+            <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+            <li><a href="/contact" aria-current="page" data-i18n="i4832e45">Contact us</a></li>
+        </ul>
+      </div>
+    </li>
     </ul>
 
     <!-- filled in by clock.js, and hidden until it is -->
@@ -87,20 +120,42 @@
       <span class="nt-bars" aria-hidden="true"><i></i><i></i></span>
     </button>
 
-    <!-- The sheet is a copy of the row above, which is the one duplication
-         in this bar: two lists, kept in step by hand. -->
+    <!-- The same two groups again, stacked. They are generated from one
+         source in tools/bar.py, so the row and the sheet cannot drift the
+         way the two hand-kept lists used to. -->
     <div class="bar-sheet" id="bar-sheet" hidden>
       <ul>
-        <li><a href="/activities" data-i18n="ie58f7f8">Activities</a></li>
-        <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
-        <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
-        <li><a href="/contact" aria-current="page" data-i18n="i4832e45">Contact us</a></li>
+        <li class="bar-row">
+          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-offer">
+            <span data-i18n="ib953849">What we offer</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+          </button>
+          <div class="bar-menu" id="sheet-offer" hidden>
+            <ul>
+                <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+                <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
+                <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+                <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
+                <li><a href="/reading-list" data-i18n="id80f6ec">Reading list</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="bar-row">
+          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-about">
+            <span data-i18n="i6b21fb7">About</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+          </button>
+          <div class="bar-menu" id="sheet-about" hidden>
+            <ul>
+                <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+                <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+                <li><a href="/contact" aria-current="page" data-i18n="i4832e45">Contact us</a></li>
+            </ul>
+          </div>
+        </li>
       </ul>
       <nav class="bar-lang sheet-lang" aria-label="Language" data-i18n-aria="89b86ab">
-      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
-      <button type="button" data-lang="ms" aria-pressed="false" lang="ms">BM</button>
-    </nav>
-      <p class="sheet-sub" data-i18n="ib226a42">What we offer: <a href="/self-check">Self-check</a> · <a href="/blog">Blog</a> · <a href="/habits">Habits</a> · <a href="/reading-list">Reading list</a> · <a href="/tools">Tools</a></p>
+        <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+        <button type="button" data-lang="ms" aria-pressed="false" lang="ms">BM</button>
+      </nav>
     </div>
   </nav>
 
@@ -162,7 +217,7 @@
 
   <nav class="pager" aria-label="Next page" data-i18n-aria="4bfc194">
   <span class="p-label" data-i18n="ibc98198">Next</span>
-  <a href="/activities" data-i18n="ie778b83"><i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i> Activities</a>
+  <a href="/blog" data-i18n="id3c7ae2"><i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i> Blog</a>
 </nav>
 </main>
 

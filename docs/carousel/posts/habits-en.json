@@ -1,0 +1,48 @@
+{
+  "slug": "habits-en",
+  "lang": "en",
+  "theme": "light",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "You already tried harder.",
+      "title": "Five habits\nthat work [[with]]\nyour brain.",
+      "sub": "Not willpower advice. Start with one."
+    },
+    {
+      "type": "point",
+      "title": "Stop asking\nyourself to\n[[remember]]",
+      "body": "Knowing what to do and doing it are two different jobs. It is the second one that goes wrong. Put the thing where you will trip over it."
+    },
+    {
+      "type": "point",
+      "title": "Start next to\n[[someone else]]",
+      "body": "In the room, on a call, or a stranger on a video. The research is thin and points both ways — but it is free to try, and one session tells you."
+    },
+    {
+      "type": "point",
+      "title": "You are stuck on\nthe [[first second]]",
+      "body": "Not on the task. Shrink it until it is not worth arguing with: open the app, find the number, put the shoes by the door."
+    },
+    {
+      "type": "point",
+      "title": "Put time where\nyou can [[see it]]",
+      "body": "An hour does not feel like an hour, and discipline does not fix that. A clock with hands. A timer that empties. Then write down what things really take."
+    },
+    {
+      "type": "point",
+      "title": "Spend your\n[[good hours]]\non good work",
+      "body": "Admin at 10am spends the sharpest hours you get on the cheapest thing you do. And the 3pm crash usually started the night before."
+    },
+    {
+      "type": "outro",
+      "title": "Which one\nare you [[trying]]?",
+      "body": "Small, testable changes. Start with one. Dump the rest into my.adhd and get one thing back.",
+      "cta": {
+        "label": "Read all five at myadhd.my/habits"
+      }
+    }
+  ]
+}
