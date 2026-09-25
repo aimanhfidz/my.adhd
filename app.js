@@ -2784,11 +2784,16 @@ function lift() {
 }
 
 /* Centred on the pointer and lifted clear of it, so a fingertip is not
-   parked on top of the answer. */
+   parked on top of the answer. Measured once — the chip never changes
+   size in flight — and moved by transform, so a move is a composite
+   rather than a layout. */
 function placeGhost(x, y) {
-  const g = drag.ghost.getBoundingClientRect();
-  drag.ghost.style.left = `${x - g.width / 2}px`;
-  drag.ghost.style.top  = `${y - g.height - 18}px`;
+  if (!drag.size) {
+    const g = drag.ghost.getBoundingClientRect();
+    drag.size = { w: g.width, h: g.height };
+  }
+  drag.ghost.style.transform =
+    `translate3d(${x - drag.size.w / 2}px, ${y - drag.size.h - 18}px, 0) rotate(-1.2deg)`;
 }
 
 /* The one thing a row can be dropped on: a quadrant. */

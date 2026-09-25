@@ -133,6 +133,68 @@ body{
 
 /* the toggle button itself is styled in theme.css */
 
+/* ============ the way in ============
+   The iOS SplashScreen's timeline, to the millisecond: four rays at 70ms
+   apart on the arrive curve, the capsule on the pop, the word opening
+   out at 460ms, and the leave at 1080ms. Everything that moves is a
+   transform or opacity, except the word's column — a grid track from 0fr
+   to 1fr, which is what walks the mark left as the word arrives, and
+   costs nothing inside a box this small that contains its own layout. */
+.splash{
+  --sp-arrive:cubic-bezier(.16,1,.3,1);
+  --sp-pop:cubic-bezier(.2,1.4,.4,1);
+  position:fixed; inset:0; z-index:1000;
+  display:grid; place-items:center;
+  background:var(--surface);
+  contain:strict;
+  animation:splash-out .3s ease-out 1.08s forwards;
+}
+.no-splash .splash{display:none}
+.splash.is-leaving{animation:splash-out .22s ease-out forwards}
+
+.splash-lockup{
+  display:grid; grid-template-columns:auto 0fr; align-items:center;
+  column-gap:0;
+  animation:splash-open .5s var(--sp-arrive) .46s forwards,
+            splash-grow .3s ease-out 1.08s forwards;
+}
+.splash-mark{width:55px; height:55px; display:block}   /* 34px × 26/16 */
+.splash-word{
+  overflow:hidden; min-width:0;
+  opacity:0; transform:translateY(8px);
+  animation:splash-word .5s var(--sp-arrive) .46s forwards;
+}
+.splash-word .wordmark{font-size:34px; white-space:nowrap; display:block; line-height:1.1}
+
+.sp-ray{
+  transform-box:view-box; transform-origin:50px 50px;
+  transform:scaleY(0);
+  animation:splash-ray .42s var(--sp-arrive) forwards;
+}
+.sp-ray-1{animation-delay:.08s}
+.sp-ray-2{animation-delay:.15s}
+.sp-ray-3{animation-delay:.22s}
+.sp-ray-4{animation-delay:.29s}
+.sp-pill{
+  transform-box:view-box; transform-origin:68px 68px;
+  transform:scale(0);
+  animation:splash-pop .38s var(--sp-pop) .36s forwards;
+}
+
+@keyframes splash-ray{to{transform:scaleY(1)}}
+@keyframes splash-pop{to{transform:scale(1)}}
+@keyframes splash-open{to{grid-template-columns:auto 1fr; column-gap:21px}}  /* 34 × 10/16 */
+@keyframes splash-word{to{opacity:1; transform:none}}
+@keyframes splash-out{to{opacity:0; visibility:hidden}}
+@keyframes splash-grow{to{transform:scale(1.06)}}
+.splash.is-leaving .splash-lockup{animation:splash-open 0s forwards, splash-grow .22s ease-out forwards}
+
+@media (prefers-reduced-motion:reduce){
+  .splash{animation:splash-out .15s linear .5s forwards}
+  .splash-lockup{animation:none; grid-template-columns:auto 1fr; column-gap:21px}
+  .splash-word,.sp-ray,.sp-pill{animation:none; opacity:1; transform:none}
+}
+
 /* ---------- the loud surface (screen 1 only) ----------
    After loudsrl.com: the viewport is one glossy sheet that drifts on its
    own, and everything on top of it is unfilled glass — hairline edges, no
@@ -189,15 +251,12 @@ body{
     radial-gradient(52% 38% at 80% 16%, var(--loud-sheen-2) 0%, transparent 60%),
     radial-gradient(72% 52% at 62% 92%, var(--loud-sheen-3) 0%, transparent 66%);
   filter:blur(34px);
-  animation:loud-drift 64s linear infinite alternate;
-}
-@keyframes loud-drift{
-  0%  {transform:translate3d(-3%,-2%,0) scale(1.06) rotate(0deg)}
-  50% {transform:translate3d(3%,2%,0)   scale(1.14) rotate(4deg)}
-  100%{transform:translate3d(-2%,3%,0)  scale(1.08) rotate(-3deg)}
-}
-@media (prefers-reduced-motion:reduce){
-  #screen-home::before{animation:none}
+  /* Held still, where it used to drift on a 64s loop. The motion was too
+     slow to see, and it was not free: every frame of it made the browser
+     redo the backdrop blur on the header, the home cards and the tab bar
+     sitting over it — a phone's GPU busy for as long as home was open.
+     The same call the website made when its field stopped moving. */
+  transform:translate3d(-3%,-2%,0) scale(1.06);
 }
 
 /* the header stops being an opaquepanel  and becomes glass over the sheet */
@@ -673,7 +732,7 @@ body{
   font-size:12.5px; color:var(--accent); margin:12px 0 0;
   display:flex; align-items:center; gap:6px;
 }
-.note-delete{margin-top:18px; align-self:flex-start}
+.note-delete{margin-top:16px; align-self:flex-start}
 
 /* ---------- the note toolbar ----------
    Where the tab bar would be, because the tab bar is gone while you write.
@@ -746,7 +805,7 @@ body{
 .fmt-u{text-decoration:underline}
 .fmt-s{text-decoration:line-through}
 
-.rem-foot{display:flex; align-items:center; gap:12px; margin-top:18px}
+.rem-foot{display:flex; align-items:center; gap:12px; margin-top:16px}
 .rem-foot .btn-soft{flex:0 0 auto; min-width:0; margin-left:auto; padding:11px 26px}
 
 
@@ -756,6 +815,9 @@ body{
 .settings-wrap{margin:0; padding-top:clamp(18px,3vh,32px); padding-bottom:8px}
 .settings-section{width:100%}
 .settings-section + .settings-section{margin-top:26px}
+/* the plans are hidden while billing is off, and a hidden section is not
+   a section before this one */
+#set-sub.is-hidden + .settings-section{margin-top:0}
 .settings-wrap .hint{margin-top:18px}
 
 /* The feedback box kept its own screen, so it keeps the centred, unhurried
@@ -978,7 +1040,7 @@ body{
   background:var(--surface); border:1.5px solid var(--line-strong);
   color:var(--muted); font:inherit; font-size:14px; font-weight:500;
   padding:12px; border-radius:999px; cursor:pointer;
-  transition:all .18s var(--ease);
+  transition:border-color .18s var(--ease), color .18s var(--ease), background-color .18s var(--ease), opacity .18s var(--ease);
 }
 .btn-soft:hover{color:var(--accent); border-color:var(--accent); background:var(--wash)}
 .btn-soft:disabled{opacity:.45; cursor:not-allowed}
@@ -1005,7 +1067,7 @@ body{
   border-radius:14px;
   padding:14px 16px; margin-bottom:22px;
 }
-.offline-note p{font-size:13.5px; color:var(--ink-soft); line-height:1.55; margin-bottom:11px}
+.offline-note p{font-size:13.5px; color:var(--ink-soft); line-height:1.55; margin-bottom:12px}
 .offline-note strong{color:var(--orange); font-weight:700}
 .offline-note .btn-soft{width:100%; min-width:0}
 
@@ -1169,7 +1231,7 @@ body{
   border-radius:50%; border:2px solid var(--line-strong);
   background:none; color:transparent; cursor:pointer;
   display:grid; place-items:center;
-  transition:all .16s var(--ease);
+  transition:border-color .16s var(--ease), color .16s var(--ease), background-color .16s var(--ease);
 }
 .task-check svg{width:13px; height:13px}
 .task-check:hover{border-color:var(--accent); color:var(--accent)}
@@ -1194,7 +1256,7 @@ body{
    Deliberately the quietest thing in the detail: they are the exits, not
    the offer. Sitting below the break-it-down button, which is the one the
    detail was opened for. */
-.task-fix{display:flex; gap:8px; margin-top:10px}
+.task-fix{display:flex; gap:8px; margin-top:8px}
 .task-fix-btn{
   flex:1 1 0;
   background:none; border:none; cursor:pointer;
@@ -1328,6 +1390,7 @@ body{
 
 /* clear everything — deliberately quiet until armed, then loud */
 .danger-zone{margin-top:34px; padding-top:20px; border-top:1.5px solid var(--line)}
+.danger-zone .clear-confirm{margin-top:12px}
 
 .btn-danger-quiet{
   background:none; border:none; cursor:pointer;
@@ -1349,9 +1412,9 @@ body{
 }
 .clear-confirm-text{
   font-size:14px; line-height:1.55; color:var(--ink);
-  margin-bottom:13px; font-weight:500;
+  margin-bottom:12px; font-weight:500;
 }
-.clear-confirm-actions{display:flex; gap:9px; flex-wrap:wrap}
+.clear-confirm-actions{display:flex; gap:12px; flex-wrap:wrap}
 .clear-confirm-actions .btn-soft{flex:1 1 0; min-width:110px}
 
 .btn-danger{
@@ -1409,7 +1472,7 @@ body{
 /* A toast carrying an offer rather than a message: it holds an Undo, so
    it needs a row and a longer life (see toast() in app.js). */
 .toast--action{
-  display:flex; align-items:center; gap:14px;
+  display:flex; align-items:center; gap:12px;
   text-align:left; padding:10px 12px 10px 20px;
 }
 .toast-do{
@@ -1572,7 +1635,7 @@ body.has-tabbar .toast{
 .fb-input::placeholder{color:var(--faint)}
 .fb-input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
 
-.fb-foot{display:flex; align-items:center; gap:12px; margin-top:14px}
+.fb-foot{display:flex; align-items:center; gap:12px; margin-top:16px}
 .fb-count{
   flex:1; font-size:12.5px; color:var(--faint);
   font-variant-numeric:tabular-nums;
@@ -1590,7 +1653,7 @@ body.has-tabbar .toast{
    filled one lives on the thanks card, where it has been earned. */
 .fb-give-quiet{margin-top:12px}
 .fb-give-quiet-text{
-  font-size:13px; color:var(--faint); line-height:1.6; margin-bottom:10px;
+  font-size:13px; color:var(--faint); line-height:1.6; margin-bottom:12px;
 }
 .fb-give-quiet-btn{
   display:inline-block; text-decoration:none;
@@ -1760,6 +1823,7 @@ body.has-tabbar .toast{
    drags, and the only rows that lift now are the matrix's. */
 .cal-ghost{
   position:fixed; z-index:60; margin:0;
+  left:0; top:0; will-change:transform;   /* placed by transform — see placeGhost() */
   pointer-events:none;          /* so elementFromPoint sees the cell beneath */
   max-width:min(230px, 62vw);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
@@ -1936,7 +2000,7 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
    a small outline pill, sized to its word. */
 .gcal-go.acct-btn--quiet{
   width:auto; display:inline-flex; gap:6px;
-  margin-top:14px; padding:7px 14px;
+  margin-top:16px; padding:7px 14px;
   background:transparent; border:1.5px solid var(--line-strong);
   box-shadow:none; color:var(--muted);
   font-family:inherit; font-size:13px; font-weight:600; letter-spacing:0;
@@ -1947,7 +2011,9 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
   display:flex; align-items:center; justify-content:space-between;
   gap:12px; margin-top:12px;
 }
-.gcal-more:empty{display:none}
+.gcal-more:empty,
+.gcal-more:not(:has(> :not(.is-hidden):not(:empty))){display:none}
+.gcal-more{flex-wrap:wrap}
 .gcal-more .btn-soft{flex:0 1 auto; min-width:0; padding:9px 16px; font-size:13.5px}
 .gcal-more .is-hidden{display:none}
 
@@ -1964,7 +2030,7 @@ body.is-dragging *{user-select:none; -webkit-user-select:none}
   border:1px solid var(--orange); border-radius:14px;
   background:var(--danger-wash);
 }
-.gcal-dupe .gcal-note{margin:0 0 8px}
+.gcal-dupe .gcal-note{margin:0 0 12px}
 
 .acct-card{margin-top:18px}
 .acct-face{
@@ -2279,3 +2345,16 @@ body.is-composing .tabbar{
   -webkit-backdrop-filter:none;
   backdrop-filter:none;
 }
+
+/* ---------- hit areas ----------
+   These controls are drawn small on purpose, and were being hit small
+   too — 28 to 36px against the 44 a thumb needs. An invisible box around
+   each one takes the tap without moving anything that is drawn. Vertical
+   only where buttons sit side by side, so neighbours never overlap. */
+.btn-danger-quiet, .toast-do, .composer-cancel, .composer-post,
+.note-sheet-x, .quad-add, .task-fix-btn, .gcal-go.acct-btn--quiet{position:relative}
+.btn-danger-quiet::after, .toast-do::after, .composer-cancel::after, .composer-post::after,
+.note-sheet-x::after, .quad-add::after, .signup-x::after, .gcal-go.acct-btn--quiet::after{
+  content:""; position:absolute; inset:-8px;
+}
+.task-fix-btn::after{content:""; position:absolute; inset:-6px 0}

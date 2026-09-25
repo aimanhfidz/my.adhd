@@ -44,8 +44,48 @@
 <link rel="stylesheet" href="theme.css" />
 <script src="theme.js"></script>
 <link rel="stylesheet" href="styles.css?v=8" />
+<script>
+/* The way in plays once per tab: a reload is not an arrival. Set before
+   first paint so a second load never flashes the overlay. */
+try { if (sessionStorage.getItem('myadhd.splash')) document.documentElement.classList.add('no-splash'); } catch (e) {}
+</script>
 </head>
 <body>
+
+<!-- ============ the way in ============
+     The iOS app's SplashScreen, on the web: the mark draws itself, ray by
+     ray, the capsule lands, and the wordmark opens out beside it. Pure CSS,
+     so it runs before a line of app.js has arrived — nothing is loading
+     behind it, it is an entrance rather than a wait, and a tap skips it.
+     Each ray sits in a <g> carrying its rotation, so the rect inside is
+     free to take a CSS transform without losing the attribute's. -->
+<div class="splash" id="splash" aria-hidden="true">
+  <div class="splash-lockup">
+    <svg class="splash-mark" viewBox="0 0 100 100">
+      <g class="lg-star">
+        <g><rect class="sp-ray sp-ray-1" x="46.5" y="18" width="7" height="64"/></g>
+        <g transform="rotate(90 50 50)"><rect class="sp-ray sp-ray-2" x="46.5" y="18" width="7" height="64"/></g>
+        <g transform="rotate(45 50 50)"><rect class="sp-ray sp-ray-3" x="46.5" y="18" width="7" height="64"/></g>
+        <g transform="rotate(-45 50 50)"><rect class="sp-ray sp-ray-4" x="46.5" y="18" width="7" height="32"/></g>
+      </g>
+      <path class="lg-pill sp-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </svg>
+    <span class="splash-word"><span class="wordmark">my<span class="accent">.adhd</span></span></span>
+  </div>
+</div>
+<script>
+(function () {
+  var s = document.getElementById('splash');
+  if (!s || document.documentElement.classList.contains('no-splash')) { if (s) s.remove(); return; }
+  try { sessionStorage.setItem('myadhd.splash', '1'); } catch (e) {}
+  function gone() { if (s.parentNode) s.remove(); }
+  s.addEventListener('animationend', function (e) { if (e.target === s) gone(); });
+  s.addEventListener('pointerdown', function () { s.classList.add('is-leaving'); });
+  /* belt and braces: a tab opened in the background never runs the
+     animation, and the overlay must not outlive its welcome */
+  setTimeout(gone, 3000);
+})();
+</script>
 
 <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
   <defs>
