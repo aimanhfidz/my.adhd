@@ -904,7 +904,7 @@ design is written down in `docs/loud-redesign-plan.md`.
 
 | URL | What it is |
 |---|---|
-| `/` | The scene — one screen that plays itself, then the funnel. No full footer |
+| `/` | The two doors, then the funnel. No full footer |
 | `/self-check` | **The test.** A standalone page, outside the site. Google sign-in + a PDPA intake since 2026-09-13 — see below |
 | `/blog` | Offer 02. Empty index, placeholder |
 | `/habits` | Offer 03. Five named habits, explanations placeholder |
@@ -954,36 +954,18 @@ has not yet been brought over. The screener is
 the exception in both directions: the eighteen ASRS questions in `test.js`
 are an instrument, not copy, and they get no voice pass at all.
 
-### The scene
+### The scene, removed
 
-`/` is one `100dvh` screen that plays itself. Five things the organisation
-believes are written out a word at a time on a timer; the five things it
-offers light up in the corner beside them. Scrolling is left to do what it
-is for, which is reach the ask.
-
-**It was a six-viewport scroll track first**, with the headline typing as
-you came down it — LOUD's mechanism. Two things were wrong with it and
-neither showed up until it was real. The page said nothing at all until
-you scrolled it, so the first thing a visitor met was a blank screen with
-a bar on top. And pressing an item in the corner list jumped you to the
-scroll offset where that item began, which is the offset where its
-sentence is one word long — so the single interaction on the page
-reliably delivered an unfinished sentence.
-
-The corner list is **links**, not scroll positions: it is the only
-navigation on that screen besides the bar. The writing pauses when the tab
-is hidden or the scene is scrolled off, because a timer firing into a DOM
-nobody can see is just work.
-
-The five sentences are lifted from `docs/content/about.md` — they are the
-organisation's own words, not written for the home page. If they are ever
-replaced with proper value statements, `LINES` in `scene()` is the only
-place they live.
+`/` used to have a second screen under the doors: five things the
+organisation believes, typed out a word at a time on a timer, with the
+five offers lighting up in a corner list beside them. It was taken out on
+2026-09-27. The sentences were lifted from `docs/content/about.md` and are
+still there; the doors now run straight into the funnel.
 
 ### The funnel
 
-The scene scrolls into one, and the home page ends there. Before it there
-was nothing under the scene but the footer, so a reader who scrolled
+The doors scroll into one, and the home page ends there. Before it there
+was nothing under the first screen but the footer, so a reader who scrolled
 arrived at a column of links and no reason to press any of them. Two ways
 on, and they are not equal: the self-check is the organisation's front
 door and gets the orange button; everything else is a plain link beside

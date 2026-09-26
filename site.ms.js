@@ -20,11 +20,6 @@ window.MYADHD_MS = {
   "i3ffb811": "Tentang kami",
   "i2c2cd2a": "Testimoni",
   "i4832e45": "Hubungi kami",
-  "ia9dfd3a": "SEMAKAN KENDIRI",
-  "i00e97c0": "BLOG",
-  "i6307583": "TABIAT",
-  "ib4fca04": "SENARAI BACAAN",
-  "i9d0e510": "ALATAN",
   "i1d4d87b": "Buat semakan kendiri",
   "i45406d3": "Mula di sini.",
   "i5abc5dd": "Kalau ada yang terasa macam awak, itu belum tentu <span class=\"adhd-word\">ADHD</span>. Tapi mungkin ia berbaloi untuk awak tahu.",
@@ -188,8 +183,6 @@ window.MYADHD_MS = {
   "i10fc385": "Tak payah set apa-apa",
   "i24b5de4": "Senarai awak kekal dalam peranti awak",
   "i8e07898": "{icon} Tentang kami",
-  "ibelieve": "APA YANG KAMI PERCAYA",
-  "iee8de84": "Terlalu ramai orang Malaysia membesar dengan percaya yang mereka cuai, malas, atau tak cukup berusaha.",
 
   /* ---- /soon, the page every app link goes to while the app is
      shut. Delete this block and the page with it when it opens. ---- */
@@ -230,15 +223,7 @@ window.MYADHD_MS = {
   "4bfc194": "Halaman seterusnya",
   "949ec14": "Kembali ke muka depan",
   "12f3e1f": "Laman utama MyADHD",
-  "1de9b5a": "Baca seterusnya",
   "b953849": "Apa yang kami tawarkan",
   "89b86ab": "Bahasa"
-},
-  scene: [
-  "Terlalu ramai orang Malaysia membesar dengan percaya yang mereka cuai, malas, atau tak cukup berusaha.",
-  "Sedangkan apa yang mereka hadap sebenarnya ialah otak yang berfungsi lain.",
-  "Kesedaran di sini masih nipis. Diagnosis lambat dan mahal.",
-  "ADHD dewasa, lagi la jarang disebut.",
-  "Kami tunjuk jalan ke penilaian yang betul, bukan teka-teka."
-]
+}
 };

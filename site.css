@@ -165,11 +165,6 @@ body{
   background:var(--surface);
   border-bottom:1px solid var(--line);
 }
-/* The scene is the exception the rule was written for. Its stage never
-   moves, so nothing ever travels under the bar, and a band drawn across
-   the wave field would cut a visible seam through it. */
-.scene .bar{background:none; border-bottom:0}
-
 /* The mark, and — on every page but the home — a circled back arrow in
    its place. LOUD swaps the lockup for one on every sub-page, which is
    what tells you at a glance that you are inside the site rather than at
@@ -525,7 +520,7 @@ body{
    single most recognisable thing about LOUD's sub-pages and it costs one
    border: it turns a stack of centred sections into a document with a
    left edge, which is what makes the enormous white space read as
-   composition rather than as absence. Not on the home scene, which has
+   composition rather than as absence. Not on the home page, which has
    no document to bind. */
 .spine{
   border-left:1px solid var(--line);
@@ -864,8 +859,9 @@ body{
    z-index 0, so it paints ABOVE any static content that has not claimed a
    layer. The front page's own two screens were left off this list when it
    gained the page-wide field and both headlines came out washed grey —
-   the scene looked right only because it is position:relative already and
-   stacks its children at 1. Anything that holds words goes here. */
+   the scene between them (gone since) looked right only because it was
+   position:relative and stacked its children at 1. Anything that holds
+   words goes here. */
 .spine, .foot, .ask, .pager,
 .doors, .ending{position:relative; z-index:1}
 /* ...and the bar's ground has to go, or it paints a band across a field
@@ -890,12 +886,6 @@ body{
     backdrop-filter:blur(14px) saturate(1.2);
   }
 }
-/* The scene keeps the exception because nothing ever travels under its
-   bar: it is one non-scrolling stage. The front page's bar lives in
-   .doors now, and .doors is followed by two more screens — so it takes
-   the blurred pane every other page has, or the nav prints straight
-   through the card headings on the way past. Measured: it did. */
-.scene .bar::after{display:none}
 
 /* ============ THE MARQUEE ============
    A giant line of type travelling sideways between sections. LOUD runs
@@ -1029,26 +1019,7 @@ body{
 }
 
 
-/* ============ THE HOME SCENE ============
-   One screen that plays itself.
-
-   It used to be six viewports of scroll track with a sticky stage inside,
-   and the headline typed as you scrolled. That is LOUD's mechanism and it
-   was the wrong one to copy here, for two reasons that only showed up
-   once it was real: the page said nothing at all until you scrolled it,
-   and pressing a beat in the corner list jumped you to a scroll offset
-   where that beat was still half-typed — so the one interaction on the
-   page reliably showed you an unfinished sentence.
-
-   So the scene is one 100dvh screen now and the writing happens on a
-   timer. Scrolling does what scrolling should: it leaves, and what it
-   leaves for is the ask. */
-.scene{
-  position:relative; height:100dvh; overflow:hidden; isolation:isolate;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  padding:calc(var(--bar-h) + 20px) var(--gutter) clamp(150px,24vh,240px);
-}
-.scene > *:where(:not(.bar):not(.pill)){position:relative; z-index:1}
+/* ============ THE WEATHER ============ */
 .hero-waves{position:absolute; inset:0; z-index:0}
 /* Kept for the day the shader comes back: it is a child, so it paints over
    the ground below rather than fighting it. */
@@ -1121,94 +1092,8 @@ body{
   --faint:#A6A5BB;
 }
 
-/* The index over the headline: which value is showing, out of how many. */
-.index{
-  font-family:var(--mono); font-size:11px; letter-spacing:.16em;
-  text-transform:uppercase; color:var(--faint);
-  margin-bottom:26px;
-}
-.index b{font-weight:400; color:var(--ink)}
-
-/* The line itself. It arrives a word at a time on a timer and holds; the
-   word arriving is dim, the ones behind it are ink. min-height holds three
-   lines open so the screen never jumps as one value hands over to the
-   next. */
-.type{
-  font-family:var(--mono); font-weight:400;
-  font-size:clamp(21px,3.5vw,46px); line-height:1.32; letter-spacing:-.015em;
-  color:var(--ink); text-align:center; max-width:30ch;
-  min-height:4em;
-}
-/* The word still arriving is purple rather than grey. --type-dim is the
-   brand violet by day and a lighter one at night, where the field behind
-   it is now purple too and #7B3FE4 has nothing to sit against. */
-.type .dim{color:var(--type-dim)}
-
-/* ---------- the activities, bottom left ----------
-   LOUD lists its verticals down there and lights one at a time. Ours are
-   the five things the organisation actually offers, and unlike LOUD's
-   they are links — this is the only navigation on the page besides the
-   bar, so it had better go somewhere.
-
-   They pop in one after another on load rather than all at once: five
-   labels appearing together is a block arriving, five arriving in
-   sequence is a list being read out. */
-.acts-list{
-  position:absolute; left:var(--gutter); bottom:clamp(28px,5vh,52px);
-  list-style:none; display:grid; gap:13px; z-index:2; margin:0;
-}
-.acts-list a{
-  display:inline-block;
-  font-family:var(--mono); font-size:12px; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--muted); text-decoration:none;
-  transition:color .3s var(--ease), translate .3s var(--ease);
-}
-.acts-list a:hover{color:var(--ink); translate:3px 0}
-.acts-list li[aria-current] a{color:var(--ink)}
-/* The marker, in the site's action colour, so the item lit in the corner
-   reads as the one you could press rather than as the one being narrated. */
-.acts-list li[aria-current] a::before{
-  content:""; display:inline-block; vertical-align:middle;
-  width:5px; height:5px; border-radius:999px; background:var(--orange);
-  margin-right:9px; margin-top:-2px;
-}
-.acts-list a:focus-visible{outline:2px solid var(--accent); outline-offset:4px}
-@media (prefers-reduced-motion:no-preference){
-  .acts-list[data-anim] li{opacity:0; translate:0 6px; transition:opacity .5s var(--ease), translate .5s var(--ease)}
-  .acts-list[data-anim][data-in] li{opacity:1; translate:0 0}
-  .acts-list[data-anim] li:nth-child(1){transition-delay:.10s}
-  .acts-list[data-anim] li:nth-child(2){transition-delay:.20s}
-  .acts-list[data-anim] li:nth-child(3){transition-delay:.30s}
-  .acts-list[data-anim] li:nth-child(4){transition-delay:.40s}
-  .acts-list[data-anim] li:nth-child(5){transition-delay:.50s}
-}
-@media (max-width:820px){
-  /* On a phone the headline is the whole screen and a second index in the
-     corner is clutter — the bar's sheet already lists these five. */
-  .acts-list{display:none}
-}
-
-/* The nudge at the bottom of the scene. Without it a screen that fills the
-   window and plays itself looks finished, and nobody scrolls. */
-.scroll-cue{
-  position:absolute; left:50%; translate:-50% 0; bottom:clamp(22px,4vh,40px);
-  z-index:2;
-  display:grid; place-items:center; width:42px; height:42px;
-  border:1.5px solid var(--line-strong); border-radius:999px;
-  color:var(--muted); text-decoration:none;
-  transition:border-color .18s var(--ease), color .18s var(--ease);
-}
-.scroll-cue:hover{border-color:var(--orange); color:var(--ink)}
-.scroll-cue:focus-visible{outline:none; border-color:var(--orange); box-shadow:0 0 0 4px rgba(247,92,3,.22)}
-.scroll-cue svg{width:16px; height:16px; display:block}
-@media (prefers-reduced-motion:no-preference){
-  .scroll-cue{animation:cue 2.4s var(--ease) infinite}
-}
-@keyframes cue{0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)}}
-@media (max-width:820px){ .scroll-cue{display:none} }
-
 /* ============ THE TWO DOORS ============
-   The fork between the scene and the ask. A reader arrives not knowing
+   The fork before the ask. A reader arrives not knowing
    which of two people they are — still wondering, or already told — and
    until this was here the ask below only ever spoke to the first of them.
 
@@ -1254,8 +1139,9 @@ body{
   padding:calc(var(--bar-h) + clamp(24px,5vh,56px)) var(--gutter) clamp(86px,17vh,190px);
 }
 /* The hairline belongs between the two screens, and the doors are the
-   first of them — so it goes on the scene's top edge and not the doors'. */
-.doors + .scene{border-top:1px solid var(--line)}
+   first of them — so it goes on the ending's top edge and not the doors'.
+   `~` rather than `+`: the pill sits between them in the markup. */
+.doors ~ .ending{border-top:1px solid var(--line)}
 .doors .kicker{margin-bottom:clamp(14px,2vh,22px)}
 .doors-line{
   font-family:var(--display); font-weight:600;
@@ -1388,9 +1274,9 @@ body{
 .ending > .foot .foot-base{border-top:0; padding-top:0}
 
 /* ---------- the funnel ----------
-   What the scene scrolls into. The home page had nothing here but the
-   footer, so a reader who scrolled past the scene arrived at a column of
-   links and no reason to press any of them. This is the reason. */
+   What the doors scroll into. The home page had nothing here but the
+   footer, so a reader who scrolled down arrived at a column of links and
+   no reason to press any of them. This is the reason. */
 .funnel{
   /* A screen of its own, the way .sec-full gives the openers one. It was
      min(88vh,760px), which at 1440 the content already exceeded — so the
@@ -1469,7 +1355,7 @@ body{
    the way the recognition does, out of something that looked like
    nothing.
 
-   Same track-and-stage mechanics as the scene above. */
+   A tall track with a sticky stage inside it. */
 .decode-stage{
   position:sticky; top:0; height:100dvh; overflow:hidden; isolation:isolate;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -1501,7 +1387,7 @@ body{
 .chev:hover{border-color:var(--accent); background:var(--surface)}
 .chev:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
 .chev svg{width:18px; height:18px; display:block}
-/* Same as the scene above: the track's height arrives from script. */
+/* The track's height arrives from script. */
 
 
 /* ============ SMALL SHARED PIECES ============ */

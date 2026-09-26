@@ -3,16 +3,15 @@
    are their own surface and load none of this.) Deferred, so the DOM is
    up by the time any of this runs.
 
-   Seven jobs, one closure each, in this order: the phone menu, the
-   reveals, the home scene, the decode, the mosaic, the wave fields, and
-   the two small housekeeping passes the whole site shares.
+   Six jobs, one closure each, in this order: the phone menu, the
+   reveals, the decode, the mosaic, the wave fields, and the two small
+   housekeeping passes the whole site shares.
 
    Every one of them is progressive. Nothing here is required for the
-   page to be readable: the sections start visible, the scene's track
-   starts collapsed, the decode starts as its finished sentence. Script
-   turns motion on; it never turns content on. That rule is why the flags
-   below (data-anim, data-scene) are set from here rather than written
-   into the markup. */
+   page to be readable: the sections start visible, the decode's track
+   starts collapsed and as its finished sentence. Script turns motion on;
+   it never turns content on. That rule is why the flags below
+   (data-anim) are set from here rather than written into the markup. */
 (function () {
   'use strict';
 
@@ -154,8 +153,8 @@
   /* ---------- the track reader ----------
      The decode below is a tall track with a sticky stage inside it and a
      number between 0 and 1 saying how far through it the window has come.
-     The home scene used to be one of these too; it is not any more (see
-     scene() below for why), so this now has exactly one caller.
+     The home scene used to be one of these too, and is gone now, so this
+     has exactly one caller.
 
      The handler is passive and does its work synchronously rather than
      inside a requestAnimationFrame. That looks like the wrong call and is
@@ -184,22 +183,6 @@
   }
 
 
-  /* ---------- 3. the home scene ----------
-     Five things the organisation believes, written out one at a time, and
-     the five things it offers lighting up in the corner beside them.
-
-     This ran on the scroll position first — six viewports of track, the
-     headline typing as you came down it. Two things were wrong with that
-     and neither showed up until it was real. The page said nothing at all
-     until you scrolled it, so the first thing a visitor met was a blank
-     screen with a bar on top. And pressing an item in the corner jumped
-     you to the scroll offset where that item began, which is the offset
-     where its sentence is one word long — so the single interaction on
-     the page reliably delivered an unfinished sentence.
-
-     A timer fixes both. The writing starts on load, the corner list is
-     links rather than scroll positions, and scrolling is left to do what
-     it is for. */
   /* ---------- 0. the language ----------
      One switch, EN | BM, in the bar and again in the phone sheet. English
      is harvested from the markup at load — every element site.ms.js can
@@ -217,7 +200,7 @@
   var LANG_KEY = 'myadhd.lang';
   var lang = 'en';
   try { if (localStorage.getItem(LANG_KEY) === 'ms') lang = 'ms'; } catch (_) {}
-  var MSX = window.MYADHD_MS || { strings: {}, aria: {}, scene: null };
+  var MSX = window.MYADHD_MS || { strings: {}, aria: {} };
   var ICON_RE = /<i aria-hidden="true">[\s\S]*?<\/i>/;
   var EN = {}, ICONS = {}, EN_ARIA = {};
   var langListeners = [];
@@ -257,120 +240,6 @@
   });
   window.myadhdLang = { active: function () { return lang; }, set: setLang, onChange: function (fn) { langListeners.push(fn); } };
   if (lang !== 'en') applyLang();
-
-
-  (function scene() {
-    var el = document.querySelector('.scene');
-    if (!el) return;
-    var out = el.querySelector('.type');
-    var idx = el.querySelector('[data-cur]');
-    var items = [].slice.call(el.querySelectorAll('.acts-list li'));
-    if (!out) return;
-
-    /* The organisation's own sentences, lifted from docs/content/about.md
-       — not written for this page. If these are ever replaced with proper
-       value statements, this is the only place they live. */
-    var LINES = [
-      "Too many Malaysians grow up believing they're careless, lazy, or just not trying hard enough.",
-      "What they're actually dealing with is a brain that's wired differently.",
-      "Awareness here is still thin. Diagnosis is slow and expensive.",
-      "Adult ADHD, especially, is barely discussed at all.",
-      "We point people toward proper assessment instead of guesswork."
-    ];
-    var LINES_EN = LINES;
-    var ROMAN = ['I', 'II', 'III', 'IV', 'V'];
-    var N = LINES.length;
-    var WORDS = LINES.map(function (l) { return l.split(' '); });
-    /* The Malay set rides in site.ms.js. A switch mid-beat starts the
-       current beat again in the other language rather than finishing an
-       English sentence in Malay. */
-    function useLang(l) {
-      LINES = (l === 'ms' && MSX.scene && MSX.scene.length === N) ? MSX.scene : LINES_EN;
-      WORDS = LINES.map(function (x) { return x.split(' '); });
-    }
-    useLang(lang);
-
-    var WORD_MS = 105;   /* one word */
-    /* The finished sentence, before it hands over. 2600 was a slideshow:
-       a line lands, you begin it, it is gone. Seven seconds is the floor
-       for reading one of these once and looking up — the typing is on
-       top of it (a second or so), so each beat holds the screen for
-       about eight, and the five come round in three quarters of a
-       minute. */
-    var HOLD_MS = 7000;
-
-    function light(k) {
-      if (idx) idx.textContent = ROMAN[k];
-      items.forEach(function (li, i) {
-        if (i === k) li.setAttribute('aria-current', 'true');
-        else li.removeAttribute('aria-current');
-      });
-    }
-
-    /* Reduced motion, or no timers: the first line whole, everything lit.
-       The screen still says what it is for. */
-    if (reduced) {
-      out.textContent = LINES[0];
-      light(0);
-      window.myadhdLang.onChange(function (l) { useLang(l); out.textContent = LINES[0]; });
-      return;
-    }
-
-    var k = 0, w = 0, timer;
-    window.myadhdLang.onChange(function (l) {
-      useLang(l);
-      clearTimeout(timer); w = 0; step();
-    });
-    function step() {
-      var words = WORDS[k];
-      w++;
-      out.textContent = words.slice(0, w - 1).join(' ') + (w > 1 ? ' ' : '');
-      var tip = document.createElement('span');
-      tip.className = 'dim';
-      tip.textContent = words[w - 1];
-      out.appendChild(tip);
-
-      if (w < words.length) {
-        timer = setTimeout(step, WORD_MS);
-      } else {
-        timer = setTimeout(function () {
-          k = (k + 1) % N; w = 0; light(k); step();
-        }, HOLD_MS);
-      }
-    }
-    light(0);
-    step();
-
-    /* Stop writing to a page nobody is looking at — a tab in the
-       background, or the scene scrolled off behind the funnel. Both save
-       the same thing: a timer firing into a DOM nobody can see. */
-    function pause() { clearTimeout(timer); }
-    function resume() { pause(); step(); }
-    document.addEventListener('visibilitychange', function () {
-      document.hidden ? pause() : resume();
-    });
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { e.isIntersecting ? resume() : pause(); });
-      }, { threshold: 0.15 }).observe(el);
-    }
-
-    /* The corner list pops in once, on load. */
-    var list = el.querySelector('.acts-list');
-    if (list) {
-      list.setAttribute('data-anim', '');
-      setTimeout(function () { list.setAttribute('data-in', ''); }, 260);
-    }
-
-    /* The field is behind a screen that never moves, so nothing takes it
-       off the GPU on its own once the reader has gone past it. */
-    window.addEventListener('scroll', function () {
-      var W = window.myadhdWaves;
-      if (W && W.pause) {
-        (window.scrollY > window.innerHeight * 0.9) ? W.pause() : W.play();
-      }
-    }, { passive: true });
-  })();
 
 
   /* ---------- 4. the decode ----------
