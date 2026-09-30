@@ -303,6 +303,15 @@ Two things, and they are deliberately not one card:
    opens a two-step red confirm. That stays here, beside the account it
    ends.
 
+### REMINDERS
+The **Notifications card**, in the calendar card's shape — bell glyph,
+*"Notifications"*, a state line (*"Off"* / *"On for this device"* /
+*"Blocked"* in orange / *"Needs the Home Screen"*), a note, a gradient
+**"Turn on reminders"** (or **"Show me how"**, to `/install`, on an iPhone in
+a Safari tab), and a quiet red **"Turn off"** once on. The whole group is
+absent where the browser cannot receive a push, and inside the iOS app,
+which rings on its own. See `push.js`.
+
 ### SYNC CALENDARS
 The **Google Calendar card**, unchanged — calendar glyph, *"Google
 Calendar"*, a state line (*"Not linked"* / *"Linked"* / *"Needs

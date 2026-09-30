@@ -1358,8 +1358,14 @@ to one block per line rather than one block holding newlines.
 
 ## Deliberately not in the beta
 
-Timers, streaks, XP, notifications, sub-projects, tags. Every one of those is
+Timers, streaks, XP, sub-projects, tags. Every one of those is
 a reason for the app to feel like homework.
+
+**Notifications came off it on 2026-10-01**, for the reason calendars did:
+the times were already there. A task with a day rings at its time, with its
+first step as the body, and nothing rings that nobody dated. Off until turned
+on, from Settings. The rules match the iOS app's; `push.js` has them, and why
+only the times reach the server.
 
 **Calendars were on this list and came off it.** The dump reads days and times
 out of plain language, so the dates existed whether or not anything drew
@@ -1398,6 +1404,9 @@ answers truthfully; no feature reads it. The app behaves exactly as it did.
 | `api/stripe-webhook.js` | **The only thing that grants or revokes access.** Verifies the signature, writes `billing` |
 | `api/portal.js` | Opens Stripe's billing portal, so this app never builds a cancel flow |
 | `sql/001_billing.sql` | The `billing` table, its RLS, and `is_entitled()` |
+| `push.js` | Web reminders: the Settings card, the switch, and the fortnight of times sent to `/api/push`. The words go to Cache Storage for `sw.js`, never to the server |
+| `api/push.js` | Stores one browser's reminder times, replaced whole on each call. No account — the push endpoint is the identity |
+| `api/push-send.js` | Sends what is due. Called every minute by pg_cron (`sql/003_push.sql`), behind `PUSH_CRON_SECRET` |
 | `billing.js` | Client. Reads the row, never decides it |
 | `/billing` | Account screen, where Stripe returns to, and the end-to-end test harness. `noindex` |
 

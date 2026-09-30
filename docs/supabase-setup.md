@@ -113,6 +113,30 @@ fetch(MYADHD_SUPABASE_URL + '/rest/v1/rpc/save_self_check', {
 **Anything but 200 is correct.** A 200 means the revoke did not apply and the
 table is writable by the public — stop and fix it before the page goes live.
 
+### 003 — web reminders
+
+1. **Database → Extensions → enable `pg_cron` and `pg_net`.**
+2. Put the cron secret in the vault, **as the SQL editor, not in a file**:
+   `select vault.create_secret('<PUSH_CRON_SECRET>', 'push_cron_secret');`
+3. Run `sql/003_push.sql`. Read the output: a notice in capitals means the
+   schedule did not land and nothing will ever be sent.
+4. Vercel env vars: `VAPID_PRIVATE_KEY` and `PUSH_CRON_SECRET`, the same
+   secret as step 2. The public half of the key is in `config.js` and
+   `api/push-send.js` and must match the private one.
+
+```sql
+-- it is ticking, and getting 200s back
+select status_code, content::text, created
+  from net._http_response order by created desc limit 5;
+```
+
+A 401 there is the vault secret and the Vercel one disagreeing; a 503 is an
+env var missing on Vercel.
+
+`003` is the exception to section 5 below: sending a push needs the VAPID
+key, which lives on Vercel, so the clock has to call out. The endpoint it
+calls only sends what is already due and refuses anyone without the secret.
+
 ## 4. Row-level security
 
 Every table has RLS on, a `select` policy matching `auth.uid()`, and no

@@ -292,6 +292,9 @@ function load() {
    restamp them as local edits and bounce them straight up again. */
 function persistOnly() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (_) {}
+  /* Here rather than in save(), so tasks arriving from another device
+     reschedule this one's reminders too. No-op unless they are on. */
+  if (window.reminders) reminders.soon(state);
 }
 
 function save() {
@@ -3957,6 +3960,7 @@ function paintSettings() {
   paintGoogle();
   paintAccount();
   paintFeedback();
+  if (window.reminders) reminders.paint();
 }
 
 function showSettings() {
@@ -5707,6 +5711,14 @@ paintMorph();
 buildAvatarPicker();
 paintProfile();
 showHome();
+
+/* Reminders are rebuilt from the store on every open as well as every
+   save: the server only holds a fortnight, and a daily note needs the
+   next one added. See push.js. */
+if (window.reminders) {
+  reminders.wire(toast);
+  reminders.soon(state);
+}
 
 /* Back from Stripe. The webhook is what grants the entitlement and it
    lands a second or two behind the redirect, so one read here would

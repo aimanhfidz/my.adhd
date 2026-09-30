@@ -65,3 +65,14 @@ window.MYADHD_DONATE_URL = 'https://donate.stripe.com/00w9ATcWR3EGaOugv718c00';
    The rail stays wired, so bringing the plans back is this one line. */
 
 window.MYADHD_BILLING_ENABLED = false;
+
+/* ---- Reminders ----
+   The public half of the VAPID key pair. The browser hands it to its push
+   service when it subscribes, and the push service then only accepts a
+   push signed by the private half — which is VAPID_PRIVATE_KEY in Vercel's
+   env vars and nowhere else. api/push-send.js carries this same string;
+   change one and change the other, or every push is refused.
+
+   Leave it empty and the Reminders card never renders. See push.js. */
+
+window.MYADHD_VAPID_PUBLIC_KEY = 'BKFIeQ7iPHrY5ZuivUcIwKIAY0grSlnqHznje1mSHjN9LvCYg46q9pscQavApRj2XDhj49e6A0eOGquIUXj15Ws';

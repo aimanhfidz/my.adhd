@@ -32,7 +32,13 @@
    v47: the app is shut behind /soon — every cached copy of /app and
    /install carries the hold now, and /soon has to be cached with them or
    a home-screen copy opened offline redirects into nothing. */
-const CACHE = 'myadhd-v54';   // v54: /activities is gone; evict it from v53
+const CACHE = 'myadhd-v55';   // v55: push.js, and the push handler at the bottom
+
+/* The words for each reminder, written by push.js. Not ours to evict: it is
+   a file of data rather than a copy of the site, and the activate handler
+   below would otherwise delete it on every version bump. */
+const PLAN_CACHE = 'myadhd-reminders';
+const PLAN_URL = '/__reminders.json';
 
 const SHELL = [
   '/',
@@ -54,6 +60,7 @@ const SHELL = [
   '/app.js',
   '/gcal.js',
   '/cloud.js',
+  '/push.js',
   '/voice.js',
   '/auth.js',
   '/billing.js',
@@ -110,7 +117,7 @@ self.addEventListener('install', (e) => {
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE && k !== PLAN_CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -137,5 +144,49 @@ self.addEventListener('fetch', (e) => {
           hit || (req.mode === 'navigate' ? caches.match('/app') : undefined)
         )
       )
+  );
+});
+
+/* ---------------- reminders ----------------
+   A push carries only a tag — `t.<task id>` or `n.<note id>.<time>` — and
+   the words are looked up here, in the plan push.js wrote. See the head of
+   push.js for why the server never has them.
+
+   A push must end in a notification. Safari revokes the subscription of a
+   site that receives pushes and shows nothing, so a tag that is not in the
+   plan still shows something: the plan can be missing (storage cleared),
+   and a task ticked off while offline can still be on the server's list.
+   The second case says less rather than naming a task you already did. */
+self.addEventListener('push', (e) => {
+  let tag = '';
+  try { tag = String((e.data && e.data.json() || {}).tag || ''); } catch (_) {}
+
+  e.waitUntil(
+    caches.open(PLAN_CACHE)
+      .then((c) => c.match(PLAN_URL))
+      .then((r) => (r ? r.json() : {}))
+      .catch(() => ({}))
+      .then((words) => {
+        const w = words[tag] || { title: 'my.adhd', body: 'Something you planned is due.' };
+        return self.registration.showNotification(w.title, {
+          body: w.body || '',
+          tag: tag || 'myadhd',
+          icon: '/icons/icon-192.png?v=3',
+          badge: '/icons/icon-192.png?v=3',
+          data: { url: '/app' },
+        });
+      })
+  );
+});
+
+/* A tap opens the app, or brings the open one forward. */
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || '/app';
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((all) => {
+      const open = all.find((c) => new URL(c.url).pathname.startsWith('/app'));
+      return open ? open.focus() : self.clients.openWindow(url);
+    })
   );
 });

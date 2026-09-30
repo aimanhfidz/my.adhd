@@ -794,6 +794,32 @@ try { if (sessionStorage.getItem('myadhd.splash')) document.documentElement.clas
 
       </section>
 
+      <!-- Reminders. Hidden where the browser cannot receive a push at all,
+           and inside the iOS app, which rings on its own. On an iPhone in a
+           Safari tab it shows, but only to say the Home Screen copy is where
+           this works. push.js paints and wires all of it. -->
+      <section class="settings-section is-hidden">
+        <p class="eyebrow settings-cap">Reminders</p>
+
+        <div class="gcal-card" id="push-card">
+          <div class="gcal-head">
+            <svg class="gcal-mark" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-bell"/></svg>
+            <div>
+              <p class="gcal-title">Notifications</p>
+              <p class="gcal-state" id="push-state">Off</p>
+            </div>
+          </div>
+
+          <p class="gcal-note" id="push-note"></p>
+
+          <button class="btn-primary gcal-go" id="push-btn" type="button">Turn on reminders</button>
+
+          <div class="gcal-more">
+            <button class="btn-danger-quiet is-hidden" id="push-off" type="button">Turn off</button>
+          </div>
+        </div>
+      </section>
+
       <!-- The calendar link gets a group of its own rather than a row in the
            account one. Both are Google and they look alike on purpose, but
            one is who you are and the other is a wiring decision, and putting
@@ -1175,6 +1201,7 @@ try { if (sessionStorage.getItem('myadhd.splash')) document.documentElement.clas
 <script src="billing.js"></script>
 <script src="gcal.js"></script>
 <script src="cloud.js"></script>
+<script src="push.js"></script>
 <script src="voice.js"></script>
 <script src="app.js"></script>
 <script>
