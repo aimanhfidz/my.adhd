@@ -709,8 +709,12 @@ body{
 /* The placeholder on the first empty line, and only there. */
 .nb-text:empty[data-hint]::before{content:attr(data-hint); color:var(--note-faint)}
 
+/* Centred on the first line's letters rather than its line box: DM Sans
+   sits low in its line, so 4px left the box riding above the words.
+   Measured in WebKit — the box's centre lands between the cap height and
+   the x-height of the 15.5px text beside it. */
 .nb-box{
-  flex:none; width:18px; height:18px; margin-top:4px;
+  flex:none; width:18px; height:18px; margin-top:5.5px;
   background:none; border:2px solid var(--note-faint); border-radius:5px;
   cursor:pointer; padding:0;
   transition:background .16s var(--ease), border-color .16s var(--ease);
