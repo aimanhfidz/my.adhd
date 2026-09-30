@@ -211,6 +211,12 @@
         + '&redirect_to=' + encodeURIComponent(back);
       if (scopes) url += '&scopes=' + encodeURIComponent(scopes);
       if (offline) url += '&access_type=offline&prompt=consent';
+      /* The server keeps one refresh token per account, and the iPhone's
+         carries calendar.readonly as well as this page's scope. Without
+         this, signing in here would replace it with a narrower one and
+         the phone's meetings would stop; with it, Google folds every
+         scope granted before into the new grant. */
+      if (offline) url += '&include_granted_scopes=true';
       location.href = url;
     },
 

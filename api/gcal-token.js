@@ -10,9 +10,11 @@
  * install cannot do at all, so on a phone it always failed. Here the
  * exchange happens server to server, where none of that applies.
  *
- * What goes back to the browser is an access token that dies in an hour
- * and can only touch the app's own calendar. The refresh token itself
- * never leaves this side.
+ * What goes back is an access token that dies in an hour. From the web
+ * it can only touch the app's own calendar; an account that signed in on
+ * the iPhone app also granted calendar.readonly, which the phone uses to
+ * draw the meetings already on the diary. The refresh token itself never
+ * leaves this side.
  *
  * Requires SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, GOOGLE_CLIENT_ID and
  * GOOGLE_CLIENT_SECRET.
