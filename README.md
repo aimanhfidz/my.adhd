@@ -284,7 +284,7 @@ the top of the file why each line in it is safe to publish.
 | `GOOGLE_CLIENT_ID` | `api/gcal-token.js` | `/api/gcal-token` 503s and the calendar link falls back to the in-browser flow |
 | `GOOGLE_CLIENT_SECRET` | `api/gcal-token.js` | The same, and this one has no public half — it exists nowhere else |
 | `FEEDBACK_SALT` | `api/feedback.js` | The feedback screen cannot send; it is what the daily limit counts against |
-| `ADMIN_EMAILS` | `api/admin-feedback.js` | Comma-separated. Empty **fails closed** and locks everyone out, including you |
+| `ADMIN_EMAILS` | `api/_admin-feedback.js` | Comma-separated. Empty **fails closed** and locks everyone out, including you |
 
 **`GOOGLE_CLIENT_ID` lives in two places on purpose and they have to agree.**
 The public half is `window.MYADHD_GOOGLE_CLIENT_ID` in `config.js`, which the
@@ -768,8 +768,8 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `api/gcal-token.js` | Spends that refresh token server to server for an hour-long access token. This is what ended the reconnect prompt on iOS |
 | `api/gcal-calendar.js` | Settles once, for the whole account, which Google calendar is the my.adhd one — the fix for two devices linking at once and creating two |
 | `api/delete-account.js` | Ends an account from inside the app, and takes the cloud copy of the lists with it. App Store Guideline 5.1.1(v) |
-| `api/admin-feedback.js` | Reads the feedback table. The only route that hands one person another person's writing, so it is the only one gated on `ADMIN_EMAILS` — and it fails closed |
-| `admin.html` / `admin.js` / `admin.css` | The feedback page, at `/admin` — not to be confused with the Notes tab in the app. Presentation only: the access decision is made server-side by `api/admin-feedback.js`, and hiding the list from a signed-out visitor is politeness rather than security |
+| `api/_admin-feedback.js` | `/api/admin-feedback`, rewritten to `/api/feedback` and handed over on GET — the Hobby plan caps a deploy at twelve functions. Reads the feedback table. The only route that hands one person another person's writing, so it is the only one gated on `ADMIN_EMAILS` — and it fails closed |
+| `admin.html` / `admin.js` / `admin.css` | The feedback page, at `/admin` — not to be confused with the Notes tab in the app. Presentation only: the access decision is made server-side by `api/_admin-feedback.js`, and hiding the list from a signed-out visitor is politeness rather than security |
 | `install.html` / `install.css` | The "add to home screen" walkthrough |
 | `privacy.html` / `terms.html` | The legal pages. Written against the code -- if they disagree with it, one of the two is a bug |
 | `legal.css` | Long-form prose: one measured column. The only stylesheet on the site that is about reading |
@@ -1406,7 +1406,7 @@ answers truthfully; no feature reads it. The app behaves exactly as it did.
 | `sql/001_billing.sql` | The `billing` table, its RLS, and `is_entitled()` |
 | `push.js` | Web reminders: the Settings card, the switch, and the fortnight of times sent to `/api/push`. The words go to Cache Storage for `sw.js`, never to the server |
 | `api/push.js` | Stores one browser's reminder times, replaced whole on each call. No account — the push endpoint is the identity |
-| `api/push-send.js` | Sends what is due. Called every minute by pg_cron (`sql/003_push.sql`), behind `PUSH_CRON_SECRET` |
+| `api/_push-send.js` | Sends what is due, behind `/api/push-send` (rewritten to `/api/push?op=send`: the Hobby plan caps a deploy at twelve functions). Called every minute by pg_cron (`sql/003_push.sql`), behind `PUSH_CRON_SECRET` |
 | `billing.js` | Client. Reads the row, never decides it |
 | `/billing` | Account screen, where Stripe returns to, and the end-to-end test harness. `noindex` |
 

@@ -15,6 +15,7 @@
  */
 
 import { createHash } from 'node:crypto';
+import { adminFeedback } from './_admin-feedback.js';
 
 const MIN = 4;
 const MAX = 2000;
@@ -33,6 +34,9 @@ function hashIP(ip, salt) {
 }
 
 export default async function handler(req, res) {
+  /* Reading it back is /api/admin-feedback, rewritten here in vercel.json. */
+  if (req.method === 'GET') return adminFeedback(req, res);
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'POST only' });
   }

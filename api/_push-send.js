@@ -1,6 +1,11 @@
 /**
  * POST /api/push-send   (Authorization: Bearer <PUSH_CRON_SECRET>)
  *
+ * Not a route of its own: vercel.json rewrites /api/push-send to
+ * /api/push?op=send, which hands over to this. The Hobby plan allows twelve
+ * functions a deployment and api/ already had twelve; the underscore keeps
+ * this file from being counted as a thirteenth.
+ *
  * Sends every reminder that is due. Called once a minute by the pg_cron
  * job in sql/003_push.sql — not by a Vercel cron, because the Hobby plan
  * refuses to deploy a cron that runs more than once a day.
@@ -28,7 +33,7 @@ const BATCH = 500;
    two halves have to match or every push is refused as unauthorised. */
 const VAPID_PUBLIC = 'BKFIeQ7iPHrY5ZuivUcIwKIAY0grSlnqHznje1mSHjN9LvCYg46q9pscQavApRj2XDhj49e6A0eOGquIUXj15Ws';
 
-export default async function handler(req, res) {
+export async function send(req, res) {
   const secret = process.env.PUSH_CRON_SECRET || '';
   const priv = process.env.VAPID_PRIVATE_KEY || '';
   if (!configured() || !secret || !priv) {
@@ -39,12 +44,14 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'no' });
   }
 
-  webpush.setVapidDetails('https://myadhd.my', VAPID_PUBLIC, priv);
-
   const now = Date.now();
   const nowIso = new Date(now).toISOString();
 
   try {
+    /* Inside the try: a malformed key throws, and it should say so in the
+       log rather than as an unhandled crash. */
+    webpush.setVapidDetails('https://myadhd.my', VAPID_PUBLIC, priv);
+
     /* Too late to be worth saying: gone, unsent. */
     await db(`push_fire?fire_at=lt.${new Date(now - LATE).toISOString()}`, { method: 'DELETE' });
 

@@ -22,6 +22,11 @@
  * including me, which is the right way round for a mistake to go.
  *
  * Requires SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ADMIN_EMAILS.
+ *
+ * Not a route of its own: vercel.json rewrites /api/admin-feedback to
+ * /api/feedback, which hands a GET over to this. The Hobby plan allows
+ * twelve functions a deployment; the underscore keeps this one uncounted
+ * so reminders could have api/push.
  */
 
 const URL_BASE = (process.env.SUPABASE_URL || '').replace(/\/+$/, '');
@@ -35,7 +40,7 @@ function admins() {
     .filter(Boolean);
 }
 
-export default async function handler(req, res) {
+export async function adminFeedback(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'GET only' });
   }

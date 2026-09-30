@@ -16,6 +16,7 @@
  */
 
 import { configured, db } from './_supabase.js';
+import { send } from './_push-send.js';
 
 const MAX_FIRES = 60;
 const HORIZON = 31 * 24 * 60 * 60 * 1000;
@@ -49,6 +50,9 @@ function body(req) {
 }
 
 export default async function handler(req, res) {
+  /* /api/push-send, by way of the rewrite in vercel.json. */
+  if (req.query && req.query.op === 'send') return send(req, res);
+
   if (!configured()) return res.status(503).json({ error: 'not configured' });
 
   const b = body(req);
