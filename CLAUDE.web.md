@@ -75,10 +75,11 @@ is quietly depending on here.
 
 ## Right now
 
-**The app is held behind `/soon`** while it is rebuilt. `localhost` is never
-held. The block comment at the top of `app.html` lists everything to undo when
-it opens again. It also catches the iOS shell, which injects the dev key at
-document start to get past it — that is the shell's business, not this repo's.
+**Soft launch.** `/app` has been open since 2026-09-18 — no hold, it answers
+whoever types the address — but nothing on the site links to it: the links
+still say `/soon`, and `/install` still redirects there (never on
+`localhost`, nor with the dev key). The block comment in `app.html`'s `<head>`
+lists what is left to undo for the full opening.
 
 ## Running it
 

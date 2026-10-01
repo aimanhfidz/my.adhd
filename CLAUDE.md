@@ -47,10 +47,12 @@ Change either and it changes in one place only until somebody does the other.
 
 ## Right now
 
-**The app is held behind `/soon`.** `app.html` carries an inline hold in its
-`<head>` that sends everyone to `/soon` before first paint, except `localhost`
-and a browser that has been given the dev key. The block comment in `app.html`
-lists everything to undo when it opens again.
+**Soft launch: `/app` is open, but nothing points at it.** Its `/soon` hold
+came out on 2026-09-18, so the app answers to anyone who types the address.
+`/install` is still held (an inline redirect to `/soon`, skipped on
+`localhost` and with the dev key), and the site's links still say `/soon`.
+The block comment in `app.html`'s `<head>` lists what is left to undo for
+the full opening.
 
 ## House rules
 
