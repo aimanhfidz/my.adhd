@@ -210,7 +210,12 @@
         + '?provider=google'
         + '&redirect_to=' + encodeURIComponent(back);
       if (scopes) url += '&scopes=' + encodeURIComponent(scopes);
-      if (offline) url += '&access_type=offline&prompt=consent';
+      /* select_account, always: a browser still signed in to Google would
+         otherwise go straight back into the same account, and signing out
+         here to sign in as somebody else would be a loop with no exit. */
+      url += offline
+        ? '&access_type=offline&prompt=' + encodeURIComponent('select_account consent')
+        : '&prompt=select_account';
       /* The server keeps one refresh token per account, and the iPhone's
          carries calendar.readonly as well as this page's scope. Without
          this, signing in here would replace it with a narrower one and

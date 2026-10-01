@@ -331,6 +331,14 @@ Four rows in one card:
 3. **Privacy policy** — shield glyph → `/privacy`
 4. **Terms** — document glyph → `/terms`
 
+### RESET
+Behind a hairline under About, quiet like **"Clear everything"** on the
+lists: **"Reset this browser"**. It opens the same two-step red confirm,
+then deletes everything the app keeps in this browser — tasks, notes, name
+and face, theme — and reloads as a first visit. While signed in or while
+the calendar is linked it is greyed, with a faint line saying which to undo
+first and a soft **"Go to Google settings"** that scrolls to that card.
+
 ### The tail
 Small and muted: the line about tasks living in this browser only, and a
 version line **`v0.1.0`** with a small **`Beta`** tag. The old

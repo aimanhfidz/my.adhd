@@ -908,6 +908,28 @@ try { if (sessionStorage.getItem('myadhd.splash')) document.documentElement.clas
         </div>
       </section>
 
+      <!-- Starting over on this browser: everything the app keeps here, not
+           just the tasks the lists' Clear everything takes. Last on the
+           screen and quiet until armed, like that one.
+
+           Greyed while signed in or while the calendar is linked, with a
+           line saying which to undo first — an empty browser would
+           otherwise be a deletion sent to every other device and to the
+           calendar. See resetBlocker() in app.js. -->
+      <section class="settings-section reset-zone" id="reset-zone">
+        <button class="btn-danger-quiet" id="btn-reset" type="button">Reset this browser</button>
+        <p class="reset-note is-hidden" id="reset-note"></p>
+        <button class="btn-soft reset-where is-hidden" id="btn-reset-where" type="button">Go to Google settings</button>
+
+        <div class="clear-confirm is-hidden" id="reset-confirm">
+          <p class="clear-confirm-text" id="reset-text"></p>
+          <div class="clear-confirm-actions">
+            <button class="btn-soft" id="btn-reset-cancel" type="button">Cancel</button>
+            <button class="btn-danger" id="btn-reset-go" type="button"></button>
+          </div>
+        </div>
+      </section>
+
       <p class="hint" id="local-note">Your tasks live in this browser only &mdash; no account,
         no server. The calendar link above is the one exception, and only while
         it is switched on.</p>

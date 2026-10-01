@@ -210,6 +210,14 @@ const el = {
   acctDeleteText:      $('acct-delete-text'),
   btnAcctDeleteCancel: $('btn-acct-delete-cancel'),
   btnAcctDeleteGo:     $('btn-acct-delete-go'),
+  resetZone:    $('reset-zone'),
+  btnReset:     $('btn-reset'),
+  resetNote:    $('reset-note'),
+  btnResetWhere: $('btn-reset-where'),
+  resetConfirm: $('reset-confirm'),
+  resetText:    $('reset-text'),
+  btnResetNo:   $('btn-reset-cancel'),
+  btnResetGo:   $('btn-reset-go'),
   signupOffer:  $('signup-offer'),
   signupYes:    $('signup-yes'),
   signupNo:     $('signup-no'),
@@ -286,11 +294,17 @@ function load() {
   } catch (_) { /* corrupt store — start fresh rather than crash */ }
 }
 
+/* Set once the Settings reset has started, and never unset: the page is
+   leaving. Declared here, above the two writers that read it, because a
+   `let` read before its own line has run throws. */
+let resetting = false;
+
 /* The store, written and nothing else. cloud.js uses this after a merge:
    the tasks that just came down are already stamped with the timestamps
    they arrived carrying, and running them back through save() would
    restamp them as local edits and bounce them straight up again. */
 function persistOnly() {
+  if (resetting) return;   // see resetBrowser()
   try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (_) {}
   /* Here rather than in save(), so tasks arriving from another device
      reschedule this one's reminders too. No-op unless they are on. */
@@ -298,6 +312,7 @@ function persistOnly() {
 }
 
 function save() {
+  if (resetting) return;
   /* Before the write, so what lands on disk carries the timestamps the
      other devices will settle conflicts on. Free when signed out — it is
      one hash per task and no network. */
@@ -3497,6 +3512,7 @@ async function disconnectGoogle() {
 
 function paintGoogle() {
   if (!el.gcalCard) return;
+  paintReset();   // linked or not decides whether it may run
 
   /* No client ID in config.js means this build cannot do it at all, and a
      button that can only ever fail is worse than no button. The note under
@@ -3598,6 +3614,7 @@ function paintSignupOffer() {
 
 function paintAccount() {
   if (!el.acctCard) return;
+  paintReset();   // signed in or out decides whether it may run
 
   if (!window.auth || !auth.configured()) {
     el.acctCard.classList.add('is-hidden');
@@ -3833,6 +3850,141 @@ async function stepAcctDelete() {
   acctDeleteTimer = setTimeout(resetAcctDelete, 20000);
 }
 
+/* ---------------- starting over on this browser ----------------
+   The lists' Clear everything takes the tasks. This takes everything the
+   app keeps here — tasks, notes, the name and face, the theme, and the
+   sync and calendar bookkeeping — and the page comes back as a first
+   visit. Same two-stage shape as the other two, same 20-second disarm.
+
+   **Not while Google is in it.** Signed in, an empty browser is a deletion
+   the next cloud pass would carry to every other device; linked, every
+   dated task's event would be deleted off the calendar with it. So while
+   either is on, the button is greyed and says which one to undo first —
+   and both of those controls are on this same screen, above it.
+
+   **The sync book goes too, and that is not tidiness.** cloud.js keeps
+   the ids of every task this browser has stamped, and save() stamps even
+   signed out. Left behind, signing in again after the reset would read
+   every one of those ids as deleted here and tombstone the account's copy
+   of them. Gone with the rest, the next sign-in starts clean and simply
+   brings the account's lists down.
+
+   Two keys stay: myadhd.lang and myadhd.installSeen belong to the site
+   pages, not to the app. */
+
+const RESET_KEYS = [
+  STORE_KEY,            // tasks, notes, profile, and the rest of the state
+  'myadhd.cloud.v1',    // the sync book — see above
+  'myadhd.gcal.v1',     // the calendar link, already unlinked by now
+  'myadhd.auth.v1',     // the session, already signed out by now
+  'myadhd.theme',
+];
+
+let resetStage = 0;
+let resetTimer;
+
+/** What has to be undone first, in words, or null when nothing does. */
+function resetBlocker() {
+  const signedIn = !!(window.auth && auth.configured() && auth.signedIn());
+  const linked = !!(window.gcal && gcal.configured() && gcal.connected());
+  if (signedIn && linked) {
+    return 'Sign out and unlink Google Calendar first, so your other devices '
+      + 'and your calendar are left alone.';
+  }
+  if (signedIn) return 'Sign out first, so your other devices keep their lists.';
+  if (linked) return 'Unlink Google Calendar first, so the events on your calendar are left alone.';
+  return null;
+}
+
+/* Called from paintAccount() and paintGoogle(), which run whenever either
+   connection changes — so the button follows a sign-out or an unlink
+   without anything having to remember to ask. */
+function paintReset() {
+  if (!el.resetZone) return;
+  const why = resetBlocker();
+  el.btnReset.disabled = !!why;
+  el.resetNote.textContent = why || '';
+  el.resetNote.classList.toggle('is-hidden', !why);
+  el.btnResetWhere.classList.toggle('is-hidden', !why);
+  if (why) disarmReset();
+}
+
+function disarmReset() {
+  resetStage = 0;
+  clearTimeout(resetTimer);
+  if (!el.resetConfirm) return;
+  el.resetConfirm.classList.add('is-hidden');
+  el.resetConfirm.classList.remove('is-final');
+  el.btnReset.classList.remove('is-hidden');
+}
+
+/* The card the blocker is about, brought into view. Signed in goes first:
+   Sign out is the one that matters most, and the account card is above. */
+function showResetBlocker() {
+  const signedIn = !!(window.auth && auth.configured() && auth.signedIn());
+  const card = signedIn ? el.acctCard : el.gcalCard;
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function stepReset() {
+  /* A sign-in in another tab can land between the presses. */
+  if (resetBlocker()) { paintReset(); return; }
+
+  resetStage += 1;
+
+  if (resetStage === 1) {
+    const n = state.tasks.length;
+    const m = (state.notes || []).length;
+    const bits = [];
+    if (n) bits.push(n === 1 ? '1 task' : `${n} tasks`);
+    if (m) bits.push(m === 1 ? '1 note' : `${m} notes`);
+    bits.push('your name', 'your settings');
+    const list = bits.slice(0, -1).join(', ') + ' and ' + bits[bits.length - 1];
+
+    el.btnReset.classList.add('is-hidden');
+    el.resetConfirm.classList.remove('is-hidden', 'is-final');
+    el.resetText.textContent =
+      `Delete everything my.adhd keeps in this browser — ${list} — and `
+      + 'start over? Lists saved to an account stay in it.';
+    el.btnResetGo.textContent = 'Yes, reset';
+  } else if (resetStage === 2) {
+    el.resetConfirm.classList.add('is-final');
+    el.resetText.textContent =
+      'Last check — this permanently deletes it all from this browser and '
+      + 'there is no backup.';
+    el.btnResetGo.textContent = 'Reset this browser';
+  } else {
+    resetBrowser();
+    return;
+  }
+
+  // don't leave it armed
+  clearTimeout(resetTimer);
+  resetTimer = setTimeout(disarmReset, 20000);
+}
+
+/* Nothing may write between the keys going and the page leaving: a save()
+   from a debounce or a repaint would put the old state straight back, and
+   cloud.stamp() inside it would rebuild the book as a list of graves.
+   `resetting` makes save() and persistOnly() do nothing, and nothing else
+   that writes these keys can run with Google out of the picture. The
+   reload is the reset — every screen, timer and module comes back as a
+   first visit, with nothing in memory left over to reconcile. */
+function resetBrowser() {
+  resetting = true;
+  clearTimeout(resetTimer);
+  clearTimeout(clearTimer);
+  for (const key of RESET_KEYS) {
+    try { localStorage.removeItem(key); } catch (_) {}
+  }
+  /* Reminders hold a schedule on the server for this browser, and a fresh
+     start should not ring about the old lists. Turned off rather than left
+     to empty itself on the next open; the reload waits for it, but never
+     more than a moment — an offline reset still resets. */
+  const off = window.reminders ? reminders.disable().catch(() => {}) : Promise.resolve();
+  Promise.race([off, new Promise(r => setTimeout(r, 2500))]).then(() => location.reload());
+}
+
 /* Runs once at boot, before anything is drawn. Two jobs: catch the tokens
    coming back from Google, and — if there is an account — tell gcal.js it
    can stop asking the browser for tokens and ask the server instead. */
@@ -3964,6 +4116,7 @@ function paintSettings() {
 }
 
 function showSettings() {
+  disarmReset();   // a confirm left half-pressed on the last visit
   paintSettings();
   show(el.screenSettings);
 
@@ -5560,6 +5713,13 @@ if (el.acctBtn) {
   el.btnAcctDelete.addEventListener('click', stepAcctDelete);
   el.btnAcctDeleteGo.addEventListener('click', stepAcctDelete);
   el.btnAcctDeleteCancel.addEventListener('click', resetAcctDelete);
+}
+
+if (el.btnReset) {
+  el.btnReset.addEventListener('click', stepReset);
+  el.btnResetGo.addEventListener('click', stepReset);
+  el.btnResetNo.addEventListener('click', disarmReset);
+  el.btnResetWhere.addEventListener('click', showResetBlocker);
 }
 
 if (el.signupYes) {
