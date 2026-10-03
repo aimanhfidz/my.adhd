@@ -55,7 +55,7 @@ The block comment in `app.html`'s `<head>` lists what is left to undo for
 the full opening.
 
 **focus.myadhd.my is built, and nothing links to it either.** It is
-`focus/`, served at the subdomain's root by a host rewrite in `vercel.json`.
+`focus/`, served at the subdomain's root by `middleware.js`.
 It keeps its own store (`myadhd.focus.v1`) and must never touch `myadhd.v1`.
 README has the rest.
 

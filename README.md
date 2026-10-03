@@ -782,6 +782,7 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `package.json` / `vercel.json` | The one dependency and the `dev` script; `cleanUrls`, the two function timeouts, the security headers, and the host rules that put `focus/` on focus.myadhd.my |
 | `serve.py` | Local preview that applies the same `cleanUrls` rule Vercel does, so `/app` resolves without a build. `npm run dev` runs it. It does not run the functions |
 | `focus/` | **focus.myadhd.my** — the focus dashboard. Its own page, stylesheet, script and manifest; see [focus.myadhd.my](#focusmyadhdmy) below |
+| `middleware.js` | Routing Middleware, matched to `/` only: on the focus host it serves `focus/index.html`, on any other host it does nothing |
 | ~~`ios/`~~ | Moved out on 2026-09-18 to [aimanhfidz/myadhd.my_IOS](https://github.com/aimanhfidz/myadhd.my_IOS). The `WKWebView` shell that opens `/app` on an iPhone and adds haptics, reminders, widgets, the share sheet, Siri and Google sign-in. It reads the deployed page, never this tree |
 
 ## focus.myadhd.my
@@ -801,9 +802,11 @@ art, copy, quotes or audio. Everything in it is free.
 | **Settings** | Scenes per mode, clock, timer, stats with a 16-week heatmap, quotes, extras (auto-hide, keep the screen on, still scenes, export / reset) |
 
 **How it is served.** It is `focus/index.html`, deployed by the same Vercel
-project. A host-scoped rewrite in `vercel.json` serves it at the root of
-`focus.myadhd.my`; anywhere else (localhost, preview deploys) it is at
-`/focus/`. Two host-scoped redirects keep the origins apart:
+project. `middleware.js` serves it at the root of `focus.myadhd.my`;
+anywhere else (localhost, preview deploys) it is at `/focus/`. It cannot be
+a `vercel.json` rewrite: Vercel looks for a file before it rewrites, and `/`
+always finds the main site's `index.html` — which is exactly what the first
+deploy served. Two host-scoped redirects keep the origins apart:
 `myadhd.my/focus` goes to the subdomain, and any path on the subdomain that
 is not focus's own files, `theme.css`, `fonts/`, `icons/` or the favicon
 goes back to `myadhd.my` — otherwise `focus.myadhd.my/app` would open the
