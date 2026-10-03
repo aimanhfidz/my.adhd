@@ -1,0 +1,79 @@
+/* my.adhd poster — one 1080×1350 Instagram post announcing an event.
+
+   Built on ../carousel/carousel.css: same size, faces, tokens, grain,
+   header lockup and footer rule. This file only holds the poster's body
+   block and one deliberate twist on the `orange` style: the accent words go
+   violet instead of white.
+
+   Violet on orange is low contrast (~1.7:1 for the brand violet), so the
+   accent is a deeper violet and only ever sits on display-size type. */
+
+:root[data-style="orange"]{
+  --accent:#4A1FB0;                 /* between --violet and --violet-deep */
+  --mark-pill:#4A1FB0;
+  --wordmark-accent:#4A1FB0;
+}
+
+/* the body: from under the header to above the rule, weight low, as in the deck */
+.poster .stack{
+  position:absolute; left:var(--margin); right:var(--margin);
+  top:200px; bottom:calc(var(--h) - var(--foot-rule) + 40px);
+  display:flex; flex-direction:column; justify-content:flex-end;
+}
+
+.poster .kicker{
+  display:inline-flex; align-items:center; gap:16px; margin:0 0 28px;
+  color:var(--ink);
+}
+.poster .kicker::before{
+  content:""; width:12px; height:12px; border-radius:999px; background:var(--dot);
+}
+
+.poster .hero{
+  font-family:var(--display); font-weight:600; font-size:152px; line-height:.9;
+  letter-spacing:-.035em; color:var(--ink); margin:0;
+}
+.poster .hero .ac{font-style:normal; color:var(--accent)}
+
+.poster .copy.sub{
+  font-size:38px; line-height:1.35; margin:22px 0 0; max-width:820px;
+}
+
+/* the when/where/who: a 2×2 grid between two rules */
+.poster .facts{
+  display:grid; grid-template-columns:1fr 1fr; margin:40px 0 0;
+  border-top:1px solid var(--line-strong);
+}
+.poster .facts div{
+  padding:14px 0; border-bottom:1px solid var(--line-strong);
+}
+.poster .facts dt{
+  font-family:var(--mono); font-size:22px; line-height:1; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 10px;
+}
+.poster .facts dd{
+  font-family:var(--sans); font-size:32px; line-height:1.2; color:var(--ink); margin:0;
+}
+
+/* the sign-up: words left, the QR on a white card right. The card is white
+   on purpose — a QR needs real contrast to scan, and orange is not it. */
+.poster .rsvp{
+  display:flex; align-items:center; justify-content:space-between; gap:40px;
+  margin:36px 0 0;
+}
+.poster .rsvp-title{
+  font-family:var(--display); font-weight:600; font-size:64px; line-height:1;
+  letter-spacing:-.025em; color:var(--ink); margin:0;
+}
+.poster .rsvp-note{
+  display:flex; align-items:center; gap:12px; margin:22px 0 0;
+  font-family:var(--mono); font-size:22px; line-height:1; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted);
+}
+.poster .rsvp-note svg{width:26px; height:26px; flex:none}
+.poster .qr{
+  flex:none; display:block; width:200px; height:200px; padding:18px;
+  background:#FFFFFF; border-radius:22px;
+  box-shadow:0 10px 30px rgba(110,30,0,.22);
+}
+.poster .qr img{display:block; width:100%; height:100%; image-rendering:pixelated}

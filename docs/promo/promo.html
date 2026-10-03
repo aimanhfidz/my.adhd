@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>my.adhd promo</title>
+<!--
+  A 30-second vertical promo for the web app, drawn in code.
+
+  Open it through serve.py (it needs /fonts/) and it plays on a loop:
+    python3 serve.py 8770  →  http://localhost:8770/docs/promo/promo.html
+  Space pauses, ←/→ step a second, a click scrubs by where you click.
+
+  ?render=1 strips the chrome for docs/promo/render.swift, which calls
+  seek(t) once per frame and writes the MP4. Everything on screen is a pure
+  function of t — no CSS animation, no timers — so a render is the same
+  every time and a frame can be looked at on its own.
+
+  The look: loose black ink on off-white, rough pastel-coral paint, white
+  characters with blush. The ink "boils" — its displacement noise changes
+  seed eight times a second, the way hand-drawn animation redraws a line
+  and never gets it quite the same. Colour stays to ink, coral and paper,
+  with the brand's own orange and violet allowed on the logo alone.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=block" rel="stylesheet" />
+<style>
+  @font-face{
+    font-family:"Baloo 2"; src:url("/fonts/Baloo2-Variable.ttf") format("truetype");
+    font-weight:400 800; font-display:block;
+  }
+  html,body{margin:0; height:100%; background:#1E1B1A}
+  body{display:grid; place-items:center; overflow:hidden}
+  #stage{height:100vh; width:auto; aspect-ratio:1080/1920; display:block; cursor:pointer}
+  .render body, .render{background:#F7F1E8}
+  .render #stage{width:1080px; height:1920px}
+  #hud{position:fixed; left:12px; bottom:10px; font:12px/1 ui-monospace,monospace; color:#bbb}
+  .render #hud{display:none}
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- the ink: lines wander a few pixels, and the seed moves on the boil -->
+    <filter id="ink" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence id="boilInk" type="fractalNoise" baseFrequency="0.022" numOctaves="2" seed="1" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- lettering boils too, but only just, so it stays readable -->
+    <filter id="inkText" x="-5%" y="-10%" width="110%" height="120%">
+      <feTurbulence id="boilText" type="fractalNoise" baseFrequency="0.03" numOctaves="1" seed="1" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- the paint: edges torn by low noise, the fill thinned by fine grain -->
+    <filter id="paint" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.011" numOctaves="3" seed="4" result="low"/>
+      <feDisplacementMap in="SourceGraphic" in2="low" scale="46" xChannelSelector="R" yChannelSelector="G" result="torn"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="9" result="fine"/>
+      <feColorMatrix in="fine" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 1.32" result="grain"/>
+      <feComposite in="torn" in2="grain" operator="in"/>
+    </filter>
+    <filter id="blush" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <!-- paper tooth, laid over everything at the end -->
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="7"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.12  0 0 0 0 0.10  0 0 0 0 0.09  0 0 0 0.16 -0.02"/>
+    </filter>
+  </defs>
+
+  <rect width="1080" height="1920" fill="#F7F1E8"/>
+  <g id="paintLayer" filter="url(#paint)"></g>
+  <g id="inkLayer" filter="url(#ink)"></g>
+  <g id="textLayer" filter="url(#inkText)"></g>
+  <rect width="1080" height="1920" filter="url(#grain)" style="mix-blend-mode:multiply" pointer-events="none"/>
+</svg>
+<div id="hud"></div>
+
+<script>
+'use strict';
+const RENDER = new URLSearchParams(location.search).has('render');
+if (RENDER) document.documentElement.classList.add('render');
+
+const DURATION = 30;
+const C = {
+  paper:'#F7F1E8', ink:'#1E1B1A', soft:'#6D6660', white:'#FFFCF7',
+  coral:'#F29C85', coralLight:'#F8C9B8', coralDeep:'#D9705A', blush:'#F09A93',
+  orange:'#F75C03', violet:'#7B3FE4',
+};
+const NS = 'http://www.w3.org/2000/svg';
+const $ = (id) => document.getElementById(id);
+
+/* ---------- small maths ---------- */
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, p) => a + (b - a) * p;
+const ease = {
+  lin: (t) => t,
+  out: (t) => 1 - Math.pow(1 - t, 3),
+  inOut: (t) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+  back: (t) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); },
+};
+/** 0 before a, 1 after b, eased in between. */
+function P(t, a, b, e = ease.out) {
+  if (t <= a) return 0;
+  if (t >= b) return 1;
+  return e((t - a) / (b - a));
+}
+/** On between a and b, fading in over fi and out over fo. */
+function win(t, a, b, fi = .4, fo = .4) {
+  return P(t, a, a + fi) * (1 - P(t, b - fo, b));
+}
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x6D2B79F5) >>> 0;
+    let r = Math.imul(s ^ (s >>> 15), 1 | s);
+    r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r;
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* ---------- hand-drawn geometry ----------
+   Every shape is a Catmull-Rom curve through jittered points, and closed
+   shapes run a little past their start — a pen that overshoots the join
+   is most of what makes a line read as drawn rather than set. */
+function curve(pts) {
+  let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += `C${c1[0].toFixed(1)} ${c1[1].toFixed(1)} ${c2[0].toFixed(1)} ${c2[1].toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+function roughEllipse(cx, cy, rx, ry, seed, wob = .035, over = .3) {
+  const r = rng(seed), pts = [], n = 26, start = r() * Math.PI * 2;
+  for (let i = 0; i <= n; i++) {
+    const a = start + (i / n) * (Math.PI * 2 + over);
+    const k = 1 + (r() - .5) * 2 * wob;
+    pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]);
+  }
+  return curve(pts);
+}
+function roughRect(x, y, w, h, rad, seed, jit = 2.2) {
+  const r = rng(seed), pts = [];
+  const per = 2 * (w + h - 4 * rad) + 2 * Math.PI * rad;
+  const n = Math.max(24, Math.round(per / 34));
+  const at = (s) => {
+    s = ((s % per) + per) % per;
+    const seg = [w - 2 * rad, Math.PI * rad / 2, h - 2 * rad, Math.PI * rad / 2, w - 2 * rad, Math.PI * rad / 2, h - 2 * rad, Math.PI * rad / 2];
+    const corners = [[x + w - rad, y + rad, -Math.PI / 2], [x + w - rad, y + h - rad, 0], [x + rad, y + h - rad, Math.PI / 2], [x + rad, y + rad, Math.PI]];
+    let i = 0;
+    while (s > seg[i]) { s -= seg[i]; i = (i + 1) % 8; }
+    switch (i) {
+      case 0: return [x + rad + s, y];
+      case 2: return [x + w, y + rad + s];
+      case 4: return [x + w - rad - s, y + h];
+      case 6: return [x, y + h - rad - s];
+      default: {
+        const c = corners[(i - 1) / 2], a = c[2] + s / rad;
+        return [c[0] + Math.cos(a) * rad, c[1] + Math.sin(a) * rad];
+      }
+    }
+  };
+  const start = r() * per;
+  for (let i = 0; i <= n + 2; i++) {
+    const p = at(start + (i / n) * per);
+    pts.push([p[0] + (r() - .5) * jit * 2, p[1] + (r() - .5) * jit * 2]);
+  }
+  return curve(pts);
+}
+function scribbleLine(x0, x1, y, seed, amp = 5) {
+  const r = rng(seed), pts = [], n = 7;
+  for (let i = 0; i <= n; i++) pts.push([lerp(x0, x1, i / n), y + (r() - .5) * amp * 2 + (i === n ? -4 : 0)]);
+  return curve(pts);
+}
+/** A tangle of loops — the busy head, drawn as one continuous line. */
+function tangle(cx, cy, rx, ry, seed) {
+  const r = rng(seed), pts = [];
+  for (let i = 0; i < 70; i++) {
+    const a = i * .52;
+    const k = .45 + .55 * r();
+    pts.push([cx + Math.cos(a) * rx * k + (r() - .5) * 40, cy + Math.sin(a * 1.07) * ry * k + (r() - .5) * 40]);
+  }
+  return curve(pts);
+}
+
+/* ---------- DOM ---------- */
+function el(tag, attrs, parent) {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function set(n, attrs) { for (const k in attrs) n.setAttribute(k, attrs[k]); }
+const INK = { fill: 'none', stroke: C.ink, 'stroke-width': 5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' };
+/** A drawn line whose reveal is 0..1 through dashoffset. */
+function drawn(d, attrs, parent) {
+  return el('path', Object.assign({ d, pathLength: 1, 'stroke-dasharray': 1, 'stroke-dashoffset': 1 }, INK, attrs), parent);
+}
+function reveal(n, p) { n.setAttribute('stroke-dashoffset', (1 - p).toFixed(4)); }
+
+const paintL = $('paintLayer'), inkL = $('inkLayer'), textL = $('textLayer');
+
+/* ---------- path morphing ----------
+   Moods share one command structure per part, so a face can ease from one
+   to the next number by number. */
+function lerpPath(a, b, p) {
+  const nb = b.match(/-?\d*\.?\d+/g);
+  let i = 0;
+  return a.replace(/-?\d*\.?\d+/g, (m) => (lerp(+m, +nb[i++], p)).toFixed(1));
+}
+
+/* ---------- the character ---------- */
+const MOODS = {
+  worried: {
+    mouth: 'M -26 58 Q -13 46 0 56 Q 13 66 26 54',
+    browL: 'M -64 -34 Q -44 -40 -24 -54', browR: 'M 24 -54 Q 44 -40 64 -34',
+    armL: 'M -96 150 Q -190 110 -128 30', armR: 'M 96 150 Q 190 110 128 30',
+    eyeRy: 11,
+  },
+  calm: {
+    mouth: 'M -26 50 Q -13 60 0 60 Q 13 60 26 50',
+    browL: 'M -62 -44 Q -44 -54 -26 -46', browR: 'M 26 -46 Q 44 -54 62 -44',
+    armL: 'M -100 160 Q -150 250 -128 330', armR: 'M 100 160 Q 150 250 128 330',
+    eyeRy: 10,
+  },
+  happy: {
+    mouth: 'M -36 44 Q -18 84 0 84 Q 18 84 36 44',
+    browL: 'M -64 -52 Q -44 -66 -24 -56', browR: 'M 24 -56 Q 44 -66 64 -52',
+    armL: 'M -98 150 Q -190 60 -168 -50', armR: 'M 98 150 Q 190 60 168 -50',
+    eyeRy: 5,
+  },
+};
+function moodAt(a, b, p) {
+  const A = MOODS[a], B = MOODS[b], out = {};
+  for (const k of ['mouth', 'browL', 'browR', 'armL', 'armR']) out[k] = lerpPath(A[k], B[k], p);
+  out.eyeRy = lerp(A.eyeRy, B.eyeRy, p);
+  return out;
+}
+function makeCharacter(parent) {
+  const g = el('g', {}, parent);
+  const legs = el('path', Object.assign({ d: 'M -44 420 Q -46 470 -52 505 M -58 505 L -30 505 M 44 420 Q 46 470 52 505 M 58 505 L 30 505' }, INK), g);
+  const body = el('path', Object.assign({}, INK, { d: 'M -86 92 C -150 200 -154 390 -104 428 Q 0 446 104 428 C 154 390 150 200 86 92', fill: C.white }), g);
+  const armL = el('path', Object.assign({}, INK), g);
+  const armR = el('path', Object.assign({}, INK), g);
+  const handL = el('circle', Object.assign({}, INK, { r: 17, fill: C.white }), g);
+  const handR = el('circle', Object.assign({}, INK, { r: 17, fill: C.white }), g);
+  const head = el('path', Object.assign({}, INK, { d: roughEllipse(0, 0, 124, 114, 11, .025, .25), fill: C.white }), g);
+  const cheekL = el('ellipse', { cx: -70, cy: 34, rx: 26, ry: 15, fill: C.blush, opacity: .8, filter: 'url(#blush)' }, g);
+  const cheekR = el('ellipse', { cx: 70, cy: 34, rx: 26, ry: 15, fill: C.blush, opacity: .8, filter: 'url(#blush)' }, g);
+  const eyeL = el('ellipse', { cx: -40, cy: -6, rx: 9, ry: 10, fill: C.ink }, g);
+  const eyeR = el('ellipse', { cx: 40, cy: -6, rx: 9, ry: 10, fill: C.ink }, g);
+  const browL = el('path', Object.assign({}, INK, { 'stroke-width': 5 }), g);
+  const browR = el('path', Object.assign({}, INK, { 'stroke-width': 5 }), g);
+  const mouth = el('path', Object.assign({}, INK, { 'stroke-width': 5.5 }), g);
+  const hair = el('path', Object.assign({}, INK, { d: 'M -18 -112 Q -8 -142 6 -118 Q 14 -150 30 -124' }), g);
+  const end = (d) => { const n = d.match(/-?\d*\.?\d+/g).map(Number); return [n[n.length - 2], n[n.length - 1]]; };
+  return {
+    g,
+    pose(m, blink) {
+      set(mouth, { d: m.mouth }); set(browL, { d: m.browL }); set(browR, { d: m.browR });
+      set(armL, { d: m.armL }); set(armR, { d: m.armR });
+      const [lx, ly] = end(m.armL), [rx, ry] = end(m.armR);
+      set(handL, { cx: lx, cy: ly }); set(handR, { cx: rx, cy: ry });
+      const ey = blink ? 1.5 : m.eyeRy;
+      set(eyeL, { ry: ey }); set(eyeR, { ry: ey });
+    },
+  };
+}
+
+/* ---------- build the scenes ---------- */
+const S = {};
+function build() {
+  /* paint, back to front */
+  S.blob1 = el('path', { d: roughEllipse(540, 690, 430, 330, 3, .06), fill: C.coral }, paintL);
+  S.blob2 = el('path', { d: roughEllipse(540, 800, 380, 540, 5, .05), fill: C.coralLight }, paintL);
+  S.blob3 = el('path', { d: roughEllipse(540, 800, 440, 420, 8, .06), fill: C.coral }, paintL);
+
+  /* scene 1: the busy head */
+  S.tangle = drawn(tangle(540, 690, 300, 220, 2), { 'stroke-width': 4, opacity: .55 }, inkL);
+  S.bubbles = [[572, 1098, 14], [606, 1040, 22], [646, 972, 30]].map(([x, y, r], i) =>
+    el('path', Object.assign({}, INK, { d: roughEllipse(x, y, r, r * .9, 40 + i), fill: C.white, 'stroke-width': 4.5 }), inkL));
+  S.sweat = el('path', Object.assign({}, INK, { d: 'M 0 -26 Q 16 -2 12 8 Q 6 20 -6 14 Q -14 6 0 -26', fill: C.white, 'stroke-width': 4 }), inkL);
+
+  /* the phone */
+  S.phone = el('g', {}, inkL);
+  el('path', Object.assign({}, INK, { d: roughRect(280, 330, 520, 910, 64, 12), fill: C.white, 'stroke-width': 6 }), S.phone);
+  el('path', Object.assign({}, INK, { d: roughRect(478, 356, 124, 26, 13, 13, 1.2), fill: C.ink, 'stroke-width': 3 }), S.phone);
+  S.dumpUI = el('g', {}, S.phone);
+  el('path', Object.assign({}, INK, { d: roughRect(318, 470, 444, 560, 26, 14), 'stroke-width': 4, stroke: C.soft }), S.dumpUI);
+  S.button = el('g', {}, S.dumpUI);
+  el('path', Object.assign({}, INK, { d: roughRect(330, 1082, 420, 96, 48, 15), fill: C.coral, 'stroke-width': 5 }), S.button);
+  S.tap = el('path', Object.assign({}, INK, { d: roughEllipse(0, 0, 1, 1, 16, .04), 'stroke-width': 4, opacity: 0 }), inkL);
+
+  /* scene 3: the lists */
+  S.heads = [['Today', 470], ['Coming up', 690], ['No date yet', 960]].map(([label, y], i) => ({
+    y, label,
+    line: drawn(scribbleLine(330, 330 + [118, 196, 214][i], y + 14, 30 + i, 3), { stroke: C.coral, 'stroke-width': 9 }, inkL),
+  }));
+
+  /* scene 4: the one thing */
+  S.card = drawn(roughRect(300, 600, 480, 250, 30, 17), { 'stroke-width': 5, fill: C.paper, 'fill-opacity': 0 }, inkL);
+  S.check = el('path', Object.assign({}, INK, { d: roughEllipse(366, 700, 30, 30, 18, .03), fill: C.white, 'stroke-width': 5 }), inkL);
+  S.tick = drawn('M 350 700 L 362 713 L 384 686', { 'stroke-width': 7 }, inkL);
+  S.strike = drawn('M 0 0', { 'stroke-width': 5 }, inkL);
+  S.spark = [];
+  for (let i = 0; i < 11; i++) {
+    const a = (i / 11) * Math.PI * 2 + .2;
+    S.spark.push({ a, n: drawn(`M ${540 + Math.cos(a) * 270} ${735 + Math.sin(a) * 175} L ${540 + Math.cos(a) * 320} ${735 + Math.sin(a) * 215}`, { 'stroke-width': 5 }, inkL) });
+  }
+
+  /* scene 5: the mark, drawn like the app's own way in */
+  S.mark = el('g', {}, inkL);
+  S.rays = [0, 90, 45, -45].map((rot, i) => {
+    const g = el('g', { transform: `rotate(${rot} 50 50)` }, S.mark);
+    return el('rect', { x: 46.5, y: 18, width: 7, height: i === 3 ? 32 : 64, fill: C.orange }, g);
+  });
+  S.pill = el('path', { d: 'M64.5 64.5l7 7', stroke: C.violet, 'stroke-width': 7, 'stroke-linecap': 'round', fill: 'none' }, S.mark);
+  S.urlPill = el('path', Object.assign({}, INK, { d: roughRect(250, 1236, 580, 104, 52, 19), fill: C.white, 'stroke-width': 5 }), inkL);
+
+  /* the character, over the paint and under the words */
+  S.char = makeCharacter(inkL);
+  S.sparkles = [[250, 1330], [830, 1380], [760, 1180]].map(([x, y], i) =>
+    drawn(`M ${x} ${y - 22} L ${x} ${y + 22} M ${x - 22} ${y} L ${x + 22} ${y}`, { 'stroke-width': 4.5, stroke: C.coralDeep }, inkL));
+
+  /* ---------- words ---------- */
+  const T = (txt, attrs) => { const n = el('text', Object.assign({ fill: C.ink, 'text-anchor': 'middle' }, attrs), textL); n.textContent = txt; return n; };
+  const cap = { 'font-family': '"Baloo 2"', 'font-weight': 700, 'font-size': 82, 'letter-spacing': -2 };
+  const hand = { 'font-family': 'Caveat', 'font-weight': 700 };
+  S.caps = [
+    ['Your head, right now.', null, 0.2, 6.0],
+    ['Dump it all out.', 'type it. say it. all of it.', 6.2, 12.0],
+    ['It sorts itself.', 'by day, on its own.', 12.2, 18.0],
+    ['Then, just one thing.', null, 18.2, 24.0],
+  ].map(([a, b, t0, t1], i) => {
+    const main = T(a, Object.assign({ x: 540, y: 205 }, cap));
+    const w = main.getComputedTextLength();
+    return {
+      t0, t1, main,
+      sub: b ? T(b, Object.assign({ x: 540, y: 285, 'font-size': 52, fill: C.coralDeep }, hand)) : null,
+      line: drawn(scribbleLine(540 - w / 2 + 10, 540 + w / 2 - 10, 238, 60 + i, 4), { stroke: C.coral, 'stroke-width': 10, opacity: .9 }, inkL),
+    };
+  });
+  S.noise = ['?!', '!!', '??'].map((s, i) => T(s, Object.assign({ 'font-size': 64 }, hand)));
+
+  /* the to-dos: one set of words that travels the whole film */
+  const TODO = [
+    ['reply to boss', 'today'], ['dentist', 'soon', 'Fri'], ['gym', 'none'], ['pay the bill', 'today'],
+    ["mum's birthday", 'soon', 'Sun'], ['buy milk', 'none'], ['tax form', 'soon', '30 Sep'], ['that email', 'none'],
+  ];
+  const slotY = { today: [530, 588], soon: [750, 808, 866], none: [1020, 1078, 1136] };
+  const used = { today: 0, soon: 0, none: 0 };
+  S.todos = TODO.map(([txt, bucket, chip], i) => {
+    const n = T(txt, Object.assign({ 'font-size': 100 }, hand));
+    const w100 = n.getComputedTextLength();
+    const y = slotY[bucket][used[bucket]++];
+    const item = { i, n, w100, listY: y, bucket };
+    item.box = drawn(roughEllipse(352, y - 13, 13, 13, 70 + i, .05), { 'stroke-width': 4 }, inkL);
+    if (chip) {
+      const cw = chip.length * 17 + 34;
+      item.chip = el('path', Object.assign({}, INK, { d: roughRect(752 - cw, y - 36, cw, 44, 22, 80 + i, 1.4), fill: C.coralLight, 'stroke-width': 3.5 }), inkL);
+      item.chipT = T(chip, { x: 752 - cw / 2, y: y - 5, 'font-family': '"Baloo 2"', 'font-weight': 700, 'font-size': 25 });
+    }
+    return item;
+  });
+
+  S.dumpTitle = T("What's on your mind?", { x: 540, y: 432, 'font-family': '"Baloo 2"', 'font-weight': 600, 'font-size': 34, fill: C.soft });
+  S.buttonT = T('Clear my head', { x: 540, y: 1142, 'font-family': '"Baloo 2"', 'font-weight': 700, 'font-size': 38 });
+  S.headT = S.heads.map((h) => T(h.label, { x: 330, y: h.y, 'text-anchor': 'start', 'font-family': '"Baloo 2"', 'font-weight': 700, 'font-size': 34 }));
+  S.nowT = T('NOW', { x: 540, y: 478, 'font-family': '"Baloo 2"', 'font-weight': 700, 'font-size': 26, 'letter-spacing': 6, fill: C.soft });
+  S.metaT = T('10 min · low energy', { x: 416, y: 780, 'text-anchor': 'start', 'font-family': '"Baloo 2"', 'font-weight': 500, 'font-size': 29, fill: C.soft });
+  S.oneDown = T("one down. that's it for now.", Object.assign({ x: 540, y: 960, 'font-size': 54, fill: C.coralDeep }, hand));
+
+  S.word = T('', { x: 540, y: 1010, 'font-family': '"Baloo 2"', 'font-weight': 700, 'font-size': 132, 'letter-spacing': -4 });
+  S.word.innerHTML = 'my<tspan fill="' + C.violet + '">.adhd</tspan>';
+  S.tag1 = T('Dump everything on your mind.', { x: 540, y: 1110, 'font-family': '"Baloo 2"', 'font-weight': 600, 'font-size': 46 });
+  S.tag2 = T('Get back one thing to do.', { x: 540, y: 1168, 'font-family': '"Baloo 2"', 'font-weight': 600, 'font-size': 46 });
+  S.urlT = T('Free on the web · myadhd.my', { x: 540, y: 1302, 'font-family': '"Baloo 2"', 'font-weight': 700, 'font-size': 40 });
+}
+
+/* ---------- the timeline ---------- */
+function orbit(item, t) {
+  const a = item.i * (Math.PI * 2 / 8) + t * .28;
+  return [540 + Math.cos(a) * 320, 700 + Math.sin(a) * 235 + Math.sin(t * 2 + item.i) * 8];
+}
+function op(n, v) { n.setAttribute('opacity', clamp(v).toFixed(3)); }
+function move(n, x, y, s = 1, rot = 0) {
+  n.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(2)}) scale(${s.toFixed(4)})`);
+}
+
+function seek(t) {
+  t = clamp(t, 0, DURATION - 1e-6);
+
+  op(S.tap, 0);   // shown only while a tap is actually happening — see tapAt()
+
+  /* the boil: a new line eight times a second */
+  const seed = 1 + (Math.floor(t * 8) % 4);
+  $('boilInk').setAttribute('seed', seed);
+  $('boilText').setAttribute('seed', seed);
+
+  /* paint */
+  const b1 = P(t, 0, .9, ease.back) * (1 - P(t, 6.0, 6.6));
+  op(S.blob1, b1 ? 1 : 0); move(S.blob1, 540 * (1 - Math.max(b1, .01)), 690 * (1 - Math.max(b1, .01)), Math.max(b1, .01));
+  const b2 = P(t, 6.2, 7.2, ease.back) * (1 - P(t, 23.8, 24.4));
+  op(S.blob2, b2 ? 1 : 0); move(S.blob2, 540 * (1 - Math.max(b2, .01)), 800 * (1 - Math.max(b2, .01)), Math.max(b2, .01));
+  const b3 = P(t, 24.2, 25.1, ease.back);
+  op(S.blob3, b3 ? 1 : 0); move(S.blob3, 540 * (1 - Math.max(b3, .01)), 800 * (1 - Math.max(b3, .01)), Math.max(b3, .01));
+
+  /* captions */
+  S.caps.forEach((c) => {
+    const o = win(t, c.t0, c.t1, .45, .35), rise = (1 - P(t, c.t0, c.t0 + .6)) * 24;
+    op(c.main, o); move(c.main, 0, rise);
+    reveal(c.line, P(t, c.t0 + .35, c.t0 + .9)); op(c.line, o);
+    if (c.sub) { op(c.sub, win(t, c.t0 + 1, c.t1, .5, .35)); move(c.sub, 0, (1 - P(t, c.t0 + 1, c.t0 + 1.6)) * 16); }
+  });
+
+  /* scene 1 */
+  reveal(S.tangle, P(t, .3, 1.8, ease.inOut));
+  op(S.tangle, .55 * (1 - P(t, 6.0, 6.5)));
+  S.tangle.setAttribute('transform', `rotate(${(Math.sin(t * .9) * 4).toFixed(2)} 540 690)`);
+  S.bubbles.forEach((b, i) => op(b, P(t, .2 + i * .18, .5 + i * .18) * (1 - P(t, 5.9, 6.3))));
+  op(S.sweat, win(t, 1.2, 6.0, .3, .3));
+  S.noise.forEach((n, i) => {
+    const pos = [[250, 470], [850, 520], [800, 940]][i];
+    op(n, win(t, 1.5 + i * .5, 6.0, .2, .3) * (Math.floor(t * 3 + i) % 2 ? 1 : .55));
+    set(n, { x: pos[0], y: pos[1] });
+  });
+
+  /* the character */
+  const ch = S.char;
+  let cx = 540, cy = 1250, cs = 1;
+  const m1 = P(t, 6.0, 6.9, ease.inOut);
+  cy = lerp(1250, 1470, m1); cs = lerp(1, .72, m1);
+  const m2 = P(t, 24.0, 24.8, ease.inOut);
+  cy = lerp(cy, 1585, m2); cs = lerp(cs, .56, m2);
+  const jump = t > 20.9 && t < 21.9 ? Math.sin((t - 20.9) / 1 * Math.PI) * 80 : 0;
+  const breathe = Math.sin(t * 2.4) * 4;
+  const shake = t < 6 ? Math.sin(t * 22) * 2.2 : 0;
+  ch.g.setAttribute('transform', `translate(${(cx + shake).toFixed(1)} ${(cy - jump + breathe).toFixed(1)}) scale(${cs.toFixed(4)})`);
+  let mood;
+  if (t < 11.4) mood = moodAt('worried', 'worried', 0);
+  else if (t < 20.9) mood = moodAt('worried', 'calm', P(t, 11.4, 12.4, ease.inOut));
+  else if (t < 24.0) mood = moodAt('calm', 'happy', P(t, 20.9, 21.2));
+  else mood = moodAt('happy', 'calm', P(t, 24.0, 24.6, ease.inOut));
+  if (t >= 26) {                     // a wave goodbye
+    const w = moodAt('calm', 'happy', P(t, 26, 26.4));
+    mood.armR = lerpPath(mood.armR, w.armR, P(t, 26, 26.4));
+    mood.mouth = w.mouth; mood.eyeRy = w.eyeRy; mood.browL = w.browL; mood.browR = w.browR;
+    const sway = Math.sin((t - 26) * 8) * 34 * P(t, 26, 26.5);
+    mood.armR = mood.armR.replace(/(-?\d*\.?\d+) (-?\d*\.?\d+)$/, (_, x, y) => `${(+x + sway).toFixed(1)} ${(+y - Math.abs(sway) * .4).toFixed(1)}`);
+  }
+  const blink = [2.6, 8.3, 15.1, 27.7].some((b) => t > b && t < b + .12);
+  ch.pose(mood, blink);
+  const hx = cx + 118 * cs, hy = cy - 64 * cs - jump;
+  S.sweat.setAttribute('transform', `translate(${hx.toFixed(1)} ${(hy + Math.sin(t * 5) * 5).toFixed(1)})`);
+  S.sparkles.forEach((s, i) => { reveal(s, P(t, 13.2 + i * .25, 13.6 + i * .25)); op(s, win(t, 13.2, 18.0, .1, .4)); });
+
+  /* the phone */
+  const phIn = P(t, 6.1, 7.0, ease.back), phOut = P(t, 23.9, 24.5, ease.inOut);
+  op(S.phone, P(t, 6.1, 6.4) * (1 - phOut));
+  S.phone.setAttribute('transform', `translate(0 ${((1 - phIn) * 260 + phOut * 120).toFixed(1)})`);
+  const dumpO = win(t, 6.4, 12.4, .4, .4);
+  op(S.dumpUI, dumpO); op(S.dumpTitle, dumpO); op(S.buttonT, dumpO);
+  const press = t > 11.0 && t < 11.25 ? .94 : 1;
+  S.button.setAttribute('transform', `translate(540 1130) scale(${press}) translate(-540 -1130)`);
+  S.buttonT.setAttribute('transform', `translate(540 1130) scale(${press}) translate(-540 -1130) translate(0 ${((1 - phIn) * 260).toFixed(1)})`);
+  S.dumpTitle.setAttribute('transform', `translate(0 ${((1 - phIn) * 260).toFixed(1)})`);
+  tapAt(t, 11.0, 540, 1130);
+  tapAt(t, 20.3, 366, 700);
+
+  /* lists */
+  S.heads.forEach((h, i) => {
+    const o = win(t, 12.6 + i * .35, 18.2, .35, .3);
+    op(S.headT[i], o); reveal(h.line, P(t, 12.8 + i * .35, 13.3 + i * .35)); op(h.line, o);
+  });
+
+  /* the to-dos, all the way through */
+  S.todos.forEach((it) => {
+    const i = it.i;
+    const tFly = 6.5 + i * .45, tSort = 12.5 + i * .13;
+    const lineX = 350, lineY = 530 + i * 60;
+    const wAt = (s) => it.w100 * s / 100;
+    let x, y, s, rot = 0, o = 1;
+    if (t < tFly) {
+      [x, y] = orbit(it, t); s = 54; rot = Math.sin(t * 1.3 + i) * 6;
+      o = P(t, .6 + i * .32, 1.0 + i * .32);
+    } else if (t < tSort) {
+      const [ox, oy] = orbit(it, tFly);
+      const p = P(t, tFly, tFly + .75, ease.inOut);
+      s = lerp(54, 44, p);
+      x = lerp(ox, lineX + wAt(44) / 2, p);
+      y = lerp(oy, lineY, p) - Math.sin(p * Math.PI) * 120;
+      rot = lerp(Math.sin(tFly * 1.3 + i) * 6, 0, p);
+    } else {
+      const p = P(t, tSort, tSort + .8, ease.inOut);
+      s = 44;
+      x = lerp(lineX + wAt(44) / 2, 386 + wAt(44) / 2, p);
+      y = lerp(lineY, it.listY, p);
+      if (t >= 18.0) {
+        if (i === 0) {
+          const q = P(t, 18.3, 19.0, ease.inOut);
+          s = lerp(44, 60, q);
+          x = lerp(386 + wAt(44) / 2, 414 + wAt(60) / 2, q);
+          y = lerp(it.listY, 716, q);
+          o = 1 - phOut;
+        } else o = 1 - P(t, 18.0, 18.4);
+      }
+    }
+    move(it.n, x, y, s / 100, rot);
+    set(it.n, { x: 0, y: 0 });
+    op(it.n, o);
+    const listO = win(t, tSort + .6, 18.3, .3, .3);
+    reveal(it.box, P(t, tSort + .5, tSort + .9)); op(it.box, listO);
+    if (it.chip) { op(it.chip, listO); op(it.chipT, listO); }
+  });
+
+  /* scene 4 */
+  const cardO = P(t, 18.3, 18.8) * (1 - phOut);
+  reveal(S.card, P(t, 18.3, 19.0, ease.inOut)); op(S.card, cardO);
+  S.card.setAttribute('fill-opacity', P(t, 18.7, 19.1).toFixed(3));
+  S.card.setAttribute('fill', t > 20.9 ? C.coralLight : C.paper);
+  op(S.nowT, win(t, 18.6, 24.2, .4, .4));
+  op(S.metaT, win(t, 19.0, 24.2, .4, .4));
+  op(S.check, P(t, 18.9, 19.2) * (1 - phOut));
+  S.check.setAttribute('fill', t > 20.5 ? C.coral : C.white);
+  reveal(S.tick, P(t, 20.5, 20.9)); op(S.tick, 1 - phOut);
+  const w60 = S.todos[0].w100 * .6;
+  S.strike.setAttribute('d', `M 410 700 Q ${410 + w60 / 2} 694 ${414 + w60} 702`);
+  reveal(S.strike, P(t, 20.8, 21.2)); op(S.strike, 1 - phOut);
+  S.spark.forEach((s, i) => {
+    reveal(s.n, P(t, 20.9 + i * .02, 21.3 + i * .02));
+    op(s.n, 1 - P(t, 21.6, 22.1));
+  });
+  op(S.oneDown, win(t, 22.0, 24.0, .5, .3));
+  S.oneDown.setAttribute('transform', `translate(0 ${((1 - P(t, 22, 22.6)) * 16).toFixed(1)})`);
+
+  /* scene 5 */
+  const mx = 540 - 125, my = 560;
+  S.mark.setAttribute('transform', `translate(${mx} ${my}) scale(2.5)`);
+  /* scaled about the box's centre, where the long rays cross and the short
+     one starts — so each grows out from the middle like the app's own */
+  S.rays.forEach((r, i) => {
+    const k = P(t, 24.7 + i * .1, 25.15 + i * .1);
+    r.setAttribute('transform', `translate(0 ${(50 * (1 - k)).toFixed(2)}) scale(1 ${k.toFixed(4)})`);
+  });
+  const pk = P(t, 25.1, 25.5, ease.back);
+  S.pill.setAttribute('transform', `translate(${(68 * (1 - pk)).toFixed(2)} ${(68 * (1 - pk)).toFixed(2)}) scale(${pk.toFixed(4)})`);
+  op(S.mark, t > 24.6 ? 1 : 0);
+  op(S.word, P(t, 25.4, 25.9)); S.word.setAttribute('transform', `translate(0 ${((1 - P(t, 25.4, 26)) * 20).toFixed(1)})`);
+  op(S.tag1, P(t, 26.0, 26.5)); op(S.tag2, P(t, 26.3, 26.8));
+  const up = P(t, 27.0, 27.5, ease.back);
+  op(S.urlPill, P(t, 27.0, 27.2)); op(S.urlT, P(t, 27.0, 27.2));
+  const pillT = `translate(540 1288) scale(${Math.max(up, .01).toFixed(4)}) translate(-540 -1288)`;
+  S.urlPill.setAttribute('transform', pillT); S.urlT.setAttribute('transform', pillT);
+}
+
+function tapAt(t, t0, x, y) {
+  const p = P(t, t0, t0 + .6);
+  if (t < t0 || t > t0 + .6) return;
+  const r = lerp(20, 95, p);
+  S.tap.setAttribute('transform', `translate(${x} ${y}) scale(${r.toFixed(2)})`);
+  S.tap.setAttribute('stroke-width', (4 / r).toFixed(4));
+  op(S.tap, 1 - p);
+}
+
+/* ---------- start ---------- */
+Promise.all([
+  document.fonts.load('700 80px "Baloo 2"'), document.fonts.load('600 40px "Baloo 2"'),
+  document.fonts.load('700 50px "Caveat"'),
+]).then(() => document.fonts.ready).then(() => {
+  build();
+  seek(0);
+  window.seek = seek;
+  window.__ready = true;
+  if (RENDER) return;
+
+  let playing = true, t = 0, last = performance.now();
+  const hud = $('hud');
+  function frame(now) {
+    if (playing) t = (t + (now - last) / 1000) % DURATION;
+    last = now;
+    seek(t);
+    hud.textContent = t.toFixed(2) + 's' + (playing ? '' : ' — paused');
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  addEventListener('keydown', (e) => {
+    if (e.key === ' ') { playing = !playing; e.preventDefault(); }
+    if (e.key === 'ArrowRight') t = Math.min(DURATION - .01, t + 1);
+    if (e.key === 'ArrowLeft') t = Math.max(0, t - 1);
+  });
+  $('stage').addEventListener('click', (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    t = clamp((e.clientX - r.left) / r.width) * DURATION;
+  });
+});
+</script>
+</body>
+</html>

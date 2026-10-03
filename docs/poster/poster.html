@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-style="orange">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080">
+<meta name="robots" content="noindex">
+<title>what is adhd?? — my.adhd talk poster</title>
+<link rel="stylesheet" href="../carousel/carousel.css">
+<link rel="stylesheet" href="poster.css">
+</head>
+<body data-count="1" data-slug="what-is-adhd-talk">
+<!-- One 1080×1350 Instagram poster for the "what is adhd??" online talk.
+     The [bracketed] facts are placeholders — swap them for the real ones.
+     Add ?render=1 to drop the preview padding; render.swift does that. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs><g id="i-arrow"><path d="M5 12h13M12 5l7 7-7 7"/></g></defs>
+</svg>
+<section class="slide poster" data-blob="2">
+  <header class="head">
+    <span class="lockup">
+      <svg class="mark" viewBox="14 14 72 72" aria-hidden="true">
+        <g style="fill:var(--mark-star)">
+          <rect x="46.5" y="18" width="7" height="64"></rect>
+          <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"></rect>
+          <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"></rect>
+          <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"></rect>
+        </g>
+        <path d="M64.5 64.5l7 7" style="stroke:var(--mark-pill)" stroke-width="7" stroke-linecap="round" fill="none"></path>
+      </svg>
+      <span class="wordmark">my<span class="accent">.adhd</span></span>
+    </span>
+    <span class="label">myadhd.my</span>
+  </header>
+
+  <div class="stack">
+    <p class="kicker">Free online talk</p>
+    <h1 class="hero">what is<br><em class="ac">adhd??</em></h1>
+    <p class="copy sub">Finally understand the brain<br>you've been living with.</p>
+
+    <dl class="facts">
+      <div><dt>Date</dt><dd>[Sat, 00 Nov]</dd></div>
+      <div><dt>Time</dt><dd>[8.30 pm MYT]</dd></div>
+      <div><dt>Where</dt><dd>[Zoom]</dd></div>
+      <div><dt>Speaker</dt><dd>[Speaker name]</dd></div>
+    </dl>
+
+    <div class="rsvp">
+      <div>
+        <p class="rsvp-title">Scan to save<br>your seat.</p>
+        <p class="rsvp-note">Point your camera here <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow"/></svg></p>
+      </div>
+      <!-- qr.svg is a stand-in pointing at myadhd.my; regenerate it with
+           out/qr '<sign-up link>' qr.svg once the link exists -->
+      <span class="qr"><img src="qr.svg" alt="QR code to register"></span>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span class="org">MYADHD</span>
+    <span class="count">OPEN TO ALL</span>
+  </footer>
+</section>
+<script>
+  if (new URLSearchParams(location.search).get('render')) document.body.dataset.render = '1';
+  document.fonts.ready.then(() => { window.__ready = true; });
+</script>
+</body>
+</html>

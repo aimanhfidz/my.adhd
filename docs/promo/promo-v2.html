@@ -1,0 +1,1204 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>my.adhd promo v2</title>
+<!--
+  The second promo: 30 seconds, vertical, silent. Where v1 (promo.html) was
+  a hand-drawn cartoon, this one is the app itself — its screens rebuilt
+  here in HTML from the same tokens (theme.css), the same type and the same
+  copy as app.html and app.js, inside a phone, with the captions carrying
+  the story above it.
+
+  Open it through serve.py (it loads /theme.css and /fonts/):
+    python3 serve.py 8770  →  http://localhost:8770/docs/promo/promo-v2.html
+  Space pauses, ←/→ step a second, ,/. step a frame, a click scrubs.
+  ?t=12.5 opens paused on that second.
+
+  ?render=1 strips the chrome for render.swift, which calls seek(t) once per
+  frame. Everything on screen is a pure function of t: no CSS transitions,
+  no animations, no timers.
+
+  Where the film departs from the running app, it does so for the brand
+  book, not for looks:
+  - Orange is spent once per frame. The app paints "Late" orange in the
+    heading, the card's edge, the date chip and an "urgent" chip at once,
+    and rings the theme toggle in it; here only the late chip carries it,
+    as a wash plus an edge, and the toggle and badges are left out.
+  - The welcome meme is left off the cold start: it is someone else's
+    picture, and the brand uses no borrowed imagery.
+  - The film's "today" is Thursday 1 October 2026, so the dump's dates land
+    where the story needs them.
+-->
+<link rel="stylesheet" href="/theme.css" />
+<style>
+  html,body{margin:0; height:100%; background:#E9E7FB; overflow:hidden}
+  body{display:grid; place-items:center}
+  .render, .render body{background:#FFFFFF}
+  *{box-sizing:border-box; margin:0; padding:0}
+
+  #wrap{width:1080px; height:1920px; transform-origin:50% 50%; flex:none}
+  #stage{
+    position:relative; width:1080px; height:1920px; overflow:hidden;
+    background:#FFFFFF; color:var(--ink); cursor:pointer;
+  }
+  #hud{position:fixed; left:12px; bottom:10px; font:12px/1 var(--mono); color:var(--stone)}
+  .render #hud{display:none}
+
+  /* ---------- captions ---------- */
+  .cap{
+    position:absolute; left:70px; right:70px; bottom:calc(1920px - 400px);
+    text-align:center;
+  }
+  .cap-k{
+    display:block; margin-bottom:26px;
+    font-family:var(--mono); font-weight:400; font-size:28px;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--stone);
+  }
+  .cap-m{
+    display:block;
+    font-family:var(--display); font-weight:700; font-size:86px;
+    letter-spacing:-.03em; line-height:1.0; color:var(--black);
+  }
+  .cap-m .w, .cap-k .w{display:inline-block; white-space:pre}
+
+  /* ---------- the hook: a head's worth of words ---------- */
+  /* its own stacking context, so the loudest words never climb over the phone */
+  #hook{position:absolute; inset:0; pointer-events:none; z-index:0}
+  .hw{
+    position:absolute; left:0; top:0; white-space:nowrap;
+    font-family:var(--sans); letter-spacing:-.02em; line-height:1;
+  }
+
+  /* ---------- the phone ---------- */
+  #cam{position:absolute; inset:0; transform-origin:540px 445px}
+  #phone{
+    position:absolute; left:0; top:0; width:416px; height:870px;
+    transform-origin:208px 435px;
+  }
+  .body{
+    position:absolute; inset:0; border-radius:68px; padding:13px;
+    background:linear-gradient(150deg,#3A3A48 0%,#16161F 22%,#101018 60%,#26262F 100%);
+    box-shadow:
+      inset 0 0 0 1.5px #4A4A58,
+      inset 0 0 0 4px #101018,
+      0 60px 90px -44px rgba(32,32,48,.55),
+      0 30px 140px -40px rgba(71,55,255,.22);
+  }
+  .btn-side{position:absolute; width:4px; border-radius:2px; background:#2A2A34}
+  .glass{
+    position:relative; width:390px; height:844px; border-radius:55px;
+    overflow:hidden; background:var(--surface);
+    font-family:var(--display); color:var(--ink); line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .island{
+    position:absolute; z-index:90; top:11px; left:50%; margin-left:-62px;
+    width:124px; height:36px; border-radius:20px; background:#000;
+  }
+  .status{
+    position:absolute; z-index:89; top:0; left:0; right:0; height:52px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:4px 30px 0 46px; font-family:var(--sans); font-weight:600;
+    font-size:16px; letter-spacing:-.01em; color:var(--ink);
+  }
+  .status-r{display:flex; gap:6px; align-items:center}
+  .home-ind{
+    position:absolute; z-index:89; bottom:8px; left:50%; margin-left:-68px;
+    width:136px; height:5px; border-radius:3px; background:var(--ink);
+  }
+
+  .scr{position:absolute; inset:0; overflow:hidden; background:var(--surface)}
+  .pad{padding:0 20px}
+
+  /* the bar, as the app draws it */
+  .brand{
+    position:absolute; left:0; right:0; top:0; z-index:20;
+    height:112px; padding:66px 20px 0;
+    display:flex; align-items:flex-start; gap:10px;
+    background:var(--surface);
+  }
+  .brand .logo{width:26px; height:26px; margin-top:4px}
+  .brand .wordmark{font-size:16px; line-height:34px}
+  .icon-btn{
+    margin-left:auto; flex:none; width:34px; height:34px; display:grid; place-items:center;
+    border:1.5px solid var(--loud-edge,rgba(16,16,24,.10)); border-radius:999px; color:var(--muted);
+  }
+  .icon-btn svg{width:17px; height:17px}
+
+  /* home */
+  #s-home, #s-done{background:#EFEDFA; isolation:isolate}
+  .sheen{
+    position:absolute; inset:-25%; z-index:-1;
+    background:
+      radial-gradient(58% 42% at 22% 24%, rgba(71,55,255,.16) 0%, transparent 62%),
+      radial-gradient(52% 38% at 80% 16%, rgba(123,63,228,.13) 0%, transparent 60%),
+      radial-gradient(72% 52% at 62% 92%, rgba(255,255,255,.85) 0%, transparent 66%);
+    transform:translate(-3%,-2%) scale(1.06);
+  }
+  #s-home .brand, #s-done .brand{background:none}
+  .start{position:absolute; left:20px; right:20px; top:300px; text-align:center}
+  .headline{
+    font-size:23.4px; font-weight:800; letter-spacing:-.04em; line-height:1.15;
+    margin-bottom:12px;
+  }
+  .hint{font-size:13px; color:var(--faint); margin-bottom:22px}
+  .btn-primary{
+    display:flex; align-items:center; justify-content:center; width:100%;
+    background:var(--grad); border-radius:999px; color:#fff;
+    font-size:16.5px; font-weight:700; letter-spacing:-.01em; padding:17px 24px;
+    box-shadow:0 26px 70px -34px rgba(16,16,40,.45), 0 16px 34px -16px rgba(71,55,255,.85);
+  }
+
+  /* home, once everything is done */
+  .home-card{
+    position:absolute; left:20px; right:20px; top:128px;
+    background:rgba(255,255,255,.62); border:1.5px solid rgba(16,16,24,.10);
+    border-radius:34px; padding:20px 18px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.75), 0 26px 70px -34px rgba(16,16,40,.45);
+  }
+  .home-card-title{font-size:17px; font-weight:800; margin-bottom:14px}
+  .home-empty{font-size:14px; color:var(--muted)}
+  .stat-row{
+    position:absolute; left:20px; right:20px; top:262px;
+    display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  }
+  .stat{
+    text-align:center; border:1.5px solid rgba(16,16,24,.08); border-radius:22px;
+    padding:16px 8px; background:rgba(255,255,255,.35);
+  }
+  .stat--wide{grid-column:1 / -1}
+  .stat strong{display:block; font-size:26px; font-weight:800; letter-spacing:-.03em; line-height:1.1}
+  .stat span{display:block; margin-top:4px; font-size:12.5px; color:var(--faint)}
+
+  /* the tab bar */
+  .tabbar{
+    position:absolute; z-index:40; left:14px; right:14px; bottom:26px;
+    display:flex; align-items:center; padding:7px 8px;
+    background:rgba(255,255,255,.94); border:1.5px solid rgba(16,16,24,.07);
+    border-radius:999px;
+    box-shadow:0 22px 46px -20px rgba(16,16,24,.42), 0 3px 10px -6px rgba(16,16,24,.22);
+  }
+  .tab{
+    flex:1 1 0; height:46px; display:grid; place-items:center;
+    border-radius:15px; color:var(--muted); --icon-fill:none;
+  }
+  .tab svg{width:23px; height:23px}
+  .tab.is-on{background:var(--wash-2); color:var(--ink)}
+  .tab.is-on.fills{--icon-fill:currentColor}
+  .tab--add{color:var(--ink)}
+
+  /* the composer */
+  #composer{position:absolute; inset:0; z-index:60}
+  .scrim{position:absolute; inset:0; background:rgba(16,16,24,.42)}
+  .sheet{
+    position:absolute; left:0; right:0; top:64px; bottom:0;
+    background:var(--surface); border-radius:22px 22px 0 0;
+    border-top:1.5px solid var(--line);
+    box-shadow:0 -12px 40px -12px rgba(16,16,24,.45); overflow:hidden;
+  }
+  .c-bar{
+    display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px;
+    padding:14px 20px; border-bottom:1.5px solid var(--line);
+  }
+  .c-cancel{justify-self:start; font-size:15px; font-weight:600; padding:6px 2px}
+  .c-title{font-size:16px; font-weight:800; letter-spacing:-.02em}
+  .c-post{
+    justify-self:end; background:var(--grad); color:#fff; border-radius:999px;
+    padding:9px 20px; font-size:14.5px; font-weight:700;
+  }
+  .c-body{display:flex; gap:12px; padding:16px 20px 24px}
+  .c-face{
+    flex:none; width:38px; height:38px; border-radius:999px; display:grid; place-items:center;
+    font-size:21px; line-height:1; background:var(--wash-2);
+  }
+  .c-field{flex:1 1 auto; min-width:0}
+  .c-name{display:block; font-size:14.5px; font-weight:700; margin-bottom:2px}
+  .c-input{font-size:16.5px; line-height:1.45; min-height:26px; color:var(--ink)}
+  .c-input .ph{color:var(--faint)}
+  .c-input .v{display:inline}
+  .dump-dates{margin-top:16px}
+  .dump-dates-label{
+    display:block; font-size:11.5px; font-weight:700; letter-spacing:.05em;
+    text-transform:uppercase; color:var(--faint); margin-bottom:8px;
+  }
+  .dump-chips{display:flex; gap:6px; flex-wrap:wrap}
+  .voice{
+    position:absolute; left:0; right:0; bottom:64px;
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+  }
+  .mic{
+    position:relative; width:76px; height:76px; border-radius:999px;
+    background:var(--grad); color:#fff; display:grid; place-items:center;
+    box-shadow:0 10px 28px -10px rgba(16,16,24,.5);
+  }
+  .mic-ring{position:absolute; inset:0; border-radius:999px; background:var(--grad); opacity:0}
+  .mic svg{width:30px; height:30px; fill:currentColor; position:relative; z-index:1}
+  .mic-hint{font-size:13.5px; font-weight:600; color:var(--faint); letter-spacing:-.01em}
+
+  /* the wait */
+  .loading{position:absolute; left:0; right:0; top:300px; text-align:center}
+  .loading svg{width:150px; height:150px; display:block; margin:0 auto 34px}
+  .loading-lines{position:relative; height:24px}
+  .loading-text{position:absolute; left:0; right:0; color:var(--muted); font-size:15px}
+
+  /* the lists */
+  .content{position:absolute; left:0; right:0; top:112px; padding:14px 20px 120px}
+  .eyebrow{
+    font-size:11px; font-weight:700; letter-spacing:.13em; text-transform:uppercase;
+    color:var(--faint); margin-bottom:12px;
+  }
+  .lists-summary{font-size:13.5px; color:var(--faint); margin-bottom:22px}
+  .cat-bar{display:flex; gap:8px; margin-bottom:18px; margin-right:-20px; overflow:hidden}
+  .cat-pill{
+    flex:none; display:inline-flex; align-items:center; gap:7px;
+    font-size:13px; font-weight:600; background:var(--surface);
+    border:1.5px solid var(--line-strong); color:var(--muted);
+    padding:8px 14px; border-radius:999px; white-space:nowrap;
+  }
+  .cat-pill.is-on{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+  .cat-pill-n{
+    font-size:11px; font-weight:700; color:var(--faint); background:var(--wash);
+    border-radius:999px; min-width:18px; padding:1px 6px; text-align:center;
+  }
+  .cat-pill.is-on .cat-pill-n{background:rgba(255,255,255,.22); color:var(--on-accent)}
+  .lists{display:flex; flex-direction:column; gap:26px}
+  .bucket{display:flex; flex-direction:column; gap:10px}
+  .bucket-head{display:flex; align-items:center; gap:9px}
+  .bucket-name{font-size:15px; font-weight:700; letter-spacing:-.01em; color:var(--muted)}
+  .bucket--ink .bucket-name{color:var(--ink)}
+  .bucket-count{
+    font-size:11px; font-weight:700; color:var(--faint); background:var(--wash);
+    border-radius:999px; min-width:18px; padding:1px 6px; text-align:center;
+  }
+  .items{display:flex; flex-direction:column; gap:8px}
+
+  .task{
+    display:flex; gap:13px; align-items:flex-start;
+    background:var(--surface); border:1.5px solid var(--line);
+    border-radius:16px; padding:14px 16px;
+  }
+  .check{
+    position:relative; flex:none; width:24px; height:24px; margin-top:1px;
+    border-radius:50%; border:2px solid var(--line-strong);
+    display:grid; place-items:center; color:transparent;
+  }
+  .check svg{width:13px; height:13px}
+  .task-body{flex:1; min-width:0}
+  .task-title{font-size:15.5px; font-weight:600; line-height:1.35; letter-spacing:-.01em; margin-bottom:8px}
+  .task-meta{display:flex; gap:6px; flex-wrap:wrap}
+  .chip{
+    font-size:12px; font-weight:500; background:var(--surface);
+    border:1.5px solid var(--line-strong); color:var(--muted);
+    padding:5px 12px; border-radius:999px; white-space:nowrap; line-height:1.45;
+  }
+  .chip--time{background:var(--accent); border-color:var(--accent); color:var(--on-accent); font-weight:600}
+  .chip--when{color:var(--ink-soft); font-weight:600}
+  .dump-chips .chip--when{font-size:12.5px; padding:4px 11px}
+  /* the late chip: the one chip allowed orange, as a wash plus an edge */
+  .chip--when.is-late{color:var(--orange); border-color:var(--orange); background:rgba(247,92,3,.08)}
+
+  .detail{overflow:hidden}
+  .detail-in{padding-top:14px}
+  .first-step{
+    background:var(--wash); border-left:3px solid var(--accent); border-radius:12px;
+    padding:15px 17px; margin-bottom:12px;
+  }
+  .first-step-label{
+    display:block; font-size:10.5px; font-weight:700; letter-spacing:.11em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:6px;
+  }
+  .first-step-text{font-size:15.5px; color:var(--ink-soft); line-height:1.55}
+  .steps-wrap{overflow:hidden}
+  .steps-block{
+    background:var(--wash); border-radius:12px; padding:15px 17px; margin-bottom:12px;
+    border-left:3px solid var(--line-strong);
+  }
+  .steps-block .first-step-label{color:var(--muted)}
+  .steps{list-style:none}
+  .steps li{display:flex; gap:11px; align-items:flex-start; font-size:15px; color:var(--ink-soft); padding:7px 0}
+  .steps li i{
+    flex:none; width:21px; height:21px; border-radius:50%; background:var(--accent);
+    color:var(--on-accent); font-style:normal; font-size:11px; font-weight:700;
+    display:grid; place-items:center; margin-top:1px;
+  }
+  .btn-soft{
+    display:block; width:100%; text-align:center; background:var(--surface);
+    border:1.5px solid var(--line-strong); color:var(--muted);
+    font-size:14px; font-weight:500; padding:12px; border-radius:999px;
+  }
+  .task-fix{display:flex; gap:8px; margin-top:8px}
+  .task-fix span{flex:1 1 0; text-align:center; font-size:13px; font-weight:600; color:var(--faint); padding:8px 6px}
+
+  /* the calendar */
+  .cal-head{display:flex; align-items:center; gap:8px; margin-bottom:16px}
+  .cal-month{flex:1; text-align:center; font-size:19px; font-weight:800; letter-spacing:-.02em}
+  .cal-nav{
+    flex:none; width:38px; height:38px; display:grid; place-items:center;
+    border:1.5px solid var(--line-strong); border-radius:999px; color:var(--muted);
+  }
+  .cal-nav svg{width:17px; height:17px}
+  .cal-dow, .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:3px}
+  .cal-dow{margin-bottom:6px}
+  .cal-dow span{text-align:center; font-size:11.5px; font-weight:700; color:var(--faint); letter-spacing:.06em}
+  .cal-day{
+    position:relative; aspect-ratio:1; display:grid; place-items:center;
+    border:1.5px solid transparent; border-radius:13px;
+    font-size:14.5px; font-weight:600; color:var(--ink-soft);
+  }
+  .cal-day.is-picked{background:var(--accent); border-color:var(--accent); color:var(--on-accent); font-weight:800}
+  .cal-dot{
+    position:absolute; bottom:6px; left:50%; margin-left:-2.5px;
+    width:5px; height:5px; border-radius:50%; background:var(--accent);
+  }
+  .cal-day.is-picked .cal-dot{background:var(--on-accent)}
+  .cal-time{
+    position:absolute; bottom:3px; left:0; right:0; text-align:center;
+    font-size:9px; font-weight:700; line-height:1; letter-spacing:-.02em; color:var(--accent);
+  }
+  .cal-agenda{margin-top:18px}
+  .cal-group-head{
+    font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:10px; padding-bottom:9px; border-bottom:1.5px solid var(--line);
+  }
+  .cal-row{overflow:hidden}
+  .cal-item{
+    display:flex; align-items:flex-start; gap:11px; background:var(--surface);
+    border:1.5px solid var(--line); border-radius:22px; padding:13px 15px;
+  }
+  .cal-item-title{font-size:15px; font-weight:600; line-height:1.35}
+  .cal-item-meta{margin-top:3px; font-size:12.5px; color:var(--faint)}
+
+  /* toasts */
+  .toast{
+    position:absolute; z-index:50; left:50%; bottom:114px;
+    background:var(--toast-bg); color:var(--toast-ink);
+    font-size:14px; font-weight:500; line-height:1.4;
+    padding:12px 22px; border-radius:999px; text-align:center;
+    box-shadow:0 18px 40px -16px rgba(16,16,24,.55); white-space:nowrap;
+  }
+  .toast--wrap{white-space:normal; width:318px; border-radius:24px}
+  .toast--action{display:flex; align-items:center; gap:12px; padding:10px 12px 10px 20px}
+  .toast-do{
+    border:1.5px solid currentColor; border-radius:999px; font-size:12.5px; font-weight:700;
+    line-height:1; letter-spacing:.01em; padding:7px 14px;
+  }
+
+  /* a fingertip */
+  .touch{
+    position:absolute; z-index:95; left:0; top:0; width:46px; height:46px; margin:-23px 0 0 -23px;
+    border-radius:50%; background:rgba(16,16,24,.20);
+    border:2px solid rgba(255,255,255,.95);
+    box-shadow:0 4px 14px rgba(16,16,24,.25);
+  }
+  .touch-ring{
+    position:absolute; z-index:94; left:0; top:0; width:46px; height:46px; margin:-23px 0 0 -23px;
+    border-radius:50%; border:2px solid var(--accent);
+  }
+
+  /* ---------- the end card ---------- */
+  #end{position:absolute; inset:0}
+  #end-mark{position:absolute; left:360px; top:520px; width:360px; height:360px; overflow:visible}
+  #end-word{
+    position:absolute; left:0; right:0; top:930px; text-align:center;
+    font-family:var(--display); font-weight:700; font-size:150px; letter-spacing:-.03em;
+    line-height:1; color:var(--black);
+  }
+  #end-word .accent{color:var(--violet)}
+  #end-tag{
+    position:absolute; left:0; right:0; top:1150px; text-align:center;
+    font-family:var(--sans); font-weight:500; font-size:58px; letter-spacing:-.025em;
+    line-height:1.12; color:var(--black);
+  }
+  #end-url{
+    position:absolute; left:0; right:0; top:1420px; text-align:center;
+    font-family:var(--mono); font-weight:400; font-size:32px; letter-spacing:.1em; color:var(--stone);
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+    <g id="icon-home" fill="var(--icon-fill,none)" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3.4 10.4 12 3.7l8.6 6.7v7.7a2.3 2.3 0 0 1-2.3 2.3H5.7a2.3 2.3 0 0 1-2.3-2.3z"/>
+    </g>
+    <g id="icon-list" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.2 6.6h9.4M10.2 12h9.4M10.2 17.4h9.4"/>
+      <path d="m4.2 6.5 1.5 1.5 2.4-2.6M4.2 11.9l1.5 1.5 2.4-2.6M4.2 17.3l1.5 1.5 2.4-2.6"/>
+    </g>
+    <g id="icon-calendar" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3.2" y="5.4" width="17.6" height="14.4" rx="4.6"/>
+      <path d="M3.4 10.4h17.2M8.4 3.4v3.8M15.6 3.4v3.8"/>
+    </g>
+    <g id="icon-plus" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round">
+      <path d="M12 5v14M5 12h14"/>
+    </g>
+    <g id="icon-note" fill="var(--icon-fill,none)" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5.2 4.6a1.6 1.6 0 0 1 1.6-1.6h6.5l5.5 5.5v10.9a1.6 1.6 0 0 1-1.6 1.6H6.8a1.6 1.6 0 0 1-1.6-1.6z"/>
+      <path d="M13.1 3v4.1a1.4 1.4 0 0 0 1.4 1.4h4.3" fill="none"/>
+    </g>
+    <g id="icon-gear" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3.1"/>
+      <path d="M19.1 14.6a1.6 1.6 0 0 0 .32 1.76l.06.06a1.9 1.9 0 1 1-2.7 2.7l-.06-.06a1.6 1.6 0 0 0-1.76-.32 1.6 1.6 0 0 0-.97 1.46v.17a1.9 1.9 0 1 1-3.8 0v-.09a1.6 1.6 0 0 0-1.05-1.46 1.6 1.6 0 0 0-1.76.32l-.06.06a1.9 1.9 0 1 1-2.7-2.7l.06-.06a1.6 1.6 0 0 0 .32-1.76 1.6 1.6 0 0 0-1.46-.97h-.17a1.9 1.9 0 1 1 0-3.8h.09a1.6 1.6 0 0 0 1.46-1.05 1.6 1.6 0 0 0-.32-1.76l-.06-.06a1.9 1.9 0 1 1 2.7-2.7l.06.06a1.6 1.6 0 0 0 1.76.32h.08a1.6 1.6 0 0 0 .97-1.46v-.17a1.9 1.9 0 1 1 3.8 0v.09a1.6 1.6 0 0 0 .97 1.46 1.6 1.6 0 0 0 1.76-.32l.06-.06a1.9 1.9 0 1 1 2.7 2.7l-.06.06a1.6 1.6 0 0 0-.32 1.76v.08a1.6 1.6 0 0 0 1.46.97h.17a1.9 1.9 0 1 1 0 3.8h-.09a1.6 1.6 0 0 0-1.46.97z"/>
+    </g>
+    <g id="icon-back" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14.5 5.5 8 12l6.5 6.5"/>
+    </g>
+    <g id="icon-chevron" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9.5 5.5 16 12l-6.5 6.5"/>
+    </g>
+    <path id="icon-tick" d="M5 12.5l5 5L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </defs>
+</svg>
+
+<div id="wrap"><div id="stage">
+  <div id="hook"></div>
+
+  <div id="cam">
+    <div id="phone">
+      <div class="btn-side" style="left:-3px; top:170px; height:34px"></div>
+      <div class="btn-side" style="left:-3px; top:230px; height:62px"></div>
+      <div class="btn-side" style="left:-3px; top:306px; height:62px"></div>
+      <div class="btn-side" style="right:-3px; top:250px; height:96px"></div>
+      <div class="body">
+        <div class="glass" id="glass">
+          <div class="island"></div>
+          <div class="status">
+            <span>9:41</span>
+            <span class="status-r">
+              <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx="1" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 11.2 5.6 8.6a3.4 3.4 0 0 1 4.8 0z" fill="currentColor"/><path d="M3.4 6.4a6.5 6.5 0 0 1 9.2 0M1 4a10 10 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <svg width="27" height="13" viewBox="0 0 27 13"><rect x=".75" y=".75" width="22" height="11.5" rx="3.5" fill="none" stroke="currentColor" stroke-opacity=".4" stroke-width="1.5"/><rect x="2.5" y="2.5" width="17" height="8" rx="2" fill="currentColor"/><path d="M24.6 4.5v4a2 2 0 0 0 0-4z" fill="currentColor" fill-opacity=".45"/></svg>
+            </span>
+          </div>
+
+          <!-- HOME: the cold start -->
+          <section class="scr" id="s-home">
+            <div class="sheen"></div>
+            <header class="brand">
+              <svg class="logo" viewBox="0 0 100 100"><use href="#logo-mark"/></svg>
+              <span class="wordmark">my<span class="accent">.adhd</span></span>
+              <span class="icon-btn"><svg viewBox="0 0 24 24"><use href="#icon-gear"/></svg></span>
+            </header>
+            <div class="start">
+              <h1 class="headline">What's on your mind?</h1>
+              <p class="hint">Everything gets sorted into lists. Nothing is thrown away.</p>
+              <div class="btn-primary" id="btn-start">Clear my head</div>
+            </div>
+          </section>
+
+          <!-- THE WAIT -->
+          <section class="scr" id="s-load">
+            <div class="loading">
+              <svg viewBox="0 0 100 100" id="morph"></svg>
+              <div class="loading-lines">
+                <p class="loading-text">Untangling that…</p>
+                <p class="loading-text">Sorting the noise from the signal…</p>
+                <p class="loading-text">Finding the one that matters…</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- THE LISTS -->
+          <section class="scr" id="s-lists">
+            <div class="content" id="lists-content">
+              <p class="eyebrow">Sorted into lists.</p>
+              <p class="lists-summary">8 things · 6 lists · about 3.9 hr all in</p>
+              <div class="cat-bar">
+                <span class="cat-pill is-on">All <span class="cat-pill-n">8</span></span>
+                <span class="cat-pill">Work <span class="cat-pill-n">2</span></span>
+                <span class="cat-pill">Health <span class="cat-pill-n">2</span></span>
+                <span class="cat-pill">Admin <span class="cat-pill-n">1</span></span>
+                <span class="cat-pill">Money <span class="cat-pill-n">1</span></span>
+                <span class="cat-pill">Social <span class="cat-pill-n">1</span></span>
+                <span class="cat-pill">Errand <span class="cat-pill-n">1</span></span>
+              </div>
+              <div class="lists" id="lists"></div>
+            </div>
+            <header class="brand">
+              <svg class="logo" viewBox="0 0 100 100"><use href="#logo-mark"/></svg>
+              <span class="wordmark">my<span class="accent">.adhd</span></span>
+            </header>
+          </section>
+
+          <!-- THE CALENDAR -->
+          <section class="scr" id="s-cal">
+            <div class="content">
+              <div class="cal-head">
+                <span class="cal-nav"><svg viewBox="0 0 24 24"><use href="#icon-back"/></svg></span>
+                <span class="cal-month">October 2026</span>
+                <span class="cal-nav"><svg viewBox="0 0 24 24"><use href="#icon-chevron"/></svg></span>
+              </div>
+              <div class="cal-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+              <div class="cal-grid" id="cal-grid"></div>
+              <div class="cal-agenda">
+                <p class="cal-group-head">Today</p>
+                <div class="cal-row" id="row-boss"><div class="cal-item">
+                  <span class="check" id="chk-boss"><svg viewBox="0 0 24 24"><use href="#icon-tick"/></svg></span>
+                  <div><p class="cal-item-title">Reply to boss</p><p class="cal-item-meta">any time · 10 min · low energy</p></div>
+                </div></div>
+                <div class="cal-row" id="row-bill"><div class="cal-item" style="margin-top:8px">
+                  <span class="check" id="chk-bill"><svg viewBox="0 0 24 24"><use href="#icon-tick"/></svg></span>
+                  <div><p class="cal-item-title">Pay the electric bill</p><p class="cal-item-meta">any time · 5 min · low energy</p></div>
+                </div></div>
+              </div>
+            </div>
+            <header class="brand">
+              <svg class="logo" viewBox="0 0 100 100"><use href="#logo-mark"/></svg>
+              <span class="wordmark">my<span class="accent">.adhd</span></span>
+            </header>
+          </section>
+
+          <!-- HOME, AFTER -->
+          <section class="scr" id="s-done">
+            <div class="sheen"></div>
+            <header class="brand">
+              <svg class="logo" viewBox="0 0 100 100"><use href="#logo-mark"/></svg>
+              <span class="wordmark">my<span class="accent">.adhd</span></span>
+              <span class="icon-btn"><svg viewBox="0 0 24 24"><use href="#icon-gear"/></svg></span>
+            </header>
+            <section class="home-card">
+              <h2 class="home-card-title">Next up</h2>
+              <p class="home-empty">Head's clear. Nothing waiting.</p>
+            </section>
+            <div class="stat-row">
+              <div class="stat"><strong>0</strong><span>on your lists</span></div>
+              <div class="stat"><strong>8</strong><span>done</span></div>
+              <div class="stat"><strong>0</strong><span>lists</span></div>
+              <div class="stat"><strong>0</strong><span>on the calendar</span></div>
+              <div class="stat stat--wide"><strong>0</strong><span>overdue</span></div>
+            </div>
+          </section>
+
+          <nav class="tabbar" id="tabbar">
+            <span class="tab fills" id="tab-home"><svg viewBox="0 0 24 24"><use href="#icon-home"/></svg></span>
+            <span class="tab" id="tab-cal"><svg viewBox="0 0 24 24"><use href="#icon-calendar"/></svg></span>
+            <span class="tab tab--add"><svg viewBox="0 0 24 24"><use href="#icon-plus"/></svg></span>
+            <span class="tab" id="tab-lists"><svg viewBox="0 0 24 24"><use href="#icon-list"/></svg></span>
+            <span class="tab fills"><svg viewBox="0 0 24 24"><use href="#icon-note"/></svg></span>
+          </nav>
+
+          <!-- THE COMPOSER -->
+          <div id="composer">
+            <div class="scrim"></div>
+            <div class="sheet">
+              <header class="c-bar">
+                <span class="c-cancel">Cancel</span>
+                <h2 class="c-title">New dump</h2>
+                <span class="c-post" id="c-post">Sort it</span>
+              </header>
+              <div class="c-body">
+                <span class="c-face">🧔🏻</span>
+                <div class="c-field">
+                  <span class="c-name">you</span>
+                  <div class="c-input" id="c-input"><span class="ph">just tell me, i'll sort it out.</span></div>
+                  <div class="dump-dates" id="c-dates">
+                    <span class="dump-dates-label">Heading for the calendar</span>
+                    <div class="dump-chips">
+                      <span class="chip chip--when" id="chip-fri">Tomorrow · 10am</span>
+                      <span class="chip chip--when" id="chip-sun">Sun 4 Oct</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="voice">
+                <div class="mic" id="mic">
+                  <span class="mic-ring" id="mic-ring"></span>
+                  <span class="mic-ring" id="mic-ring2"></span>
+                  <svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <p class="mic-hint" id="mic-hint">hold to talk</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="toast toast--wrap" id="toast-gcal">Linked. Anything with a date on it goes to your calendar.</div>
+          <div class="toast toast--action" id="toast-done"><span>Done.</span><span class="toast-do">Undo</span></div>
+
+          <div class="touch-ring" id="touch-ring"></div>
+          <div class="touch" id="touch"></div>
+          <div class="home-ind"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cap" id="caps"></div>
+
+  <div id="end">
+    <svg id="end-mark" viewBox="0 0 100 100"></svg>
+    <div id="end-word">my<span class="accent">.adhd</span></div>
+    <div id="end-tag">Understand Your Mind.<br>Own Your Day.</div>
+    <div id="end-url">myadhd.my</div>
+  </div>
+</div></div>
+<div id="hud"></div>
+
+<script>
+'use strict';
+const Q = new URLSearchParams(location.search);
+const RENDER = Q.has('render');
+if (RENDER) document.documentElement.classList.add('render');
+
+const DURATION = 30, FPS = 30;
+const $ = (id) => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+
+/* ---------- small maths ---------- */
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, p) => a + (b - a) * p;
+const E = {
+  lin: (x) => x,
+  out: (x) => 1 - Math.pow(1 - x, 3),
+  in: (x) => x * x * x,
+  inOut: (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2),
+  /* the app's own --ease, cubic-bezier(.22,.9,.28,1), near enough */
+  app: (x) => 1 - Math.pow(1 - x, 4),
+  /* the iOS sheet curve the composer uses, cubic-bezier(.32,.72,0,1) */
+  sheet: (x) => 1 - Math.pow(1 - x, 5),
+  back: (x) => { const c1 = 1.4, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); },
+};
+/** 0 before a, 1 after b, eased between. */
+function P(t, a, b, e = E.out) {
+  if (t <= a) return 0;
+  if (t >= b) return 1;
+  return e((t - a) / (b - a));
+}
+/** On from a to b, fading in over fi and out over fo. */
+function win(t, a, b, fi = .3, fo = .3) { return P(t, a, a + fi) * (1 - P(t, b - fo, b)); }
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x6D2B79F5) >>> 0;
+    let r = Math.imul(s ^ (s >>> 15), 1 | s);
+    r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r;
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function css(n, o) { for (const k in o) n.style[k] = o[k]; }
+function op(n, v) { n.style.opacity = clamp(v).toFixed(3); n.style.visibility = v <= 0.001 ? 'hidden' : 'visible'; }
+
+/* ---------- the timeline, in seconds ---------- */
+const T = {
+  riseA: 3.65, riseB: 4.65,          // the phone comes up
+  tapStart: 5.05,                    // Clear my head
+  sheetA: 5.2, sheetB: 5.62,         // the composer comes up
+  holdA: 5.95, holdB: 8.2,           // hold to talk
+  typeA: 6.15, typeB: 7.95,
+  tapSort: 8.85,
+  loadA: 9.05,
+  line2: 9.95, line3: 10.8,
+  listsA: 11.55,
+  zoomListA: 12.2, zoomListB: 13.0, zoomListOut: 13.9,
+  scrollA: 14.35, scrollB: 15.9, scrollBackA: 16.45, scrollBackB: 17.15,
+  tapTax: 17.6,
+  tapBreak: 19.15, stepsA: 19.7,
+  tapCal: 21.3, calA: 21.42,
+  dot1: 21.95, dot2: 22.25,
+  toastA: 22.6, toastB: 23.9,
+  tapBoss: 24.5, tapBill: 25.05, doneToastA: 24.65, doneToastB: 25.75,
+  tapHome: 25.55, homeA: 25.66,
+  outA: 26.25, outB: 26.8,
+  markA: 26.75,
+};
+
+const CAPS = [
+  { k: null,              m: 'Your head, right now.',           a: 0.25,  b: 3.75 },
+  { k: '01 · The dump',   m: 'Type it. Say it. All of it.',     a: 4.2,   b: 8.8 },
+  { k: '02 · The sort',   m: 'It sorts itself.',                a: 8.8,   b: 11.55 },
+  { k: '03 · The lists',  m: 'Into lists. By day.',             a: 11.55, b: 17.3 },
+  { k: '04 · First step', m: "A first step\nyou can't refuse.", a: 17.3,  b: 21.2 },
+  { k: '05 · Calendar',   m: 'Dates go to your calendar.',      a: 21.2,  b: 24.35 },
+  { k: '06 · Done',       m: "Tick it off. Head's clear.",      a: 24.35, b: 26.35 },
+];
+
+/* The dump itself — the same eight things the hook throws around, in the
+   order a person would say them. */
+const DUMP = "reply to boss, dentist fri 10am, pay the bill, mum's birthday sun, tax form 30 sep, buy milk, gym, that email";
+
+const TASKS = [
+  // bucket, title, minutes label, energy, when label, late?
+  ['Late',        'Tax form',             '45 min', 'high',   'Yesterday',        true],
+  ['Today',       'Reply to boss',        '10 min', 'low',    'Today'],
+  ['Today',       'Pay the electric bill','5 min',  'low',    'Today'],
+  ['Coming up',   'Dentist',              '1 hr',   'medium', 'Tomorrow · 10am'],
+  ['Coming up',   "Mum's birthday",       '30 min', 'medium', 'Sun 4 Oct'],
+  ['No date yet', 'Gym',                  '1 hr',   'high',   null],
+  ['No date yet', 'Buy milk',             '10 min', 'low',    null],
+  ['No date yet', 'Answer that email',    '15 min', 'medium', null],
+];
+
+/* ---------- build ---------- */
+const S = {};
+
+function el(tag, cls, parent, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function svgEl(tag, attrs, parent) {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function build() {
+  /* captions, word by word */
+  const capsBox = $('caps');
+  S.caps = CAPS.map((c) => {
+    const box = el('div', null, capsBox);
+    css(box, { position: 'absolute', left: 0, right: 0, bottom: 0 });
+    const words = [];
+    if (c.k) {
+      const k = el('span', 'cap-k', box);
+      c.k.split(' ').forEach((w, i, a) => words.push(el('span', 'w', k, w + (i < a.length - 1 ? ' ' : ''))));
+    }
+    const kc = words.length;
+    const m = el('span', 'cap-m', box);
+    // a \n in the caption is a line break the layout does not get to choose
+    c.m.split('\n').forEach((line, li) => {
+      if (li) m.appendChild(document.createElement('br'));
+      line.split(' ').forEach((w, i, a) => words.push(el('span', 'w', m, w + (i < a.length - 1 ? ' ' : ''))));
+    });
+    return Object.assign({ box, words, kc }, c);
+  });
+
+  /* the hook: every thing on the list, three times over, louder each time */
+  const ITEMS = ['reply to boss', 'dentist Fri', 'pay the bill', "mum's birthday Sun",
+                 'tax form 30 Sep', 'buy milk', 'that email', 'gym'];
+  const r = rng(11);
+  const hook = $('hook');
+  S.hook = [];
+  const N = 27;
+  for (let i = 0; i < N; i++) {
+    const text = ITEMS[(i * 3) % ITEMS.length];
+    const k = i / (N - 1);                         // 0 early and quiet, 1 late and loud
+    const n = el('div', 'hw', hook, text);
+    const size = Math.round(lerp(50, 118, Math.pow(k, 1.15)) * (0.85 + r() * .3));
+    const weight = k < .3 ? 300 : k < .6 ? 400 : k < .85 ? 500 : 600;
+    const tone = k < .35 ? '#CFCBE9' : k < .7 ? '#5E5E6A' : '#101018';
+    css(n, { fontSize: size + 'px', fontWeight: weight, color: tone });
+    const w = n.getBoundingClientRect().width;
+    // a loose cloud under the caption, crowding towards the middle
+    const ang = r() * Math.PI * 2, rad = Math.sqrt(r()) * lerp(1, .8, k);
+    const cx = 540 + Math.cos(ang) * 360 * rad;
+    const cy = 1150 + Math.sin(ang) * 560 * rad;
+    S.hook.push({
+      n, w, x: clamp(cx - w / 2, 30, 1050 - w), y: cy - size / 2, size,
+      at: 0.2 + Math.pow(k, 1.6) * 3.1,         // arrivals speed up
+      rot: (r() - .5) * 7, drift: (r() - .5) * 16, z: 1 + k,
+    });
+  }
+
+  /* the lists */
+  const lists = $('lists');
+  S.cards = [];
+  const buckets = {};
+  TASKS.forEach(([b, title, mins, energy, when, late], i) => {
+    if (!buckets[b]) {
+      const bk = el('section', 'bucket' + (b === 'Late' || b === 'Today' ? ' bucket--ink' : ''), lists);
+      const head = el('div', 'bucket-head', bk);
+      el('span', 'bucket-name', head, b);
+      const count = el('span', 'bucket-count', head, '0');
+      buckets[b] = { bk, head, items: el('div', 'items', bk), count, n: 0 };
+    }
+    const B = buckets[b];
+    B.count.textContent = ++B.n;
+    const card = el('div', 'task', B.items);
+    const chk = el('span', 'check', card);
+    chk.innerHTML = '<svg viewBox="0 0 24 24"><use href="#icon-tick"/></svg>';
+    const body = el('div', 'task-body', card);
+    const tt = el('p', 'task-title', body, title);
+    const meta = el('div', 'task-meta', body);
+    el('span', 'chip chip--time', meta, mins);
+    el('span', 'chip', meta, energy + ' energy');
+    if (when) el('span', 'chip chip--when' + (late ? ' is-late' : ''), meta, when);
+    S.cards.push({ card, title: tt, bucket: B, i });
+    if (i === 0) {
+      /* the detail, as renderTask() builds it */
+      const detail = el('div', 'detail', body);
+      const din = el('div', 'detail-in', detail);
+      const fs = el('div', 'first-step', din);
+      el('span', 'first-step-label', fs, 'Start here — 2 minutes');
+      el('p', 'first-step-text', fs, "Find last year's form.");
+      const sw = el('div', 'steps-wrap', din);
+      const sb = el('div', 'steps-block', sw);
+      el('span', 'first-step-label', sb, 'Broken down');
+      const ol = el('ol', 'steps', sb);
+      S.steps = ["Find last year's form", "Download this year's", 'Fill in page one', 'Send it'].map((s, j) => {
+        const li = el('li', null, ol);
+        el('i', null, li, String(j + 1));
+        el('span', null, li, s);
+        return li;
+      });
+      const brk = el('span', 'btn-soft', din, 'Too big — break it down');
+      const fix = el('div', 'task-fix', din);
+      el('span', null, fix, 'Edit'); el('span', null, fix, 'Remove');
+      Object.assign(S, { detail, stepsWrap: sw, breakBtn: brk, taxCard: card, taxTitle: tt });
+    }
+  });
+  S.buckets = Object.values(buckets);
+
+  /* the calendar: October 2026 starts on a Thursday */
+  const grid = $('cal-grid');
+  S.days = {};
+  for (let i = 0; i < 3; i++) el('span', 'cal-day', grid);
+  for (let d = 1; d <= 31; d++) {
+    const c = el('span', 'cal-day' + (d === 1 ? ' is-picked' : ''), grid, String(d));
+    S.days[d] = c;
+  }
+  el('span', 'cal-dot', S.days[1]);
+  S.dotFri = el('span', 'cal-time', S.days[2], '10am');
+  S.dotSun = el('span', 'cal-dot', S.days[4]);
+
+  /* the mark, twice: thinking on the wait, drawing itself at the end */
+  S.morph = makeMark($('morph'));
+  S.endMark = makeMark($('end-mark'));
+
+  /* measure what grows, while it is still at its natural size */
+  S.stepsH = S.stepsWrap.offsetHeight;
+  css(S.stepsWrap, { height: '0px' });
+  S.detailH = S.detail.offsetHeight;
+  css(S.detail, { height: '0px' });
+  S.scrollMax = Math.max(0, $('lists-content').offsetHeight - 844 + 8);
+  // far enough that "Late" sits just under the bar, and nothing above it peeks out
+  S.scrollLate = $('lists').offsetTop - 14 + 4;
+  S.rowH = $('row-boss').offsetHeight;
+  S.rowH2 = $('row-bill').offsetHeight;
+}
+
+/* Seven arms and a capsule, each its own element so each can move alone.
+   Arm i points at angle A[i]; the lower-right is the one come loose. */
+const ARMS = [0, 45, 90, 180, 225, 270, 315];
+function makeMark(svg) {
+  const g = svgEl('g', {}, svg);
+  const arms = ARMS.map((a) => {
+    const ag = svgEl('g', { transform: `rotate(${a} 50 50)` }, g);
+    return svgEl('rect', { x: 46.5, y: 18, width: 7, height: 32, fill: '#F75C03' }, ag);
+  });
+  const pill = svgEl('path', { d: 'M64.5 64.5l7 7', stroke: '#7B3FE4', 'stroke-width': 7, 'stroke-linecap': 'round', fill: 'none' }, g);
+  return { g, arms, pill };
+}
+/** An arm of length len (32 is the mark's own), grown from the centre. */
+function arm(rect, len) {
+  rect.setAttribute('y', (50 - len).toFixed(3));
+  rect.setAttribute('height', Math.max(0, len).toFixed(3));
+}
+
+/* ---------- a fingertip ---------- */
+const TAPS = [];   // filled in seek order; the last one wins
+function touchAt(t, t0, target, holdTo) {
+  const up = holdTo || t0 + .12;
+  if (t < t0 - .32 || t > up + .5) return null;
+  const inP = P(t, t0 - .32, t0 - .04, E.out);
+  const outP = P(t, up + .05, up + .3, E.out);
+  const press = t >= t0 && t <= up;
+  return { target, a: inP * (1 - outP), press, ring: P(t, t0, t0 + .45, E.out), ringOn: t >= t0 && t <= t0 + .45, t0 };
+}
+function placeTouch(tp) {
+  const dot = $('touch'), ring = $('touch-ring');
+  if (!tp) { op(dot, 0); op(ring, 0); return; }
+  const g = $('glass').getBoundingClientRect();
+  const k = g.width / 390;
+  const r = tp.target.getBoundingClientRect();
+  const x = (r.left + r.width / 2 - g.left) / k, y = (r.top + r.height / 2 - g.top) / k;
+  op(dot, tp.a);
+  dot.style.transform = `translate(${x.toFixed(1)}px,${(y + (1 - tp.a) * 18).toFixed(1)}px) scale(${tp.press ? .82 : 1})`;
+  if (tp.ringOn) {
+    op(ring, (1 - tp.ring) * .8);
+    ring.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) scale(${lerp(.8, 2.3, tp.ring).toFixed(3)})`;
+  } else op(ring, 0);
+}
+
+/* ---------- seek ---------- */
+function seek(t) {
+  t = clamp(t, 0, DURATION - 1e-6);
+
+  /* captions: each word rises in, the lot lifts away */
+  S.caps.forEach((c) => {
+    const on = t >= c.a - .01 && t < c.b + .01;
+    op(c.box, on ? 1 : 0);
+    if (!on) return;
+    const out = P(t, c.b - .3, c.b, E.in);
+    c.words.forEach((w, i) => {
+      const d = i < c.kc ? i * .05 : .12 + (i - c.kc) * .055;
+      const p = P(t, c.a + d, c.a + d + .5, E.app);
+      op(w, p * (1 - out));
+      w.style.transform = `translateY(${((1 - p) * 30 - out * 18).toFixed(1)}px)`;
+    });
+  });
+
+  /* ---- 1. the hook ---- */
+  const sweep = P(t, T.riseA - .05, T.riseB - .15, E.inOut);
+  S.hook.forEach((h) => {
+    const p = P(t, h.at, h.at + .35, E.app);
+    if (p <= 0) { op(h.n, 0); return; }
+    const life = t - h.at;
+    let x = h.x + h.drift * life, y = h.y - 6 * life;
+    // swept into the phone as it rises
+    const tx = 540 - h.w / 2, ty = 1100;
+    x = lerp(x, tx, sweep); y = lerp(y, ty, sweep);
+    const s = lerp(.94, 1, p) * lerp(1, .25, sweep);
+    op(h.n, p * (1 - P(t, T.riseA + .25, T.riseB - .1)));
+    h.n.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) rotate(${(h.rot * (1 - sweep)).toFixed(2)}deg) scale(${s.toFixed(4)})`;
+    h.n.style.zIndex = Math.round(h.z * 10);
+  });
+
+  /* ---- the phone, and the camera on it ---- */
+  const rise = P(t, T.riseA, T.riseB, E.sheet);
+  const leave = P(t, T.outA, T.outB, E.in);
+  const SC = 1.62, PCY = 1150;
+  const py = PCY + (1 - rise) * 1250 + leave * 260;
+  const tilt = (1 - rise) * 16;
+  $('phone').style.transform =
+    `translate(${540 - 208}px,${(py - 435).toFixed(1)}px) perspective(2200px) rotateX(${tilt.toFixed(2)}deg) scale(${SC})`;
+  op($('phone'), rise > 0 ? 1 - leave : 0);
+
+  // push-ins, anchored at the phone's top edge so the captions stay clear
+  let z = 1;
+  z = lerp(z, 1.07, P(t, 5.6, 6.3, E.inOut) * (1 - P(t, 8.5, 9.0, E.inOut)));
+  z = lerp(z, 1.13, P(t, T.zoomListA, T.zoomListB, E.inOut) * (1 - P(t, T.zoomListOut, T.zoomListOut + .6, E.inOut)));
+  z = lerp(z, 1.15, P(t, 17.3, 18.1, E.inOut) * (1 - P(t, 20.9, 21.45, E.inOut)));
+  $('cam').style.transform = `scale(${z.toFixed(4)})`;
+
+  /* ---- which screen ---- */
+  const load = P(t, T.loadA, T.loadA + .3);
+  const lists = P(t, T.listsA, T.listsA + .3);
+  // a tab switch in the app is a swap, not a dissolve — near enough a cut
+  const cal = P(t, T.calA, T.calA + .12);
+  const done = P(t, T.homeA, T.homeA + .12);
+  // each screen fades in over the one before, which holds until it is covered
+  op($('s-home'), load < 1 ? 1 : 0);
+  op($('s-load'), lists < 1 ? load : 0);
+  op($('s-lists'), cal < 1 ? lists : 0);
+  op($('s-cal'), done < 1 ? cal : 0);
+  op($('s-done'), done);
+
+  // the wait has no bar; the bar lights where you are
+  const barOn = t < T.loadA + .05 || t > T.listsA + .05;
+  op($('tabbar'), barOn ? 1 : P(t, T.listsA, T.listsA + .3));
+  $('tab-home').classList.toggle('is-on', t < T.loadA || t >= T.tapHome + .02);
+  $('tab-lists').classList.toggle('is-on', t >= T.listsA && t < T.tapCal + .02);
+  $('tab-cal').classList.toggle('is-on', t >= T.tapCal + .02 && t < T.tapHome + .02);
+
+  /* ---- 2. the dump ---- */
+  const pressStart = t >= T.tapStart && t < T.tapStart + .14;
+  $('btn-start').style.transform = `scale(${pressStart ? .97 : 1})`;
+  const sheetIn = P(t, T.sheetA, T.sheetB, E.sheet);
+  const sheetOut = P(t, T.tapSort + .08, T.tapSort + .42, E.in);
+  const comp = $('composer');
+  op(comp, sheetIn > 0 && sheetOut < 1 ? 1 : 0);
+  op(comp.querySelector('.scrim'), sheetIn * (1 - sheetOut));
+  comp.querySelector('.sheet').style.transform = `translateY(${((1 - sheetIn + sheetOut) * 790).toFixed(1)}px)`;
+
+  // the words arrive in the box the way dictation lands: a word at a time
+  const words = DUMP.split(' ');
+  const shown = Math.floor(P(t, T.typeA, T.typeB, E.lin) * words.length + (t >= T.typeB ? 1 : 0));
+  const input = $('c-input');
+  const text = words.slice(0, shown).join(' ');
+  if (input.dataset.text !== text) {
+    input.dataset.text = text;
+    input.innerHTML = text ? '' : "<span class=\"ph\">just tell me, i'll sort it out.</span>";
+    if (text) input.textContent = text;
+  }
+  const post = $('c-post');
+  op(post, text ? 1 : .4);
+  post.style.transform = `scale(${t >= T.tapSort && t < T.tapSort + .12 ? .96 : 1})`;
+  const hasFri = text.includes('10am'), hasSun = text.includes(' sun');
+  op($('c-dates'), hasFri ? 1 : 0);
+  $('c-dates').style.display = hasFri ? '' : 'none';
+  const tFri = T.typeA + (words.indexOf('10am,') + 1) / words.length * (T.typeB - T.typeA);
+  const tSun = T.typeA + (words.indexOf('sun,') + 1) / words.length * (T.typeB - T.typeA);
+  [['chip-fri', hasFri, tFri], ['chip-sun', hasSun, tSun]].forEach(([id, on, at]) => {
+    const p = on ? P(t, at, at + .25, E.app) : 0;
+    op($(id), p);
+    $(id).style.display = on ? '' : 'none';
+    $(id).style.transform = `translateY(${((1 - p) * 8).toFixed(1)}px)`;
+  });
+
+  // hold to talk
+  const live = t >= T.holdA && t < T.holdB;
+  const liveP = P(t, T.holdA, T.holdA + .16) * (1 - P(t, T.holdB, T.holdB + .16));
+  $('mic').style.transform = `scale(${lerp(1, 1.12, liveP).toFixed(4)})`;
+  [['mic-ring', 0], ['mic-ring2', .75]].forEach(([id, off]) => {
+    const ph = live ? (((t - T.holdA + off) % 1.5) + 1.5) % 1.5 / 1.5 : 0;
+    op($(id), live && t - T.holdA + off >= 0 ? .5 * (1 - ph) * liveP : 0);
+    $(id).style.transform = `scale(${lerp(1, 1.9, ph).toFixed(4)})`;
+  });
+  const hint = $('mic-hint');
+  const hintText = live ? 'listening… let go when done' : 'hold to talk';
+  if (hint.textContent !== hintText) hint.textContent = hintText;
+  hint.style.color = live ? 'var(--ink)' : 'var(--faint)';
+
+  /* ---- 3. the wait: the mark thinking ---- */
+  if (load > 0 && lists < 1) {
+    const ph = (t - T.loadA) * 2 * Math.PI / 1.6;
+    S.morph.arms.forEach((a, i) => arm(a, 32 * (0.62 + 0.38 * (0.5 + 0.5 * Math.sin(ph + i * 0.9)))));
+    const pr = 0.5 + 0.5 * Math.sin(ph * .8 + 2);
+    S.morph.pill.setAttribute('transform', `translate(${(pr * 6).toFixed(2)} ${(pr * 6).toFixed(2)})`);
+    S.morph.g.setAttribute('transform', `rotate(${(Math.sin(ph * .5) * 10).toFixed(2)} 50 50)`);
+  }
+  const lines = document.querySelectorAll('#s-load .loading-text');
+  [[T.loadA, T.line2], [T.line2, T.line3], [T.line3, T.listsA + .3]].forEach(([a, b], i) => {
+    const p = win(t, a, b, i === 0 ? .01 : .22, .22);
+    op(lines[i], p);
+    lines[i].style.transform = `translateY(${((1 - P(t, a, a + .3, E.app)) * 8).toFixed(1)}px)`;
+  });
+
+  /* ---- 4. the lists ---- */
+  S.cards.forEach((c, i) => {
+    const a = T.listsA + .1 + i * .09;
+    const p = P(t, a, a + .28, E.app);
+    op(c.card, p);
+    c.card.style.transform = `translateY(${((1 - p) * 10).toFixed(1)}px)`;
+  });
+  S.buckets.forEach((b, i) => {
+    const a = T.listsA + .05 + i * .12;
+    op(b.head, P(t, a, a + .25));
+  });
+  const scroll = P(t, T.scrollA, T.scrollB, E.inOut) * (1 - P(t, T.scrollBackA, T.scrollBackB, E.inOut)) * S.scrollMax
+               + P(t, T.stepsA, T.stepsA + .6, E.inOut) * S.scrollLate;
+  $('lists-content').style.transform = `translateY(${(-scroll).toFixed(1)}px)`;
+
+  /* ---- 5. the first step ---- */
+  const open = P(t, T.tapTax + .08, T.tapTax + .45, E.app);
+  S.taxCard.style.borderColor = open > .5 ? 'var(--accent)' : '';
+  S.taxCard.style.background = open > .5 ? 'var(--wash)' : '';
+  const grow = P(t, T.stepsA, T.stepsA + .45, E.app);
+  S.stepsWrap.style.height = (grow * S.stepsH).toFixed(1) + 'px';
+  S.detail.style.height = open >= 1 ? 'auto' : (open * S.detailH).toFixed(1) + 'px';
+  op(S.detail, open);
+  S.steps.forEach((li, j) => {
+    const p = P(t, T.stepsA + .12 + j * .1, T.stepsA + .4 + j * .1, E.app);
+    op(li, p);
+    li.style.transform = `translateX(${((1 - p) * 10).toFixed(1)}px)`;
+  });
+  const breaking = t >= T.tapBreak + .05 && t < T.stepsA;
+  const bt = breaking ? 'Breaking it down…' : 'Too big — break it down';
+  if (S.breakBtn.textContent !== bt) S.breakBtn.textContent = bt;
+  S.breakBtn.style.transform = `scale(${t >= T.tapBreak && t < T.tapBreak + .12 ? .97 : 1})`;
+  S.breakBtn.style.opacity = breaking ? .45 : 1;
+
+  /* ---- 6. the calendar ---- */
+  const d1 = P(t, T.dot1, T.dot1 + .35, E.back), d2 = P(t, T.dot2, T.dot2 + .35, E.back);
+  op(S.dotFri, P(t, T.dot1, T.dot1 + .12)); S.dotFri.style.transform = `scale(${Math.max(d1, .01).toFixed(3)})`;
+  op(S.dotSun, P(t, T.dot2, T.dot2 + .12)); S.dotSun.style.transform = `scale(${Math.max(d2, .01).toFixed(3)})`;
+  const tg = win(t, T.toastA, T.toastB, .3, .25);
+  const toastG = $('toast-gcal');
+  op(toastG, tg);
+  toastG.style.transform = `translate(-50%,${((1 - P(t, T.toastA, T.toastA + .3, E.app)) * 10).toFixed(1)}px)`;
+
+  /* ---- 7. done ---- */
+  [['chk-boss', 'row-boss', T.tapBoss, S.rowH], ['chk-bill', 'row-bill', T.tapBill, S.rowH2]].forEach(([c, r, at, h]) => {
+    const ticked = t >= at;
+    const chk = $(c);
+    chk.style.background = ticked ? 'var(--accent)' : 'none';
+    chk.style.color = ticked ? '#fff' : 'transparent';
+    chk.style.borderColor = ticked ? 'var(--accent)' : '';
+    chk.style.transform = `scale(${ticked ? lerp(.86, 1, P(t, at, at + .18, E.back)) : 1})`;
+    const gone = P(t, at + .3, at + .6, E.inOut);
+    const row = $(r);
+    row.style.height = gone > 0 ? ((1 - gone) * h).toFixed(1) + 'px' : '';
+    op(row, 1 - P(t, at + .25, at + .45));
+  });
+  const td = win(t, T.doneToastA, T.doneToastB, .28, .25);
+  const toastD = $('toast-done');
+  op(toastD, td);
+  toastD.style.transform = `translate(-50%,${((1 - P(t, T.doneToastA, T.doneToastA + .28, E.app)) * 10).toFixed(1)}px)`;
+
+  /* ---- 8. the end card ---- */
+  const endOn = t >= T.markA - .01;
+  op($('end'), endOn ? 1 : 0);
+  if (endOn) {
+    // a slow drift in while it holds, so the last frame is not a freeze
+    $('end').style.transform = `scale(${lerp(1, 1.03, P(t, T.markA, DURATION, E.lin)).toFixed(4)})`;
+    const M = S.endMark;
+    M.arms.forEach((a, i) => {
+      const p = P(t, T.markA + i * .11, T.markA + i * .11 + .3, E.app);
+      arm(a, 32 * p);
+    });
+    // the capsule comes last, from further out along its own diagonal,
+    // and stops short of the centre: it stays apart
+    const cp = P(t, T.markA + .8, T.markA + 1.3, E.back);
+    const off = (1 - cp) * 30;
+    M.pill.setAttribute('transform', `translate(${off.toFixed(2)} ${off.toFixed(2)})`);
+    M.pill.style.opacity = P(t, T.markA + .8, T.markA + .95).toFixed(3);
+    const w = P(t, T.markA + 1.15, T.markA + 1.65, E.app);
+    op($('end-word'), w); $('end-word').style.transform = `translateY(${((1 - w) * 26).toFixed(1)}px)`;
+    const g = P(t, T.markA + 1.5, T.markA + 2.0, E.app);
+    op($('end-tag'), g); $('end-tag').style.transform = `translateY(${((1 - g) * 22).toFixed(1)}px)`;
+    const u = P(t, T.markA + 1.85, T.markA + 2.3, E.app);
+    op($('end-url'), u); $('end-url').style.transform = `translateY(${((1 - u) * 16).toFixed(1)}px)`;
+  }
+
+  /* ---- the fingertip, last, so it measures this frame's layout ---- */
+  const q = $;
+  const tp = [
+    touchAt(t, T.tapStart, q('btn-start')),
+    touchAt(t, T.holdA, q('mic'), T.holdB),
+    touchAt(t, T.tapSort, q('c-post')),
+    touchAt(t, T.tapTax, S.taxTitle),
+    touchAt(t, T.tapBreak, S.breakBtn),
+    touchAt(t, T.tapCal, q('tab-cal')),
+    touchAt(t, T.tapBoss, q('chk-boss')),
+    touchAt(t, T.tapBill, q('chk-bill')),
+    touchAt(t, T.tapHome, q('tab-home')),
+  ].filter(Boolean);
+  placeTouch(tp.length ? tp[tp.length - 1] : null);
+}
+
+/* ---------- start ---------- */
+Promise.all([
+  document.fonts.load('700 80px "Baloo 2"'), document.fonts.load('800 24px "Baloo 2"'),
+  document.fonts.load('600 16px "Baloo 2"'), document.fonts.load('500 16px "Baloo 2"'),
+  document.fonts.load('300 60px "DM Sans"'), document.fonts.load('500 60px "DM Sans"'),
+  document.fonts.load('600 60px "DM Sans"'), document.fonts.load('400 30px "DM Mono"'),
+]).then(() => document.fonts.ready).then(() => {
+  build();
+  seek(0);
+  window.seek = seek;
+  window.__ready = true;
+  if (RENDER) return;
+
+  const wrap = $('wrap');
+  const fit = () => { wrap.style.transform = `scale(${Math.min(innerHeight / 1920, innerWidth / 1080)})`; };
+  fit(); addEventListener('resize', fit);
+
+  let playing = !Q.has('t'), t = Q.has('t') ? +Q.get('t') || 0 : 0, last = performance.now();
+  const hud = $('hud');
+  function frame(now) {
+    if (playing) t = (t + (now - last) / 1000) % DURATION;
+    last = now;
+    seek(t);
+    hud.textContent = t.toFixed(2) + 's' + (playing ? '' : ' — paused');
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  addEventListener('keydown', (e) => {
+    if (e.key === ' ') { playing = !playing; e.preventDefault(); }
+    if (e.key === 'ArrowRight') t = Math.min(DURATION - .01, t + 1);
+    if (e.key === 'ArrowLeft') t = Math.max(0, t - 1);
+    if (e.key === '.') { playing = false; t = Math.min(DURATION - .01, t + 1 / FPS); }
+    if (e.key === ',') { playing = false; t = Math.max(0, t - 1 / FPS); }
+  });
+  $('stage').addEventListener('click', (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    t = clamp((e.clientX - r.left) / r.width) * DURATION;
+  });
+});
+</script>
+</body>
+</html>
