@@ -6,6 +6,10 @@
    the rewrite there never fired, and the subdomain opened on the wrong
    page. Routing Middleware runs before that lookup.
 
+   The target is /focus, not /focus/index.html: with cleanUrls on, Vercel
+   only serves an .html file under its extensionless name, and rewriting to
+   the full filename comes back 404.
+
    It is matched to "/" only, and anything that is not the focus host walks
    straight through untouched. Every other focus path is handled by the
    host-scoped redirects in vercel.json, which do work, because there the
@@ -17,6 +21,6 @@ export default function middleware(request) {
   const url = new URL(request.url);
   if (url.hostname !== 'focus.myadhd.my') return;
   return new Response(null, {
-    headers: { 'x-middleware-rewrite': new URL('/focus/index.html', url).toString() },
+    headers: { 'x-middleware-rewrite': new URL('/focus', url).toString() },
   });
 }
