@@ -163,7 +163,6 @@ body{
    moment the page is longer than the window, which is always. */
 .bar{
   background:var(--surface);
-  border-bottom:1px solid var(--line);
 }
 /* The mark, and — on every page but the home — a circled back arrow in
    its place. LOUD swaps the lockup for one on every sub-page, which is
@@ -497,13 +496,16 @@ body{
    Bottom right, on every page, always the next thing to do. LOUD's says
    "Are you the next?" and never changes; ours changes exactly once — the
    app's pages offer the app, every other page offers the self-check —
-   because this site has two things to be the next step of. */
+   because this site has two things to be the next step of.
+
+   Solid ink — black by day, white at night — so it reads as a control
+   over the field rather than a hole in it. The dot stays orange. */
 .pill{
   position:fixed; right:var(--gutter); z-index:19;
   bottom:calc(clamp(20px,3vh,40px) + env(safe-area-inset-bottom, 0px));
   padding:10px 18px; border-radius:999px;
-  border:1px solid var(--line-strong); background:var(--surface);
-  font-size:13px; color:var(--ink); text-decoration:none; white-space:nowrap;
+  border:1px solid var(--ink); background:var(--ink);
+  font-size:13px; color:var(--surface); text-decoration:none; white-space:nowrap;
   transition:background .18s var(--ease), border-color .18s var(--ease);
 }
 .pill::before{
@@ -511,11 +513,17 @@ body{
   background:var(--orange); margin-right:9px;
 }
 .pill{display:inline-flex; align-items:center}
-.pill:hover{border-color:var(--orange); color:var(--ink)}
+.pill:hover{border-color:var(--orange); color:var(--surface)}
 .pill:focus-visible{outline:none; border-color:var(--orange); box-shadow:0 0 0 4px rgba(247,92,3,.22)}
 
 
 /* ============ THE SPINE ============
+   The column every sub-page reads down. It carried a hairline down its
+   left edge until 2026-10-04 — LOUD's signature — and the user had it
+   taken off with the bar's own bottom rule: two lines meeting at the top
+   left read as a frame drawn round the page rather than as the page.
+   What follows is the old reasoning for the line, kept for the record.
+
    One hairline down the left of every page under the bar. It is the
    single most recognisable thing about LOUD's sub-pages and it costs one
    border: it turns a stack of centred sections into a document with a
@@ -523,7 +531,6 @@ body{
    composition rather than as absence. Not on the home page, which has
    no document to bind. */
 .spine{
-  border-left:1px solid var(--line);
   margin-left:var(--gutter);
   padding-left:clamp(20px,2.2vw,32px);
   padding-right:var(--gutter);
@@ -863,7 +870,15 @@ body{
    position:relative and stacked its children at 1. Anything that holds
    words goes here. */
 .spine, .foot, .ask, .pager,
-.doors, .facts, .ending{position:relative; z-index:1}
+.facts, .ending{position:relative; z-index:1}
+/* Not .doors itself: the front page's <nav class="bar"> lives inside that
+   section, and a z-index on it would make it a stacking context that the
+   bar's own z-index:20 cannot climb out of — .facts, later in the page at
+   the same z-index:1, then painted straight over the fixed bar, and "TL;DR"
+   scrolled through the nav. So the section stays out of the stacking and
+   its children each take the layer instead; the bar keeps its own. */
+.doors{position:relative}
+.doors > :not(.bar){position:relative; z-index:1}
 /* ...and the bar's ground has to go, or it paints a band across a field
    that now runs the full height of the window. */
 .bar{background:none; border-bottom:0}
@@ -877,7 +892,6 @@ body{
 .bar::after{
   content:""; position:absolute; inset:0; z-index:-1;
   background:rgb(var(--wave-rgb) / .90);
-  border-bottom:1px solid var(--line);
 }
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)){
   .bar::after{
@@ -1026,68 +1040,57 @@ body{
 .hero-waves canvas{display:block; width:100%; height:100%}
 
 /* ---------- the field ----------
-   This was a WebGL shader in waves.js with a three-layer veil over it —
-   a reader pool on a smoothstep, a linear pass to give the bar something
-   to sit on, and a flat wash under both to stop the loud corners reading
-   as a picture rather than as weather.
+   This was a WebGL shader in waves.js with a three-layer veil over it,
+   then four static radials — three blobs in the brand's pale (by day) or
+   deep (by night) blues and violets, under a wash that came up at the
+   edges. At night that read as gloom: every colour at a third of its
+   strength over ink is a murky indigo, not a brand colour.
 
-   It is four static radials now, and the veil is not a layer on top any
-   more: it is the first of them. The blobs sit off-centre and the wash
-   comes UP at the edges, so the middle of the screen — where the headline
-   is, and where a sub-page's column of reading is — stays the quietest
-   part of the field by construction rather than by a pool drawn over it.
+   It is one glow now, in Vivid Blue #4737FF in both themes, coming down
+   from the top edge. The colour is the brand's and does not change; only
+   how much of it there is does. The middle of the screen — where the
+   headline is, and a sub-page's column of reading — is clear ground, so
+   the full-strength doors below are the loudest thing on it.
 
-   The colours are the brand's, as tokens, so the two themes are one
-   gradient read twice rather than two gradients kept in step by hand.
-   Blob stops fade to `rgb(... / 0)` and never to `transparent`, which is
+   The stop fades to `rgb(... / 0)` and never to `transparent`, which is
    rgba(0,0,0,0) and interpolates through grey. */
 .hero-waves,
 .page-wave .panel-wave{
   background:
-    radial-gradient(120% 90% at 50% 40%,
-      rgb(var(--wave-rgb) / 0) 0%,
-      rgb(var(--wave-rgb) / var(--field-wash-mid)) 62%,
-      rgb(var(--wave-rgb) / var(--field-wash-edge)) 100%),
-    radial-gradient(70% 55% at 18% 22%,
-      rgb(var(--field-a) / var(--field-a-o)) 0%,
-      rgb(var(--field-a) / 0) 70%),
-    radial-gradient(65% 55% at 82% 30%,
-      rgb(var(--field-b) / var(--field-b-o)) 0%,
-      rgb(var(--field-b) / 0) 72%),
-    radial-gradient(80% 60% at 50% 96%,
-      rgb(var(--field-c) / var(--field-c-o)) 0%,
-      rgb(var(--field-c) / 0) 70%);
+    radial-gradient(60% 45% at 50% 0%,
+      rgb(var(--glow) / var(--glow-o)) 0%,
+      rgb(var(--glow) / 0) 70%);
 }
 
 /* --wave-rgb is still the page's own ground and still what .bar::after
-   fills with, so it stays whatever the veil does. --wave-veil-a and
-   --wave-reader-h went with the pool that used them. */
+   fills with. */
 :root{
   --wave-rgb:255 255 255;
-  --field-a:172 165 255;  --field-a-o:.55;   /* blue-pale   #ACA5FF */
-  --field-b:220 201 255;  --field-b-o:.62;   /* violet-pale #DCC9FF */
-  --field-c:209 205 255;  --field-c-o:.50;   /* pale-blue   #D1CDFF */
-  --field-wash-mid:.55;   --field-wash-edge:.85;
+  --glow:71 55 255;  --glow-o:.20;   /* blue #4737FF */
 }
-/* Night runs the brand's own three — deep blue, vivid blue, deep violet —
-   and washes a shade lighter, because on ink the surround has to come up
-   to meet the middle rather than the middle going down to meet the page. */
 :root[data-theme="dark"]{
   --wave-rgb:16 16 24;
-  --field-a:53 41 191;    --field-a-o:.55;   /* blue-deep   #3529BF */
-  --field-b:71 55 255;    --field-b-o:.38;   /* blue        #4737FF */
-  --field-c:58 28 134;    --field-c-o:.55;   /* violet-deep #3A1C86 */
-  --field-wash-mid:.45;   --field-wash-edge:.80;
+  --glow-o:.35;
 }
-/* Night accents, a step brighter than the shared theme's. On a field that
-   runs to deep blue and violet the app's tokens sank into it: the violet
-   kicker, ".adhd" in the bar and the grey labels all read as dim. The
-   website only — the app keeps theme.css's values. The wordmark leaves
-   the favicon's #7B3FE4 here on purpose; legibility won over the match. */
+/* Night accents, a step brighter than the shared theme's, so the labels
+   and links do not sink into the ink. The website only — the app keeps
+   theme.css's values.
+
+   The wordmark is NOT among them. ".adhd" in the lockup is #7B3FE4 in
+   both themes, everywhere, matching the favicon and every exported mark —
+   it used to lift to #B08CFF at night, which made the bar's purple a
+   different purple from the tab's beside it. Logotypes are exempt from
+   contrast minimums (WCAG 1.4.3), so there is nothing to trade it for.
+   Do not override --wordmark-accent here again.
+
+   The brand name set in running text is a different case: that is text,
+   not a logo, and #7B3FE4 is 3.3:1 on #101018. --violet-ink is the
+   violet you can set words in. */
+:root{--violet-ink:var(--violet)}
 :root[data-theme="dark"]{
   --accent:#B4ABFF;
   --focus:rgba(180,171,255,.30);
-  --wordmark-accent:#B08CFF;
+  --violet-ink:#B08CFF;
   --muted:#B7B5CA;
   --faint:#A6A5BB;
 }
@@ -1101,33 +1104,26 @@ body{
    on it, and `min-height` rather than `height`: over-tall beats clipped,
    and the two cards grow with their copy in Malay, which runs longer.
 
-   The front door is tinted orange and the other blue. Orange is the
-   site's signal colour and normally it is spent only on the thing to
-   press — which is what this card is, whole: the entire surface is one
-   button. It is held at .16 falling to .05 so it reads as a warm ground
-   rather than as a fill, because Vivid Orange at strength is a colour
-   for a 56px circle and not for the size of a hand.
+   The front door is Vivid Orange and the other Vivid Blue, both solid
+   and at full strength, in both themes — the two brand colours, one per
+   reader, and the loudest things on the screen. They used to be tints of
+   the same two (orange at .16 falling to .05, blue-pale at .42), which on
+   paper read as soft and at night as mud. Everything on both cards is
+   white, kicker and arrow included: one rule for both, so neither card
+   reads as the lesser one.
 
-   START HERE is orange too, but not Vivid Orange: see --orange-ink
-   below. The arrow keeps the true colour, because a mark answers to
-   3:1 rather than 4.5:1 and passes. */
+   White on #4737FF is 6.4:1. White on #F75C03 is 3.2:1, which clears the
+   large-text bar the titles sit at and not the 4.5:1 that the body and
+   kicker strictly want — a choice made for the brand's orange over a
+   darker one, not an oversight.
+
+   --door-b is no longer a door's ground, but .fact-icon still reads it
+   as its own pale blue disc. */
 :root{
-  --door-a:247 92 3;     --door-a-hi:.16;  --door-a-lo:.05;  /* orange      #F75C03 */
-  /* Orange you can set words in. Vivid Orange is 2.54:1 at label size on
-     the card it belongs to, and the brand book has no darker one — the
-     nearest thing in the palette is the destructive red, which means
-     something else. This is the same hue (21.9deg) at the same
-     saturation, dropped in lightness until it clears 4.5:1 and no
-     further, so it is still the brand's orange and not a brown. */
-  --orange-ink:#B14202;
-  --door-b:172 165 255;  --door-b-hi:.42;  --door-b-lo:.16;  /* blue-pale   #ACA5FF */
+  --door-b:172 165 255;  --door-b-hi:.42;  /* blue-pale   #ACA5FF */
 }
 :root[data-theme="dark"]{
-  --door-a:247 92 3;     --door-a-hi:.20;  --door-a-lo:.06;  /* orange      #F75C03 */
-  /* Vivid Orange measures 4.60:1 here but reads dim on the warm card, so
-     night lifts it the other way — lighter, same hue family. */
-  --orange-ink:#FF8A3D;
-  --door-b:53 41 191;    --door-b-hi:.45;  --door-b-lo:.18;  /* blue-deep   #3529BF */
+  --door-b:53 41 191;    --door-b-hi:.45;  /* blue-deep   #3529BF */
 }
 .doors{
   min-height:100dvh;
@@ -1179,25 +1175,20 @@ body{
   padding:clamp(24px,3vw,38px);
   border-radius:var(--radius-lg);
   cursor:pointer;
-  transition:translate .18s var(--ease);
+  color:#FFFFFF;
+  transition:translate .18s var(--ease), box-shadow .18s var(--ease);
 }
 .door:hover{translate:0 -2px}
-.door--start{
-  background:linear-gradient(158deg,
-    rgb(var(--door-a) / var(--door-a-hi)) 0%,
-    rgb(var(--door-a) / var(--door-a-lo)) 100%);
-}
-.door--known{
-  background:linear-gradient(158deg,
-    rgb(var(--door-b) / var(--door-b-hi)) 0%,
-    rgb(var(--door-b) / var(--door-b-lo)) 100%);
-}
+.door--start{background:var(--orange)}
+.door--known{background:var(--blue)}
+.door--start:hover{box-shadow:0 18px 48px -14px rgb(247 92 3 / .6)}
+.door--known:hover{box-shadow:0 18px 48px -14px rgb(71 55 255 / .7)}
 .door-kicker{
   font-family:var(--mono); font-size:11px; letter-spacing:.12em;
   text-transform:uppercase;
 }
-.door--start .door-kicker{color:var(--orange-ink)}
-.door--known .door-kicker{color:var(--accent)}
+/* white, from .door — these three set their own colours for the page */
+.door .door-kicker, .door .door-title, .door .door-body{color:inherit}
 .door-title{
   margin-top:clamp(12px,1.6vh,18px);
   font-family:var(--display); font-weight:600;
@@ -1209,15 +1200,14 @@ body{
   font-size:clamp(14px,1.4vw,17px); line-height:1.6; color:var(--ink-soft);
   max-width:40ch;
 }
-/* A real <button>, and empty on purpose: it goes nowhere yet, and an <a>
-   with a dead href would look like a destination and drop out of the tab
-   order. margin-top:auto puts both on the same line however unevenly the
-   two bodies wrap. */
+/* A link now, to the self-check and to /living-with-adhd; it was an
+   empty <button> while there was nowhere to go. margin-top:auto puts both
+   on the same line however unevenly the two bodies wrap. */
 .door-cta{
   margin-top:auto; padding:clamp(18px,2.6vh,30px) 0 0;
   align-self:flex-start;
   display:inline-flex; align-items:center; gap:10px;
-  background:none; border:0; cursor:pointer;
+  background:none; border:0; cursor:pointer; text-decoration:none;
   font:inherit; font-size:clamp(14px,1.4vw,17px); font-weight:500;
 }
 /* the card-sized hit area, and the card-sized focus ring */
@@ -1228,13 +1218,8 @@ body{
 .door-cta i{display:block; transition:transform .18s var(--ease)}
 .door-cta svg{width:18px; height:18px; display:block}
 .door:hover .door-cta i{transform:translateX(4px)}
-/* The label is ink and only the arrow is orange. Orange text at this size
-   measured 2.92:1 on the card's own warm ground — it was already 3.24:1 on
-   paper, which is what visual-first.md means by "heading, edge, dot, mark
-   only". The arrow is a mark, so it keeps the colour and the card keeps
-   its meaning. */
-.door-cta{color:var(--ink)}
-.door--start .door-cta i{color:var(--orange)}
+/* The label and the arrow are the card's white; the card is the colour. */
+.door-cta{color:inherit}
 .door-cta:focus-visible{outline:none}
 .door-cta:focus-visible::after{box-shadow:0 0 0 3px var(--focus)}
 
@@ -1612,4 +1597,265 @@ body{
    clever, because "MyADHD" must NOT get it — that string is the
    organisation's name and the lockup beside it already carries the
    brand's colours. Only the bare word is wrapped. */
-.adhd-word{color:var(--wordmark-accent)}
+.adhd-word{color:var(--violet-ink)}
+
+
+
+/* ============ THE STANDARD CARD ============
+   One card for anything you can open, so the site has one answer to
+   "what can I press": the same --radius-lg the homepage doors and the
+   self-check's result card use, a blue mono label, a Baloo title, a line
+   of muted text, and one orange arrow circle as the only action. Orange
+   is the 10% that means "act here" and appears on nothing else in the
+   card, so a reader learns it once and finds it everywhere. The whole
+   card is the link (Fitts: the target is the card, not the word), and it
+   answers back: a 2px lift, a blue edge and a soft blue shadow on hover;
+   the 4px focus ring for a keyboard.
+
+   Three shapes of the one thing:
+     .sc        a card, in a grid
+     .sr        a row, in a .sr-list — for a list too long to grid
+     .sc--static the card as a container for words you cannot open: no
+                 arrow, no hover, so it never promises a click */
+.sc-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(12px,1.4vw,18px)}
+.sc-grid--2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:900px){ .sc-grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:560px){ .sc-grid, .sc-grid--2{grid-template-columns:minmax(0,1fr)} }
+
+.sc{
+  display:flex; flex-direction:column;
+  padding:clamp(20px,2vw,26px);
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:var(--surface); color:var(--ink); text-decoration:none;
+  transition:translate .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease);
+}
+a.sc:hover{translate:0 -2px; border-color:var(--accent); box-shadow:0 16px 36px -20px rgb(71 55 255 / .55)}
+a.sc:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+.sc-ico{
+  display:grid; place-items:center; flex:none;
+  width:44px; height:44px; border-radius:999px; margin-bottom:16px;
+  background:rgb(var(--door-b) / var(--door-b-hi));
+}
+.sc-ico .cfig{width:22px; height:22px}
+.cfig .d{fill:var(--accent)}
+.sc-label{
+  font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--accent);
+}
+.sc-title{
+  margin-top:8px;
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(18px,1.7vw,21px); line-height:1.2; letter-spacing:-.01em;
+  color:var(--ink); text-wrap:balance;
+}
+.sc-text{margin-top:8px; font-size:14.5px; line-height:1.55; color:var(--muted)}
+.sc-go{
+  margin-top:auto; padding-top:18px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  font-size:15px; font-weight:500; color:var(--ink);
+}
+/* the one orange thing on a card */
+.sc-go i, .sc-arrow{
+  display:grid; place-items:center; flex:none;
+  width:38px; height:38px; border-radius:999px;
+  background:var(--orange); color:#FFFFFF;
+  transition:transform .18s var(--ease);
+}
+.sc-go svg, .sc-arrow svg{width:17px; height:17px; display:block}
+a.sc:hover .sc-go i, a.sr:hover .sc-arrow{transform:translateX(3px)}
+.sc--static .sc-title{margin-top:10px}
+
+/* ---------- the row ---------- */
+.sr-list{
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:var(--surface); overflow:hidden;
+}
+.sr{
+  display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:16px;
+  padding:16px 18px; color:var(--ink); text-decoration:none;
+  transition:background .18s var(--ease);
+}
+.sr + .sr{border-top:1px solid var(--line)}
+a.sr:hover{background:var(--wash)}
+a.sr:focus-visible{outline:none; box-shadow:inset 0 0 0 3px var(--accent)}
+.sr .sc-ico{margin:0; width:40px; height:40px}
+.sr .sc-ico .cfig{width:20px; height:20px}
+.sr-body{display:flex; flex-direction:column; gap:3px; min-width:0}
+.sr-title{font-family:var(--display); font-weight:600; font-size:17px; line-height:1.25}
+.sr--compact{padding:11px 0; gap:12px; font-family:var(--display); font-weight:600; font-size:16px}
+.sr--compact .sc-ico{width:36px; height:36px}
+.sr--compact .sc-ico .cfig{width:18px; height:18px}
+.sr--compact .sc-arrow{width:32px; height:32px}
+a.sr--compact:hover{background:none}
+
+/* ---------- chips ----------
+   Solid blue when on: the active state has to be unmistakable, and the
+   brand's blue is the colour of "where you are" everywhere else. */
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{
+  display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+  padding:9px 16px; border-radius:999px;
+  border:1.5px solid var(--line-strong); background:var(--surface);
+  font:inherit; font-size:14.5px; color:var(--ink); text-decoration:none; cursor:pointer;
+  transition:border-color .18s var(--ease), color .18s var(--ease), background .18s var(--ease);
+}
+.chip .chip-n{opacity:.6}
+.chip:hover{border-color:var(--accent); color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--blue); border-color:var(--blue); color:#FFFFFF}
+.chip:focus-visible{outline:none; box-shadow:0 0 0 4px var(--focus)}
+
+/* ---------- the orange pill ----------
+   The self-check's own button (test.css .btn-go), for the one place a
+   site page hands a reader to the screener from inside a card. */
+.pill-go{
+  display:inline-flex; align-items:center;
+  padding:13px 22px; border-radius:999px;
+  background:var(--orange); color:#FFFFFF;
+  font-size:15.5px; font-weight:500; text-decoration:none;
+  transition:filter .18s var(--ease);
+}
+.pill-go:hover{filter:brightness(1.06)}
+.pill-go:focus-visible{outline:none; box-shadow:0 0 0 4px rgb(247 92 3 / .28)}
+
+
+/* ============ LIVING WITH ADHD ============
+   The hub behind the homepage's second door and its sixteen topic pages,
+   all written by tools/topics.py, out of the standard card. The hub
+   opens on the site's three card types side by side — a door, the
+   self-check's warm card, a card of picks — then the full list. */
+.lwa-open .page-title + .body-copy,
+.topic-lead{margin-top:clamp(20px,2.6vw,32px)}
+.spine > section.lwa-open{padding-bottom:clamp(16px,3vh,32px)}
+.spine > section.lwa-first{padding-top:clamp(20px,3vh,32px)}
+.lwa-k{margin-bottom:16px; color:var(--accent)}
+
+.lwa-trio{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(14px,1.6vw,20px); align-items:stretch}
+@media (max-width:980px){ .lwa-trio{grid-template-columns:minmax(0,1fr)} }
+/* the self-check's result card, as a ground: the same warm wash */
+.lwa-warm{
+  display:flex; flex-direction:column;
+  padding:clamp(20px,2.4vw,28px);
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:linear-gradient(158deg, rgb(247 92 3 / .10), rgb(247 92 3 / .02) 62%), var(--surface);
+}
+.lwa-warm .sc-label{margin-bottom:10px}
+.lwa-warm-line{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(19px,1.8vw,22px); line-height:1.25; letter-spacing:-.01em; color:var(--ink);
+}
+.lwa-warm-line{margin-bottom:20px}
+.lwa-warm .pill-go{margin-top:auto; align-self:flex-start}
+.lwa-picks .sc-label{margin-bottom:6px}
+
+.lwa-chips{margin-bottom:clamp(8px,1.4vh,16px)}
+.lwa-group[hidden]{display:none}
+.lwa-group-h{
+  margin:clamp(24px,3.6vh,36px) 0 10px;
+  font-family:var(--mono); font-size:12px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--accent);
+}
+.lwa-group-h span{opacity:.6; margin-left:4px}
+.lwa-tools{margin-top:clamp(18px,2.6vh,28px); max-width:none}
+.lwa-h2{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(22px,2.6vw,32px); line-height:1.15; letter-spacing:-.02em; color:var(--ink);
+}
+
+/* ---------- a topic page ---------- */
+.topic-crumb a{color:inherit; text-decoration:none; border-bottom:1px solid var(--line-strong)}
+.topic-crumb a:hover{color:var(--ink); border-bottom-color:var(--ink)}
+/* The carousel's highlighted word. Text, not the logo, so it takes the
+   violet you can set words in rather than the wordmark's. */
+em.hl{font-style:normal; color:var(--violet-ink)}
+.topic-points{margin-top:clamp(22px,3.4vh,34px)}
+.topic-points .num{font-size:15px}
+.topic-close{
+  margin-top:clamp(26px,4vh,40px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(20px,2.4vw,28px); line-height:1.3; letter-spacing:-.015em;
+  color:var(--ink); max-width:36ch; text-wrap:balance;
+}
+.topic-app{margin-top:clamp(20px,3vh,30px)}
+/* the list follows the three cards; it does not start a new chapter */
+.spine > section#topics{padding-top:clamp(28px,5vh,56px)}
+
+
+/* ============ THE CARD LOOK, ON EVERY SUB-PAGE ============
+   2026-10-04: the topic pages under /living-with-adhd were the look the
+   user wanted everywhere, so the shared pieces every sub-page is built
+   from take it here, once, rather than page by page:
+
+     - the ruled .grid becomes a set of separate rounded cards — the
+       standard card's radius, border and ground — with gaps between
+       them, so a row that does not divide no longer needs a .filler;
+     - cell titles are set in Baloo and cell labels in the blue, like
+       the standard card's;
+     - a section's kicker is blue after the opener (the opener's own stays
+       grey, as the topic pages have it);
+     - a cell that is a link (/contact, /soon) becomes the whole-card link,
+       with the one orange arrow the standard card carries;
+     - the closing line loses the rule above it, and lists of short lines
+       sit in one rounded box, like .sr-list.
+
+   Earlier rules for these classes are left where they are, with their
+   reasoning; this block is the override, and the cascade is the record. */
+
+.grid{gap:clamp(12px,1.4vw,18px); background:none; border:0}
+.grid > *{
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:var(--surface);
+  padding:clamp(20px,2.4vw,30px);
+}
+.grid .filler{display:none}
+.cell-ico{margin-bottom:clamp(20px,3vh,32px)}
+.cell-label{font-size:11px; letter-spacing:.12em; color:var(--accent)}
+.cell-title{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(18px,1.8vw,22px); line-height:1.22; letter-spacing:-.01em;
+  text-wrap:balance;
+}
+.cell-text{font-size:clamp(14.5px,1.5vw,16px)}
+
+.spine > section:not(:first-child) > .kicker,
+.spine > section:not(:first-child) > div > .kicker{color:var(--accent)}
+
+.turn{border-top:0; padding-top:0}
+
+/* the list of short lines on /tools, as one rounded box of rows */
+.symptoms{
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:var(--surface); overflow:hidden;
+}
+.symptoms li{padding:clamp(14px,1.8vw,18px) clamp(18px,2vw,24px); border-top:0}
+.symptoms li + li{border-top:1px solid var(--line)}
+.symptoms li:last-child{border-bottom:0}
+
+/* the quote cards on /testimonials: Baloo heads, like every card title */
+.q-head{font-family:var(--display); font-weight:600; font-size:clamp(18px,1.8vw,22px); line-height:1.22}
+
+/* ---------- a cell that is a link ----------
+   The link's own ::after covers the cell, so the whole card is the
+   target and the focus ring goes round the card; the orange circle is
+   drawn on the cell, bottom right, where the standard card keeps it. */
+.grid > :has(> .cell-link){
+  position:relative; padding-bottom:clamp(64px,8vh,76px);
+  transition:translate .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease);
+}
+.grid > :has(> .cell-link)::before{
+  content:""; position:absolute; right:clamp(18px,2vw,24px); bottom:clamp(16px,2vw,22px);
+  width:38px; height:38px; border-radius:999px;
+  background:var(--orange) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h13M12 5l7 7-7 7'/%3E%3C/svg%3E") center / 17px no-repeat;
+  transition:transform .18s var(--ease);
+}
+.grid > :has(> .cell-link):hover{translate:0 -2px; border-color:var(--accent); box-shadow:0 16px 36px -20px rgb(71 55 255 / .55)}
+.grid > :has(> .cell-link):hover::before{transform:translateX(3px)}
+.cell-link{border-bottom:0}
+.cell-link::after{content:""; position:absolute; inset:0; border-radius:var(--radius-lg)}
+.cell-link:focus-visible{outline:none}
+.cell-link:focus-visible::after{box-shadow:0 0 0 4px var(--focus)}
+/* the contact marks on the same blue disc as the standard card's */
+.cw-ico{
+  width:44px; height:44px; border-radius:999px; justify-content:center;
+  background:rgb(var(--door-b) / var(--door-b-hi));
+}
+.contact-one .grid > :has(> .cell-link){padding-bottom:clamp(60px,7vh,70px)}

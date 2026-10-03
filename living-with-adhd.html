@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Living with ADHD — MyADHD</title>
+<meta name="description" content="For adults who already know they have ADHD: what it does to time, focus and feelings, what helps, and a community that gets it." />
+<meta name="theme-color" content="#FFFFFF" />
+<link rel="canonical" href="https://myadhd.my/living-with-adhd" />
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+<link rel="icon" href="/icons/favicon-32.png?v=3" sizes="32x32" type="image/png" />
+<link rel="icon" href="/icons/favicon-16.png?v=3" sizes="16x16" type="image/png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=3" />
+<link rel="manifest" href="/site.webmanifest?v=3" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="MyADHD" />
+<meta property="og:title" content="Living with ADHD — MyADHD" />
+<meta property="og:description" content="For adults who already know they have ADHD: what it does to time, focus and feelings, what helps, and a community that gets it." />
+<meta property="og:url" content="https://myadhd.my/living-with-adhd" />
+<meta property="og:image" content="https://myadhd.my/icons/og.png?v=3" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preload" href="/fonts/DMSans-Variable.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="preload" href="/fonts/DMMono-Regular.ttf" as="font" type="font/ttf" crossorigin />
+<!-- Written by tools/topics.py. Edit that script or the carousel post it
+     reads, not this file, and re-run it. Every path starts with a slash,
+     because the topic pages live one folder down. -->
+<script src="/theme.js"></script>
+<script src="/clock.js" defer></script>
+<script src="/site.ms.js" defer></script>
+<!-- after site.ms.js, before site.js: it adds to the table site.js reads -->
+<script src="/topics.ms.js" defer></script>
+<script src="/site.js" defer></script>
+<link rel="stylesheet" href="/theme.css" />
+<link rel="stylesheet" href="/site.css" />
+</head>
+<body>
+
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Seven orange arms: the eighth (lower-right) is detached and carried
+         by the violet capsule sitting just off the centre. -->
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+</svg>
+<!-- ============ the page's weather ============
+     The wave field used to sit in a bordered box partway down the page,
+     which made it a picture of itself: a framed illustration on a page
+     whose whole argument is that it has no furniture. It is the ground
+     now — fixed behind everything, one field per page, and the veil over
+     it is what keeps it weather rather than wallpaper. -->
+<div class="page-wave" aria-hidden="true"><div class="panel-wave" data-wave="flow" data-wave-speed="0.4"></div></div>
+
+<nav class="bar">
+    <a class="back" href="/" aria-label="Back to the front" data-i18n-aria="949ec14"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 19l-7-7 7-7"/></svg></a>
+    <a class="brand-lockup" href="/" aria-label="MyADHD home" data-i18n-aria="12f3e1f">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="wordmark">my<span class="accent">.adhd</span></span>
+    </a>
+    <p class="bar-org">MyADHD</p>
+
+    <!-- Two groups, each one button that opens the rest. It used to be a
+         link plus a separate chevron, because the label was a real
+         destination and swallowing it into a button would have stranded
+         the page it named. /activities is gone, so there is nothing left
+         to strand and the whole control is the toggle — which is where
+         everyone was pressing anyway.
+
+         The label sits in a <span> of its own with the chevron beside it,
+         never inside it: site.js rewrites a data-i18n element's innerHTML
+         whole when the language changes, and its ICON_RE only rescues a
+         bare <i aria-hidden="true">, not this classed one. -->
+    <ul class="bar-links">
+    <li class="bar-group-item">
+      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-offer">
+        <span data-i18n="ib953849">What we offer</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+      </button>
+      <div class="bar-menu" id="menu-offer" hidden>
+        <ul>
+            <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+            <li><a href="/living-with-adhd" aria-current="page" data-i18n="ic729436">Living with ADHD</a></li>
+            <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
+            <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+            <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
+            <li><a href="/reading-list" data-i18n="id80f6ec">Reading list</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="bar-group-item">
+      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-about">
+        <span data-i18n="i6b21fb7">About</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+      </button>
+      <div class="bar-menu" id="menu-about" hidden>
+        <ul>
+            <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+            <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+            <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+        </ul>
+      </div>
+    </li>
+    </ul>
+
+    <!-- filled in by clock.js, and hidden until it is -->
+    <p class="nav-clock" hidden><span class="nc-place"></span><span class="nc-time"></span></p>
+
+    <nav class="bar-lang" aria-label="Language" data-i18n-aria="89b86ab">
+      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-lang="ms" aria-pressed="false" lang="ms">BM</button>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+      <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.9 8.9 0 1 0 11.1 11.1z"/></svg>
+      <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+    </button>
+
+    <button class="bar-toggle" type="button" aria-expanded="false" aria-controls="bar-sheet" aria-label="Open menu" data-i18n-aria="197101e">
+      <span class="nt-bars" aria-hidden="true"><i></i><i></i></span>
+    </button>
+
+    <!-- The same two groups again, stacked. They are generated from one
+         source in tools/bar.py, so the row and the sheet cannot drift the
+         way the two hand-kept lists used to. -->
+    <div class="bar-sheet" id="bar-sheet" hidden>
+      <ul>
+        <li class="bar-row">
+          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-offer">
+            <span data-i18n="ib953849">What we offer</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+          </button>
+          <div class="bar-menu" id="sheet-offer" hidden>
+            <ul>
+                <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+                <li><a href="/living-with-adhd" aria-current="page" data-i18n="ic729436">Living with ADHD</a></li>
+                <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
+                <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+                <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
+                <li><a href="/reading-list" data-i18n="id80f6ec">Reading list</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="bar-row">
+          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-about">
+            <span data-i18n="i6b21fb7">About</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+          </button>
+          <div class="bar-menu" id="sheet-about" hidden>
+            <ul>
+                <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+                <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+                <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+      <nav class="bar-lang sheet-lang" aria-label="Language" data-i18n-aria="89b86ab">
+        <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+        <button type="button" data-lang="ms" aria-pressed="false" lang="ms">BM</button>
+      </nav>
+    </div>
+  </nav>
+
+<a class="pill" href="/self-check" data-i18n="i1d4d87b">Take the self-check</a>
+
+<main class="spine">
+  <!-- ============ the opener ============
+       The page behind the homepage's second door, I ALREADY KNOW. It opens
+       on the site's three kinds of card side by side — the homepage's door,
+       the self-check's warm card, a standard card of picks — so the three
+       places read as one, and then the whole list, filterable. -->
+  <section class="lwa-open" data-reveal>
+    <p class="kicker" data-i18n="idf0c3a4">I already know.</p>
+    <h1 class="page-title" data-i18n="i325c3fc">Living with ADHD.</h1>
+    <p class="body-copy" data-i18n="i12eb79d">What ADHD is actually doing to your day, and what helps. Sixteen short reads &mdash; start with the one that sounds like your week.</p>
+  </section>
+
+  <section class="lwa-first" data-reveal>
+    <div class="lwa-trio">
+      <article class="door door--known">
+        <p class="door-kicker" data-i18n="i54acc28">Start here</p>
+        <h3 class="door-title" data-i18n="i272a27d">Why does time disappear when I am not looking?</h3>
+        <p class="door-body" data-i18n="i29b0ac4">You are not careless. Your sense of time is just quiet. Two minutes to read.</p>
+        <a class="door-cta" href="/living-with-adhd/time-blindness" data-i18n="i6bc3fe4">Read the guide <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+      </article>
+      <div class="lwa-warm">
+        <p class="sc-label" data-i18n="i2fdaf67">Not sure it&rsquo;s ADHD?</p>
+        <p class="lwa-warm-line" data-i18n="i402d839">Six questions, five minutes, and a result you can take to a doctor.</p>
+        <a class="pill-go" href="/self-check" data-i18n="i1d4d87b">Take the self-check</a>
+      </div>
+      <div class="sc lwa-picks">
+        <p class="sc-label" data-i18n="i7055d59">New here? Then these.</p>
+        <a class="sr sr--compact" href="/living-with-adhd/rsd"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M12 19.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.5 2.3c0 5.4-7.5 10-7.5 10z"/><path class="w" d="M12 8.5l-1.5 3.5 3 1.5-1.5 3.5"/></svg></span><span data-i18n="i04b0c10">Rejection sensitivity</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr sr--compact" href="/living-with-adhd/burnout"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><rect class="w" x="3" y="8" width="16" height="9" rx="2.2"/><path class="w" d="M21 11v3"/><rect class="d" x="5.5" y="10.5" width="3" height="4" rx="1"/></svg></span><span data-i18n="ia32192d">Burnout</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr sr--compact" href="/living-with-adhd/masking"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M4 8c3-1.6 13-1.6 16 0 0 6-3.4 10-8 10S4 14 4 8z"/><circle class="d" cx="9" cy="10.8" r="1.4"/><circle class="d" cx="15" cy="10.8" r="1.4"/></svg></span><span data-i18n="ie490fb9">Masking</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="topics" data-reveal>
+    <p class="kicker lwa-k" data-i18n="ief9856c">All sixteen.</p>
+    <div class="chips lwa-chips" data-filter role="group" aria-label="Show topics" data-i18n-aria="lwafilter">
+      <button class="chip" type="button" data-show="all" aria-pressed="true"><span data-i18n="i6a72085">All</span> <span class="chip-n">16</span></button>
+      <button class="chip" type="button" data-show="time" aria-pressed="false"><span data-i18n="i6dd5a8a">Time &amp; attention</span> <span class="chip-n">6</span></button>
+      <button class="chip" type="button" data-show="feel" aria-pressed="false"><span data-i18n="ic183706">Feelings &amp; people</span> <span class="chip-n">5</span></button>
+      <button class="chip" type="button" data-show="day" aria-pressed="false"><span data-i18n="id3b1922">The everyday</span> <span class="chip-n">5</span></button>
+    </div>
+    <div class="lwa-group" data-group="time">
+      <p class="lwa-group-h"><span data-i18n="i6dd5a8a">Time &amp; attention</span> <span>6</span></p>
+      <div class="sr-list">
+        <a class="sr" href="/living-with-adhd/time-blindness"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><circle class="w" cx="12" cy="12" r="8.5"/><path class="w" d="M12 7.5V12l3 2"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="i5952a7a">Time blindness</span><span class="sr-title" data-i18n="i272a27d">Why does time disappear when I am not looking?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/focus"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><circle class="w" cx="12" cy="12" r="8.5"/><circle class="w" cx="12" cy="12" r="4.5"/><circle class="d" cx="12" cy="12" r="1.6"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="ife7f55b">Focus</span><span class="sr-title" data-i18n="i7c44718">Why can't I just focus on the thing?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/distracted"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><circle class="d" cx="6" cy="7" r="1.6"/><circle class="d" cx="17" cy="5.5" r="1.6"/><circle class="d" cx="18.5" cy="15" r="1.6"/><circle class="d" cx="8" cy="17.5" r="1.6"/><circle class="w" cx="12" cy="12" r="2.6"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="id7b855c">Distraction</span><span class="sr-title" data-i18n="i402a9c6">Why do you get distracted by everything?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/hyperfocus"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><rect class="w" x="3.5" y="5" width="17" height="14" rx="3"/><rect class="w" x="7.5" y="8.5" width="9" height="7" rx="2"/><circle class="d" cx="12" cy="12" r="1.5"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="i2cca94f">Hyperfocus</span><span class="sr-title" data-i18n="iebaa065">Where did the last six hours go?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/procrastination"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M7 3.5h10M7 20.5h10M8 3.5c0 5 8 5.5 8 8.5s-8 3.5-8 8.5M16 3.5c0 5-8 5.5-8 8.5s8 3.5 8 8.5"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="ieb270ff">Procrastination</span><span class="sr-title" data-i18n="ie2c7cdf">Why can't I start the thing that actually matters?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/forgetful"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><circle class="w" cx="12" cy="12" r="8.5" stroke-dasharray="3 3"/><circle class="d" cx="12" cy="12" r="1.8"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="i3da4227">Forgetting</span><span class="sr-title" data-i18n="i2c40293">Why do I forget what I was doing?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+      </div>
+    </div>
+    <div class="lwa-group" data-group="feel">
+      <p class="lwa-group-h"><span data-i18n="ic183706">Feelings &amp; people</span> <span>5</span></p>
+      <div class="sr-list">
+        <a class="sr" href="/living-with-adhd/rsd"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M12 19.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.5 2.3c0 5.4-7.5 10-7.5 10z"/><path class="w" d="M12 8.5l-1.5 3.5 3 1.5-1.5 3.5"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="i04b0c10">Rejection sensitivity</span><span class="sr-title" data-i18n="ibfeaec7">Why does a small no hurt this much?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/big-feelings"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M3.5 13c2-5 4-5 6 0s4 5 6 0 3-4 5-2"/><circle class="d" cx="20" cy="9" r="1.4"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="i459e0ef">Big feelings</span><span class="sr-title" data-i18n="i0889e14">Why do my feelings go 0 to 100?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/masking"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M4 8c3-1.6 13-1.6 16 0 0 6-3.4 10-8 10S4 14 4 8z"/><circle class="d" cx="9" cy="10.8" r="1.4"/><circle class="d" cx="15" cy="10.8" r="1.4"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="ie490fb9">Masking</span><span class="sr-title" data-i18n="i6856d7b">Why am I so tired from acting fine?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/conversations"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M4 5.5h10.5a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H9l-3 2.5v-2.5H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2z"/><path class="w" d="M18.5 9.5H20a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-1v2.2l-2.6-2.2H12"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="i07c59b4">Conversations</span><span class="sr-title" data-i18n="i89b8a82">Why do I interrupt people I love?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/overstimulation"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><circle class="d" cx="6" cy="12" r="1.8"/><path class="w" d="M10 8.5a5 5 0 0 1 0 7M13.5 6a8.5 8.5 0 0 1 0 12M17 3.5a12 12 0 0 1 0 17"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="i688cc14">Overstimulation</span><span class="sr-title" data-i18n="icd5e947">Why does a busy room drain me so fast?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+      </div>
+    </div>
+    <div class="lwa-group" data-group="day">
+      <p class="lwa-group-h"><span data-i18n="id3b1922">The everyday</span> <span>5</span></p>
+      <div class="sr-list">
+        <a class="sr" href="/living-with-adhd/adhd-morning"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M3 17.5h18M7 17.5a5 5 0 0 1 10 0M12 6v2.5M5.5 9.5l1.6 1.6M18.5 9.5l-1.6 1.6"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="i62534e4">Mornings</span><span class="sr-title" data-i18n="i78f9e7c">The ADHD morning, in five scenes.</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/sleep"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M18.5 14.6A7.4 7.4 0 0 1 9.4 5.5a7.6 7.6 0 1 0 9.1 9.1z"/><circle class="d" cx="17" cy="6" r="1.3"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="i3cac34e">Sleep</span><span class="sr-title" data-i18n="i076c227">Why can't I just go to sleep like everyone else?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/doom-piles"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><rect class="w" x="5" y="15" width="14" height="5" rx="1.5"/><rect class="w" x="7" y="10" width="11" height="5" rx="1.5"/><rect class="w" x="6" y="5" width="9" height="5" rx="1.5"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="ia9f7be2">Doom piles</span><span class="sr-title" data-i18n="i7e0aa52">Why is there a pile on every surface?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/adhd-tax"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M6 3.5h12v17l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5z"/><path class="w" d="M9 8.5h6M9 12h6"/><circle class="d" cx="15" cy="15.5" r="1.3"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="i672194c">The ADHD tax</span><span class="sr-title" data-i18n="i7b0b4a7">The ADHD tax no one warned you about</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+        <a class="sr" href="/living-with-adhd/burnout"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><rect class="w" x="3" y="8" width="16" height="9" rx="2.2"/><path class="w" d="M21 11v3"/><rect class="d" x="5.5" y="10.5" width="3" height="4" rx="1"/></svg></span><span class="sr-body"><span class="sc-label" data-i18n="ia32192d">Burnout</span><span class="sr-title" data-i18n="i4f9e2ab">Why do I crash after coping so well?</span></span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="tools" data-reveal>
+    <p class="kicker lwa-k" data-i18n="i3235afd">For the day.</p>
+    <h2 class="lwa-h2" data-i18n="id65e2ad">Tools for getting through it</h2>
+    <div class="doors-grid lwa-tools">
+      <article class="door door--known">
+        <p class="door-kicker" data-i18n="i45ab397">Habits</p>
+        <h3 class="door-title" data-i18n="id0c4c67">Systems that work with your brain</h3>
+        <p class="door-body" data-i18n="i39a20dc">Five habits that still hold up on a bad day.</p>
+        <a class="door-cta" href="/habits" data-i18n="i936f9a7">See the habits <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+      </article>
+      <article class="door door--start">
+        <p class="door-kicker" data-i18n="i9445c32">The app</p>
+        <h3 class="door-title" data-i18n="i3fef7ab">my.adhd</h3>
+        <p class="door-body" data-i18n="i1021aab">Empty everything in your head into one box. Get back the one thing to do next.</p>
+        <a class="door-cta" href="/tools" data-i18n="i71c4cf4">How my.adhd works <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+      </article>
+    </div>
+  </section>
+
+  <section class="ask" id="together" data-reveal>
+  <p class="ask-line" data-i18n="i9b655ad">You are not alone. Other people get it.</p>
+  <p class="ask-lede" data-i18n="iee481df">The MyADHD community is adults who know exactly what you mean &mdash; diagnosed, waiting, or still wondering, and parents too. The link to join is in our Instagram bio.</p>
+  <a class="arrow-cta" href="https://www.instagram.com/myadhd.my/" target="_blank" rel="noopener" data-i18n="i663a8a9">Find us on Instagram <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+  <a class="arrow-link" href="/testimonials" data-i18n="i6ee5886">Read three stories <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+</section>
+
+  <nav class="pager" aria-label="Next page" data-i18n-aria="4bfc194">
+  <span class="p-label" data-i18n="ibc98198">Next</span>
+  <a href="/habits" data-i18n="idfa4de0"><i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i> Habits</a>
+</nav>
+</main>
+
+<footer class="foot">
+
+  <!-- The sign-off and the ask, side by side. The first version stacked
+       these and left the whole right half of the band empty. -->
+  <div class="foot-top">
+    <p class="foot-line" data-i18n="i53ac30e">A brain dump that answers back. No account, nothing to set up, and your lists stay on your device.</p>
+    <a class="arrow-cta" href="/soon" data-i18n="i731361d">Clear my head <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+  </div>
+
+  <div class="foot-cols">
+    <div class="foot-col">
+      <h2 data-i18n="ib953849">What we offer</h2>
+      <ul>
+        <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+        <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
+        <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
+        <li><a href="/reading-list" data-i18n="id80f6ec">Reading list</a></li>
+        <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2>MyADHD</h2>
+      <ul>
+        <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+        <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+        <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2>my.adhd</h2>
+      <ul>
+        <li><a href="/soon" data-i18n="ice21cc3">Open my.adhd</a></li>
+        <li><a href="/soon" data-i18n="i85773bc">Add to home screen</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2 data-i18n="i979e25d">Say hello</h2>
+      <ul>
+        <li><a href="https://www.threads.com/@myadhd.my" rel="me noopener" target="_blank">Threads</a></li>
+        <li><a href="https://www.instagram.com/myadhd.my/" rel="me noopener" target="_blank">Instagram</a></li>
+        <li><a href="mailto:hello@myadhd.my">hello@myadhd.my</a></li>
+        <li><a href="/privacy" data-i18n="icf01481">Privacy</a></li>
+        <li><a href="/terms" data-i18n="ia55a275">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot-base">
+    <p class="foot-note" data-i18n="ide9430f">A tool for getting started &mdash; not treatment, therapy, or medical advice.</p>
+    <p>&copy; <span data-year>2026</span> MyADHD</p>
+  </div>
+
+</footer>
+
+</body>
+</html>

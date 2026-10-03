@@ -380,6 +380,29 @@
   })();
   */
 
+  /* ---------- 8. the filter chips ----------
+     A [data-filter] row of chip buttons over [data-group] blocks (the
+     Living with ADHD hub's list). One chip is on at a time — aria-pressed
+     says which — and "all" shows every group. The markup ships with every
+     group visible, so without this script the reader simply gets the full
+     list, which is what "all" means anyway. */
+  (function filterChips() {
+    document.querySelectorAll('[data-filter]').forEach(function (row) {
+      var chips = row.querySelectorAll('button[data-show]');
+      var scope = row.closest('section') || document;
+      var groups = scope.querySelectorAll('[data-group]');
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var want = chip.getAttribute('data-show');
+          chips.forEach(function (c) { c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'); });
+          groups.forEach(function (g) {
+            g.hidden = want !== 'all' && g.getAttribute('data-group') !== want;
+          });
+        });
+      });
+    });
+  })();
+
   /* The service worker, so the home-screen copy opens without a
      connection and Chrome offers a real install rather than a shortcut. */
   if ('serviceWorker' in navigator) {

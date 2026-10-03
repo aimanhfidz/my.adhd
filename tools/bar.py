@@ -12,7 +12,9 @@ drifted fails loudly instead of being quietly overwritten.
 import re, sys, os
 
 PAGES = ['index','about','testimonials','contact',
-         'blog','habits','reading-list','tools','soon']
+         'blog','habits','reading-list','tools','soon','living-with-adhd']
+# The topic pages under living-with-adhd/ carry this bar too, but they are
+# written whole by tools/topics.py, which imports build() from here.
 
 # Not the bare <i aria-hidden="true"> that site.js's ICON_RE rescues — this
 # one is classed, and it lives outside the translated <span> rather than
@@ -22,6 +24,7 @@ CHEV = ('<i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="n
         '<path d="M6 9l6 6 6-6"/></svg></i>')
 
 OFFER = [('/self-check','i050c897','Self-check'),
+         ('/living-with-adhd','ic729436','Living with ADHD'),
          ('/habits','i45ab397','Habits'),
          ('/tools','i4fa8cc8','Tools'),
          ('/blog','i0b9d2b2','Blog'),
@@ -139,14 +142,15 @@ def find_bar(s):
     raise SystemExit('unbalanced <nav>')
 
 
-for name in PAGES:
-    p = name + '.html'
-    s = open(p).read()
-    a, b = find_bar(s)
-    old = s[a:b]
-    assert old.count('<nav') == 3, '%s: expected 3 navs in the bar, found %d' % (p, old.count('<nav'))
-    back = re.search(r'<a class="back".*?</a>', old, re.S)
-    route = '/' if name == 'index' else '/' + name
-    new = build(route, back is not None, back.group(0) if back else '')
-    open(p, 'w').write(s[:a] + new + s[b:])
-    print('  %-20s back=%-5s current=%s' % (p, bool(back), route))
+if __name__ == '__main__':
+    for name in PAGES:
+        p = name + '.html'
+        s = open(p).read()
+        a, b = find_bar(s)
+        old = s[a:b]
+        assert old.count('<nav') == 3, '%s: expected 3 navs in the bar, found %d' % (p, old.count('<nav'))
+        back = re.search(r'<a class="back".*?</a>', old, re.S)
+        route = '/' if name == 'index' else '/' + name
+        new = build(route, back is not None, back.group(0) if back else '')
+        open(p, 'w').write(s[:a] + new + s[b:])
+        print('  %-20s back=%-5s current=%s' % (p, bool(back), route))

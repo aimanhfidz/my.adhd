@@ -212,8 +212,10 @@ window.MYADHD_MS = {
   "iaf79f97": "Saringan ringkas berdasarkan ASRS, alat yang digunakan pakar kesihatan mental. Sepuluh minit, percuma, dan ia takkan diagnos awak.",
   "i2def595": "Saya memang dah tahu",
   "ia734bda": "Saya sudah didiagnos",
-  "i9299d0a": "Tabiat, senarai bacaan dan alatan untuk lalui hari &mdash; dan my.adhd, yang tukar semua yang bersepah dalam kepala jadi satu benda untuk buat sekarang.",
+  "i2c37c8c": "Apa yang ADHD lakukan kepada masa, tumpuan dan emosi, serta apa yang membantu &mdash; tabiat, alatan, dan my.adhd, yang mengubah fikiran yang bersepah menjadi satu perkara untuk dibuat sekarang.",
   "i89441a0": "Hidup dengan ADHD {icon}",
+  "ic729436": "Hidup dengan ADHD",
+
 
   /* ---- the facts under the fold ---- */
   "i5e2ac1c": "Apa yang anda perlu tahu",

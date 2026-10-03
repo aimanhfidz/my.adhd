@@ -62,10 +62,10 @@
      are, and the funnel below only ever spoke to one of them. This is the
      fork, and it is its own screen: the question is the only thing on it.
 
-     The buttons are deliberately unwired — <button type="button"> with no
-     handler rather than an <a> with a dead href, so the keyboard still
-     reaches them and nothing pretends to be a destination that is not one
-     yet. Point them at /self-check and /app when those are the answer. -->
+     Each door is a link now that both rooms exist: START HERE to the
+     self-check, I ALREADY KNOW to /living-with-adhd. The whole card still
+     presses — .door-cta throws its ::after over the card — and the link is
+     still the one thing in the tab order. -->
 <section class="doors" id="doors">
 
   <nav class="bar">
@@ -94,6 +94,7 @@
       <div class="bar-menu" id="menu-offer" hidden>
         <ul>
             <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+            <li><a href="/living-with-adhd" data-i18n="ic729436">Living with ADHD</a></li>
             <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
             <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
             <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
@@ -143,6 +144,7 @@
           <div class="bar-menu" id="sheet-offer" hidden>
             <ul>
                 <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+                <li><a href="/living-with-adhd" data-i18n="ic729436">Living with ADHD</a></li>
                 <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
                 <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
                 <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
@@ -179,14 +181,14 @@
       <p class="door-kicker" data-i18n="i54acc28">Start here</p>
       <h3 class="door-title" data-i18n="i9a5c579">I think I might have ADHD</h3>
       <p class="door-body" data-i18n="iaf79f97">A short screener built on the ASRS, the tool mental-health professionals use. Ten minutes, free, and it will not diagnose you.</p>
-      <button class="door-cta" type="button" data-i18n="ia8ac426">Take the self-check <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></button>
+      <a class="door-cta" href="/self-check" data-i18n="ia8ac426">Take the self-check <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
     </article>
 
     <article class="door door--known">
       <p class="door-kicker" data-i18n="i2def595">I already know</p>
       <h3 class="door-title" data-i18n="ia734bda">I have been diagnosed</h3>
-      <p class="door-body" data-i18n="i9299d0a">Habits, a reading list and tools for getting through the day &mdash; and my.adhd, which turns a brain dump into the one thing to do next.</p>
-      <button class="door-cta" type="button" data-i18n="i89441a0">Living with ADHD <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></button>
+      <p class="door-body" data-i18n="i2c37c8c">What ADHD does to time, focus and feelings, and what helps &mdash; habits, tools, and my.adhd, which turns a brain dump into the one thing to do next.</p>
+      <a class="door-cta" href="/living-with-adhd" data-i18n="i89441a0">Living with ADHD <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
     </article>
   </div>
 </section>

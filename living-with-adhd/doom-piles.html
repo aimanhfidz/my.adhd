@@ -3,33 +3,35 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>About us — MyADHD</title>
-<meta name="description" content="Too many Malaysians grow up believing they’re careless, lazy, or just not trying hard enough. MyADHD exists to close that gap." />
+<title>Doom piles — Living with ADHD — MyADHD</title>
+<meta name="description" content="It is not mess for the sake of mess. It is a filing system that got out of hand." />
 <meta name="theme-color" content="#FFFFFF" />
+<link rel="canonical" href="https://myadhd.my/living-with-adhd/doom-piles" />
 <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
 <link rel="icon" href="/icons/favicon-32.png?v=3" sizes="32x32" type="image/png" />
 <link rel="icon" href="/icons/favicon-16.png?v=3" sizes="16x16" type="image/png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=3" />
 <link rel="manifest" href="/site.webmanifest?v=3" />
-<meta property="og:type" content="website" />
+<meta property="og:type" content="article" />
 <meta property="og:site_name" content="MyADHD" />
-<meta property="og:title" content="About us — MyADHD" />
-<meta property="og:description" content="Too many Malaysians grow up believing they’re careless, lazy, or just not trying hard enough. MyADHD exists to close that gap." />
+<meta property="og:title" content="Doom piles — Living with ADHD — MyADHD" />
+<meta property="og:description" content="It is not mess for the sake of mess. It is a filing system that got out of hand." />
+<meta property="og:url" content="https://myadhd.my/living-with-adhd/doom-piles" />
 <meta property="og:image" content="https://myadhd.my/icons/og.png?v=3" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-title" content="my.adhd" />
-<link rel="preload" href="fonts/DMSans-Variable.ttf" as="font" type="font/ttf" crossorigin />
-<link rel="preload" href="fonts/DMMono-Regular.ttf" as="font" type="font/ttf" crossorigin />
-<!-- synchronous: the data-theme stamp has to land before first paint, or
-     a saved dark choice arrives as a white flash -->
-<script src="theme.js"></script>
-<script src="clock.js" defer></script>
-<script src="site.ms.js" defer></script>
-<script src="site.js" defer></script>
-<link rel="stylesheet" href="theme.css" />
-<link rel="stylesheet" href="site.css" />
+<link rel="preload" href="/fonts/DMSans-Variable.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="preload" href="/fonts/DMMono-Regular.ttf" as="font" type="font/ttf" crossorigin />
+<!-- Written by tools/topics.py. Edit that script or the carousel post it
+     reads, not this file, and re-run it. Every path starts with a slash,
+     because the topic pages live one folder down. -->
+<script src="/theme.js"></script>
+<script src="/clock.js" defer></script>
+<script src="/site.ms.js" defer></script>
+<!-- after site.ms.js, before site.js: it adds to the table site.js reads -->
+<script src="/topics.ms.js" defer></script>
+<script src="/site.js" defer></script>
+<link rel="stylesheet" href="/theme.css" />
+<link rel="stylesheet" href="/site.css" />
 </head>
 <body>
 
@@ -57,7 +59,7 @@
 <div class="page-wave" aria-hidden="true"><div class="panel-wave" data-wave="flow" data-wave-speed="0.4"></div></div>
 
 <nav class="bar">
-    <a class="back" href="/" aria-label="Back to the front" data-i18n-aria="949ec14"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 19l-7-7 7-7"/></svg></a>
+    <a class="back" href="/living-with-adhd" aria-label="Back to Living with ADHD" data-i18n-aria="lwaback"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 19l-7-7 7-7"/></svg></a>
     <a class="brand-lockup" href="/" aria-label="MyADHD home" data-i18n-aria="12f3e1f">
       <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
       <span class="wordmark">my<span class="accent">.adhd</span></span>
@@ -97,7 +99,7 @@
       </button>
       <div class="bar-menu" id="menu-about" hidden>
         <ul>
-            <li><a href="/about" aria-current="page" data-i18n="i3ffb811">About us</a></li>
+            <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
             <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
             <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
         </ul>
@@ -147,7 +149,7 @@
           </button>
           <div class="bar-menu" id="sheet-about" hidden>
             <ul>
-                <li><a href="/about" aria-current="page" data-i18n="i3ffb811">About us</a></li>
+                <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
                 <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
                 <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
             </ul>
@@ -164,41 +166,47 @@
 <a class="pill" href="/self-check" data-i18n="i1d4d87b">Take the self-check</a>
 
 <main class="spine">
-
-  <!-- ============ the body ============
-       docs/content/about.md, in order, at the four sizes site.css owns.
-       The Malay line is mono because on this site a list of names for a
-       thing is a label — and it is not italicised, because those are four
-       ordinary Malay words rather than foreign matter. -->
-  <section id="problem" class="sec-full" data-reveal>
-    <p class="kicker" data-i18n="i0974f3c">About us.</p>
-    <p class="statement is-wide" data-i18n="ie71b270">You meant to start that assignment three weeks ago. You&rsquo;re late even when you leave early. You interrupt people mid-sentence and feel bad about it every time. Your mind is in six places at once, and none of them is the one you need it in.</p>
+  <section data-reveal>
+    <p class="kicker topic-crumb"><a href="/living-with-adhd" data-i18n="ic729436">Living with ADHD</a> <span aria-hidden="true">&middot;</span> <span data-i18n="ia9f7be2">Doom piles</span></p>
+    <h1 class="page-title" data-i18n="i326af1b">Why is there a <em class="hl">pile</em> on every surface?</h1>
+    <p class="body-copy topic-lead" data-i18n="i8db9f08">It is not mess for the sake of mess. It is a filing system that got out of hand.</p>
   </section>
 
-  <section id="emotion" data-reveal>
-    <p class="name-line" data-i18n="i658d1f4">In Malaysia, we have names for this. Malas. Tak fokus. Tak matang. Tak reti jaga barang.</p>
-    <p class="statement" style="margin-top:clamp(28px,4vh,52px)" data-i18n="ia275e17">We don&rsquo;t often have the other name for it: <span class="adhd-word">ADHD</span>.</p>
+  <section data-reveal>
+    <p class="kicker lwa-k" data-i18n="i8e426d1">The short version.</p>
+    <div class="sc-grid sc-grid--2 topic-points" data-i18n="if5b1936">
+      <div class="sc sc--static"><span class="num">01</span><p class="sc-title">Out of sight, <em class="hl">out of mind</em></p><p class="sc-text">For many ADHD brains, what goes in a drawer stops existing. So the letter stays on the table, where you can see it. The pile is a reminder that grew.</p></div>
+      <div class="sc sc--static"><span class="num">02</span><p class="sc-title">Every item is a <em class="hl">small decision</em></p><p class="sc-text">Keep, bin, file, reply, return. Each thing asks a question, and the pile turns twelve small questions into one huge one. Huge ones get avoided.</p></div>
+      <div class="sc sc--static"><span class="num">03</span><p class="sc-title">Tidying is boring with <em class="hl">no deadline</em></p><p class="sc-text">No one is waiting for it. Nothing happens if you skip it today. Without interest or urgency, the pile has nothing to pull you in.</p></div>
+      <div class="sc sc--static"><span class="num">04</span><p class="sc-title">The shame makes it <em class="hl">heavier</em></p><p class="sc-text">Every glance at the pile comes with a small "what is wrong with me". That feeling is the real reason you avoid the corner, not the paper.</p></div>
+      <div class="sc sc--static"><span class="num">05</span><p class="sc-title">Give it a <em class="hl">home</em> you can see</p><p class="sc-text">Open trays, clear boxes, hooks on the wall. If out of sight means gone, stop hiding things. Storage you can see is not mess, it is memory.</p></div>
+      <div class="sc sc--static"><span class="num">06</span><p class="sc-title">Five minutes, <em class="hl">one pile</em></p><p class="sc-text">Not the whole room. One pile, one timer, three bags: keep, bin, somewhere else. Stop when it rings, even if you are not done.</p></div>
+      <div class="sc sc--static"><span class="num">07</span><p class="sc-title">One <em class="hl">landing spot</em> by the door</p><p class="sc-text">Keys, post, receipts, the thing to return. One bowl by the door where everything lands first. The pile still happens, but only in one place.</p></div>
+    </div>
+    <p class="topic-close" data-i18n="i2efdea9">Your pile is not a character flaw. It is your memory, sitting outside your head. Dump the rest into my.adhd and get one thing back to clear.</p>
+    <a class="arrow-link topic-app" href="/tools" data-i18n="ifde75f8">How my.adhd helps <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+    <p class="grid-foot" data-i18n="i0d4256c">Adapted from our carousel series. A starting point, not medical advice &mdash; for that, talk to a psychiatrist or clinical psychologist.</p>
   </section>
 
-  <section id="believe" data-reveal>
-    <p class="body-copy" data-i18n="i9030eaa">That&rsquo;s the gap MyADHD exists to close. Too many Malaysians grow up believing they&rsquo;re careless, lazy, or just not trying hard enough &mdash; when what they&rsquo;re actually dealing with is a brain that&rsquo;s wired differently, and a country that hasn&rsquo;t been taught to recognise it. Awareness here is still thin. Diagnosis is slow and expensive. Adult <span class="adhd-word">ADHD</span>, especially, is barely discussed at all.</p>
-    <p class="body-copy" data-i18n="i4282922">We&rsquo;re here to change that. We share what <span class="adhd-word">ADHD</span> actually looks like in everyday Malaysian life &mdash; at school, at work, in marriage, in families. We point people toward proper assessment instead of guesswork. And we build a space where you can finally stop asking what&rsquo;s wrong with me and start asking better questions.</p>
-
-    <p class="sign" data-i18n="i2c7e465"><b>Aiman Hafidz</b>Founder, MyADHD</p>
+  <section data-reveal>
+    <p class="kicker lwa-k" data-i18n="i1d3bcf2">More like this.</p>
+    <div class="sc-grid">
+      <a class="sc" href="/living-with-adhd/adhd-tax"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M6 3.5h12v17l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5z"/><path class="w" d="M9 8.5h6M9 12h6"/><circle class="d" cx="15" cy="15.5" r="1.3"/></svg></span><span class="sc-label" data-i18n="i672194c">The ADHD tax</span><span class="sc-title" data-i18n="i7b0b4a7">The ADHD tax no one warned you about</span><span class="sc-text" data-i18n="ida05b30">It is not being bad with money. It is the price of a brain that forgets and acts fast.</span><span class="sc-go"><span data-i18n="i852b438">Read</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></span></a>
+      <a class="sc" href="/living-with-adhd/burnout"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><rect class="w" x="3" y="8" width="16" height="9" rx="2.2"/><path class="w" d="M21 11v3"/><rect class="d" x="5.5" y="10.5" width="3" height="4" rx="1"/></svg></span><span class="sc-label" data-i18n="ia32192d">Burnout</span><span class="sc-title" data-i18n="i4f9e2ab">Why do I crash after coping so well?</span><span class="sc-text" data-i18n="id410991">It is not laziness arriving late. It is the cost of running at full effort for years.</span><span class="sc-go"><span data-i18n="i852b438">Read</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></span></a>
+      <a class="sc" href="/living-with-adhd/adhd-morning"><span class="sc-ico" aria-hidden="true"><svg class="cfig" viewBox="0 0 24 24"><path class="w" d="M3 17.5h18M7 17.5a5 5 0 0 1 10 0M12 6v2.5M5.5 9.5l1.6 1.6M18.5 9.5l-1.6 1.6"/></svg></span><span class="sc-label" data-i18n="i62534e4">Mornings</span><span class="sc-title" data-i18n="i78f9e7c">The ADHD morning, in five scenes.</span><span class="sc-text" data-i18n="idf2f515">Swipe if any of these are you.</span><span class="sc-go"><span data-i18n="i852b438">Read</span><i class="sc-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></span></a>
+    </div>
   </section>
 
-  <section class="marquee" aria-hidden="true">
-  <span>MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; MyADHD &mdash; </span>
-</section>
-
-  <section class="ask" data-reveal>
-  <p class="ask-line" data-i18n="i5abc5dd">If any of this sounds familiar, it doesn&rsquo;t mean you have <span class="adhd-word">ADHD</span>. But it might mean it&rsquo;s worth finding out.</p>
-  <a class="arrow-cta" href="/self-check" data-i18n="ia8ac426">Take the self-check <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+  <section class="ask" id="together" data-reveal>
+  <p class="ask-line" data-i18n="i9b655ad">You are not alone. Other people get it.</p>
+  <p class="ask-lede" data-i18n="iee481df">The MyADHD community is adults who know exactly what you mean &mdash; diagnosed, waiting, or still wondering, and parents too. The link to join is in our Instagram bio.</p>
+  <a class="arrow-cta" href="https://www.instagram.com/myadhd.my/" target="_blank" rel="noopener" data-i18n="i663a8a9">Find us on Instagram <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+  <a class="arrow-link" href="/testimonials" data-i18n="i6ee5886">Read three stories <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
 </section>
 
   <nav class="pager" aria-label="Next page" data-i18n-aria="4bfc194">
   <span class="p-label" data-i18n="ibc98198">Next</span>
-  <a href="/testimonials" data-i18n="i618d739"><i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i> Testimonials</a>
+  <a href="/living-with-adhd/adhd-tax" data-i18n="i60b1f86"><i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i> The ADHD tax</a>
 </nav>
 </main>
 
