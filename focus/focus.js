@@ -302,16 +302,23 @@
   const $$ = (sel, el) => [...(el || document).querySelectorAll(sel)];
   const html = document.documentElement;
 
+  // Eight scenes that do not look alike: three families of colour (violet,
+  // orange, neutral) and four kinds of surface (mesh, moving light, a
+  // horizon, a printed grid). Keep the ids in step with the list in
+  // index.html's head script, which paints the first frame.
   const SCENES = [
     { id: 'indigo',   name: 'Indigo',   tone: 'dark' },
-    { id: 'midnight', name: 'Midnight', tone: 'dark' },
-    { id: 'brand',    name: 'Brand',    tone: 'dark' },
     { id: 'aurora',   name: 'Aurora',   tone: 'dark',  moving: true },
-    { id: 'lilac',    name: 'Lilac',    tone: 'light' },
+    { id: 'ember',    name: 'Ember',    tone: 'dark' },
+    { id: 'horizon',  name: 'Horizon',  tone: 'dark' },
+    { id: 'charcoal', name: 'Charcoal', tone: 'dark' },
+    { id: 'apricot',  name: 'Apricot',  tone: 'light' },
+    { id: 'lilac',    name: 'Lilac',    tone: 'light', moving: true },
     { id: 'paper',    name: 'Paper',    tone: 'light' },
-    { id: 'tide',     name: 'Tide',     tone: 'light', moving: true },
   ];
-  const sceneById = (id) => SCENES.find((s) => s.id === id) || SCENES[0];
+  // scenes that were retired, and where a saved choice of one now lands
+  const RETIRED = { midnight: 'charcoal', brand: 'indigo', tide: 'lilac' };
+  const sceneById = (id) => SCENES.find((s) => s.id === (RETIRED[id] || id)) || SCENES[0];
 
   const SOUNDS = [
     { id: 'rain',  name: 'Rain',        cat: 'nature', icon: 's-rain',  gen: 'rain',  level: 0.7 },
@@ -381,6 +388,7 @@
     try { raw = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (_) {}
     const settings = Object.assign({}, DEFAULTS, raw.settings || {});
     settings.scenes = Object.assign({}, DEFAULTS.scenes, settings.scenes || {});
+    Object.keys(settings.scenes).forEach((m) => { settings.scenes[m] = sceneById(settings.scenes[m]).id; });
     return {
       settings,
       tasks: Array.isArray(raw.tasks) ? raw.tasks : [],
@@ -661,10 +669,50 @@
     const live = {};          // id -> {src, gain, extra:[]}
     const buffers = {};
 
+    // iPhone: Web Audio is filed as "ambient" sound, so the silent switch
+    // mutes it — the page looked as if it played and nothing came out.
+    // Safari 17+ lets a page ask for "playback" instead. Older iOS has no
+    // such switch, but a playing <audio> element moves the whole page into
+    // playback, and Web Audio rides along: so a second of silence, looped,
+    // while the mix plays. Both have to happen inside a tap.
+    let keepAlive = null;
+    function silentWav() {
+      const n = 8000, buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+      const str = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+      str(0, 'RIFF'); v.setUint32(4, 36 + n, true); str(8, 'WAVEfmt ');
+      v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+      v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true);
+      str(36, 'data'); v.setUint32(40, n, true);
+      for (let i = 0; i < n; i++) v.setUint8(44 + i, 128);
+      return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+    }
+    function playbackSession(on) {
+      try {
+        if (navigator.audioSession) { navigator.audioSession.type = 'playback'; return; }
+      } catch (_) {}
+      if (!/iP(hone|ad|od)|Macintosh/.test(navigator.userAgent) || !('ontouchend' in document)) return;
+      if (!on) { if (keepAlive) keepAlive.pause(); return; }
+      if (!keepAlive) {
+        keepAlive = new Audio(silentWav());
+        keepAlive.loop = true;
+        keepAlive.setAttribute('playsinline', '');
+      }
+      keepAlive.play().catch(() => {});
+    }
+
+    function wake() {
+      // "interrupted" is Safari's own state, after a call or a trip to the lock screen
+      if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && playing) wake();
+    });
+
     function ensure() {
       if (ctx) return ctx;
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return null;
+      playbackSession(true);
       ctx = new AC();
       master = ctx.createGain();
       master.gain.value = 1;
@@ -732,7 +780,7 @@
     }
 
     return {
-      unlock() { if (ensure() && ctx.state === 'suspended' && playing) ctx.resume(); },
+      unlock() { if (ensure()) wake(); },
       get playing() { return playing; },
       isOn(id) { return S.soundOn.includes(id); },
       toggleSound(id) {
@@ -757,16 +805,18 @@
       play() {
         if (!ensure()) return;
         playing = true;
-        ctx.resume();
+        playbackSession(true);
+        wake();
         S.soundOn.forEach((id) => startOne(SOUNDS.find((x) => x.id === id)));
       },
       pause() {
         playing = false;
         Object.keys(live).forEach(stopOne);
+        playbackSession(false);
       },
       chime() {
         if (!ensure()) return;
-        if (ctx.state === 'suspended') ctx.resume();
+        wake();
         const t0 = ctx.currentTime + 0.05;
         [[784, 0], [1175, 0.2], [784, 0.9], [1175, 1.1]].forEach(([f, dt]) => {
           const o = ctx.createOscillator(), g = ctx.createGain();
@@ -1084,6 +1134,29 @@
     }
     ['pointermove', 'pointerdown', 'keydown', 'wheel'].forEach((e) => document.addEventListener(e, poke, { passive: true }));
     return { poke };
+  })();
+
+  // The phone keyboard. visualViewport is the part of the page still
+  // showing above it; html.kb and two variables let the CSS pin the open
+  // panel to exactly that. Nothing to do on desktop, where it never shrinks.
+  (function keyboard() {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const fit = () => {
+      const covered = window.innerHeight - vv.height;
+      const typing = /^(INPUT|TEXTAREA)$/.test((document.activeElement || {}).tagName || '');
+      html.classList.toggle('kb', covered > 120 && typing && window.matchMedia('(max-width:720px)').matches);
+      html.style.setProperty('--vv-top', vv.offsetTop + 'px');
+      html.style.setProperty('--vv-h', vv.height + 'px');
+    };
+    vv.addEventListener('resize', fit);
+    vv.addEventListener('scroll', fit);
+    document.addEventListener('focusin', () => setTimeout(fit, 50));
+    document.addEventListener('focusout', () => setTimeout(() => {
+      fit();
+      // iOS leaves the page scrolled to where the field was; put it back
+      if (!html.classList.contains('kb')) window.scrollTo(0, 0);
+    }, 50));
   })();
 
   function toggleFull() {

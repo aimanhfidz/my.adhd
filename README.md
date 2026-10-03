@@ -832,12 +832,25 @@ equal-power crossfade at the seam, plus live filters (and two slow LFOs for
 the wind). There are no audio files, so there is nothing to license. Several
 play at once, each with its own volume.
 
-**Scenes, and orange.** Seven scenes — four deep, three pale — made of the
-brand blues and violets with a grain overlay; two of them drift. A pale
+**Scenes.** Eight, chosen so that no two look alike: three families of
+colour (violet — Indigo, Aurora, Lilac; orange — Ember, Apricot, and
+Horizon's one glowing line; neutral — Charcoal's dot grid and Paper's
+graph paper) across four kinds of surface. Aurora and Lilac drift. A pale
 scene turns the whole page light, because `data-theme` follows the scene
-here rather than the theme toggle. There is no orange in any scene, and the
-streak flame is violet: orange means act now, and a background never asks
-you to.
+here rather than the theme toggle. Orange in a scene was the user's call on
+2026-10-04, against the rule that orange means act now; on the two orange
+scenes the big button turns orange too. Retired scene ids (`midnight`,
+`brand`, `tide`) map to their nearest survivor, so an old saved choice still
+lands somewhere sensible.
+
+**iPhone.** Two things only a phone shows. Web Audio counts as "ambient"
+sound on iOS, so the silent switch muted every sound and the chime with no
+error; the page asks for `navigator.audioSession.type = 'playback'` (Safari
+17+) and, on older iOS, loops a second of silent `<audio>` while the mix
+plays, which moves the page into playback. And the keyboard slides over a
+fixed bottom sheet instead of resizing the page, so while a field has it up
+`visualViewport` pins the open panel to the visible area (`html.kb`). Inputs
+are 16px on phones, the size below which Safari zooms in on focus.
 
 **Testing.** The top half of `focus/focus.js` is pure and exported as
 `window.FocusPure` — timer arithmetic, streaks, totals, the heatmap, the

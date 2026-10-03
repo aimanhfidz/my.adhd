@@ -53,8 +53,19 @@ input,textarea{font:inherit; color:inherit}
 
 /* ============ scenes ============
    Each scene is a handful of custom properties on [data-scene]: the mesh,
-   three light colours, and whether the lights move. The same selectors
-   paint the thumbnails in settings, so a scene is defined exactly once. */
+   three light colours, whether the lights move, and the colour of the big
+   button. The same selectors paint the thumbnails in settings, so a scene
+   is defined exactly once.
+
+   Eight that do not look alike — three families of colour, four kinds of
+   surface:
+     violet   Indigo (mesh) · Aurora (moving light) · Lilac (moving, pale)
+     orange   Ember (glow from below) · Apricot (pale) · Horizon (a line of it)
+     neutral  Charcoal (dot grid) · Paper (graph paper)
+   Orange in a scene is the user's call (2026-10-04), against this site's
+   rule that orange means act now. It is held to the two orange scenes and
+   Horizon's one line, and the big button turns orange with them rather
+   than putting a blue button on an orange field. */
 [data-scene="indigo"]{
   --mesh:
     radial-gradient(55% 75% at 8% 35%, rgba(123,63,228,.95) 0%, rgba(123,63,228,0) 62%),
@@ -62,38 +73,49 @@ input,textarea{font:inherit; color:inherit}
     radial-gradient(45% 55% at 58% 62%, rgba(53,41,191,.9) 0%, rgba(53,41,191,0) 70%),
     linear-gradient(165deg, #3A1C86 0%, #101018 42%, #15122E 100%);
 }
-[data-scene="midnight"]{
-  --mesh:
-    radial-gradient(50% 60% at 15% 10%, rgba(58,28,134,.55) 0%, rgba(58,28,134,0) 70%),
-    radial-gradient(55% 60% at 90% 95%, rgba(53,41,191,.45) 0%, rgba(53,41,191,0) 70%),
-    linear-gradient(180deg, #101018 0%, #0B0B12 100%);
-}
-[data-scene="brand"]{
-  --mesh:
-    radial-gradient(60% 80% at 100% 100%, rgba(172,165,255,.65) 0%, rgba(172,165,255,0) 60%),
-    linear-gradient(118deg, #101018 0%, #3529BF 42%, #4737FF 70%, #8B7DFF 100%);
-}
 [data-scene="aurora"]{
   --mesh:linear-gradient(180deg, #0A0A12 0%, #08080C 100%);
   --l1:#4737FF; --l2:#7B3FE4; --l3:#ACA5FF; --lights:.62;
 }
+[data-scene="ember"]{
+  --mesh:
+    radial-gradient(75% 55% at 50% 112%, #F75C03 0%, rgba(247,92,3,.7) 28%, rgba(247,92,3,0) 68%),
+    radial-gradient(35% 30% at 12% 104%, rgba(255,150,80,.8) 0%, rgba(255,150,80,0) 70%),
+    radial-gradient(45% 40% at 88% -5%, rgba(123,63,228,.28) 0%, rgba(123,63,228,0) 70%),
+    linear-gradient(180deg, #0E0806 0%, #1A0C06 60%, #2A1206 100%);
+  --btn-1:#FF8A3D; --btn-2:#F75C03; --btn-3:#D94E00; --btn-glow:rgba(247,92,3,.7);
+}
+[data-scene="horizon"]{
+  --mesh:
+    radial-gradient(70% 9% at 50% 62%, rgba(255,138,61,.95) 0%, rgba(247,92,3,.45) 40%, rgba(247,92,3,0) 75%),
+    linear-gradient(180deg, #0B0B1A 0%, #17143A 35%, #2D2470 61.4%, #FF9A55 61.8%, #F75C03 62.1%, #3A1C86 62.5%, #1A0F3A 78%, #0B0818 100%);
+}
+[data-scene="charcoal"]{
+  --mesh:
+    radial-gradient(circle, rgba(255,255,255,.085) 1.1px, rgba(255,255,255,0) 1.7px) 0 0 / 22px 22px,
+    radial-gradient(70% 60% at 50% 45%, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 70%),
+    linear-gradient(180deg, #2E3138 0%, #24272D 100%);
+}
+[data-scene="apricot"]{
+  /* solid stops only: a fade to transparent dithered into black specks in
+     WebKit at thumbnail size */
+  --mesh:radial-gradient(95% 105% at 12% 112%, #FFAE78 0%, #FFCDAA 32%, #FFE8D9 62%, #FFF8F3 100%);
+  --btn-1:#FF8A3D; --btn-2:#F75C03; --btn-3:#D94E00; --btn-glow:rgba(247,92,3,.55);
+}
 [data-scene="lilac"]{
   --mesh:
     radial-gradient(55% 70% at 5% 15%, #DCC9FF 0%, rgba(220,201,255,0) 70%),
-    radial-gradient(60% 70% at 95% 95%, #ACA5FF 0%, rgba(172,165,255,0) 65%),
     radial-gradient(50% 50% at 55% 50%, #FFFFFF 0%, rgba(255,255,255,0) 70%),
-    linear-gradient(160deg, #E9E7FB 0%, #D9D5F6 100%);
+    linear-gradient(160deg, #EFEDFA 0%, #E2DEF8 100%);
+  --l1:#ACA5FF; --l2:#DCC9FF; --l3:#8B7DFF; --lights:.5;
 }
 [data-scene="paper"]{
   --mesh:
-    radial-gradient(45% 55% at 100% 0%, rgba(209,205,255,.75) 0%, rgba(209,205,255,0) 70%),
-    radial-gradient(40% 50% at 0% 100%, rgba(220,201,255,.6) 0%, rgba(220,201,255,0) 70%),
-    linear-gradient(180deg, #FAFAFF 0%, #F1F0FC 100%);
+    linear-gradient(rgba(71,55,255,.075) 1px, rgba(71,55,255,0) 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, rgba(71,55,255,.075) 1px, rgba(71,55,255,0) 1px) 0 0 / 28px 28px,
+    linear-gradient(180deg, #FCFBF8 0%, #F6F4EE 100%);
 }
-[data-scene="tide"]{
-  --mesh:linear-gradient(180deg, #F2F1FD 0%, #E7E4FA 100%);
-  --l1:#ACA5FF; --l2:#DCC9FF; --l3:#8B7DFF; --lights:.55;
-}
+:root[data-scene="charcoal"] .scene-grain, :root[data-scene="paper"] .scene-grain{opacity:.08}
 
 .scene{position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none}
 .scene-mesh{position:absolute; inset:0; background:var(--mesh); transition:opacity .6s var(--ease)}
@@ -155,14 +177,14 @@ input,textarea{font:inherit; color:inherit}
    lets the background repeat into it as a sliver down one side. */
 .icon-btn.primary{
   border:0; color:#fff;
-  background:radial-gradient(120% 120% at 30% 20%, #6A5CFF 0%, #4737FF 55%, #3A2DE0 100%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.28), inset 0 -2px 6px rgba(20,10,90,.35), 0 12px 30px -10px rgba(71,55,255,.75);
+  background:radial-gradient(120% 120% at 30% 20%, var(--btn-1, #6A5CFF) 0%, var(--btn-2, #4737FF) 55%, var(--btn-3, #3A2DE0) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28), inset 0 -2px 6px rgba(20,10,90,.3), 0 12px 30px -10px var(--btn-glow, rgba(71,55,255,.75));
   -webkit-backdrop-filter:none; backdrop-filter:none;
   transition:transform .2s var(--ease), box-shadow .25s var(--ease), filter .2s;
 }
 .icon-btn.primary .ic{margin-left:2px}           /* a triangle's weight sits left of its box */
 .icon-btn.primary[aria-label="Pause"] .ic{margin-left:0}
-@media (hover:hover){ .icon-btn.primary:hover{background:radial-gradient(120% 120% at 30% 20%, #7A6DFF 0%, #5546FF 55%, #4031E8 100%); transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,.32), inset 0 -2px 6px rgba(20,10,90,.35), 0 16px 36px -10px rgba(71,55,255,.85)} }
+@media (hover:hover){ .icon-btn.primary:hover{filter:brightness(1.1); transform:translateY(-1px)} }
 .icon-btn.primary:active{transform:scale(.95)}
 .controls .icon-btn:not(.primary){width:44px; height:44px; border-radius:50%}
 
@@ -337,7 +359,7 @@ input,textarea{font:inherit; color:inherit}
 .modes{display:flex; gap:2px; padding:3px; border-radius:14px}
 .modes button{position:relative; width:36px; height:34px; border-radius:11px; display:grid; place-items:center; color:var(--scene-soft); transition:all .2s var(--ease)}
 .modes button .ic{width:19px; height:19px}
-.modes button[aria-selected="true"]{background:var(--grad); color:#fff; box-shadow:0 8px 20px -8px rgba(71,55,255,.9)}
+.modes button[aria-selected="true"]{background:linear-gradient(135deg, var(--btn-1, #6A5CFF), var(--btn-3, #3A2DE0)); color:#fff; box-shadow:0 8px 20px -8px var(--btn-glow, rgba(71,55,255,.9))}
 .tip{
   position:absolute; top:calc(100% + 10px); left:50%; transform:translate(-50%, -4px);
   font-size:12px; font-weight:600; white-space:nowrap; color:var(--scene-ink);
@@ -463,6 +485,25 @@ input[type="text"].field{width:180px}
   .streak{position:absolute; right:0; bottom:calc(100% + 8px); height:34px}
   .brand-tag{display:none}
   .quote{max-width:calc(100vw - 32px - 150px)}
+}
+/* ============ phone keyboard ============
+   iOS slides the keyboard over the page without resizing it, so a fixed
+   bottom sheet ends up underneath, two lines of it showing. While a field
+   has the keyboard up (html.kb, set from visualViewport in focus.js) the
+   open panel is pinned to exactly the part of the screen still visible,
+   and everything else gets out of its way. */
+@media (max-width:720px){
+  #notes, .task-add input, .intent-edit input, .field{font-size:16px}   /* under 16px, Safari zooms in on focus */
+  .kb .pop:not([hidden]){
+    position:fixed; left:8px; right:8px; bottom:auto;
+    top:calc(var(--vv-top, 0px) + 8px); height:calc(var(--vv-h, 100dvh) - 16px); max-height:none;
+    animation:none; background:var(--surface);
+  }
+  .kb:has(.pop:not([hidden])) .stage{visibility:hidden}
+  .kb #pop-notes #notes{min-height:0; margin-bottom:10px}
+  .kb .intent-edit{position:fixed; left:8px; right:8px; width:auto; top:calc(var(--vv-top, 0px) + 8px); max-height:calc(var(--vv-h, 100dvh) - 16px); display:flex; flex-direction:column}
+  .kb .intent-picks{max-height:none; flex:1}
+  .kb .dock, .kb .corner-br, .kb .corner-tl, .kb .corner-tr, .kb .stage .view > :not(.intent){visibility:hidden}
 }
 @media (max-width:360px){
   .corner-br, .dock{gap:6px}
