@@ -54,6 +54,11 @@ came out on 2026-09-18, so the app answers to anyone who types the address.
 The block comment in `app.html`'s `<head>` lists what is left to undo for
 the full opening.
 
+**focus.myadhd.my is built, and nothing links to it either.** It is
+`focus/`, served at the subdomain's root by a host rewrite in `vercel.json`.
+It keeps its own store (`myadhd.focus.v1`) and must never touch `myadhd.v1`.
+README has the rest.
+
 ## House rules
 
 - **Never stage whole files.** Unfinished work lives in the same files as

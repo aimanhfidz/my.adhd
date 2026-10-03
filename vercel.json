@@ -5,7 +5,13 @@
     "api/triage.js": { "maxDuration": 60 },
     "api/transcribe.js": { "maxDuration": 60 }
   },
+  "redirects": [
+    { "source": "/focus", "has": [{ "type": "host", "value": "myadhd.my" }], "destination": "https://focus.myadhd.my/", "permanent": false },
+    { "source": "/focus/", "has": [{ "type": "host", "value": "myadhd.my" }], "destination": "https://focus.myadhd.my/", "permanent": false },
+    { "source": "/((?!focus/|theme\\.css|fonts/|icons/|favicon).+)", "has": [{ "type": "host", "value": "focus.myadhd.my" }], "destination": "https://myadhd.my/$1", "permanent": false }
+  ],
   "rewrites": [
+    { "source": "/", "has": [{ "type": "host", "value": "focus.myadhd.my" }], "destination": "/focus/index.html" },
     { "source": "/api/admin-feedback", "destination": "/api/feedback" },
     { "source": "/api/push-send", "destination": "/api/push?op=send" }
   ],

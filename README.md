@@ -779,9 +779,67 @@ sync, and a two-way sync wants conflict resolution, which wants a server.
 | `animation/source/` | `gen.py` (svg), `render.py` (gif + mp4), the four beats, the motion sheet |
 | `components/ui/` | `flowing-waves-shader.tsx`, the three.js component `waves.js` was ported from. Reference, not shipped — nothing on the site imports it |
 | `waves-lab.html` | A bench for the wave field: the shader's switches on sliders. Reached only from the hidden `waves` link in the admin nav, and deliberately not in the service worker |
-| `package.json` / `vercel.json` | The one dependency and the `dev` script; `cleanUrls`, the two function timeouts, and the security headers |
+| `package.json` / `vercel.json` | The one dependency and the `dev` script; `cleanUrls`, the two function timeouts, the security headers, and the host rules that put `focus/` on focus.myadhd.my |
 | `serve.py` | Local preview that applies the same `cleanUrls` rule Vercel does, so `/app` resolves without a build. `npm run dev` runs it. It does not run the functions |
+| `focus/` | **focus.myadhd.my** — the focus dashboard. Its own page, stylesheet, script and manifest; see [focus.myadhd.my](#focusmyadhdmy) below |
 | ~~`ios/`~~ | Moved out on 2026-09-18 to [aimanhfidz/myadhd.my_IOS](https://github.com/aimanhfidz/myadhd.my_IOS). The `WKWebView` shell that opens `/app` on an iPhone and adds haptics, reminders, widgets, the share sheet, Siri and Google sign-in. It reads the deployed page, never this tree |
+
+## focus.myadhd.my
+
+A second, separate screen for the part after the brain dump: one thing in
+the middle, a timer, a scene behind it. Its shape is borrowed from Flocus —
+a clock home, a focus mode, an ambient mode, a dock of three tools in the
+bottom-left and the mode switch in the bottom-right — and none of its code,
+art, copy, quotes or audio. Everything in it is free.
+
+| | |
+|---|---|
+| **Home** (`#/`) | Greeting and a big clock. A quote in the corner, tap for another |
+| **Focus** (`#/focus`) | "What do you want to focus on?", Pomodoro / Countdown / Stopwatch, cycle dots, the streak |
+| **Ambient** (`#/ambient`) | The scene alone, with a small timer card in the corner |
+| **Dock** | Tasks, Sounds, Notepad — one popover open at a time |
+| **Settings** | Scenes per mode, clock, timer, stats with a 16-week heatmap, quotes, extras (auto-hide, keep the screen on, still scenes, export / reset) |
+
+**How it is served.** It is `focus/index.html`, deployed by the same Vercel
+project. A host-scoped rewrite in `vercel.json` serves it at the root of
+`focus.myadhd.my`; anywhere else (localhost, preview deploys) it is at
+`/focus/`. Two host-scoped redirects keep the origins apart:
+`myadhd.my/focus` goes to the subdomain, and any path on the subdomain that
+is not focus's own files, `theme.css`, `fonts/`, `icons/` or the favicon
+goes back to `myadhd.my` — otherwise `focus.myadhd.my/app` would open the
+app on an origin where none of its storage is. The shared files are linked
+by absolute path, so there is still one copy of each. No function: `api/`
+is at the twelve-function cap and focus needs none. The domain itself is
+added in the Vercel dashboard, not in any file.
+
+**Its storage is its own.** Everything lives in `localStorage` under
+`myadhd.focus.v1` — settings, its task list, the notepad, the session log,
+and the running timer. It never reads or writes `myadhd.v1`: on localhost it
+shares an origin with `/app`, and the iOS shell watches that key. Its tasks
+are not the app's tasks, by decision; there is no sign-in and no sync.
+
+**The timer is timestamps.** A running segment is an `endAt`, not a count of
+ticks, so a throttled background tab stays right and a reload carries on. A
+segment that ran out while the tab was shut is logged at the time it ended,
+with no chime and no auto-start.
+
+**Sounds are generated.** White, pink and brown noise, rain, ocean, wind and
+a fireplace are built in the browser — a looping buffer with an
+equal-power crossfade at the seam, plus live filters (and two slow LFOs for
+the wind). There are no audio files, so there is nothing to license. Several
+play at once, each with its own volume.
+
+**Scenes, and orange.** Seven scenes — four deep, three pale — made of the
+brand blues and violets with a grain overlay; two of them drift. A pale
+scene turns the whole page light, because `data-theme` follows the scene
+here rather than the theme toggle. There is no orange in any scene, and the
+streak flame is violet: orange means act now, and a background never asks
+you to.
+
+**Testing.** The top half of `focus/focus.js` is pure and exported as
+`window.FocusPure` — timer arithmetic, streaks, totals, the heatmap, the
+greeting and the sample generators — so it runs under node or
+JavaScriptCore with no page.
 
 ## The loading animation
 
