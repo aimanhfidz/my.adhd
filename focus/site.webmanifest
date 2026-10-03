@@ -10,8 +10,8 @@
   "theme_color": "#101018",
   "categories": ["productivity"],
   "icons": [
-    { "src": "/icons/icon-192.png?v=3", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/icon-512.png?v=3", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/icon-512.png?v=3", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/focus/icons/icon-192.png?v=1", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/focus/icons/icon-512.png?v=1", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/focus/icons/icon-maskable-512.png?v=1", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
