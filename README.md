@@ -839,7 +839,7 @@ graph paper) across four kinds of surface. Aurora and Lilac drift. A pale
 scene turns the whole page light, because `data-theme` follows the scene
 here rather than the theme toggle. Orange in a scene was the user's call on
 2026-10-04, against the rule that orange means act now; on the two orange
-scenes the big button turns orange too. Retired scene ids (`midnight`,
+scenes the active mode turns orange too. Retired scene ids (`midnight`,
 `brand`, `tide`) map to their nearest survivor, so an old saved choice still
 lands somewhere sensible.
 
