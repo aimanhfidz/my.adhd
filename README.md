@@ -990,7 +990,7 @@ design is written down in `docs/loud-redesign-plan.md`.
 
 | URL | What it is |
 |---|---|
-| `/` | The two doors, then the funnel. No full footer |
+| `/` | The two doors, four facts under the fold, then the funnel. No full footer |
 | `/self-check` | **The test.** A standalone page, outside the site. Google sign-in + a PDPA intake since 2026-09-13 — see below |
 | `/blog` | Offer 02. Empty index, placeholder |
 | `/habits` | Offer 03. Five named habits, explanations placeholder |
@@ -1046,11 +1046,12 @@ are an instrument, not copy, and they get no voice pass at all.
 organisation believes, typed out a word at a time on a timer, with the
 five offers lighting up in a corner list beside them. It was taken out on
 2026-09-27. The sentences were lifted from `docs/content/about.md` and are
-still there; the doors now run straight into the funnel.
+still there. The screen under the doors is now `.facts` — TL;DR, four
+cards, one screen tall on anything wider than a phone.
 
 ### The funnel
 
-The doors scroll into one, and the home page ends there. Before it there
+The facts scroll into one, and the home page ends there. Before it there
 was nothing under the first screen but the footer, so a reader who scrolled
 arrived at a column of links and no reason to press any of them. Two ways
 on, and they are not equal: the self-check is the organisation's front

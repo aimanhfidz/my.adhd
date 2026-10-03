@@ -215,6 +215,18 @@ window.MYADHD_MS = {
   "i9299d0a": "Tabiat, senarai bacaan dan alatan untuk lalui hari &mdash; dan my.adhd, yang tukar semua yang bersepah dalam kepala jadi satu benda untuk buat sekarang.",
   "i89441a0": "Hidup dengan ADHD {icon}",
 
+  /* ---- the facts under the fold ---- */
+  "i5e2ac1c": "Apa yang anda perlu tahu",
+  "i6f4d8fc": "Empat perkara pantas tentang <span class=\"adhd-word\">ADHD</span> dewasa di Malaysia.",
+  "iaec6516": "Bukan sekadar hiperaktif",
+  "ie8e2fee": "<span class=\"adhd-word\">ADHD</span> dewasa selalu kelihatan seperti tertekan, mengelamun atau hilang fokus &mdash; bukan hiperaktif fizikal seperti kanak-kanak.",
+  "ie3bf099": "Bukan kerana malas",
+  "i0027002": "Cabaran <span class=\"adhd-word\">ADHD</span> datang daripada fungsi eksekutif otak yang berbeza, bukan daripada kurang disiplin atau motivasi.",
+  "i72d2434": "Boleh diuruskan",
+  "i2d671f6": "Dengan diagnosis yang sah, rawatan yang sesuai dan strategi harian, orang dewasa dengan <span class=\"adhd-word\">ADHD</span> boleh hidup penuh dan produktif.",
+  "i73194aa": "Anda tidak keseorangan",
+  "i6c98a52": "Ramai orang dewasa di Malaysia hidup dengan <span class=\"adhd-word\">ADHD</span> tanpa pernah didiagnosis. Komuniti MyADHD terbuka untuk anda.",
+
   /* the nav groups */
   "i6b21fb7": "Tentang"
 },

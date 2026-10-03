@@ -863,7 +863,7 @@ body{
    position:relative and stacked its children at 1. Anything that holds
    words goes here. */
 .spine, .foot, .ask, .pager,
-.doors, .ending{position:relative; z-index:1}
+.doors, .facts, .ending{position:relative; z-index:1}
 /* ...and the bar's ground has to go, or it paints a band across a field
    that now runs the full height of the window. */
 .bar{background:none; border-bottom:0}
@@ -1138,10 +1138,10 @@ body{
      half the difference without moving it off centre. */
   padding:calc(var(--bar-h) + clamp(24px,5vh,56px)) var(--gutter) clamp(86px,17vh,190px);
 }
-/* The hairline belongs between the two screens, and the doors are the
-   first of them — so it goes on the ending's top edge and not the doors'.
-   `~` rather than `+`: the pill sits between them in the markup. */
-.doors ~ .ending{border-top:1px solid var(--line)}
+/* The hairline belongs between the screens, and the doors are the first
+   of them — so it goes on the top edge of each one after, not the doors'.
+   `~` rather than `+`: the pill sits between two of them in the markup. */
+.doors ~ .facts, .doors ~ .ending{border-top:1px solid var(--line)}
 .doors .kicker{margin-bottom:clamp(14px,2vh,22px)}
 .doors-line{
   font-family:var(--display); font-weight:600;
@@ -1239,6 +1239,81 @@ body{
 .door-cta:focus-visible::after{box-shadow:0 0 0 3px var(--focus)}
 
 
+/* ============ WHAT YOU NEED TO KNOW ============
+   The screen under the fold. Built the way the doors are — its own
+   screen, `min-height` so it grows rather than clips, the top padding
+   clearing the fixed bar — and one size down from them, because this is
+   the thing you read after the question, not the question.
+
+   Four across while each card is wider than its heading, two by two
+   under that, one column on a phone. On a phone it runs past a screen,
+   the same as the doors do; the alternative was four cards of body copy
+   at a size nobody reads. */
+.facts{
+  min-height:100dvh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+  padding:calc(var(--bar-h) + clamp(24px,5vh,56px)) var(--gutter) clamp(48px,9vh,110px);
+}
+.facts .kicker{margin-bottom:clamp(12px,1.8vh,20px)}
+.facts-line{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(26px,3.4vw,44px); line-height:1.1; letter-spacing:-.02em;
+  color:var(--ink); max-width:22ch; text-wrap:balance;
+}
+.facts-lede{
+  margin-top:clamp(12px,1.8vh,20px);
+  font-size:clamp(15px,1.4vw,18px); line-height:1.55; color:var(--muted);
+  max-width:52ch; text-wrap:balance;
+}
+.facts-grid{
+  margin-top:clamp(28px,4.6vh,56px);
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(14px,1.6vw,24px);
+  width:100%; max-width:1180px;
+}
+@media (max-width:1080px){ .facts-grid{grid-template-columns:repeat(2,minmax(0,1fr)); max-width:760px} }
+@media (max-width:560px){ .facts-grid{grid-template-columns:minmax(0,1fr)} }
+.fact{
+  display:flex; flex-direction:column; text-align:left;
+  padding:clamp(22px,2.2vw,30px);
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:var(--surface);
+}
+/* The known door's blue, as a ground for the mark, and the accent on it. */
+.fact-icon{
+  display:grid; place-items:center; flex:none;
+  width:46px; height:46px; border-radius:999px;
+  background:rgb(var(--door-b) / var(--door-b-hi));
+  color:var(--accent);
+}
+.fact-icon svg{width:22px; height:22px; display:block}
+.fact-title{
+  margin-top:clamp(16px,2vh,22px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(18px,1.6vw,21px); line-height:1.2; letter-spacing:-.01em;
+  color:var(--ink);
+}
+.fact-body{
+  margin-top:10px;
+  font-size:15px; line-height:1.6; color:var(--ink-soft);
+}
+/* On a phone the four stack, so each one gives back the height the mark
+   takes above its heading: the mark goes beside the heading instead, and
+   the column runs about a card shorter. */
+@media (max-width:560px){
+  .facts-grid{gap:10px}
+  .fact{
+    display:grid; grid-template-columns:auto minmax(0,1fr);
+    column-gap:14px; align-items:center; padding:18px 20px;
+  }
+  .fact-icon{width:38px; height:38px}
+  .fact-icon svg{width:19px; height:19px}
+  .fact-title{margin-top:0}
+  .fact-body{grid-column:1 / -1; margin-top:10px; font-size:14.5px}
+}
+
+
 /* The front page's last screen. The ask and the sign-off are one
    composition, not two blocks that happen to be adjacent: the ask takes
    whatever height is left and centres in it, the footer sits on the
@@ -1274,7 +1349,7 @@ body{
 .ending > .foot .foot-base{border-top:0; padding-top:0}
 
 /* ---------- the funnel ----------
-   What the doors scroll into. The home page had nothing here but the
+   What the facts scroll into. The home page had nothing here but the
    footer, so a reader who scrolled down arrived at a column of links and
    no reason to press any of them. This is the reason. */
 .funnel{
