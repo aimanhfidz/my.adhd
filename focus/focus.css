@@ -66,6 +66,13 @@ input,textarea{font:inherit; color:inherit}
    rule that orange means act now. It is held to the two orange scenes and
    Horizon's one line, and the active mode turns orange with them rather
    than sitting blue on an orange field. */
+/* Every scene starts from nothing. Without this a thumbnail inherited
+   whatever the page was wearing: on Aurora, Paper and Apricot came out
+   violet, because they set no lights of their own and took Aurora's. */
+[data-scene]{
+  --l1:transparent; --l2:transparent; --l3:transparent; --lights:0;
+  --btn-1:#6A5CFF; --btn-2:#4737FF; --btn-3:#3A2DE0; --btn-glow:rgba(71,55,255,.75);
+}
 [data-scene="indigo"]{
   --mesh:
     radial-gradient(55% 75% at 8% 35%, rgba(123,63,228,.95) 0%, rgba(123,63,228,0) 62%),
@@ -300,6 +307,7 @@ input,textarea{font:inherit; color:inherit}
 .pop-foot{display:flex; justify-content:space-between; gap:10px; padding:10px 18px 14px; font-size:13px; color:var(--muted)}
 .link{font-size:13px; font-weight:600; color:var(--accent); text-decoration:underline; text-underline-offset:3px}
 .link.danger{color:var(--danger-ink)}
+.link.quiet{color:var(--muted)}
 .link.armed{color:#fff; background:var(--danger); padding:3px 9px; border-radius:999px; text-decoration:none}
 
 /* tasks */

@@ -796,6 +796,11 @@
         }
         save();
       },
+      clearAll() {
+        S.soundOn = [];
+        this.pause();
+        save();
+      },
       setVol(id, v) {
         S.soundVol[id] = v;
         const l = live[id];
@@ -867,6 +872,7 @@
     master.disabled = !anyOn;
     master.style.opacity = anyOn ? '' : '.4';
     $('#sound-dot').hidden = !(audio.playing && anyOn);
+    $('#sounds-clear').hidden = !anyOn;
     $('#sounds-meta').textContent = anyOn
       ? S.soundOn.length + ' in the mix' + (audio.playing ? '' : ' · paused')
       : 'Mix as many as you like';
@@ -1392,6 +1398,7 @@
     $('#sounds').addEventListener('input', (e) => {
       if (e.target.dataset.vol) audio.setVol(e.target.dataset.vol, Number(e.target.value));
     });
+    $('#sounds-clear').addEventListener('click', () => { audio.clearAll(); renderSounds(); });
     $('#sounds-master').addEventListener('click', () => {
       audio.playing ? audio.pause() : audio.play();
       renderSounds();
@@ -1427,7 +1434,13 @@
         applySetting(key, v === 'true' ? true : v === 'false' ? false : v);
       }
       const forBtn = e.target.closest('[data-for]');
-      if (forBtn) { sceneTarget = forBtn.dataset.for; renderScenes(); }
+      if (forBtn) {
+        // Show the mode being dressed. Picking for Ambient while the page sat
+        // on Home changed nothing you could see, and read as broken.
+        sceneTarget = forBtn.dataset.for;
+        if (sceneTarget !== mode) setMode(sceneTarget);
+        renderScenes();
+      }
       const pick = e.target.closest('[data-pick-scene]');
       if (pick) {
         S.scenes[sceneTarget] = pick.dataset.pickScene;
