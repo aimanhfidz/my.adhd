@@ -43,9 +43,29 @@ body{
    The mark, and the one link off this page. It is a text link rather than
    a button because it must not compete with the answers. */
 .t-head{
-  display:flex; align-items:center; justify-content:space-between;
+  display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
   gap:16px; padding-block:clamp(4px,1.4vh,12px);
   margin-bottom:clamp(24px,5vh,52px);
+}
+.t-head .brand-lockup{justify-self:start}
+.t-head-right{justify-self:end}
+/* "3 / 6" — only while a question is up. */
+.t-count{
+  font-family:var(--mono); font-size:13px; letter-spacing:.06em;
+  font-variant-numeric:tabular-nums; color:var(--faint);
+  visibility:hidden;
+}
+body[data-view="quiz"] .t-count{visibility:visible}
+/* While answering, the head stays put, so the way out and the count are
+   never a scroll away. The shadow paints the surface out to both edges
+   of the window and the clip keeps it off the top and bottom. */
+body[data-view="quiz"] .t-head,
+body[data-view="breath"] .t-head{
+  position:sticky; top:0; z-index:5;
+  background:var(--surface);
+  box-shadow:0 0 0 100vmax var(--surface); clip-path:inset(0 -100vmax);
+  margin-bottom:clamp(14px,3vh,32px);
+  padding-top:clamp(10px,2vh,16px);
 }
 .t-head .brand-lockup{display:flex; align-items:center; gap:9px; text-decoration:none}
 .t-head .logo{width:26px; height:26px; display:block}
@@ -104,22 +124,6 @@ h1{
 }
 .adhd-word{color:var(--wordmark-accent)}
 
-/* ---------- the intro ---------- */
-.t-facts{
-  list-style:none; margin-top:clamp(26px,4vh,40px);
-  border-top:1px solid var(--line);
-}
-.t-facts li{
-  display:flex; align-items:baseline; justify-content:space-between; gap:18px;
-  padding:13px 0; border-bottom:1px solid var(--line);
-  font-size:15px;
-}
-.t-facts dt, .t-facts .k{
-  font-family:var(--mono); font-size:12px; letter-spacing:.08em;
-  text-transform:uppercase; color:var(--faint); flex:none;
-}
-.t-facts .v{color:var(--ink-soft); text-align:right}
-
 .t-actions{
   display:flex; flex-wrap:wrap; gap:14px 18px; align-items:center;
   margin-top:clamp(28px,4.4vh,44px);
@@ -148,20 +152,52 @@ h1{
    "nearly there" and "no idea how long this is" is the difference between
    finishing and closing the tab. */
 .q-bar{
-  height:3px; background:var(--line); border-radius:999px; overflow:hidden;
-  margin-bottom:clamp(22px,3.6vh,34px);
+  position:fixed; top:0; left:0; right:0; z-index:10;
+  height:4px; background:var(--line);
+  display:none;
 }
+body[data-view="quiz"] .q-bar,
+body[data-view="breath"] .q-bar{display:block}
 .bar-fill{
   display:block; height:100%; width:0%;
   background:var(--orange);
   transition:width .3s var(--ease);
 }
 .q-meta{
-  display:flex; align-items:baseline; justify-content:space-between; gap:16px;
   font-family:var(--mono); font-size:12px; letter-spacing:.1em;
   text-transform:uppercase; color:var(--faint);
-  margin-bottom:clamp(18px,3vh,28px);
+  margin-bottom:clamp(14px,2.4vh,22px);
 }
+
+/* ---------- the navigator ----------
+   The intro's pill figure, made live: six long pills for Part A and, once
+   it is taken on, twelve short ones for Part B after a wider gap. A lit
+   pill is an answer given; the ringed one is where you are. Each is a
+   button with room around it — the pill is 8px tall and a finger is not —
+   so the hit area is the padding and the pill is drawn by ::before. */
+.q-steps{
+  display:flex; flex-wrap:wrap; align-items:center; gap:2px;
+  margin:0 0 clamp(22px,4vh,40px) -5px;
+}
+.q-step{
+  display:grid; place-items:center;
+  padding:10px 5px; background:none; border:0; cursor:pointer;
+}
+.q-step::before{
+  content:""; display:block; width:30px; height:8px; border-radius:999px;
+  background:var(--line-strong);
+  transition:background .2s var(--ease), box-shadow .2s var(--ease);
+}
+.q-step--b::before{width:16px; height:7px}
+.q-step:nth-child(6){margin-right:12px}
+.q-step.is-done::before{background:var(--orange)}
+.q-step.is-here::before{box-shadow:0 0 0 2px var(--surface), 0 0 0 4px var(--accent)}
+.q-step:not(:disabled):hover::before{box-shadow:0 0 0 2px var(--surface), 0 0 0 4px var(--line-strong)}
+.q-step.is-here:hover::before{box-shadow:0 0 0 2px var(--surface), 0 0 0 4px var(--accent)}
+.q-step:disabled{cursor:default}
+.q-step:disabled::before{opacity:.55}
+.q-step:focus-visible{outline:none}
+.q-step:focus-visible::before{box-shadow:0 0 0 2px var(--surface), 0 0 0 5px var(--focus), 0 0 0 4px var(--accent)}
 
 /* ---------- the question ----------
    Large, and alone on the screen. Nothing else is competing for the
@@ -172,13 +208,74 @@ h1{
   color:var(--ink); text-wrap:balance;
   outline:none;
 }
-.q-options{
-  display:grid; gap:10px;
-  margin-top:clamp(28px,4.4vh,44px);
+/* The question and its EN chip, side by side. */
+.q-legend{display:flex; align-items:flex-start; gap:14px}
+.q-legend .q-text{flex:1}
+.q-en{
+  flex:none; margin-top:.35em;
+  font-family:var(--mono); font-size:11px; letter-spacing:.06em; line-height:1;
+  padding:6px 8px; border-radius:999px; cursor:pointer;
+  color:var(--muted); background:none; border:1px solid var(--line-strong);
+  transition:color .16s var(--ease), border-color .16s var(--ease), background .16s var(--ease);
 }
-/* Full-width rows rather than a row of five chips: a chip row makes the
-   five answers different sizes, which quietly makes the short ones easier
-   to press. Equal rows, in the order the scale runs. */
+.q-en:hover{color:var(--ink); border-color:var(--ink)}
+.q-en[aria-expanded="true"]{background:var(--ink); border-color:var(--ink); color:var(--surface)}
+.q-en:focus-visible{outline:none; box-shadow:0 0 0 4px var(--focus); border-color:var(--accent)}
+.q-en-text{
+  margin-top:14px; padding:12px 16px;
+  border-left:3px solid var(--line-strong); background:var(--wash);
+  border-radius:0 10px 10px 0;
+  font-size:15px; line-height:1.55; color:var(--ink-soft);
+}
+
+/* ---------- the answers ----------
+   The five steps of the scale in a row, left to right as the scale runs,
+   each the same width — a row of equal cells, so a short label is no
+   easier to press than a long one. The number is the key that picks it.
+   On a phone the row would crush "Very often" into two lines of four
+   letters, so the cells stack into full-width rows instead, in the same
+   order. */
+.q-options{
+  display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px;
+  margin-top:clamp(26px,4.4vh,44px);
+}
+.ans{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  min-height:96px; padding:16px 8px;
+  border:1.5px solid var(--line-strong); border-radius:14px;
+  background:var(--surface); color:var(--ink);
+  font-family:var(--sans); font-size:15px; line-height:1.25; text-align:center;
+  cursor:pointer; hyphens:auto;
+  transition:border-color .16s var(--ease), background .16s var(--ease), transform .16s var(--ease);
+}
+.ans-n{
+  display:grid; place-items:center; width:26px; height:26px; border-radius:999px;
+  border:1.5px solid var(--line-strong);
+  font-family:var(--mono); font-size:12px; color:var(--faint);
+  transition:background .16s var(--ease), border-color .16s var(--ease), color .16s var(--ease);
+}
+.ans:hover{border-color:var(--accent); background:var(--wash)}
+.ans:active{transform:scale(.98)}
+.ans[aria-pressed="true"]{
+  border-color:var(--orange); background:rgba(247,92,3,.08); font-weight:600;
+}
+.ans[aria-pressed="true"] .ans-n{background:var(--orange); border-color:var(--orange); color:#FFFFFF}
+.ans:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
+@media (max-width:640px){
+  .q-options{grid-template-columns:1fr; gap:8px}
+  .ans{flex-direction:row; justify-content:flex-start; min-height:0; padding:14px 16px; gap:14px; font-size:16px; text-align:left}
+}
+
+/* The question arrives with a short rise, restarted by render(). */
+[data-screen="quiz"].is-in .q-meta,
+[data-screen="quiz"].is-in .q-legend,
+[data-screen="quiz"].is-in .q-en-text,
+[data-screen="quiz"].is-in .q-options{animation:q-in .32s var(--ease) both}
+[data-screen="quiz"].is-in .q-options{animation-delay:.05s}
+@keyframes q-in{from{opacity:0; transform:translateY(8px)}}
+
+/* The radio rows on the details form (gender). The quiz answers above
+   are .ans, not .opt; .opt is the form's. */
 .opt{
   display:flex; align-items:center; gap:14px;
   width:100%; padding:16px 20px;
@@ -194,12 +291,6 @@ h1{
   transition:border-color .16s var(--ease), box-shadow .16s var(--ease);
 }
 .opt:hover{border-color:var(--line-strong); background:var(--wash)}
-.opt[aria-pressed="true"]{border-color:var(--orange)}
-.opt[aria-pressed="true"]::before{
-  border-color:var(--orange);
-  box-shadow:inset 0 0 0 4px var(--orange);
-}
-.opt:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px var(--focus)}
 
 /* ---------- the gate, the details form, the door that stays shut ----------
    Everything from here to the result belongs to the three screens in
@@ -243,11 +334,9 @@ h1{
   margin-left:8px;
 }
 
-/* The gender radios reuse .opt. The visual state moves from
-   [aria-pressed] to :has(input:checked) because these are real radios —
-   :has() is already load-bearing in this file (see the intro widening
-   below), so this adds no new browser assumption, and where it is not
-   understood the radio still works and simply loses its filled circle. */
+/* The gender radios are .opt, and their state is :has(input:checked)
+   because they are real radios. Where :has() is not understood the
+   radio still works and simply loses its filled circle. */
 .opt-set{display:grid; gap:10px}
 .opt:has(input:checked){border-color:var(--orange)}
 .opt:has(input:checked)::before{
@@ -287,6 +376,7 @@ h1{
 .cfig .q{fill:none; stroke:var(--line-strong); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
 .cfig .h{fill:none; stroke:var(--accent); stroke-width:3.2; stroke-linecap:round}
 .cfig .d{fill:var(--accent)}
+.cfig .dot-q{fill:var(--line-strong)}
 /* The one dashed shape on the page: the thing this test does NOT give
    you. Drawn as an outline nobody has filled in, because that is what it
    is. */
@@ -524,76 +614,236 @@ h1{
 }
 .r-credit a{color:var(--muted)}
 
-/* ---------- the small print ----------
-   Two blocks that are not decoration and must not be treated as such: who
-   wrote the instrument, and what this page is not. Both appear before the
-   reader starts AND on the result, because the person who most needs the
-   second one is the person who just scored five. */
-.t-note{
-  margin-top:clamp(34px,6vh,64px);
-  padding-top:clamp(20px,3vh,28px);
+/* ---------- the small print, folded ----------
+   Who wrote the instrument, and what this page is not. Both are read
+   before anybody answers — folded under the start button rather than
+   standing between a reader and it. The summary is a full-width row in
+   the mono the page uses for labels, with a plus that turns as it opens. */
+.t-more{
+  width:100%; max-width:640px; margin-inline:auto;
   border-top:1px solid var(--line);
 }
-.t-note h2{
-  font-family:var(--mono); font-size:12px; font-weight:400;
-  letter-spacing:.12em; text-transform:uppercase; color:var(--faint);
-  margin-bottom:12px;
+.t-more:last-of-type{border-bottom:1px solid var(--line)}
+.t-hero + .t-more{margin-top:clamp(40px,8vh,88px)}
+.t-more > summary{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:18px 2px; cursor:pointer; list-style:none;
+  font-family:var(--mono); font-size:12px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted);
+  transition:color .16s var(--ease);
 }
-.t-note p{
-  font-size:14px; line-height:1.7; color:var(--muted);
-  max-width:68ch;
+.t-more > summary::-webkit-details-marker{display:none}
+.t-more > summary::after{
+  content:"+"; flex:none; font-size:18px; line-height:1; letter-spacing:0;
+  color:var(--faint); transition:transform .2s var(--ease);
 }
-.t-note p + p{margin-top:.9em}
-/* The list of authors is followed by more prose, and ran straight into it. */
-.t-note ul + p{margin-top:.9em}
-.t-note ul{list-style:none; margin-top:10px; display:grid; gap:6px}
-.t-note li{font-size:14px; line-height:1.6; color:var(--muted)}
-.t-note li b{font-weight:600; color:var(--ink-soft)}
-.t-note .warn{color:var(--ink-soft)}
+.t-more[open] > summary::after{transform:rotate(45deg)}
+.t-more > summary:hover{color:var(--ink)}
+.t-more > summary:focus-visible{outline:none; box-shadow:0 0 0 3px var(--focus); border-radius:6px}
+.t-more-body{padding:0 2px 26px}
+.t-more-body p{font-size:15px; line-height:1.7; color:var(--muted); max-width:68ch}
+.t-more-body p + p, .t-more-body ul + p{margin-top:.9em}
+.t-more-body > ul:not(.t-keeps){list-style:none; margin-top:10px; display:grid; gap:6px}
+.t-more-body > ul:not(.t-keeps) li{font-size:14.5px; line-height:1.6; color:var(--muted)}
+.t-more-body li b{font-weight:600; color:var(--ink-soft)}
+.t-more-body .warn{color:var(--ink-soft)}
+.t-more-body .t-fig{max-width:260px}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important}
 }
 
-/* ---------- the intro, on a desktop ----------
-   The wrap above is capped at 760px because a form that sprawls is a form
-   you lose your place in — and that stays true of the questions and the
-   result. It was never true of the page in front of them, which is a
-   pitch: a headline, what it costs you, and two buttons. Capped at 760 on
-   a 1440px screen that pitch was a strip down the middle of an empty
-   page.
+/* ---------- the intro: one screen ----------
+   What it is, two things to keep in mind, and the button — centred, and
+   all of it above the fold on a 720-tall laptop, so the decision and the
+   means to act on it are on the same screen. */
+.t-hero{
+  width:100%; max-width:620px; margin-inline:auto;
+  text-align:center;
+  padding-block:clamp(4px,3vh,40px) 0;
+}
+.t-hero .lede{max-width:54ch; margin-inline:auto}
 
-   So the intro, and only the intro, takes the width. :has() is doing the
-   asking, and where it is not understood the page keeps the 760 it had —
-   which is the narrow version, not a broken one. */
-@media (min-width:900px){
-  /* Inside the breakpoint, not above it: between 760 and 900 the columns
-     have not split yet, and a wrap let loose before they do is one long
-     line of lede. */
-  .t-wrap:has(> [data-screen="intro"]:not([hidden])){max-width:1600px}
+.t-points{
+  list-style:none; text-align:left;
+  max-width:440px; margin:clamp(26px,4.4vh,40px) auto 0;
+  display:grid; gap:clamp(14px,2.2vh,20px);
+}
+.t-points li{display:flex; align-items:flex-start; gap:15px}
+.t-point-icon{
+  flex:none; display:grid; place-items:center;
+  width:46px; height:46px; border-radius:999px;
+  background:var(--wash);
+}
+.t-point-icon .cfig{width:24px; height:24px}
+.t-point-body{display:grid; gap:2px; padding-top:3px}
+.t-point-body b{font-weight:600; font-size:16px; color:var(--ink)}
+.t-point-body span{font-size:14.5px; line-height:1.5; color:var(--muted)}
 
-  .t-intro{
-    display:grid;
-    grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
-    column-gap:clamp(40px,5vw,88px);
-    align-items:start;
+.btn-lg{
+  justify-content:center; width:100%; max-width:440px;
+  margin-top:clamp(26px,4.4vh,40px);
+  padding:18px 26px; font-size:17px;
+  box-shadow:0 12px 30px -12px rgba(247,92,3,.55);
+}
+.btn-lg:hover{box-shadow:0 14px 34px -10px rgba(247,92,3,.6)}
+.t-meta{
+  margin-top:16px;
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em;
+  color:var(--muted);
+}
+.t-meta-sub{
+  max-width:44ch; margin:6px auto 0;
+  font-size:13px; line-height:1.55; color:var(--faint);
+}
+
+/* ---------- the breather ---------- */
+[data-screen="breath"]{text-align:center}
+.b-mark{display:block; width:52px; height:52px; margin:clamp(8px,4vh,48px) auto clamp(18px,3vh,28px)}
+.b-h{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(26px,4.6vw,40px); line-height:1.12; letter-spacing:-.02em;
+  color:var(--ink); text-wrap:balance; outline:none;
+}
+[data-screen="breath"] .lede{max-width:50ch; margin-inline:auto}
+.b-fig{margin:clamp(24px,4vh,36px) auto 0; max-width:220px}
+[data-screen="breath"] .t-actions{justify-content:center}
+[data-screen="breath"] .q-foot{justify-content:center}
+
+/* ---------- the result, as a card ----------
+   The score sits in the warm wash the homepage gives its Start here
+   door, so the page that door leads to ends in the same light. */
+.r-card{
+  padding:clamp(22px,4vw,36px);
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:
+    linear-gradient(158deg, rgba(247,92,3,.10), rgba(247,92,3,.02) 62%),
+    var(--surface);
+}
+.r-card .r-verdict{margin-top:clamp(20px,3vh,28px)}
+.r-actions{margin-top:clamp(24px,4vh,34px)}
+
+/* Every answer. Number, question, the answer as a chip; the chips in
+   the shaded band take the accent, which is the one thing on this list a
+   clinician scans for. */
+.r-answers{margin-top:clamp(34px,6vh,56px)}
+.r-sub{
+  font-family:var(--mono); font-size:12px; font-weight:400;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--faint);
+  outline:none;
+}
+.r-sub-note{margin-top:8px; font-size:14px; line-height:1.6; color:var(--muted)}
+.r-list{list-style:none; margin-top:14px; border-top:1px solid var(--line)}
+.r-list li{
+  display:grid; grid-template-columns:34px 1fr auto; align-items:baseline; gap:6px 14px;
+  padding:13px 0; border-bottom:1px solid var(--line);
+}
+.r-q-n{font-family:var(--mono); font-size:12px; color:var(--faint)}
+.r-q{font-size:14.5px; line-height:1.55; color:var(--ink-soft)}
+.r-a{
+  justify-self:end; white-space:nowrap;
+  padding:4px 11px; border-radius:999px;
+  font-size:12.5px; font-weight:500; line-height:1.4;
+  background:var(--wash); color:var(--muted);
+}
+.r-a.is-band{
+  background:color-mix(in srgb, var(--accent) 14%, transparent);
+  color:var(--accent); font-weight:600;
+}
+@media (max-width:560px){
+  .r-list li{grid-template-columns:28px 1fr}
+  .r-a{grid-column:2; justify-self:start}
+}
+
+/* The heading of each form screen — the three quick things, the last
+   step, the door that stays shut — in the display face, like every
+   other heading on the page. They were falling back to the sans. */
+[data-screen="about"] > h2,
+[data-screen="details"] > h2,
+[data-screen="young"] > h2{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(26px,4.6vw,40px); line-height:1.12; letter-spacing:-.02em;
+  color:var(--ink); text-wrap:balance; outline:none;
+}
+
+/* ---------- three quick things ----------
+   The details form's own .field and .opt-set, a screen before the
+   questions. The diagnosis list is five rows long, so its rows are a
+   touch tighter than gender's three. */
+[data-screen="about"] .opt-set{gap:8px}
+[data-screen="about"] .f-set + .f-err{margin-top:8px}
+
+/* ---------- the unlock ----------
+   The score and verdict first, in the same warm card the full result
+   uses, so what is free and what is offered read as one thing. Then the
+   four things the sign-in adds, set like the intro's two points. */
+.u-preview{
+  margin-top:4px;
+  padding:clamp(20px,3.6vw,30px);
+  border:1px solid var(--line); border-radius:var(--radius-lg);
+  background:
+    linear-gradient(158deg, rgba(247,92,3,.10), rgba(247,92,3,.02) 62%),
+    var(--surface);
+}
+.u-preview .r-score{font-size:clamp(46px,9vw,72px)}
+.u-verdict{
+  margin-top:clamp(14px,2.4vh,20px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(18px,2.6vw,24px); line-height:1.25; letter-spacing:-.015em;
+  color:var(--ink); text-wrap:balance; outline:none;
+}
+.u-h{
+  margin-top:clamp(30px,5vh,48px);
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(24px,4vw,34px); line-height:1.15; letter-spacing:-.02em;
+  color:var(--ink); text-wrap:balance; outline:none;
+}
+.u-gets{
+  list-style:none; margin-top:clamp(18px,3vh,26px);
+  display:grid; gap:clamp(14px,2.2vh,18px);
+}
+.u-gets li{display:flex; align-items:flex-start; gap:15px}
+.u-gets .t-point-icon{width:42px; height:42px}
+.u-gets .cfig{width:22px; height:22px}
+[data-screen="gate"] .t-actions{margin-top:clamp(26px,4vh,36px)}
+[data-screen="gate"] .btn-go{padding-inline:30px}
+.u-leave{margin-top:14px; font-size:14px}
+.g-leave{color:var(--faint); text-decoration:none; border-bottom:1px solid var(--line-strong)}
+.g-leave:hover{color:var(--ink); border-bottom-color:var(--ink)}
+.g-leave:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+
+/* Paper only. */
+.r-print-head{display:none}
+
+/* ---------- on paper ----------
+   "A copy that stays yours" is the headline's promise, and this is it:
+   the result, the caution, and every answer, in black on white whatever
+   theme the screen was in, with the pips and band marks drawn so they
+   survive a printer that drops backgrounds. The #_ is only there to
+   outrank the dark-theme selectors in theme.css. */
+@media print{
+  html:not(#_){
+    --surface:#FFFFFF; --wash:#FFFFFF; --ink:#101018; --ink-soft:#26262F;
+    --muted:#3D3D48; --faint:#55555F; --line:#CFCFD6; --line-strong:#8E8E99;
+    --accent:#101018;
   }
-  /* The facts and the buttons line up with the headline rather than with
-     the top of the column, which is where the eye is already. */
-  .t-intro-spec{padding-top:clamp(8px,1.6vh,18px)}
-  .t-intro-spec .t-facts{margin-top:0}
-
-  /* The two notes are footnotes to the pitch, not sections of it: side by
-     side they read as the small print they are, and the page ends where
-     the buttons said it would. */
-  /* :not([hidden]) is load-bearing, not tidiness. `display:grid` from an
-     author sheet outranks the `[hidden]{display:none}` the browser brings,
-     so without it this rule un-hides the intro the moment someone starts
-     the quiz and the pitch sits on top of question one. */
-  [data-screen="intro"]:not([hidden]){
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    column-gap:clamp(40px,5vw,88px);
+  @page{margin:16mm 16mm 18mm}
+  body{background:#FFFFFF; display:block; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+  .t-head, .q-bar, .r-actions, .r-saved, .r-next{display:none !important}
+  .t-wrap{max-width:none; padding:0}
+  .r-print-head{
+    display:flex; justify-content:space-between; gap:16px;
+    font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    padding-bottom:8px; margin-bottom:18px; border-bottom:1px solid var(--ink);
   }
-  [data-screen="intro"] > .t-intro{grid-column:1 / -1}
+  .r-card{background:none; break-inside:avoid}
+  .r-score{color:var(--ink)}
+  .pip{background:none; border:1.5px solid var(--ink)}
+  .pip.is-on{background:var(--ink)}
+  .r-caution{border-left-color:var(--ink); background:none}
+  .r-partb{break-inside:avoid}
+  .r-list li{break-inside:avoid}
+  .r-a{background:none; border:1px solid var(--line-strong); color:var(--ink-soft)}
+  .r-a.is-band{background:none; border:1.5px solid var(--ink); color:var(--ink); font-weight:700}
+  .r-a.is-band::before{content:"\25CF\00A0"}
 }

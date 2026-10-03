@@ -1,7 +1,9 @@
 /**
  * GET  /api/self-check   ->  { profile, consent, needsConsent }
- * POST /api/self-check   { name, phone, age, gender, part, answers, lang,
- *                          consent: { terms, health, contact, version } }
+ * POST /api/self-check   { name, phone, age, gender, diagnosis, part,
+ *                          answers, lang,
+ *                          consent: { terms, health, contact, version }
+ *                                 | { reuse: true, version } }
  *                        ->  { ok: true, id }
  *
  * The screener's record. Two methods in one file, which is a departure
@@ -33,10 +35,15 @@ import { configured, userWithEmail, db } from './_supabase.js';
  * "if the notice changes, you are asked again, and the old tick is not
  * carried over" — and this line is the whole of that promise. The two may
  * not move independently. */
-const CONSENT_VERSION = 'pdpa-2026-09';
+const CONSENT_VERSION = 'pdpa-2026-10';
 
 const GENDERS = ['male', 'female', 'undisclosed'];
 const LANGS = ['en', 'ms'];
+/* What somebody said about diagnosis, asked before the questions since
+   2026-10-04. 'undisclosed' is a real answer on the page and is stored as
+   null — the column has no fifth value, because "prefer not to say" and
+   "not asked" mean the same thing to anybody reading the table. */
+const DIAGNOSES = ['never', 'considering', 'diagnosed', 'treatment', 'undisclosed'];
 
 /* The bands are not here on purpose. score_a is a generated column in
    sql/002_self_check.sql, computed from the answers by the database.
@@ -134,7 +141,29 @@ async function write(user, req, res) {
   if (consent.version !== CONSENT_VERSION) {
     return res.status(400).json({ error: 'the notice changed — reload the page' });
   }
-  if (consent.terms !== true || consent.health !== true) {
+
+  /* Two ways to arrive with consent. Ticked on the page just now, or
+     given before under this same notice — the page skips the form for
+     that person, and says so with `reuse`. A reuse is never taken on the
+     page's word: the row is looked up here, and its id goes to the
+     database, which checks it a second time. */
+  let consentId = null;
+  if (consent.reuse === true) {
+    try {
+      const rows = await db(
+        'self_check_consent' +
+          `?user_id=eq.${user.id}` +
+          `&version=eq.${encodeURIComponent(CONSENT_VERSION)}` +
+          '&terms=is.true&health=is.true' +
+          '&select=id&order=given_at.desc&limit=1'
+      );
+      consentId = rows && rows[0] ? rows[0].id : null;
+    } catch (err) {
+      console.error('[self-check] consent lookup', err.message);
+      return res.status(502).json({ error: 'could not read' });
+    }
+    if (!consentId) return res.status(400).json({ error: 'consent required' });
+  } else if (consent.terms !== true || consent.health !== true) {
     return res.status(400).json({ error: 'consent required' });
   }
 
@@ -162,6 +191,11 @@ async function write(user, req, res) {
   const gender = String(body.gender || '');
   if (!GENDERS.includes(gender)) {
     return res.status(400).json({ error: 'gender looks wrong' });
+  }
+
+  const diagnosis = String(body.diagnosis || '');
+  if (!DIAGNOSES.includes(diagnosis)) {
+    return res.status(400).json({ error: 'bad request' });
   }
 
   const part = String(body.part || '');
@@ -212,7 +246,11 @@ async function write(user, req, res) {
         p_version: CONSENT_VERSION,
         p_terms: true,
         p_health: true,
-        p_contact: consent.contact === true,
+        /* With a reused consent the database takes contact from that row
+           and ignores this; false is only a placeholder. */
+        p_contact: consentId ? false : consent.contact === true,
+        p_diagnosis: diagnosis === 'undisclosed' ? null : diagnosis,
+        p_consent: consentId,
       },
     });
 

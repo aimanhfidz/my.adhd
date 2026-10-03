@@ -103,6 +103,8 @@
     en: {
       qCount: function (n, t) { return 'Question ' + n + ' of ' + t; },
       partA: 'Part A', partB: 'Part B',
+      goTo: function (n) { return 'Go to question ' + n; },
+      inBand: 'in the shaded band',
       verdictYes: 'Your answers fall within the range that warrants a proper assessment.',
       verdictNo:  'Your answers fall below the range this screener flags.',
       detailYes: 'Four or more of your Part A answers landed in the bands the ASRS treats as significant. On this instrument that means symptoms highly consistent with <span class="adhd-word">ADHD</span> in adults, and that further investigation is warranted — by a psychiatrist or clinical psychologist, who are the only people who can actually diagnose it.',
@@ -116,6 +118,7 @@
       eAgeHigh: 'That age looks wrong. Check the digits?',
       eName: 'We need something to call you — two letters or more.',
       eGender: 'Pick one of the three.',
+      eDx: 'Pick the one closest to where you are — or prefer not to say.',
       eConsent: 'The first two boxes are the ones we cannot go on without.',
       ePhone: 'That does not look like a phone number we could dial. Leave it blank if you would rather not give one.',
       savedOk: 'Saved to your account.',
@@ -124,6 +127,8 @@
     ms: {
       qCount: function (n, t) { return 'Soalan ' + n + ' daripada ' + t; },
       partA: 'Bahagian A', partB: 'Bahagian B',
+      goTo: function (n) { return 'Pergi ke soalan ' + n; },
+      inBand: 'dalam julat berlorek',
       verdictYes: 'Jawapan awak berada dalam julat yang wajar mendapat penilaian penuh.',
       verdictNo:  'Jawapan awak berada di bawah julat yang ditandakan oleh saringan ini.',
       detailYes: 'Empat atau lebih jawapan Bahagian A awak jatuh dalam julat yang dianggap signifikan oleh ASRS. Pada instrumen ini, itu bermakna simptom yang sangat konsisten dengan <span class="adhd-word">ADHD</span> pada orang dewasa, dan siasatan lanjut adalah wajar — oleh pakar psikiatri atau ahli psikologi klinikal, satu-satunya pihak yang boleh mendiagnosisnya.',
@@ -134,13 +139,17 @@
       h1: 'Sepuluh minit, percuma, dan salinan yang kekal milik awak.',
       lede: 'Ini ialah Skala Laporan Kendiri <span class="adhd-word">ADHD</span> Dewasa (ASRS-v1.1) — soal selidik saringan yang digunakan perkhidmatan kesihatan, diterjemahkan di sini untuk bacaan.',
       lede2: 'Jawab dengan jujur tentang <b>enam bulan lepas</b>. Awak akan dapat gambaran jelas sama ada ciri-ciri awak berada dalam julat yang wajar mendapat penilaian penuh.',
-      f1k: 'Soalan', f1v: '6, atau 18 kalau awak nak gambaran yang lebih penuh',
-      f2k: 'Masa', f2v: 'Kira-kira 5 minit',
-      f3k: 'Kos', f3v: 'Percuma. Perlu log masuk Google',
-      f4k: 'Jawapan awak', f4v: 'Disimpan dalam akaun awak. Padam bila-bila masa.',
-      f5k: 'Apa yang awak dapat', f5v: 'Skor daripada 6, dan maksudnya',
-      startA: 'Mula saringan 6 soalan',
-      startAB: 'Jawab kesemua 18',
+      /* The intro's points, button and meta line, and everything new
+         since the redesign of 2026-10-04, are in the baku register of
+         docs/bahasa-melayu-reference.md: `anda`, `tidak`. The older
+         strings around them still say `awak` and are due the same pass. */
+      p1t: 'Fikirkan enam bulan yang lepas',
+      p1d: 'Bukan minggu ini sahaja, tetapi keadaan anda yang biasa.',
+      p2t: 'Jawab mengikut keadaan sebenar',
+      p2d: 'Bukan seperti yang anda harapkan, atau seperti yang dilihat orang lain.',
+      start: 'Mulakan semakan kendiri',
+      meta: 'Kira-kira 5 minit &middot; 6 soalan, kemudian 12 lagi jika anda mahu &middot; Percuma',
+      metaSub: 'Tidak perlu log masuk untuk bermula. Di akhir, log masuk dengan Google untuk mendapatkan laporan penuh anda. Ini bukan diagnosis.',
       whoH: 'Siapa yang menulis soalan ini',
       who1: 'Lapan belas soalan dalam semakan kendiri ini ialah <b>Senarai Semak Simptom Skala Laporan Kendiri <span class="adhd-word">ADHD</span> Dewasa (ASRS-v1.1)</b>. Versi Bahasa Melayu di halaman ini ialah terjemahan untuk bacaan; instrumen yang menjadi rujukan, dan yang menentukan skor, ialah teks asal dalam bahasa Inggeris, yang MyADHD tidak menulis dan tidak mengubahnya.',
       who2: 'Senarai semak ini dibangunkan bersama <b>Pertubuhan Kesihatan Sedunia (WHO)</b> dan Kumpulan Kerja <span class="adhd-word">ADHD</span> Dewasa, yang terdiri daripada:',
@@ -163,7 +172,7 @@
       notH: 'Apa yang ini bukan',
       not1: '<b>Ini alat saringan, bukan diagnosis.</b> Hanya pakar psikiatri atau ahli psikologi klinikal boleh mendiagnosis <span class="adhd-word">ADHD</span>. Skor yang tinggi ialah sebab untuk membuat temu janji itu, bukan jawapan; skor yang rendah tidak menolak apa-apa.',
       not2: 'Jawapan anda disimpan, dan inilah maksudnya.',
-      nk1: '<b>Apa yang disimpan</b> &mdash; jawapan anda, skor Bahagian A anda, dan butiran yang anda berikan: nama, umur, jantina, dan nombor telefon jika anda memberikannya.',
+      nk1: '<b>Apa yang disimpan</b> &mdash; hanya jika anda log masuk di akhir dan bersetuju: jawapan anda, skor Bahagian A anda, dan butiran yang anda berikan &mdash; nama, umur, jantina, maklumat diagnosis, dan nombor telefon jika anda memberikannya. Sebelum itu, tiada apa-apa keluar dari pelayar ini.',
       nk2: '<b>Di mana</b> &mdash; di bawah akaun Google anda, dalam pangkalan data kami di Supabase.',
       nk3: '<b>Untuk apa</b> &mdash; tiga perkara sahaja:',
       nk3a: 'untuk menghubungi anda tentang sokongan ADHD jika anda memintanya;',
@@ -171,13 +180,23 @@
       nk3c: 'dan, setelah nama dan setiap butiran pengenalan lain dibuang, untuk mengira bagaimana rakyat Malaysia mendapat skor.',
       nk4: '<b>Berapa lama</b> &mdash; 24 bulan selepas semakan kendiri terakhir anda, kemudian ia dipadam secara automatik.',
       not3: '<a href="/privacy" target="_blank" rel="noopener">Notis privasi</a> menerangkannya sepenuhnya, dalam Bahasa Inggeris dan Bahasa Melayu.',
-      howOften: 'Berapa kerap',
+      stepsNav: 'Soalan',
+      enShow: 'Tunjukkan teks asal dalam bahasa Inggeris',
+      bKicker: 'Bahagian A, selesai.',
+      bH: 'Itulah saringannya. Tarik nafas dahulu.',
+      bP: 'Skor anda datang daripada enam soalan tadi. Dua belas soalan lagi memberi pakar klinikal konteks tambahan &mdash; ia tidak mengubah skor, dan mengambil masa kira-kira tiga minit.',
+      bSee: 'Lihat keputusan saya',
+      bMore: 'Jawab 12 lagi',
+      rPrint: 'Cetak atau simpan sebagai PDF',
+      rAnswers: 'Jawapan anda',
+      rAnswersNote: 'Jawapan yang ditanda berada dalam julat berlorek soalan itu &mdash; yang akan ditanya dahulu oleh pakar klinikal.',
       back: '← Soalan sebelumnya',
       hint: 'Tekan 1–5 untuk menjawab',
       rKicker: 'Keputusan awak.',
       rOf: 'daripada 6 jawapan Bahagian A dalam julat signifikan',
       rB1: 'Awak juga jawab Bahagian B, di mana',
       rB2: 'daripada 12 jatuh dalam julat berlorek. Bahagian B tidak diberi skor dan tidak mengubah keputusan di atas — ia memberi pakar klinikal petunjuk tambahan untuk ditanya.',
+      n1Dx: 'Bawa laporan ini ke temu janji anda yang seterusnya &mdash; ia menunjukkan keadaan anda sepanjang enam bulan yang lepas.',
       n1: 'Bawa keputusan ini kepada pakar psikiatri atau ahli psikologi klinikal — ia bagi mereka sesuatu yang kukuh untuk dimulakan.',
       n2: 'Tulis apa yang betul-betul tak kena dalam masa seminggu, dan bawa sekali.',
       n3: 'Apa pun angkanya, hari ini tetap kena dihabiskan. <a href="/tools">Tengok apa yang kami bina untuk tu</a>.',
@@ -185,28 +204,48 @@
       home: 'Kembali ke MyADHD',
 
       /* ---------- the gate, the form, the door that stays shut ---------- */
-      gKicker: 'Sebelum awak mula.',
-      gH: 'Yang pertama: keputusan ini milik siapa.',
-      gLede: 'Semakan kendiri ni simpan keputusan awak, jadi ia kena tahu keputusan siapa. Maksudnya log masuk Google &mdash; untuk nama dan e-mel awak, dan takde apa-apa lagi. Ia tak minta kalendar atau kenalan awak.',
-      gGo: 'Teruskan dengan Google',
-      gBack: 'Kembali',
-      gFine: 'Saringan ni percuma dan akan kekal percuma. Log masuk ialah cara keputusan tu disimpan untuk awak &mdash; dan cara awak boleh padam ia nanti. Skrin seterusnya ialah skrin Google sendiri; awak akan balik ke sini lepas tu.',
+      /* Three quick things, before the questions */
+      aKicker: 'Sebelum soalan.',
+      aH: 'Tiga perkara ringkas.',
+      aLede: 'Maklumat ini kekal dalam pelayar ini bersama jawapan anda. Tiada apa-apa dihantar melainkan anda log masuk di akhir dan bersetuju.',
+      aDx: 'Adakah anda pernah didiagnosis dengan <span class="adhd-word">ADHD</span>?',
+      dxNever: 'Tidak, saya belum pernah berjumpa sesiapa tentangnya',
+      dxConsidering: 'Belum &mdash; saya sedang mempertimbangkan penilaian',
+      dxDiagnosed: 'Ya, saya telah didiagnosis',
+      dxTreatment: 'Ya, dan saya sedang menerima rawatan',
+      dxNone: 'Tidak mahu nyatakan',
+      aGo: 'Mulakan soalan',
 
-      dKicker: 'Hampir sampai.',
-      dH: 'Beberapa butiran, kemudian kita mula.',
-      dLede: 'Ini yang disimpan bersama jawapan awak. Baca notis di bawahnya sebelum awak tanda apa-apa &mdash; ia pendek, dan itulah bahagian yang betul-betul penting.',
+      /* The unlock, after the questions */
+      uKicker: 'Keputusan anda sudah sedia.',
+      uH: 'Log masuk untuk mendapatkan laporan penuh anda.',
+      u1t: 'Laporan penuh',
+      u1d: 'Maksud skor anda, setiap jawapan ditanda seperti yang dibaca oleh pakar klinikal, dan Bahagian B jika anda menjawabnya.',
+      u2t: 'Salinan untuk dibawa',
+      u2d: 'Cetak, atau simpan sebagai PDF, untuk temu janji anda.',
+      u3t: 'Disimpan dalam akaun anda, bukan dalam pelayar ini',
+      u3d: 'Disimpan di bawah akaun Google anda. Minta kami memadamnya pada bila-bila masa.',
+      u4t: 'Sokongan, hanya jika anda minta',
+      u4d: 'Satu tanda pilihan dan kami akan menghubungi anda tentang sokongan ADHD. Tanpanya, kami tidak akan menghubungi anda.',
+      gGo: 'Teruskan dengan Google',
+      uFine: 'Google memberi kami nama dan e-mel anda &mdash; bukan kalendar, kenalan atau apa-apa yang lain. Kami tidak menjualnya, dan tiada surat berita. Skrin seterusnya ialah skrin Google sendiri; anda akan kembali terus ke laporan anda.',
+      uLeave: 'Keluar tanpa menyimpan',
+
+      dKicker: 'Langkah terakhir.',
+      dH: 'Apa yang kami simpan, dan hak anda terhadapnya.',
+      dLede: 'Laporan anda hanya satu tekanan lagi. Inilah yang disimpan bersamanya. Baca notis sebelum anda menanda apa-apa &mdash; ia pendek, dan itulah bahagian yang paling penting.',
       dName: 'Nama awak',
       dNamePh: 'Nak kami panggil awak apa?',
       dPhone: 'Nombor telefon <span class="f-opt" data-i18n="dPhoneOpt">pilihan</span>',
       dPhoneOpt: 'pilihan',
       dPhonePh: '012-345 6789',
-      dAge: 'Umur awak',
+      dAge: 'Umur anda',
       dAgePh: 'cth. 28',
       dGender: 'Jantina',
       gMale: 'Lelaki',
       gFemale: 'Perempuan',
       gNone: 'Tidak mahu nyatakan',
-      dGo: 'Mula saringan',
+      dGo: 'Dapatkan laporan saya',
 
       /* The notice is shown in both languages at once and neither copy is
          behind the switch, so these two keys deliberately hold the same
@@ -217,7 +256,7 @@
       cNoticeMs: null,
 
       cTerms: 'Saya telah membaca dan bersetuju dengan <a href="/terms" target="_blank" rel="noopener">Terma Penggunaan</a> dan <a href="/privacy" target="_blank" rel="noopener">Notis Privasi</a>.',
-      cHealth: 'Saya memberi kebenaran nyata kepada MyADHD untuk memproses jawapan saya kepada soalan kesihatan ini &mdash; data peribadi sensitif di bawah PDPA &mdash; bagi tiga tujuan di atas.',
+      cHealth: 'Saya memberi kebenaran nyata kepada MyADHD untuk memproses jawapan saya kepada soalan kesihatan ini dan maklumat diagnosis yang saya berikan &mdash; data peribadi sensitif di bawah PDPA &mdash; bagi tiga tujuan di atas.',
       cContact: 'Anda boleh menghubungi saya tentang sokongan, sumber dan acara ADHD. <span class="f-opt" data-i18n="cContactOpt">pilihan</span>',
       cContactOpt: 'pilihan',
 
@@ -234,6 +273,7 @@
       eAgeHigh: 'Umur itu nampak tidak betul. Semak semula angkanya?',
       eName: 'Kami perlukan sesuatu untuk panggil awak — dua huruf atau lebih.',
       eGender: 'Pilih salah satu daripada tiga.',
+      eDx: 'Pilih yang paling hampir dengan keadaan anda — atau pilih tidak mahu nyatakan.',
       eConsent: 'Dua kotak pertama itulah yang kami tidak boleh teruskan tanpanya.',
       ePhone: 'Itu tak nampak macam nombor telefon yang boleh kami hubungi. Biar kosong kalau awak tak nak bagi.',
       savedOk: 'Disimpan dalam akaun awak.',
@@ -307,6 +347,7 @@
        their place in the questions */
     if (!screens.quiz.hasAttribute('hidden')) render();
     if (!screens.result.hasAttribute('hidden')) writeResult();
+    if (!screens.gate.hasAttribute('hidden')) paintPreview();
     /* An error is cleared rather than translated. Somebody who switches
        language mid-form should not be left holding a sentence in the
        language they just left, and re-rendering it in the new one would
@@ -325,10 +366,12 @@
 
   var screens = {
     intro:   $('[data-screen="intro"]'),
+    about:   $('[data-screen="about"]'),
     gate:    $('[data-screen="gate"]'),
     details: $('[data-screen="details"]'),
     young:   $('[data-screen="young"]'),
     quiz:    $('[data-screen="quiz"]'),
+    breath:  $('[data-screen="breath"]'),
     result:  $('[data-screen="result"]')
   };
 
@@ -344,12 +387,26 @@
        to, not whatever the inputs happen to say afterwards. */
     details: null
   };
+  /* Between a pick and the next question. The pick is drawn first and
+     the question changes a beat later, so the reader sees what they
+     chose — and while that beat runs, a second tap or a held-down key
+     cannot quietly answer the next question for them. */
+  var busy = false;
+  var PICK_MS = 380;
+  /* Whether the original English is showing under a Malay question.
+     Kept across questions: somebody who needed it for one will want it
+     for the next. */
+  var showEn = false;
   if (lang !== 'en') applyLang();
 
   function show(name) {
     Object.keys(screens).forEach(function (k) {
       screens[k].toggleAttribute('hidden', k !== name);
     });
+    /* On the body as well, so the stylesheet can change the furniture
+       around a screen — the bar, the count in the head — without
+       reaching for :has(). */
+    document.body.setAttribute('data-view', name);
     window.scrollTo(0, 0);
     /* Move focus to the top of whatever just appeared, or a keyboard and a
        screen reader are both left standing where the old screen was. */
@@ -358,49 +415,152 @@
   }
 
   /* ---------- the question ---------- */
+  function answered(k) { return state.answers[k] !== undefined; }
+  /* The first question with no answer — the furthest the navigator will
+     let anybody go. */
+  function reach() {
+    for (var k = 0; k < state.list.length; k++) if (!answered(k)) return k;
+    return state.list.length;
+  }
+
+  function paintProgress() {
+    var done = 0;
+    for (var k = 0; k < state.list.length; k++) if (answered(k)) done++;
+    $('.bar-fill').style.width = (done / state.list.length * 100) + '%';
+  }
+
+  function paintSteps() {
+    var nav = $('.q-steps');
+    var far = reach();
+    nav.textContent = '';
+    state.list.forEach(function (_, k) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'q-step' +
+        (k >= PART_A.length ? ' q-step--b' : '') +
+        (answered(k) ? ' is-done' : '') +
+        (k === state.i ? ' is-here' : '');
+      b.setAttribute('aria-label', T().goTo(k + 1));
+      if (k === state.i) b.setAttribute('aria-current', 'step');
+      if (k > far) b.disabled = true;
+      b.addEventListener('click', function () {
+        if (busy || k === state.i) return;
+        state.i = k; render(); focusQ();
+      });
+      nav.appendChild(b);
+    });
+  }
+
+  function paintEn() {
+    var open = lang === 'ms' && showEn;
+    $('.q-en').hidden = lang !== 'ms';
+    $('.q-en').setAttribute('aria-expanded', open ? 'true' : 'false');
+    $('.q-en-text').hidden = !open;
+  }
+
+  function focusQ() {
+    window.scrollTo(0, 0);
+    var h = $('.q-text');
+    h.setAttribute('tabindex', '-1');
+    h.focus({ preventScroll: true });
+  }
+
   function render() {
     var item = state.list[state.i];
     var n = state.i + 1;
-    var total = state.list.length;
+    var inA = state.i < PART_A.length;
 
-    $('.q-count').textContent = T().qCount(n, total);
-    $('.q-part').textContent = state.i < PART_A.length ? T().partA : T().partB;
+    $('.t-count').textContent = n + ' / ' + state.list.length;
+    $('.q-meta').textContent = (inA ? T().partA : T().partB) + ' · ' +
+      T().qCount(inA ? n : n - PART_A.length, inA ? PART_A.length : PART_B.length);
     $('.q-text').textContent = q(state.i);
-    $('.bar-fill').style.width = ((state.i) / total * 100) + '%';
+    $('.q-en-text').textContent = item.q;
+    paintEn();
 
     var box = $('.q-options');
     box.innerHTML = '';
     scale().forEach(function (label, v) {
       var b = document.createElement('button');
       b.type = 'button';
-      b.className = 'opt';
-      b.textContent = label;
-      if (state.answers[state.i] === v) b.setAttribute('aria-pressed', 'true');
-      else b.setAttribute('aria-pressed', 'false');
+      b.className = 'ans';
+      b.setAttribute('aria-pressed', state.answers[state.i] === v ? 'true' : 'false');
+      var num = document.createElement('span');
+      num.className = 'ans-n';
+      num.setAttribute('aria-hidden', 'true');
+      num.textContent = v + 1;
+      var txt = document.createElement('span');
+      txt.className = 'ans-l';
+      txt.textContent = label;
+      b.appendChild(num); b.appendChild(txt);
       b.addEventListener('click', function () { answer(v); });
       box.appendChild(b);
     });
 
     $('.q-back').disabled = state.i === 0;
+    paintProgress();
+    paintSteps();
+
+    /* The question arrives rather than appears: the same short rise every
+       time, restarted by taking the class off and forcing a layout. The
+       reduced-motion rule at the foot of test.css flattens it. */
+    screens.quiz.classList.remove('is-in');
+    void screens.quiz.offsetWidth;
+    screens.quiz.classList.add('is-in');
   }
 
   function answer(v) {
+    if (busy) return;
     state.answers[state.i] = v;
-    if (state.i + 1 < state.list.length) { state.i++; render(); }
-    else finish();
+    $$('.q-options .ans').forEach(function (b, k) {
+      b.setAttribute('aria-pressed', k === v ? 'true' : 'false');
+    });
+    paintProgress();
+    paintSteps();
+    busy = true;
+    setTimeout(function () { busy = false; advance(); }, PICK_MS);
   }
 
-  $('.q-back').addEventListener('click', function () {
-    if (state.i > 0) { state.i--; render(); }
-  });
+  /* On to the next question; after the sixth, to the breather unless
+     Part B has already been taken on; after the last, the result. */
+  function advance() {
+    if (screens.quiz.hasAttribute('hidden')) return;
+    if (state.i + 1 < state.list.length) { state.i++; render(); focusQ(); return; }
+    if (!state.withB) { show('breath'); return; }
+    finish();
+  }
+
+  function back() {
+    if (busy || state.i === 0) return;
+    state.i--; render(); focusQ();
+  }
+  $('.q-back').addEventListener('click', back);
+
+  $('.q-en').addEventListener('click', function () { showEn = !showEn; paintEn(); });
 
   /* Number keys 1-5 pick an answer. The mouse is the slow way through
      eighteen questions and this instrument is meant to take five minutes. */
   document.addEventListener('keydown', function (e) {
     if (screens.quiz.hasAttribute('hidden')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
     var n = parseInt(e.key, 10);
     if (n >= 1 && n <= 5) { e.preventDefault(); answer(n - 1); }
-    if (e.key === 'Backspace' && state.i > 0) { e.preventDefault(); state.i--; render(); }
+    if (e.key === 'Backspace') { e.preventDefault(); back(); }
+    if (e.key === 'Escape' && showEn) { showEn = false; paintEn(); }
+  });
+
+  /* ---------- the breather ----------
+     The score is settled by question six. Going on is offered here,
+     where it means something, and not before. */
+  $('.b-see').addEventListener('click', function () { finish(); });
+  $('.b-more').addEventListener('click', function () {
+    state.withB = true;
+    state.list = PART_A.concat(PART_B);
+    state.i = PART_A.length;
+    render(); show('quiz');
+  });
+  $('.b-back').addEventListener('click', function () {
+    state.i = PART_A.length - 1;
+    render(); show('quiz');
   });
 
   /* ---------- the score ----------
@@ -467,64 +627,161 @@
       bWrap.hidden = true;
     }
 
+    /* Somebody already diagnosed is not sent to get diagnosed: the first
+       next step becomes the appointment they already have. */
+    var dx = state.about && (state.about.diagnosis === 'diagnosed' || state.about.diagnosis === 'treatment');
+    $('[data-i18n="n1"]').hidden = !!dx;
+    $('[data-i18n="n1Dx"]').hidden = !dx;
+
+    $('.r-date').textContent = (state.doneAt || new Date())
+      .toLocaleDateString(lang === 'ms' ? 'ms-MY' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    /* Every answer, as it was given, in the language on screen. Built
+       with textContent: these strings are ours, but this list is the one
+       a reader will print and hand over, and there is no reason for it to
+       be the place that learns to trust innerHTML. */
+    var list = $('.r-list');
+    list.textContent = '';
+    state.list.forEach(function (item, k) {
+      if (!answered(k)) return;
+      var v = state.answers[k];
+      var inA = k < PART_A.length;
+      var li = document.createElement('li');
+      var num = document.createElement('span');
+      num.className = 'r-q-n';
+      num.textContent = (inA ? 'A' : 'B') + (inA ? k + 1 : k + 1 - PART_A.length);
+      var txt = document.createElement('span');
+      txt.className = 'r-q';
+      txt.textContent = q(k);
+      var chip = document.createElement('span');
+      chip.className = 'r-a' + (v >= item.band ? ' is-band' : '');
+      chip.textContent = scale()[v];
+      if (v >= item.band) {
+        var sr = document.createElement('span');
+        sr.className = 'sr-only';
+        sr.textContent = ', ' + T().inBand;
+        chip.appendChild(sr);
+      }
+      li.appendChild(num); li.appendChild(txt); li.appendChild(chip);
+      list.appendChild(li);
+    });
   }
 
-  function finish() {
-    writeResult();
-    $('.bar-fill').style.width = '100%';
-    show('result');
+  /* ---------- the end of the questions ----------
+     Three ways out, and which one depends on who is reading:
 
-    /* The result is on the screen before this opens a socket, and that
-       ordering is the whole guarantee. Somebody who has just answered
-       eighteen questions about their own attention is not made to watch a
-       spinner to find out their score, and a network they do not control
-       cannot take the result away from them. Never awaited, never
-       retried; its only visible effect is one line underneath. */
+       - no Supabase (local dev): the full result, as it always was;
+       - signed in, with details already given this visit (a retake):
+         the full result, saved;
+       - everybody else: the unlock screen — the score and the verdict,
+         free, and the sign-in offered for the full report. */
+  function finish() {
+    state.doneAt = new Date();
+    $('.bar-fill').style.width = '100%';
+    if (!GATE_ON) { showReport(); return; }
+    if (window.auth.signedIn() && state.details) { report(); return; }
+    paintPreview();
+    show('gate');
+  }
+
+  /* The result, on screen. Kept apart from report() so that the dev path
+     can show it without trying to save anything. */
+  function showReport() {
+    writeResult();
+    show('result');
+  }
+
+  /* The full report, and then the save. The report is on the screen
+     before this opens a socket, and that ordering is the whole guarantee.
+     Somebody who has just answered eighteen questions about their own
+     attention is not made to watch a spinner to find out their score, and
+     a network they do not control cannot take it away from them. Never
+     awaited, never retried; its only visible effect is one line
+     underneath. */
+  function report() {
+    showReport();
+    drop(PENDING_KEY);
     submit();
   }
 
-
-  /* ============ the gate ============
-     Between pressing start and the first question there is now a door in
-     two screens: one that offers the sign-in and does nothing else, then
-     Google, then one that asks who you are and what may be kept.
-     Everything in this block exists to make that door work without ever
-     standing between a reader and a result they have already earned.
+  /* ============ the sign-in, at the end ============
+     The page used to ask for Google before question one. It asks now
+     after the last one, on a screen that has already given the reader
+     their score and verdict, and offers the sign-in for what it adds: the
+     full report, a copy to keep, a record in their own account.
 
      GATE_ON is false when auth.js has nothing to talk to — no Supabase
-     project configured, which is what `python3 serve.py` looks like. The
-     screener then runs exactly as it did before any of this: no sign-in,
-     no form, and nothing sent. That is a development convenience and a
-     divergence from what the page's own copy promises, so it must never
-     be true in production; config.js is the thing that decides, and it is
-     deployed. */
+     project configured. The screener then runs with no sign-in, no form,
+     and nothing sent. That is a development convenience and a divergence
+     from what the page's own copy promises, so it must never be true in
+     production; config.js is the thing that decides, and it is deployed. */
   var GATE_ON = !!(window.auth && window.auth.configured());
 
-  /* Which screener they pressed, kept across a full-page redirect to
-     Google and back. sessionStorage rather than localStorage: it survives
-     the navigation, it is scoped to this tab, and it leaves nothing
-     behind on a shared machine. Both keys are read once at boot and
-     removed immediately, so a later reload cannot replay the flow.
+  /* The answers, across a full-page redirect to Google and back.
 
-     Not the query string — auth.signIn() builds its return URL from
-     origin + pathname and drops the search, so ?part=ab would not come
-     back. */
-  var INTENT_KEY = 'myadhd.selfcheck.intent';
+     sessionStorage, not localStorage: it survives the navigation, it is
+     scoped to this tab, and it goes when the tab closes, so nothing is
+     left on a shared machine. Written only when the reader presses
+     Continue with Google, and removed the moment the report is on screen,
+     when they leave without saving, or when they start again. Read back
+     only within the hour — an answer sheet from yesterday is not the
+     reader coming back from Google, it is a stale tab.
 
-  function stash(k, v) { try { sessionStorage.setItem(k, v); } catch (_) {} }
-  function unstash(k) {
-    try {
-      var v = sessionStorage.getItem(k);
-      sessionStorage.removeItem(k);
-      return v;
-    } catch (_) { return null; }
+     This is the one place the answers are ever written down in the
+     browser, and it is before consent, which is why it is here and not
+     on the server: holding something for the person who typed it, on
+     their own device, for the length of a redirect, is not us processing
+     it. Nothing in it is sent until the notice has been ticked. */
+  var PENDING_KEY = 'myadhd.selfcheck.pending';
+  var PENDING_TTL = 60 * 60 * 1000;
+
+  function keep(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (_) {} }
+  function drop(k) { try { sessionStorage.removeItem(k); } catch (_) {} }
+  function peek(k) {
+    try { return JSON.parse(sessionStorage.getItem(k) || 'null'); } catch (_) { return null; }
   }
 
-  function setIntent(which) {
-    state.withB = which === 'ab';
+  function stashPending() {
+    keep(PENDING_KEY, {
+      v: 1,
+      at: Date.now(),
+      withB: state.withB,
+      answers: state.answers.slice(0, state.list.length),
+      about: state.about,
+      doneAt: state.doneAt ? state.doneAt.getTime() : Date.now()
+    });
+  }
+
+  /* Back from Google with an answer sheet. Every field is checked rather
+     than trusted: this is the browser's own storage, but it is still
+     input, and a half-written or hand-edited sheet should fall back to
+     the intro rather than score something nobody answered. */
+  function restorePending() {
+    var p = peek(PENDING_KEY);
+    var want = p && (p.withB ? PART_A.length + PART_B.length : PART_A.length);
+    var ok = p && p.v === 1 && typeof p.at === 'number' &&
+      Date.now() - p.at < PENDING_TTL &&
+      Array.isArray(p.answers) && p.answers.length === want &&
+      p.answers.every(function (n) { return n === 0 || n === 1 || n === 2 || n === 3 || n === 4; }) &&
+      p.about && typeof p.about.age === 'number' && p.about.age >= 18 &&
+      typeof p.about.gender === 'string' && typeof p.about.diagnosis === 'string';
+    if (!ok) { drop(PENDING_KEY); return false; }
+    state.withB = !!p.withB;
     state.list = state.withB ? PART_A.concat(PART_B) : PART_A.slice();
+    state.answers = p.answers.slice();
+    state.i = state.list.length - 1;
+    state.about = p.about;
+    state.doneAt = new Date(p.doneAt);
+    return true;
+  }
+
+  /* Always Part A to begin with; Part B is offered on the breather. */
+  function setIntent() {
+    state.withB = false;
+    state.list = PART_A.slice();
     state.answers = [];
     state.i = 0;
+    state.doneAt = null;
   }
 
   function begin() {
@@ -560,118 +817,104 @@
      way to it — nothing typed here has been sent, which is what the
      screen says and has to remain true.
 
-     signOut() rather than deleteAccount(): somebody under 18 who already
-     uses the app has lists of their own, and taking those away because
-     they typed an age into a different page would be a punishment for
-     honesty. Since the sign-in now comes first, everybody who reaches
-     this is signed in, and the sign-out below is the whole of what we
-     can do about it — the age is asked as early as we can ask it, which
-     is the first screen we have a form on. Nothing they typed is sent. */
+     It no longer signs anybody out. The age is asked before the questions
+     now, which is before the sign-in, so nobody reaching this has signed
+     in for the screener — and signing out somebody who uses the app,
+     because they typed an age into a different page, would be a
+     punishment for honesty. */
   function tooYoung() {
+    state.about = null;
     state.details = null;
-    unstash(INTENT_KEY);
+    drop(PENDING_KEY);
     clearErrors();
-    var f = $('.d-name'); if (f) f.value = '';
-    var p = $('.d-phone'); if (p) p.value = '';
-    $$('.c-block input[type="checkbox"]').forEach(function (c) { c.checked = false; });
+    var a = $('.d-age'); if (a) a.value = '';
+    $$('[data-screen="about"] input[type="radio"]').forEach(function (r) { r.checked = false; });
     show('young');
-    if (GATE_ON && window.auth.signedIn()) { try { window.auth.signOut(); } catch (_) {} }
   }
 
   /* ---------- pressing start ----------
-     Start goes to the sign-in screen, not to Google. Leaving the site is
-     a thing a person should press a button to do, knowing that is what
-     the button does — a start button that turns into Google's own page
-     without warning reads as a hijack, however ordinary the destination.
-     So there is a screen in between, it says what the sign-in is for, and
-     its one button is the one that leaves.
-
-     Nothing is asked on it. Age, name, gender and the consent ticks are
-     asked once, together, on the details screen on the way back. */
-  function start(which) {
-    if (!GATE_ON) { setIntent(which); begin(); return; }
-    setIntent(which);
-    if (!window.auth.signedIn()) {
-      stash(INTENT_KEY, which);
-      clearErrors();
-      show('gate');
-      return;
-    }
-    resume();
-  }
-
-  $('.start-a').addEventListener('click', function () { start('a'); });
-  $('.start-ab').addEventListener('click', function () { start('ab'); });
-
-  /* Deliberately not routed through start(): a retake is by somebody who
-     has already signed in, already consented and already answered, and
-     asking again at that moment would read as the page forgetting them.
-     It reuses state.list and state.withB from the run just finished. */
-  $('.r-again').addEventListener('click', function () {
-    state.answers = []; state.i = 0;
-    $('.bar-fill').style.width = '0%';
-    $('.r-saved').hidden = true;
-    render(); show('quiz');
-  });
-
-  /* ---------- the gate screen ----------
-     One button and nothing to fill in: this screen exists to be the place
-     the reader chooses to leave for Google from, and a form on it would
-     only be a second thing to get wrong before they could.
-
-     Whichever screener they pressed is already stashed by start(). The
-     re-stash below is for the other way in — a token that expired under
-     resume(), where nobody pressed start this time round — and it reads
-     the intent back off the state that run left behind. */
-  var gateGo = $('.g-go');
-  if (gateGo) {
-    gateGo.addEventListener('click', function () {
-      clearErrors();
-      stash(INTENT_KEY, state.withB ? 'ab' : 'a');
-      /* Identity only. See the note on signIn() in auth.js: the calendar
-         scope belongs to the app, not to a screener. */
-      window.auth.signIn({ scopes: '', offline: false });
-    });
-  }
-
-  /* The way out that is not Google. A door with one button and no way
-     back is a trap, and the header's "Leave the self-check" link leaves
-     the site entirely — too big a step for somebody who only wants to
-     reread what they are agreeing to. This drops the stashed intent on
-     the way: they are no longer mid-flow, and a reload should not think
-     they are. */
-  var gateBack = $('.g-back');
-  if (gateBack) {
-    gateBack.addEventListener('click', function () {
-      unstash(INTENT_KEY);
-      clearErrors();
-      show('intro');
-    });
-  }
-
-  /* ---------- the details screen ---------- */
-  function readDetails() {
+     Straight to the three quick things, and from them to the questions.
+     Nothing on the way asks who you are: that is asked at the end, of
+     somebody who has seen their score and wants the rest. */
+  function start() {
+    setIntent();
     clearErrors();
+    show('about');
+  }
+  $('.start-a').addEventListener('click', start);
 
-    /* Age before the name, though the name is the field above it. This is
-       the first form on the page and so the first chance to find out that
-       somebody is 15; making them fix a blank name before we tell them
-       would be the page wasting their time on a form it is about to throw
-       away. */
+  /* ---------- the three quick things ----------
+     Age first, though gender is no harder to answer: this is the first
+     chance to find out somebody is 15, and making them fix a blank radio
+     before telling them would be the page wasting their time. */
+  function readAbout() {
+    clearErrors();
     var ageEl = $('.d-age');
     var age = readAge(ageEl);
     if (age === null) { markBad(ageEl); setErr('.d-age-err', T().eAge); return null; }
     if (age > 100)    { markBad(ageEl); setErr('.d-age-err', T().eAgeHigh); return null; }
     if (age < 18)     { tooYoung(); return null; }
 
+    var g = $('input[name="gender"]:checked');
+    if (!g) { setErr('.d-gender-err', T().eGender); return null; }
+
+    var dx = $('input[name="diagnosis"]:checked');
+    if (!dx) { setErr('.a-dx-err', T().eDx); return null; }
+
+    return { age: age, gender: g.value, diagnosis: dx.value };
+  }
+
+  $('.a-go').addEventListener('click', function () {
+    var a = readAbout();
+    if (!a) return;
+    state.about = a;
+    begin();
+  });
+
+  /* A retake. Somebody who has already signed in and given their details
+     this visit is not asked again — at the end, finish() sees them and
+     goes straight to the report. Starts from Part A; the breather offers
+     Part B again. */
+  $('.r-again').addEventListener('click', function () {
+    setIntent();
+    drop(PENDING_KEY);
+    $('.r-saved').hidden = true;
+    render(); show('quiz');
+  });
+
+  $('.r-print').addEventListener('click', function () { window.print(); });
+
+  /* ---------- the unlock screen ----------
+     The score and the verdict, on the screen that offers the sign-in.
+     Repainted on a language switch, like the result. */
+  function paintPreview() {
+    var a = scoreA();
+    $('.u-score').textContent = a;
+    paintMeter($('.u-meter'), a);
+    $('.u-verdict').textContent = a >= 4 ? T().verdictYes : T().verdictNo;
+  }
+
+  $('.g-go').addEventListener('click', function () {
+    clearErrors();
+    stashPending();
+    /* Identity only. See the note on signIn() in auth.js: the calendar
+       scope belongs to the app, not to a screener. */
+    window.auth.signIn({ scopes: '', offline: false });
+  });
+
+  /* Leaving without saving is a real choice and gets a real link. It
+     drops the answer sheet on the way, so the browser keeps nothing. */
+  $('.g-leave').addEventListener('click', function () { drop(PENDING_KEY); });
+
+  /* ---------- the details screen ---------- */
+  function readDetails() {
+    clearErrors();
+
     var nameEl = $('.d-name');
     var name = String(nameEl.value || '').trim();
     if (name.length < 2 || name.length > 80) {
       markBad(nameEl); setErr('.d-name-err', T().eName); return null;
     }
-
-    var picked = $('.c-block') && $('input[name="gender"]:checked');
-    if (!picked) { setErr('.d-gender-err', T().eGender); return null; }
 
     var terms = $('.c-terms').checked;
     var health = $('.c-health').checked;
@@ -680,49 +923,53 @@
     return {
       name: name,
       phone: String($('.d-phone').value || '').trim(),
-      age: age,
-      gender: picked.value,
       contact: $('.c-contact').checked
     };
   }
 
-  var detailsGo = $('.d-go');
-  if (detailsGo) {
-    detailsGo.addEventListener('click', function () {
-      var d = readDetails();
-      if (!d) return;
-      state.details = d;
-      begin();
-    });
-  }
+  $('.d-go').addEventListener('click', function () {
+    var d = readDetails();
+    if (!d) return;
+    state.details = d;
+    report();
+  });
 
   /* ---------- coming back ----------
-     Called once the reader is known to be signed in. Asks the server
-     whether it already holds a consent against the current notice; if it
-     does, straight to the questions, and if it does not, the form.
+     Called once the reader is known to be signed in and their answers
+     are back in state. Asks the server whether it already holds a
+     consent against the current notice; if it does, straight to the
+     report, and if it does not, the form.
 
      A failed request falls through to the form. Failing toward asking
      again is always safe; failing toward skipping consent is not, and
      that asymmetry is the reason there is no retry here. */
   function resume() {
     clearErrors();
-    var me = null;
     return window.auth.token()
       .then(function (token) {
-        if (!token) { show('gate'); return null; }
+        if (!token) return 'gate';
         return fetch('/api/self-check', {
           headers: { Authorization: 'Bearer ' + token }
+        }).then(function (res) {
+          if (res.status === 401) return 'gate';
+          return res.ok ? res.json() : null;
         });
       })
-      .then(function (res) {
-        if (!res) return null;
-        if (res.status === 401) { show('gate'); return null; }
-        return res.ok ? res.json() : null;
-      })
-      .then(function (data) {
-        if (data === null && !screens.gate.hasAttribute('hidden')) return;
-        me = data;
-        if (me && me.needsConsent === false) { begin(); return; }
+      .then(function (me) {
+        if (me === 'gate') { paintPreview(); show('gate'); return; }
+        var p = me && me.profile;
+        var user = window.auth.user();
+        var name = (p && p.name) || (user && user.name) || '';
+        /* Consent on file under this notice: no form. reuse tells the
+           server to save against that consent rather than mint a new
+           one, and the server checks it again rather than believe us. A
+           profile with no usable name still gets the form — the server
+           needs one, and asking is better than failing the save. */
+        if (me && me.needsConsent === false && name.trim().length >= 2) {
+          state.details = { name: name.trim(), phone: (p && p.phone) || '', reuse: true };
+          report();
+          return;
+        }
         prefill(me);
         show('details');
       })
@@ -742,15 +989,6 @@
     }
     var phoneEl = $('.d-phone');
     if (phoneEl && !phoneEl.value && p && p.phone) phoneEl.value = p.phone;
-
-    var ageEl = $('.d-age');
-    if (ageEl && !ageEl.value) {
-      ageEl.value = (p && p.age) || '';
-    }
-    if (p && p.gender) {
-      var r = $('input[name="gender"][value="' + p.gender + '"]');
-      if (r) r.checked = true;
-    }
     /* The consent boxes are never prefilled, even for somebody we have a
        consent on file for. If they are being shown this screen at all it
        is because the notice they agreed to is not the notice in front of
@@ -758,20 +996,24 @@
   }
 
   /* ---------- sending it ----------
-     Fire and forget, after the result is already up. */
+     Fire and forget, after the report is already up. */
   function submit() {
-    if (!GATE_ON || !window.auth.signedIn() || !state.details) return;
+    if (!GATE_ON || !window.auth.signedIn() || !state.details || !state.about) return;
 
     var d = state.details;
+    var a = state.about;
     var body = {
       name: d.name,
       phone: d.phone,
-      age: d.age,
-      gender: d.gender,
+      age: a.age,
+      gender: a.gender,
+      diagnosis: a.diagnosis,
       part: state.withB ? 'ab' : 'a',
       answers: state.answers.slice(0, state.list.length),
       lang: lang,
-      consent: { terms: true, health: true, contact: !!d.contact, version: CONSENT_VERSION }
+      consent: d.reuse
+        ? { reuse: true, version: CONSENT_VERSION }
+        : { terms: true, health: true, contact: !!d.contact, version: CONSENT_VERSION }
     };
 
     window.auth.token()
@@ -786,7 +1028,12 @@
           body: JSON.stringify(body)
         });
       })
-      .then(function (res) { said(!!(res && res.ok)); })
+      .then(function (res) {
+        said(!!(res && res.ok));
+        /* Fresh ticks are on file now. A retake this visit saves against
+           them rather than recording a second agreement nobody gave. */
+        if (res && res.ok && !d.reuse) d.reuse = true;
+      })
       .catch(function () { said(false); });
   }
 
@@ -800,8 +1047,10 @@
   /* The version of the notice these ticks were given against. It must
      match the constant in api/self-check.js — the server refuses a
      mismatch rather than guessing, which is what makes "if the notice
-     changes you are asked again" true rather than aspirational. */
-  var CONSENT_VERSION = 'pdpa-2026-09';
+     changes you are asked again" true rather than aspirational.
+     2026-10: the notice now names the diagnosis question, and says the
+     answers wait in the browser until this point. */
+  var CONSENT_VERSION = 'pdpa-2026-10';
 
   /* ---------- boot ----------
      Everything above is wiring and runs synchronously. This is the only
@@ -814,50 +1063,45 @@
     window.auth.absorbRedirect()
       .catch(function () {})
       .then(function () {
-        var intent = unstash(INTENT_KEY);
-        /* No intent means an ordinary visit — somebody who opened the
-           page rather than somebody coming back from Google. Leave the
-           intro alone. */
-        if (!intent) return;
-        /* An intent but no session means they went to Google and came
-           back without signing in. Also the intro: pushing them at the
-           door again would be the page arguing with them. */
-        if (!window.auth.signedIn()) return;
-        setIntent(intent);
+        /* No answer sheet means an ordinary visit. Leave the intro alone. */
+        if (!restorePending()) return;
+        /* A sheet but no session: they went to Google and came back
+           without signing in. Their score is theirs either way, so they
+           land on it again, with the offer still there. */
+        if (!window.auth.signedIn()) { paintPreview(); show('gate'); return; }
         return resume();
       });
   })();
 
   /* ---------- what leaves this page, and when ----------
-     This used to say that nothing did. It does now, and the honest
-     version is worth as much space as the old promise had.
+     Nothing, until the end, and then only on purpose.
 
-     One request, from finish(), after the result is already on screen:
-     the answers, the score the server recomputes from them, and the
-     details given on the form. It goes only when somebody has signed in
-     and ticked the two mandatory boxes, and it is never retried — a
-     result belongs to the person who earned it whether or not our
-     database was reachable at that moment.
+     The three quick things and the answers live in this closure while the
+     questions are up. If the reader presses Continue with Google, they are
+     written to sessionStorage for the length of the redirect (see
+     PENDING_KEY) and removed the moment the report is on screen, or when
+     they leave without saving, or start again; a sheet older than an hour
+     is ignored and removed. That copy is on their device, in this tab,
+     and never sent by itself.
 
-     What still does not leave: anything typed by somebody who turns out
-     to be under 18, and anything at all when the gate is off. The
-     under-18 branch sends nothing it was told — no name, no age, no
-     answers, no row in our own tables — but it is no longer true that it
-     touches no network, because the sign-in came first: an auth account
-     exists by then, and tooYoung() signs it straight back out. That is
-     the cost of asking for the age on the form rather than at the door,
-     and it is the reason the age is the earliest thing that form checks.
-     There is no analytics call here, and no third-party script on this
-     page — the sign-in works by navigating away to Google and coming
-     back, which is a different thing from embedding them.
+     One request leaves, from report(), after the report is already on
+     screen: the answers, the three quick things, and the name and phone
+     from the form. It goes only when somebody has signed in and either
+     ticked the two mandatory boxes just now, or ticked them before under
+     this same notice — which the server checks for itself. It is never
+     retried: a result belongs to the person who earned it whether or not
+     our database was reachable at that moment.
 
-     Storage is two keys and no answers: myadhd.lang in localStorage, and
-     one sessionStorage key carrying which screener was pressed across the
-     redirect, removed the moment it is read. The
-     answers themselves still live in this closure and go with the tab
-     when it closes; what outlives it is the copy on the server, which
-     exists because somebody asked for it and can be deleted because they
-     did. The page says all of this before it asks, in both languages,
-     which is the only honest way to run a mental-health screener on
-     somebody else's device. */
+     What does not leave: anything typed by somebody who turns out to be
+     under 18 — the age is asked before the questions, and that branch
+     touches no network at all — and anything at all from somebody who
+     closes the tab, leaves without saving, or never signs in. There is no
+     analytics call here, and no third-party script on this page — the
+     sign-in works by navigating away to Google and coming back, which is
+     a different thing from embedding them.
+
+     Storage, in full: myadhd.lang in localStorage, and the answer sheet in
+     sessionStorage while a sign-in is under way. The page says all of this
+     before it asks, in both languages, which is the only honest way to run
+     a mental-health screener on somebody else's device. */
 })();
