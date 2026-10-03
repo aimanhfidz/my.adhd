@@ -17,7 +17,8 @@ Copy `posts/example-en.json` and edit. Fields:
 |---|---|
 | `slug` | file name and output folder |
 | `lang` | `en` or `ms` — the copy's language, nothing else changes |
-| `theme` | `light` (default) or `dark` |
+| `theme` | `light` (default) or `dark` — only matters with the `gradient` style |
+| `style` | `gradient` (default), `violet`, `orange`, `night-orange` or `night-violet` — see *Styles* |
 | `label` | tracked caps label top-right, default `myadhd.my` |
 | `footer` | caps name bottom-left, default `MYADHD` |
 | `slides[]` | in order: one `cover`, N `point`, one `outro` |
@@ -61,7 +62,10 @@ server port between rounds if a CSS edit does not show — the server sends
 ## Once it is posted
 
 Move the rendered folder into `out/Posted/` (`out/Posted/<slug>/`) when the
-deck has gone up on Instagram. The post JSON stays in `posts/` — it is the
+deck has gone up on Instagram. Do it for both languages once the topic is up, since
+the `ms` deck of a posted topic would be the same post twice. A deck held
+back on purpose goes to `out/Later/` instead (Distracted is there because
+it repeats the posted Focus deck). The post JSON stays in `posts/` — it is the
 source, and a re-render writes back to `out/<slug>/`, so a folder in
 `Posted/` is the exact set of files that went live.
 
@@ -78,10 +82,35 @@ nudge styles by hand and export PNG/PDF from the toolbar; note those
 exports fall back to system fonts, so for the final files come back to
 `render.swift`.
 
+## Styles
+
+Five grounds, same layout, faces and mark. A style covers the whole deck,
+and an `en` and `ms` post of one topic share it.
+
+| `style` | ground | type | accent |
+|---|---|---|---|
+| `gradient` | the site's lilac wash as three soft blobs | ink | violet |
+| `violet` | solid brand violet + grain | white | pale violet; the mark's pill goes white |
+| `orange` | solid brand orange + grain | ink | white; star, counter dot and CTA go ink |
+| `night-orange` | near-black, orange glow + grain | white | orange |
+| `night-violet` | near-black, violet glow + grain | white | light violet |
+
+Preview any post in any style with `&style=…` on the preview or render URL;
+the post's own `style` is ignored while it is there.
+
+**Grid rhythm.** The profile grid went flat when every deck was `gradient`.
+Never post two decks of the same style back to back. The queued posts carry
+a rotation — violet, orange, night-violet, night-orange, gradient — that
+holds if they go up in alphabetical order; post out of order and check the
+neighbours.
+
 ## Brand rules baked in
 
 - Headings are Baloo 2 at 600, body is DM Sans 400, every label is DM Mono
   in tracked caps. No other faces, no other weights.
 - The reference's navy accent is `--violet` here. Orange appears only on
-  the counter dot and the CTA circle — never on a heading or a rule.
-- Backgrounds are the site's lilac wash as three soft blobs; no photos.
+  the counter dot and the CTA circle — never on a heading or a rule — in
+  `gradient`, `violet` and `night-violet`. `orange` and `night-orange` are
+  the deliberate exceptions, and the mark, dot and CTA re-colour so nothing
+  orange sits on orange.
+- No photos. Grain is an SVG turbulence layer in `carousel.css`, not an image.

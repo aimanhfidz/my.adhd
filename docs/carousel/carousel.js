@@ -2,6 +2,7 @@
 
    Post shape:
      { slug, lang, theme: "light"|"dark", label, footer,
+       style: "gradient"|"violet"|"orange"|"night-orange"|"night-violet",
        slides: [ {type:"cover", kicker, title, sub},
                  {type:"point", title, body},
                  {type:"outro", title, body, cta:{label}} ] }
@@ -20,6 +21,8 @@
 
   document.documentElement.lang = post.lang || 'en';
   document.documentElement.dataset.theme = post.theme === 'dark' ? 'dark' : 'light';
+  // ?style= overrides the post's own, so any deck can be previewed in any style
+  document.documentElement.dataset.style = q.get('style') || post.style || 'gradient';
   document.title = `${post.slug || slug} — my.adhd carousel`;
 
   const esc = s => String(s)
@@ -33,13 +36,13 @@
   // The mark is inlined rather than <use>d: WebKit does not carry the
   // document's class styles into a <use> clone, and the mark came out black.
   const MARK = `<svg class="mark" viewBox="14 14 72 72" aria-hidden="true">
-  <g style="fill:var(--orange)">
+  <g style="fill:var(--mark-star)">
     <rect x="46.5" y="18" width="7" height="64"></rect>
     <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"></rect>
     <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"></rect>
     <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"></rect>
   </g>
-  <path d="M64.5 64.5l7 7" style="stroke:var(--violet)" stroke-width="7" stroke-linecap="round" fill="none"></path>
+  <path d="M64.5 64.5l7 7" style="stroke:var(--mark-pill)" stroke-width="7" stroke-linecap="round" fill="none"></path>
 </svg>`;
 
   const total = post.slides.length;

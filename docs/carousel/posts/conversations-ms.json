@@ -1,0 +1,60 @@
+{
+  "slug": "conversations-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "night-violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Menyampuk lagi. Hanyut lagi. Mengulang semuanya pada pukul satu pagi.\n\nKami faham. Bukan tidak peduli, fikiran anda cuma tiada tempat untuk menunggu. Leret untuk memahami sebabnya, serta tiga ikhtiar untuk kekal dalam perbualan.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini untuk perbualan seterusnya.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #komunikasi",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa sering\n[[menyampuk]]\nketika berbual?",
+      "sub": "Kami faham. Bukan tidak menghormati. Fikiran anda cuma tiada tempat untuk menunggu."
+    },
+    {
+      "type": "point",
+      "title": "Fikiran akan\n[[lenyap]] jika\nmenunggu",
+      "body": "Anda menyampuk kerana tahu ia akan hilang dalam sepuluh saat. Menyebutnya sekarang terasa satu-satunya cara menyimpannya. Ini desakan, bukan biadab."
+    },
+    {
+      "type": "point",
+      "title": "Mendengar perlu\nusaha [[berganda]]",
+      "body": "Mengikut kata-kata orang sambil minda berlari di tiga landasan lain ialah kerja berat. Hanyut di tengah ayat bukan bosan. Tenaga cuma menyusut."
+    },
+    {
+      "type": "point",
+      "title": "Bercerita untuk\nmengisi [[sunyi]]",
+      "body": "Jeda terasa janggal, jadi anda mengisinya. Kemudian cerita bercabang, dan cabang itu bercabang lagi. Sepuluh minit kemudian, entah bagaimana sampai di sini."
+    },
+    {
+      "type": "point",
+      "title": "Kemudian\n[[diulang tayang]]\nwaktu malam",
+      "body": "Berbaring dan mengulang setiap ayat. \"Terlalu banyakkah saya bercakap? Saya memotong tadi?\" Perbualan sejam. Ulang tayangnya lebih lama."
+    },
+    {
+      "type": "point",
+      "title": "Genggam fikiran\ndengan [[jari]]",
+      "body": "Tekan jari ke ibu jari, atau taip satu perkataan di telefon. Sauh kecil itu membolehkan anda menunggu giliran tanpa kehilangan apa yang ingin disebut."
+    },
+    {
+      "type": "point",
+      "title": "Kembalikan\n[[soalan]]",
+      "body": "Apabila sedar sudah lama bercakap, pusingkan. \"Bagaimana pula dengan anda?\" Ia mengembalikan giliran, dan orang ingat apabila ditanya."
+    },
+    {
+      "type": "point",
+      "title": "[[Akui]] sahaja",
+      "body": "\"Maaf, saya memotong, teruskan.\" Atau \"Saya terlepas sebentar, boleh ulang?\" Jujur dan ringkas. Kebanyakan orang lebih memaafkan daripada anda sendiri."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini untuk\n[[perbualan]]\nseterusnya",
+      "body": "Anda bukan pendengar yang buruk, cuma pendengar yang sibuk. Luahkan fikiran yang berlumba dalam my.adhd, supaya ada tempat menunggu. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "slug": "forgetful-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Walked into the room. Stood there. No idea why.\n\nThat is working memory, not carelessness. Swipe for why the thought vanishes so fast, and three ways to catch it before it goes.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this, then write down what you forgot.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #workingmemory",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Walked into the kitchen. Why?",
+      "title": "Why do I\n[[forget]] what I\nwas doing?",
+      "sub": "It is not that you do not care. Your brain's notepad is just small."
+    },
+    {
+      "type": "point",
+      "title": "Your mental\nnotepad is\n[[small]]",
+      "body": "Working memory holds what you are doing right now. In many ADHD brains it holds less, and it wipes easily. One new thought, and the old one is gone."
+    },
+    {
+      "type": "point",
+      "title": "A doorway\n[[wipes it]] clean",
+      "body": "New room, new scene, and the reason you came is gone. Standing in the kitchen with no idea why is not old age. It is a full notepad."
+    },
+    {
+      "type": "point",
+      "title": "\"I'll remember\"\nis a [[trap]]",
+      "body": "It feels so clear in the moment that writing it down seems silly. Ten minutes later it is gone, and so is the memory that there was anything."
+    },
+    {
+      "type": "point",
+      "title": "Forgetting is\nnot [[not caring]]",
+      "body": "Missing a birthday or a promise can look like you do not care. You care a lot. The memory just was not kept anywhere it could come back from."
+    },
+    {
+      "type": "point",
+      "title": "Write it down\n[[right now]]",
+      "body": "Not later, not after this. One app, one notebook, one place. If a thought is worth keeping, it is worth ten seconds before it disappears."
+    },
+    {
+      "type": "point",
+      "title": "Say it [[out loud]]\nas you go",
+      "body": "\"Going to get the scissors.\" Saying the task out loud keeps it in the room with you. It feels odd, and it works."
+    },
+    {
+      "type": "point",
+      "title": "Leave [[clues]]\nwhere you\nalready look",
+      "body": "Keys on the bag. The letter on your shoes. A note on the door. Put the reminder where your eyes already go, not where it belongs."
+    },
+    {
+      "type": "outro",
+      "title": "Save this, then\n[[write down]]\nwhat you forgot",
+      "body": "Your memory is not letting you down on purpose. It just needs a second place to keep things. Dump everything into my.adhd and get one thing back.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

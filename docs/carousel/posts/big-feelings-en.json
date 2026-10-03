@@ -1,0 +1,60 @@
+{
+  "slug": "big-feelings-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Fine one minute, furious the next, then guilty for an hour.\n\nYour feelings are not wrong, they just arrive at full volume. Swipe for why they skip the middle, and three ways to steady the swing.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for the next time you boil over.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #emotionalregulation",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Fine at 9. Furious at 9:02.",
+      "title": "Why do my\nfeelings go\n[[0 to 100]]?",
+      "sub": "You are not dramatic. Your feelings just arrive at full volume."
+    },
+    {
+      "type": "point",
+      "title": "There is no\n[[dimmer]], only\non and off",
+      "body": "Annoyed turns to furious. Excited turns to giddy. The feeling fits the moment. It just skips the middle settings everyone else seems to have."
+    },
+    {
+      "type": "point",
+      "title": "It hits [[fast]],\nbefore thinking\ncan catch up",
+      "body": "The reaction is out of your mouth before the pause arrives. By the time you have thought it through, you are already apologising for it."
+    },
+    {
+      "type": "point",
+      "title": "Then comes\nthe [[second wave]]",
+      "body": "The shame afterwards often lasts longer than the feeling did. \"Why am I like this?\" weighs more than the snapped reply ever did."
+    },
+    {
+      "type": "point",
+      "title": "It builds up\n[[quietly]] first",
+      "body": "Most blow-ups are not about the last thing. They are about the hunger, the noise, the ten small things since morning. The last straw just gets the blame."
+    },
+    {
+      "type": "point",
+      "title": "Name it, and\nit [[shrinks]]\na little",
+      "body": "\"I am overwhelmed\" said out loud slows things down. Naming the feeling moves you from being inside it to looking at it."
+    },
+    {
+      "type": "point",
+      "title": "Leave the room,\nnot the\n[[conversation]]",
+      "body": "\"Give me ten minutes, I want to come back to this.\" A short break with a promise to return is not running away. It keeps your words kind."
+    },
+    {
+      "type": "point",
+      "title": "Check the\n[[basics]] first",
+      "body": "Before deciding the whole day is ruined, ask the dull questions. Have I eaten? Slept? Had water? Big feelings get bigger on an empty tank."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext time you\n[[boil over]]",
+      "body": "Your feelings are not too much. They just need more room to land. Dump everything into my.adhd and get one small thing back to steady you.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "slug": "masking-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Fine at work. Fine with friends. Falling apart the moment you get home.\n\nThat is masking, and it costs more than anyone sees. Swipe for why so many only notice it as adults, and three ways to put the mask down.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for the day you are tired of pretending.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #adhdmasking",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Held it together all day.",
+      "title": "Why am I so\ntired from\n[[acting fine]]?",
+      "sub": "Looking okay takes energy. A lot of it."
+    },
+    {
+      "type": "point",
+      "title": "Masking is\n[[acting]] fine",
+      "body": "Nodding along when you lost the thread. Rehearsing a phone call. Five alarms so no one sees you forget. From outside, you look fine. That is the point."
+    },
+    {
+      "type": "point",
+      "title": "A skill you\n[[learned early]]",
+      "body": "Years of \"sit still\" and \"pay attention\" teach you to hide the parts that got you in trouble. It worked. That is why it stuck."
+    },
+    {
+      "type": "point",
+      "title": "It is why it\nwas [[missed]]\nfor so long",
+      "body": "If you coped well enough, no one looked closer. Many people, often women, only start to recognise themselves as adults, after years of looking fine."
+    },
+    {
+      "type": "point",
+      "title": "The cost shows\nup [[at home]]",
+      "body": "You hold it together at work and fall apart on the sofa. The people closest to you get the tired version, because that is where the mask comes off."
+    },
+    {
+      "type": "point",
+      "title": "Find where you\ncan [[unmask]]",
+      "body": "One friend, one room, one group where you do not have to perform. Being yourself for an hour a week refills more than any nap."
+    },
+    {
+      "type": "point",
+      "title": "Drop [[one]]\nmask at a time",
+      "body": "You do not have to stop all at once. Try \"sorry, I lost you, can you say that again?\" instead of nodding. Small, honest, and lighter."
+    },
+    {
+      "type": "point",
+      "title": "Plan rest after\n[[big rooms]]",
+      "body": "A wedding, a workshop, a long day of meetings. Book quiet time straight after, the way you would book the ride home. The crash is coming either way."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nday you are tired\nof [[pretending]]",
+      "body": "You do not have to earn rest by hiding well. Dump everything into my.adhd and get one thing back, without the performance.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

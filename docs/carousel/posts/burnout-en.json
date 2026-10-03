@@ -1,0 +1,60 @@
+{
+  "slug": "burnout-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "night-orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "You held it together for months. Then one day, nothing worked.\n\nADHD burnout is not laziness arriving late. Swipe for why coping costs so much, and three ways to come back from empty.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for the day you finally slow down.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #adhdburnout",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Everything was fine. Then nothing was.",
+      "title": "Why do I\n[[crash]] after\ncoping so well?",
+      "sub": "It is not laziness arriving late. It is the cost of running at full effort for years."
+    },
+    {
+      "type": "point",
+      "title": "Coping is\n[[expensive]]",
+      "body": "Remembering, catching up, masking, double-checking. What others do on autopilot, you do by hand. That effort is invisible, and it adds up."
+    },
+    {
+      "type": "point",
+      "title": "Burnout does\nnot feel like\n[[tired]]",
+      "body": "It feels flat. Things you loved go grey. Small tasks feel like walls. Sleep does not fix it, because it is not only your body that ran out."
+    },
+    {
+      "type": "point",
+      "title": "It often\nfollows a\n[[big push]]",
+      "body": "A launch, an exam season, a move, a new baby. You ran on adrenaline and deadlines. When the pressure stops, the engine does too."
+    },
+    {
+      "type": "point",
+      "title": "Rest is not\nthe [[reward]].\nIt is the fuel.",
+      "body": "If rest only comes after everything is done, it never comes. Treat it as part of the work, booked like a meeting you cannot move."
+    },
+    {
+      "type": "point",
+      "title": "Drop the\n[[nice-to-haves]]",
+      "body": "For a while, do less on purpose. Cancel what you can. Lower the bar on what is left. Getting through the week is the goal, not proving yourself."
+    },
+    {
+      "type": "point",
+      "title": "Know your\n[[early signs]]",
+      "body": "Snapping more. Forgetting more. Dreading the easy things. Write down your first warning signs, so next time you catch it at a wobble, not a crash."
+    },
+    {
+      "type": "point",
+      "title": "Tell one\n[[person]]",
+      "body": "Burnout grows in silence. You do not need a full explanation. \"I am running on empty, can you take one thing off me?\" is enough."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nday you finally\n[[slow down]]",
+      "body": "You did not fail. You ran too long without a break. Dump everything into my.adhd and get one small thing back, not ten.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

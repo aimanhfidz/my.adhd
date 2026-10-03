@@ -1,0 +1,60 @@
+{
+  "slug": "doom-piles-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "gradient",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "The chair with the clothes. The table with the letters. The bag by the door.\n\nDoom piles are not laziness. They are a memory system that got out of hand. Swipe for why they grow, and three ways to shrink one today.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for the next time a pile grows.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #doompile",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Didn't organise, only moved.",
+      "title": "Why is there\na [[pile]] on\nevery surface?",
+      "sub": "It is not mess for the sake of mess. It is a filing system that got out of hand."
+    },
+    {
+      "type": "point",
+      "title": "Out of sight,\n[[out of mind]]",
+      "body": "For many ADHD brains, what goes in a drawer stops existing. So the letter stays on the table, where you can see it. The pile is a reminder that grew."
+    },
+    {
+      "type": "point",
+      "title": "Every item is a\n[[small decision]]",
+      "body": "Keep, bin, file, reply, return. Each thing asks a question, and the pile turns twelve small questions into one huge one. Huge ones get avoided."
+    },
+    {
+      "type": "point",
+      "title": "Tidying is\nboring with\n[[no deadline]]",
+      "body": "No one is waiting for it. Nothing happens if you skip it today. Without interest or urgency, the pile has nothing to pull you in."
+    },
+    {
+      "type": "point",
+      "title": "The shame\nmakes it\n[[heavier]]",
+      "body": "Every glance at the pile comes with a small \"what is wrong with me\". That feeling is the real reason you avoid the corner, not the paper."
+    },
+    {
+      "type": "point",
+      "title": "Give it a [[home]]\nyou can see",
+      "body": "Open trays, clear boxes, hooks on the wall. If out of sight means gone, stop hiding things. Storage you can see is not mess, it is memory."
+    },
+    {
+      "type": "point",
+      "title": "Five minutes,\n[[one pile]]",
+      "body": "Not the whole room. One pile, one timer, three bags: keep, bin, somewhere else. Stop when it rings, even if you are not done."
+    },
+    {
+      "type": "point",
+      "title": "One [[landing spot]]\nby the door",
+      "body": "Keys, post, receipts, the thing to return. One bowl by the door where everything lands first. The pile still happens, but only in one place."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext time a pile\n[[grows]]",
+      "body": "Your pile is not a character flaw. It is your memory, sitting outside your head. Dump the rest into my.adhd and get one thing back to clear.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

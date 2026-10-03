@@ -1,0 +1,60 @@
+{
+  "slug": "forgetful-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Masuk ke bilik. Berdiri di situ. Tidak tahu mengapa.\n\nKami faham. Itu ingatan kerja, bukan cuai. Leret untuk memahami mengapa fikiran hilang begitu cepat, serta tiga ikhtiar untuk menangkapnya.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini, dan catatkan apa yang terlupa.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #ingatan",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa mudah\n[[lupa]] apa yang\nsedang dibuat?",
+      "sub": "Kami faham. Bukan tidak peduli. Buku catatan minda anda cuma kecil."
+    },
+    {
+      "type": "point",
+      "title": "Buku catatan\nminda anda\n[[kecil]]",
+      "body": "Ingatan kerja menyimpan apa yang sedang dilakukan. Bagi ramai minda ADHD, ia menyimpan lebih sedikit dan mudah terpadam. Satu fikiran baharu, yang lama hilang."
+    },
+    {
+      "type": "point",
+      "title": "Melangkah pintu,\n[[semuanya hilang]]",
+      "body": "Bilik baharu, suasana baharu, dan tujuan datang pun lenyap. Berdiri di dapur tanpa tahu mengapa bukan tanda usia. Ia buku catatan yang penuh."
+    },
+    {
+      "type": "point",
+      "title": "\"Nanti saya ingat\"\nialah [[perangkap]]",
+      "body": "Ia terasa begitu jelas sehingga mencatatnya terasa tidak perlu. Sepuluh minit kemudian ia hilang, bersama ingatan bahawa pernah ada sesuatu."
+    },
+    {
+      "type": "point",
+      "title": "Lupa bukan\nbermakna\n[[tidak peduli]]",
+      "body": "Terlupa hari jadi atau janji boleh kelihatan seperti tidak peduli. Anda sangat peduli. Ingatan itu cuma tidak disimpan di tempat ia boleh kembali."
+    },
+    {
+      "type": "point",
+      "title": "Catat [[sekarang]],\nbukan nanti",
+      "body": "Bukan selepas ini. Satu aplikasi, satu buku, satu tempat. Jika sesuatu wajar disimpan, ia wajar diberi sepuluh saat sebelum ia lenyap."
+    },
+    {
+      "type": "point",
+      "title": "Sebut dengan\n[[kuat]]",
+      "body": "\"Saya pergi ambil gunting.\" Menyebut tugas dengan kuat menyimpannya bersama anda. Ia terasa janggal, tetapi ia berkesan."
+    },
+    {
+      "type": "point",
+      "title": "Letakkan\n[[petunjuk]] di\ndepan mata",
+      "body": "Kunci di atas beg. Surat di atas kasut. Nota di pintu. Letakkan peringatan di tempat mata anda biasa memandang, bukan di tempat asalnya."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini, dan\n[[catatkan]] apa\nyang terlupa",
+      "body": "Ingatan anda tidak sengaja mengecewakan. Ia cuma perlukan tempat kedua untuk menyimpan. Luahkan segalanya dalam my.adhd, dapatkan kembali satu perkara. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

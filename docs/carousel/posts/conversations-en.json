@@ -1,0 +1,60 @@
+{
+  "slug": "conversations-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "night-violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Interrupted again. Drifted off again. Replayed it all at 1am.\n\nIt is not that you do not care. Your thoughts just have nowhere to wait. Swipe for why chats go sideways, and three ways to stay in them.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for your next long chat.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #adhdconversations",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Sorry, you were saying?",
+      "title": "Why do I\n[[interrupt]]\npeople I love?",
+      "sub": "It is not that you do not care what they say. Your thoughts just have nowhere to wait."
+    },
+    {
+      "type": "point",
+      "title": "The thought\nwill [[vanish]]\nif you wait",
+      "body": "You interrupt because you know it will be gone in ten seconds. Saying it now feels like the only way to keep it. It is urgency, not rudeness."
+    },
+    {
+      "type": "point",
+      "title": "Listening takes\n[[double]] the\neffort",
+      "body": "Following their words while your mind runs three other tracks is hard work. Drifting off mid-sentence is not boredom. The tank just ran low."
+    },
+    {
+      "type": "point",
+      "title": "Oversharing\nfills the\n[[silence]]",
+      "body": "A pause feels awkward, so you fill it. Then the story branches, and the branch has a branch. Ten minutes later you are not sure how you got here."
+    },
+    {
+      "type": "point",
+      "title": "Then the\n[[replay]] at night",
+      "body": "Lying in bed, rewinding every line. \"Did I talk too much? Did I cut them off?\" The conversation lasted an hour. The review lasts longer."
+    },
+    {
+      "type": "point",
+      "title": "Hold the thought\n[[in your hand]]",
+      "body": "Press a finger to your thumb, or type one word on your phone. A tiny anchor lets you wait your turn without losing what you wanted to say."
+    },
+    {
+      "type": "point",
+      "title": "Ask a [[question]]\nback",
+      "body": "When you notice you have been talking a while, turn it round. \"What about you?\" It hands the floor back, and people remember being asked."
+    },
+    {
+      "type": "point",
+      "title": "Just [[name it]]",
+      "body": "\"Sorry, I cut you off, go on.\" Or \"I lost you for a second, say that again?\" Honest and quick. Most people are kinder about it than you are."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for\nyour next\n[[long chat]]",
+      "body": "You are not a bad listener. You are a busy one. Dump your racing thoughts into my.adhd, so they have somewhere to wait.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

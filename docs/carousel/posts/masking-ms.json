@@ -1,0 +1,60 @@
+{
+  "slug": "masking-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Tenang di tempat kerja. Tenang bersama rakan. Rebah sebaik sampai di rumah.\n\nKami faham. Itulah menyembunyikan diri, dan harganya lebih besar daripada yang kelihatan. Leret untuk memahami sebabnya, serta tiga ikhtiar untuk menanggalkan topeng.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini untuk hari anda penat berpura-pura.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #neurodiversiti",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa begitu\npenat berlakon\n[[tenang]]?",
+      "sub": "Kami faham. Kelihatan baik-baik sahaja memerlukan tenaga yang besar."
+    },
+    {
+      "type": "point",
+      "title": "Menyembunyikan\nitu satu\n[[lakonan]]",
+      "body": "Mengangguk walaupun sudah hilang arah. Berlatih sebelum membuat panggilan. Lima penggera supaya tiada siapa nampak anda lupa. Dari luar, semuanya baik."
+    },
+    {
+      "type": "point",
+      "title": "Kemahiran yang\n[[dipelajari awal]]",
+      "body": "Bertahun-tahun mendengar \"duduk diam\" dan \"beri perhatian\" mengajar anda menyorokkan bahagian yang dimarahi. Ia berkesan. Sebab itu ia kekal."
+    },
+    {
+      "type": "point",
+      "title": "Sebab itu ia\n[[terlepas]]\nbegitu lama",
+      "body": "Jika anda cukup pandai bertahan, tiada siapa melihat lebih dekat. Ramai, terutama wanita, hanya mula mengenali diri sendiri setelah dewasa."
+    },
+    {
+      "type": "point",
+      "title": "Harganya terasa\ndi [[rumah]]",
+      "body": "Anda bertahan di tempat kerja, lalu rebah di sofa. Orang terdekat menerima versi yang letih, kerana di situlah topeng ditanggalkan."
+    },
+    {
+      "type": "point",
+      "title": "Cari tempat untuk\n[[menjadi diri]]",
+      "body": "Seorang rakan, satu bilik, satu kumpulan yang tidak memerlukan lakonan. Menjadi diri sendiri sejam seminggu memulihkan lebih daripada tidur sebentar."
+    },
+    {
+      "type": "point",
+      "title": "Tanggalkan [[satu]]\ntopeng dahulu",
+      "body": "Tidak perlu berhenti sekali gus. Cuba \"maaf, saya terlepas, boleh ulang?\" dan bukan sekadar mengangguk. Kecil, jujur, dan lebih ringan."
+    },
+    {
+      "type": "point",
+      "title": "Rancang rehat\nselepas [[majlis]]",
+      "body": "Kenduri, bengkel, sehari penuh mesyuarat. Tempah masa sunyi sejurus selepasnya, seperti menempah perjalanan pulang. Letih itu tetap akan tiba."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini untuk\nhari anda penat\n[[berpura-pura]]",
+      "body": "Rehat tidak perlu dibayar dengan menyembunyikan diri. Luahkan segalanya dalam my.adhd, dapatkan kembali satu perkara, tanpa lakonan. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

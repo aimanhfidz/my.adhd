@@ -1,0 +1,60 @@
+{
+  "slug": "doom-piles-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "gradient",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Kerusi penuh pakaian. Meja penuh surat. Beg di tepi pintu.\n\nKami faham. Timbunan itu bukan malas, tetapi sistem ingatan yang terlepas kawalan. Leret untuk memahami sebabnya, serta tiga ikhtiar untuk mengecilkannya hari ini.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini untuk hari timbunan bertambah lagi.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #mengemas",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa ada\n[[timbunan]] di\nsetiap sudut?",
+      "sub": "Kami faham. Ia bukan sepah semata-mata, tetapi sistem yang terlepas kawalan."
+    },
+    {
+      "type": "point",
+      "title": "Tidak nampak,\n[[tidak ingat]]",
+      "body": "Bagi ramai minda ADHD, yang masuk ke laci seolah-olah lenyap. Jadi surat itu kekal di meja, di depan mata. Timbunan itu peringatan yang membesar."
+    },
+    {
+      "type": "point",
+      "title": "Setiap barang\nsatu [[keputusan]]",
+      "body": "Simpan, buang, fail, balas, pulangkan. Setiap satu bertanya soalan, dan timbunan menjadikan dua belas soalan kecil satu soalan besar yang dielakkan."
+    },
+    {
+      "type": "point",
+      "title": "Mengemas itu\nbosan dan\n[[tiada tarikh]]",
+      "body": "Tiada siapa menunggu. Tiada apa berlaku jika ditangguh hari ini. Tanpa minat atau desakan, timbunan itu tiada apa untuk menarik anda."
+    },
+    {
+      "type": "point",
+      "title": "Rasa malu\nmenjadikannya\n[[lebih berat]]",
+      "body": "Setiap kali terpandang, datang bisikan \"mengapa saya begini\". Perasaan itulah sebab sebenar sudut itu dielakkan, bukan kertasnya."
+    },
+    {
+      "type": "point",
+      "title": "Beri [[tempat]]\nyang kelihatan",
+      "body": "Dulang terbuka, kotak lutsinar, penyangkut di dinding. Jika tidak nampak bermakna hilang, jangan sembunyikan. Simpanan yang kelihatan ialah ingatan."
+    },
+    {
+      "type": "point",
+      "title": "Lima minit,\n[[satu timbunan]]",
+      "body": "Bukan seluruh bilik. Satu timbunan, satu pemasa, tiga beg: simpan, buang, tempat lain. Berhenti apabila pemasa berbunyi, walaupun belum selesai."
+    },
+    {
+      "type": "point",
+      "title": "Satu [[tempat letak]]\ndi tepi pintu",
+      "body": "Kunci, surat, resit, barang untuk dipulangkan. Satu mangkuk di tepi pintu tempat semuanya singgah dahulu. Timbunan tetap ada, tetapi di satu tempat."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini untuk\nhari timbunan\n[[bertambah]] lagi",
+      "body": "Timbunan anda bukan kelemahan diri. Ia ingatan yang duduk di luar kepala. Luahkan selebihnya dalam my.adhd, dapatkan kembali satu perkara. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

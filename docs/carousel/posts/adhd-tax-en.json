@@ -1,0 +1,60 @@
+{
+  "slug": "adhd-tax-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "night-orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Late fees, lost chargers, the subscription you forgot. It adds up.\n\nThat is the ADHD tax, and it is not about being bad with money. Swipe for where it hides, and three ways to stop paying it.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this before the next late fee.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #adhdtax",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Late fee. Again.",
+      "title": "The [[ADHD tax]]\nno one warned\nyou about",
+      "sub": "It is not being bad with money. It is the price of a brain that forgets and acts fast."
+    },
+    {
+      "type": "point",
+      "title": "Late fees for\nbills you\n[[could pay]]",
+      "body": "The money was there. The reminder was not. A bill you can afford becomes one you pay twice, just because the date slipped past."
+    },
+    {
+      "type": "point",
+      "title": "Buying it\n[[again]]",
+      "body": "The charger, the umbrella, the tape. You own three somewhere. It is faster to buy a new one than to find the old one, so you do. Again."
+    },
+    {
+      "type": "point",
+      "title": "The subscription\nyou [[forgot]]",
+      "body": "Free trial, never cancelled. The gym you visited twice. Small monthly amounts are easy to miss, and they add up quietly all year."
+    },
+    {
+      "type": "point",
+      "title": "The [[3am]]\ncheckout",
+      "body": "The rush of a new thing hits before the thinking does. Buy now, regret at delivery. The item was cheap. The pattern is not."
+    },
+    {
+      "type": "point",
+      "title": "Put bills on\n[[autopay]]",
+      "body": "Every payment that happens without you remembering is one less late fee. Set it up once, on a good day, and let the calendar do the work."
+    },
+    {
+      "type": "point",
+      "title": "A [[24-hour]]\nrule for\nwants",
+      "body": "Leave it in the cart until tomorrow. If you still want it after a night's sleep, fine. Most urges do not survive the wait."
+    },
+    {
+      "type": "point",
+      "title": "Check your\nstatement\n[[monthly]]",
+      "body": "Pick one day a month, put on a song, and scroll your bank statement. Cancel one thing you forgot you had. Five minutes, real money back."
+    },
+    {
+      "type": "outro",
+      "title": "Save this before\nthe next\n[[late fee]]",
+      "body": "You are not careless with money. You are paying for a busy brain. Dump the bills and dates into my.adhd and get one thing back to sort today.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

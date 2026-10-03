@@ -1,0 +1,60 @@
+{
+  "slug": "rsd-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "One \"seen\" with no reply, and the whole day is gone.\n\nThat sting is real, and for a lot of ADHD brains it is louder. Swipe for why a small no hurts this much, and three ways through it.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for the next time a text goes quiet.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #rejectionsensitivity",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Seen 2:14pm. No reply.",
+      "title": "Why does a small\n[[no]] hurt\nthis much?",
+      "sub": "You are not too sensitive. The sting is real."
+    },
+    {
+      "type": "point",
+      "title": "The sting is\n[[bigger]] than\nthe moment",
+      "body": "A short reply, a missed invite, a flat \"ok\". Others shrug it off in a minute. You carry it all afternoon, and it feels like proof of something."
+    },
+    {
+      "type": "point",
+      "title": "Your brain\n[[fills the gap]]\nwith the worst",
+      "body": "No reply means busy, or asleep, or driving. But silence leaves a gap, and you fill it with the harshest story you know. Usually it is about you."
+    },
+    {
+      "type": "point",
+      "title": "Notes on the\nwork feel like\n[[notes on you]]",
+      "body": "\"Can you fix this part?\" becomes \"I am bad at this\". The feedback was about one paragraph. The hurt was about everything."
+    },
+    {
+      "type": "point",
+      "title": "So you please,\n[[pull back]], or\nnever ask",
+      "body": "Say yes to everything. Quit before you can be turned down. Never ask at all. They look like different habits. They are the same shield."
+    },
+    {
+      "type": "point",
+      "title": "Name it before\nyou [[believe it]]",
+      "body": "\"This is the sting, not the facts.\" Saying it plainly puts a little space between the feeling and the story it is telling you."
+    },
+    {
+      "type": "point",
+      "title": "Wait an [[hour]]\nbefore you\nreply",
+      "body": "The urge to explain, apologise or cut them off is strongest in the first hour. Write the message if you must. Send it tomorrow, if it still makes sense."
+    },
+    {
+      "type": "point",
+      "title": "Ask, instead\nof [[guessing]]",
+      "body": "\"Hey, was that ok?\" is a small question. It costs far less than a night of rereading their last message for hidden meaning."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext time a text\n[[goes quiet]]",
+      "body": "The feeling is loud, but it is not a verdict on you. Dump the spiral into my.adhd and get one thing back to do instead.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

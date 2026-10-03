@@ -1,0 +1,60 @@
+{
+  "slug": "big-feelings-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Tenang seminit, meluap seminit kemudian, lalu rasa bersalah sejam.\n\nKami faham. Perasaan anda tidak salah, ia cuma tiba sekuat-kuatnya. Leret untuk memahami sebabnya, serta tiga ikhtiar untuk menenangkannya.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini untuk hari emosi anda meluap lagi.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #emosi",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa emosi\n[[meluap]] tanpa\namaran?",
+      "sub": "Kami faham. Bukan sengaja. Bukan kurang didikan."
+    },
+    {
+      "type": "point",
+      "title": "Tiada [[pemalap]],\nhanya hidup\ndan padam",
+      "body": "Jengkel menjadi marah. Gembira menjadi terlalu teruja. Perasaan itu sesuai dengan saatnya, cuma ia melangkau aras pertengahan yang dimiliki orang lain."
+    },
+    {
+      "type": "point",
+      "title": "Ia tiba [[pantas]],\nsebelum fikiran\nsempat menyusul",
+      "body": "Reaksi sudah terlafaz sebelum jeda sempat tiba. Apabila anda selesai berfikir, anda sudah pun memohon maaf."
+    },
+    {
+      "type": "point",
+      "title": "Kemudian datang\n[[gelombang kedua]]",
+      "body": "Rasa malu selepas itu sering bertahan lebih lama daripada marah itu sendiri. \"Mengapa saya begini?\" lebih berat daripada kata-kata yang terlepas."
+    },
+    {
+      "type": "point",
+      "title": "Ia terkumpul\n[[perlahan-lahan]]\ndahulu",
+      "body": "Kebanyakan letusan bukan tentang perkara terakhir. Ia tentang lapar, bising, dan sepuluh perkara kecil sejak pagi. Yang terakhir hanya menanggung salah."
+    },
+    {
+      "type": "point",
+      "title": "Namakan rasa,\nia [[mengecil]]\nsedikit",
+      "body": "Menyebut \"saya sedang terbeban\" memperlahankan segalanya. Menamakan perasaan mengubah anda daripada berada di dalamnya kepada memerhatikannya."
+    },
+    {
+      "type": "point",
+      "title": "Tinggalkan bilik,\nbukan\n[[perbualan]]",
+      "body": "\"Beri saya sepuluh minit, saya akan kembali.\" Rehat singkat dengan janji untuk kembali bukan melarikan diri. Ia cara menjaga kata-kata anda."
+    },
+    {
+      "type": "point",
+      "title": "Semak perkara\n[[asas]] dahulu",
+      "body": "Sebelum memutuskan hari ini sudah hancur, tanyalah soalan mudah. Sudah makan? Cukup tidur? Minum air? Emosi membesar apabila tenaga kosong."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini untuk\nhari emosi anda\n[[meluap]] lagi",
+      "body": "Perasaan anda tidak berlebihan, ia cuma perlukan ruang untuk mendarat. Luahkan segalanya dalam my.adhd, dapatkan kembali satu perkara. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

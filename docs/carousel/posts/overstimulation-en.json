@@ -1,0 +1,60 @@
+{
+  "slug": "overstimulation-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "gradient",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Two hours at a kenduri and you need a week to recover.\n\nThat is overstimulation, not being antisocial. Swipe for why a busy room drains you so fast, and three ways to last longer in it.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for the next time the room gets too loud.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #sensoryoverload",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Too loud. Too bright. Too many people.",
+      "title": "Why does a busy\nroom [[drain]]\nme so fast?",
+      "sub": "You are not antisocial. Your brain is taking in everything at once."
+    },
+    {
+      "type": "point",
+      "title": "Every sound\narrives at\n[[full volume]]",
+      "body": "The music, the blender, two conversations and the aircon. Most people filter some of it out. You hear all of it, and all of it asks for attention."
+    },
+    {
+      "type": "point",
+      "title": "Your social\nbattery is\n[[real]]",
+      "body": "Talking, listening, reading faces, trying not to interrupt. It is a lot at once. When the battery hits zero, you are not being rude. You are empty."
+    },
+    {
+      "type": "point",
+      "title": "Overload looks\nlike [[irritation]]",
+      "body": "Snapping at someone, going quiet, needing to leave right now. From outside it looks like a mood. From inside it is too much input and nowhere to put it."
+    },
+    {
+      "type": "point",
+      "title": "It builds\n[[across the day]]",
+      "body": "A loud commute, an open office, a crowded lunch. Each alone is fine. By evening there is no room left, and the smallest sound tips you over."
+    },
+    {
+      "type": "point",
+      "title": "Carry a\n[[quiet kit]]",
+      "body": "Earplugs or earphones, sunglasses, something to fidget with. Small tools that turn the volume down a notch can buy you another hour."
+    },
+    {
+      "type": "point",
+      "title": "Plan your\n[[exit]] early",
+      "body": "Before you go, decide when and how you will leave, or where you will take a break. Knowing there is a way out makes the room easier to stay in."
+    },
+    {
+      "type": "point",
+      "title": "Recharge [[alone]],\nwithout guilt",
+      "body": "Twenty minutes in a quiet room after a busy day is not antisocial. It is maintenance, and it is what lets you show up for people tomorrow."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext time the room\ngets [[too loud]]",
+      "body": "You are not too much. You just take in more. Dump the noise into my.adhd and get back one thing to hold.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

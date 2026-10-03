@@ -1,0 +1,60 @@
+{
+  "slug": "hyperfocus-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "night-violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Sat down for five minutes. Looked up and it was dark.\n\nHyperfocus is the side of ADHD nobody warns you about. Swipe for why it grabs the wrong task, and three ways to put rails on it.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for the next time you lose the day.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #hyperfocus",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Sat down at 2pm. It is 8pm.",
+      "title": "Where did the\nlast six\n[[hours]] go?",
+      "sub": "Hyperfocus is not the opposite of ADHD. It is the other side of it."
+    },
+    {
+      "type": "point",
+      "title": "Not too little\nfocus. Focus\n[[with no brake]]",
+      "body": "ADHD attention is hard to point, and just as hard to pull back. When something grabs it, the world goes quiet. Hunger, time and messages included."
+    },
+    {
+      "type": "point",
+      "title": "[[Interest]] picks\nthe task, not you",
+      "body": "Hyperfocus rarely lands on the report. It lands on the new hobby, the game, the rabbit hole at midnight. Interest chooses, not importance."
+    },
+    {
+      "type": "point",
+      "title": "It feels good,\nuntil the\n[[bill arrives]]",
+      "body": "Hours of flow feel like proof you can focus after all. Then comes the headache, the skipped meal, the thing you were meant to do at four."
+    },
+    {
+      "type": "point",
+      "title": "Coming out\nof it [[hurts]]",
+      "body": "Being pulled out mid-flow can feel like being shaken awake. The snap at whoever interrupted you is usually the shock, not the person."
+    },
+    {
+      "type": "point",
+      "title": "Set an alarm\n[[before]] you\ndive in",
+      "body": "You will not notice time passing once you are in. Put a timer across the room before you start, so standing up to stop it breaks the spell."
+    },
+    {
+      "type": "point",
+      "title": "Put water and\nfood [[in reach]]",
+      "body": "If you are going to disappear for hours, pack for the trip. A bottle and a snack on the desk means your body is not the thing you forget."
+    },
+    {
+      "type": "point",
+      "title": "Aim it at\nwhat [[matters]]",
+      "body": "You cannot summon hyperfocus on command, but you can make the important task more interesting. Music, a new place, a race against the clock."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext time you\n[[lose the day]]",
+      "body": "Your focus is powerful, it just needs guard rails. Dump everything into my.adhd and get one thing back that is worth diving into.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

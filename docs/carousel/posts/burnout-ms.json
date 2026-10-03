@@ -1,0 +1,60 @@
+{
+  "slug": "burnout-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "night-orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Berbulan-bulan anda bertahan. Kemudian suatu hari, semuanya terhenti.\n\nKami faham. Letih lesu ADHD bukan malas yang datang lewat. Leret untuk memahami mengapa bertahan itu mahal, serta tiga ikhtiar untuk bangkit semula.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini untuk hari anda akhirnya berhenti sejenak.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #burnout",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa [[rebah]]\nselepas lama\nbertahan?",
+      "sub": "Kami faham. Bukan malas yang datang lewat, tetapi harga usaha bertahun-tahun."
+    },
+    {
+      "type": "point",
+      "title": "Bertahan itu\n[[mahal]]",
+      "body": "Mengingat, mengejar, menyembunyikan, menyemak dua kali. Apa yang orang lain buat secara automatik, anda buat dengan tangan. Usaha itu terkumpul."
+    },
+    {
+      "type": "point",
+      "title": "Letih lesu\nbukan sekadar\n[[penat]]",
+      "body": "Ia terasa hambar. Yang dahulu disukai menjadi kelabu. Tugas kecil terasa seperti tembok. Tidur tidak memulihkannya, kerana yang habis bukan tubuh sahaja."
+    },
+    {
+      "type": "point",
+      "title": "Ia sering tiba\nselepas [[desakan]]\nbesar",
+      "body": "Pelancaran projek, musim peperiksaan, berpindah rumah, bayi baharu. Anda bergerak dengan adrenalin dan tarikh akhir. Apabila tekanan berhenti, enjin turut berhenti."
+    },
+    {
+      "type": "point",
+      "title": "Rehat bukan\n[[ganjaran]], ia\nbahan bakar",
+      "body": "Jika rehat hanya tiba selepas semuanya siap, ia tidak akan tiba. Jadikan rehat sebahagian kerja, dijadualkan seperti mesyuarat yang tidak boleh dianjak."
+    },
+    {
+      "type": "point",
+      "title": "Tinggalkan yang\n[[tidak wajib]]",
+      "body": "Untuk seketika, lakukan kurang dengan sengaja. Batalkan yang boleh. Rendahkan sasaran bagi yang tinggal. Melalui minggu ini ialah matlamatnya."
+    },
+    {
+      "type": "point",
+      "title": "Kenali tanda\n[[awal]] anda",
+      "body": "Lebih cepat marah. Lebih kerap lupa. Gerun dengan perkara mudah. Catatkan tanda amaran anda, supaya kali ini ia dikesan ketika goyah, bukan ketika rebah."
+    },
+    {
+      "type": "point",
+      "title": "Beritahu\n[[seorang]]",
+      "body": "Letih lesu membesar dalam senyap. Anda tidak perlu penjelasan panjang. \"Saya kehabisan tenaga, boleh bantu ambil satu perkara?\" sudah memadai."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini untuk\nhari anda akhirnya\n[[berhenti sejenak]]",
+      "body": "Anda tidak gagal. Anda cuma berlari terlalu lama tanpa rehat. Luahkan segalanya dalam my.adhd, dapatkan kembali satu perkara kecil. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

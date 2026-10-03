@@ -30,13 +30,13 @@ FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
          'family=Baloo+2:wght@400..800&family=DM+Mono&family=DM+Sans:wght@100..900&display=swap">')
 
 MARK = '''<svg class="mark" viewBox="14 14 72 72" aria-hidden="true">
-  <g style="fill:var(--orange)">
+  <g style="fill:var(--mark-star)">
     <rect x="46.5" y="18" width="7" height="64"></rect>
     <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"></rect>
     <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"></rect>
     <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"></rect>
   </g>
-  <path d="M64.5 64.5l7 7" style="stroke:var(--violet)" stroke-width="7" stroke-linecap="round" fill="none"></path>
+  <path d="M64.5 64.5l7 7" style="stroke:var(--mark-pill)" stroke-width="7" stroke-linecap="round" fill="none"></path>
 </svg>'''
 
 ICONS = {
@@ -86,8 +86,9 @@ def artboard(post, s, i, total, point_no):
                 + (f'<span class="arrow-cta">{escape(cta["label"], quote=False)} <i>{icon("arrow")}</i></span>'
                    if cta.get('label') else ''))
     theme = 'dark' if post.get('theme') == 'dark' else 'light'
+    style = escape(post.get('style') or 'gradient')
     return f'''<!doctype html>
-<html data-theme="{theme}">
+<html data-theme="{theme}" data-style="{style}">
 <head>
   <meta charset="utf-8">
   <script src="./support.js"></script>

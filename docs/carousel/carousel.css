@@ -49,6 +49,21 @@
   --line-strong:#CFCBE9;
   --accent:var(--violet);
 
+  /* what a style may need to swap: the mark's two colours, the wordmark's
+     accent, the counter dot and the CTA circle. Orange-as-signal is the
+     default; the orange styles are the deliberate exception. */
+  --mark-star:var(--orange);
+  --mark-pill:var(--violet);
+  --wordmark-accent:var(--violet);
+  --dot:var(--orange);
+  --cta-bg:var(--orange);
+  --cta-fg:#FFFFFF;
+
+  /* film grain, off by default; the non-gradient styles turn it on */
+  --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.2' intercept='-.6'/%3E%3CfeFuncG type='linear' slope='2.2' intercept='-.6'/%3E%3CfeFuncB type='linear' slope='2.2' intercept='-.6'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --noise-opacity:0;
+  --noise-blend:overlay;
+
   /* the three blobs, as rgba so the alpha can differ from the token */
   --blob-a:rgba(209,205,255,.55);   /* --pale */
   --blob-b:rgba(233,231,253,.95);   /* --wash-2 */
@@ -75,6 +90,87 @@
   --vignette:rgba(0,0,0,.35);
 }
 
+/* ---------- styles ----------
+   post.style (or ?style= in the preview) picks one; "gradient" is the block
+   above and needs nothing here. Same layout, faces and mark everywhere —
+   only the ground and the colours that sit on it change, so neighbouring
+   posts on the profile grid stop looking like one tile. */
+
+/* solid brand violet with grain; the accent goes pale, the pill goes white */
+:root[data-style="violet"]{
+  --surface:#7B3FE4;
+  --ink:#FFFFFF;
+  --ink-soft:rgba(255,255,255,.90);
+  --muted:rgba(255,255,255,.78);
+  --faint:rgba(255,255,255,.74);
+  --line-strong:rgba(255,255,255,.36);
+  --accent:#DCC9FF;                 /* --violet-pale */
+  --mark-pill:#FFFFFF;
+  --wordmark-accent:#DCC9FF;
+  --blob-a:rgba(255,255,255,.07);
+  --blob-b:rgba(58,28,134,.40);     /* --violet-deep, a little weight low */
+  --blob-c:rgba(58,28,134,.22);
+  --vignette:rgba(30,10,80,.18);
+  --noise-opacity:.85;
+}
+
+/* solid orange with grain: ink type, white accent, and nothing orange on it —
+   the star, the dot and the CTA circle all go ink */
+:root[data-style="orange"]{
+  --surface:#F75C03;
+  --ink:#101018;
+  --ink-soft:rgba(16,16,24,.86);
+  --muted:rgba(16,16,24,.72);
+  --faint:rgba(16,16,24,.68);
+  --line-strong:rgba(16,16,24,.28);
+  --accent:#FFFFFF;
+  --mark-star:#101018;
+  --wordmark-accent:#FFFFFF;
+  --dot:#101018;
+  --cta-bg:#101018;
+  --blob-a:rgba(255,150,70,.22);
+  --blob-b:rgba(190,60,0,.30);
+  --blob-c:rgba(190,60,0,.18);
+  --vignette:rgba(110,30,0,.10);
+  --noise-opacity:.85;
+}
+
+/* near-black with an orange glow and grain */
+:root[data-style="night-orange"]{
+  --surface:#0B0B10;
+  --ink:#F3F2FB;
+  --ink-soft:#D6D4EA;
+  --muted:#9A98AC;
+  --faint:#A3A1B5;
+  --line-strong:#34333F;
+  --accent:#FF7A2E;
+  --wordmark-accent:#A97BFF;
+  --blob-a:rgba(247,92,3,.50);
+  --blob-b:rgba(247,92,3,.34);
+  --blob-c:rgba(140,45,0,.55);
+  --vignette:rgba(0,0,0,.40);
+  --noise-opacity:.22;
+  --noise-blend:screen;
+}
+
+/* near-black with a violet glow and grain */
+:root[data-style="night-violet"]{
+  --surface:#0B0B10;
+  --ink:#F3F2FB;
+  --ink-soft:#D6D4EA;
+  --muted:#9A98AC;
+  --faint:#A3A1B5;
+  --line-strong:#34333F;
+  --accent:#B48CFF;
+  --wordmark-accent:#A97BFF;
+  --blob-a:rgba(123,63,228,.58);    /* --violet */
+  --blob-b:rgba(58,28,134,.75);     /* --violet-deep */
+  --blob-c:rgba(53,41,191,.45);     /* --blue-deep */
+  --vignette:rgba(0,0,0,.40);
+  --noise-opacity:.22;
+  --noise-blend:screen;
+}
+
 html,body{margin:0; padding:0}
 body{
   background:#8E8CA0;               /* preview ground, never in a slide */
@@ -99,6 +195,13 @@ body[data-render]{gap:0; padding:0; background:var(--surface)}
     radial-gradient(560px 560px at -6% 96%, var(--blob-c), transparent 70%),
     linear-gradient(180deg, var(--vignette), transparent 22%, transparent 78%, var(--vignette)),
     var(--surface);
+}
+/* grain: same z as the ground, but ::after paints after ::before, and the
+   slide is isolated so the blend only sees this slide's own background */
+.slide::after{
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background-image:var(--noise); background-size:360px 360px;
+  opacity:var(--noise-opacity); mix-blend-mode:var(--noise-blend);
 }
 /* the blobs drift a little from slide to slide, as in the reference;
    carousel.js (and build_canvas.py) set data-blob to 1, 2, 3, 1, 2, 3 … */
@@ -130,7 +233,7 @@ body[data-render]{gap:0; padding:0; background:var(--surface)}
   font-family:var(--display); font-weight:800; font-size:44px; line-height:1;
   letter-spacing:-.02em; color:var(--ink); transform:translateY(-2px);
 }
-.wordmark .accent{color:var(--violet)}
+.wordmark .accent{color:var(--wordmark-accent)}
 .label{
   font-family:var(--mono); font-weight:400; font-size:24px; line-height:1;
   letter-spacing:.12em; text-transform:uppercase; color:var(--faint);
@@ -150,7 +253,7 @@ body[data-render]{gap:0; padding:0; background:var(--surface)}
 }
 .foot .count::before{
   content:""; flex:none; width:9px; height:9px; border-radius:999px;
-  background:var(--orange); margin-right:16px;
+  background:var(--dot); margin-right:16px;
 }
 
 /* ---------- body block ---------- */
@@ -192,6 +295,6 @@ body[data-render]{gap:0; padding:0; background:var(--surface)}
 .arrow-cta i{
   flex:none; display:grid; place-items:center;
   width:96px; height:96px; border-radius:999px;
-  background:var(--orange); color:#FFFFFF;
+  background:var(--cta-bg); color:var(--cta-fg);
 }
 .arrow-cta svg{width:36px; height:36px; display:block}

@@ -1,0 +1,60 @@
+{
+  "slug": "overstimulation-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "gradient",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Dua jam di kenduri, seminggu untuk pulih.\n\nKami faham. Itu terbeban deria, bukan antisosial. Leret untuk memahami mengapa tempat sesak cepat meletihkan, serta tiga ikhtiar untuk bertahan lebih lama.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini untuk hari bilik terasa terlalu bising.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #deria",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa tempat\n[[sesak]] cepat\nmeletihkan?",
+      "sub": "Kami faham. Bukan antisosial. Minda anda menerima segalanya serentak."
+    },
+    {
+      "type": "point",
+      "title": "Setiap bunyi\ntiba [[sekuat-kuatnya]]",
+      "body": "Muzik, pengisar, dua perbualan dan penghawa dingin. Kebanyakan orang menapis sebahagiannya. Anda mendengar semuanya, dan semuanya meminta perhatian."
+    },
+    {
+      "type": "point",
+      "title": "Tenaga sosial\nitu [[benar]]",
+      "body": "Bercakap, mendengar, membaca wajah, mengingatkan diri supaya tidak menyampuk. Semuanya serentak. Apabila tenaga habis, anda bukan biadab, anda kosong."
+    },
+    {
+      "type": "point",
+      "title": "Terbeban kelihatan\nseperti [[marah]]",
+      "body": "Menjawab kasar, tiba-tiba diam, perlu keluar sekarang juga. Dari luar ia kelihatan seperti ragam. Dari dalam, masukan terlalu banyak tanpa tempat."
+    },
+    {
+      "type": "point",
+      "title": "Ia terkumpul\n[[sepanjang hari]]",
+      "body": "Perjalanan yang bising, pejabat terbuka, makan tengah hari yang sesak. Satu-satu tidak mengapa. Menjelang malam, bunyi paling kecil pun melimpahkannya."
+    },
+    {
+      "type": "point",
+      "title": "Bawa [[kit sunyi]]",
+      "body": "Penyumbat telinga atau fon telinga, cermin mata hitam, sesuatu untuk digenggam. Alat kecil yang merendahkan kebisingan boleh memberi sejam lagi."
+    },
+    {
+      "type": "point",
+      "title": "Rancang jalan\n[[keluar]] awal",
+      "body": "Sebelum pergi, tentukan bila dan bagaimana anda akan pulang, atau di mana anda akan berehat. Mengetahui ada jalan keluar memudahkan untuk kekal."
+    },
+    {
+      "type": "point",
+      "title": "Pulihkan tenaga\n[[bersendirian]]",
+      "body": "Dua puluh minit di bilik sunyi selepas hari yang sibuk bukan antisosial. Ia penjagaan, dan itulah yang membolehkan anda hadir untuk orang lain esok."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini untuk\nhari bilik terasa\n[[terlalu bising]]",
+      "body": "Anda tidak berlebihan, cuma anda menerima lebih banyak. Luahkan kebisingan itu dalam my.adhd, dapatkan kembali satu perkara. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

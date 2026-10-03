@@ -1,0 +1,60 @@
+{
+  "slug": "rsd-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Satu mesej \"dilihat\" tanpa balasan, dan seluruh hari terasa hilang.\n\nKami faham. Pedih itu benar, dan bagi ramai minda ADHD ia terasa lebih nyaring. Leret untuk memahami sebabnya, serta tiga ikhtiar untuk melaluinya.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini untuk hari mesej anda tidak berbalas.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #penolakan",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "Mengapa\n[[penolakan]] kecil\nterasa pedih?",
+      "sub": "Kami faham. Bukan terlalu sensitif. Bukan lemah."
+    },
+    {
+      "type": "point",
+      "title": "Pedihnya lebih\n[[besar]] daripada\nperistiwanya",
+      "body": "Balasan pendek, jemputan yang terlepas, jawapan \"ok\" yang hambar. Orang lain lupa dalam seminit. Anda memikulnya sepanjang petang."
+    },
+    {
+      "type": "point",
+      "title": "Senyap diisi\ndengan cerita\n[[paling buruk]]",
+      "body": "Tiada balasan mungkin bermaksud sibuk, tidur atau sedang memandu. Namun minda mengisi kekosongan itu dengan cerita paling pedih, selalunya tentang diri sendiri."
+    },
+    {
+      "type": "point",
+      "title": "Teguran pada kerja\nterasa teguran\npada [[diri]]",
+      "body": "\"Boleh betulkan bahagian ini?\" didengar sebagai \"saya tidak pandai\". Teguran itu tentang satu perenggan. Pedihnya tentang segala-galanya."
+    },
+    {
+      "type": "point",
+      "title": "Lalu kita\n[[mengelak]] sebelum\nditolak",
+      "body": "Bersetuju dengan semua permintaan. Berundur sebelum ditolak. Tidak pernah meminta langsung. Rupanya berbeza, tetapi semuanya perisai yang sama."
+    },
+    {
+      "type": "point",
+      "title": "Namakan rasa itu\n[[sebelum]]\nmempercayainya",
+      "body": "\"Ini rasa pedih, bukan fakta.\" Menyebutnya dengan jelas memberi sedikit ruang antara perasaan dan cerita yang dibisikkannya."
+    },
+    {
+      "type": "point",
+      "title": "Tunggu [[sejam]]\nsebelum\nmembalas",
+      "body": "Desakan untuk menjelaskan, memohon maaf atau memutuskan hubungan paling kuat pada jam pertama. Tulislah jika perlu. Hantar esok, jika masih wajar."
+    },
+    {
+      "type": "point",
+      "title": "[[Bertanya]],\nbukan meneka",
+      "body": "\"Adakah tadi itu baik-baik sahaja?\" ialah soalan kecil. Ia jauh lebih murah daripada semalaman membaca semula mesej mereka mencari maksud tersembunyi."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini untuk\nhari mesej anda\n[[tidak berbalas]]",
+      "body": "Perasaan itu nyaring, tetapi ia bukan keputusan tentang diri anda. Luahkan segalanya dalam my.adhd, dapatkan kembali satu perkara. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

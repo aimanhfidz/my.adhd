@@ -1,0 +1,60 @@
+{
+  "slug": "adhd-tax-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "night-orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Denda lewat, pengecas hilang, langganan yang terlupa. Semuanya terkumpul.\n\nKami faham. Itulah cukai ADHD, dan ia bukan soal boros. Leret untuk melihat di mana ia bersembunyi, serta tiga ikhtiar untuk berhenti membayarnya.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini sebelum denda lewat seterusnya.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #kewangan",
+  "slides": [
+    {
+      "type": "cover",
+      "kicker": "Saudara-saudari sekalian.",
+      "title": "[[Cukai ADHD]]\nyang jarang\ndisebut",
+      "sub": "Kami faham. Bukan boros, tetapi harga minda yang mudah lupa dan cepat bertindak."
+    },
+    {
+      "type": "point",
+      "title": "Denda lewat\nbagi bil yang\n[[mampu dibayar]]",
+      "body": "Wangnya ada. Peringatannya yang tiada. Bil yang mampu dibayar menjadi bil yang dibayar dua kali, hanya kerana tarikhnya terlepas."
+    },
+    {
+      "type": "point",
+      "title": "Membeli\n[[sekali lagi]]",
+      "body": "Pengecas, payung, pita pelekat. Anda memiliki tiga di suatu tempat. Membeli baharu lebih cepat daripada mencari yang lama, jadi anda membelinya lagi."
+    },
+    {
+      "type": "point",
+      "title": "Langganan yang\n[[terlupa]]",
+      "body": "Percubaan percuma yang tidak dibatalkan. Gim yang dikunjungi dua kali. Jumlah bulanan yang kecil mudah terlepas, dan ia terkumpul senyap sepanjang tahun."
+    },
+    {
+      "type": "point",
+      "title": "Beli-belah\n[[pukul tiga pagi]]",
+      "body": "Keseronokan barang baharu tiba sebelum pertimbangan. Beli sekarang, menyesal ketika sampai. Barangnya murah. Corak itulah yang mahal."
+    },
+    {
+      "type": "point",
+      "title": "Bayar bil secara\n[[automatik]]",
+      "body": "Setiap bayaran yang berlaku tanpa perlu diingat ialah satu denda yang terelak. Tetapkan sekali, pada hari yang baik, dan biarkan kalendar bekerja."
+    },
+    {
+      "type": "point",
+      "title": "Peraturan\n[[24 jam]] untuk\nkehendak",
+      "body": "Biarkan dalam troli hingga esok. Jika masih mahu selepas tidur semalaman, belilah. Kebanyakan desakan tidak bertahan selama itu."
+    },
+    {
+      "type": "point",
+      "title": "Semak penyata\n[[setiap bulan]]",
+      "body": "Pilih satu hari sebulan, pasang lagu, dan tatal penyata bank. Batalkan satu perkara yang anda lupa. Lima minit, wang sebenar kembali."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan ini sebelum\n[[denda lewat]]\nseterusnya",
+      "body": "Anda tidak cuai dengan wang, anda membayar harga minda yang sibuk. Luahkan bil dan tarikh dalam my.adhd, dapatkan kembali satu perkara. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}
