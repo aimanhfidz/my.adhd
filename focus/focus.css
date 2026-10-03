@@ -194,7 +194,7 @@ input,textarea{font:inherit; color:inherit}
 .corner{position:fixed; z-index:5; display:flex; align-items:center; gap:10px}
 .corner-tl{top:calc(var(--gutter) + env(safe-area-inset-top)); left:calc(var(--gutter) + env(safe-area-inset-left))}
 .corner-tr{top:calc(var(--gutter) + env(safe-area-inset-top)); right:calc(var(--gutter) + env(safe-area-inset-right)); flex-direction:column; align-items:flex-end}
-.corner-bl{bottom:calc(var(--gutter) + env(safe-area-inset-bottom)); left:calc(var(--gutter) + env(safe-area-inset-left)); align-items:flex-end}
+.corner-bl{z-index:6; bottom:calc(var(--gutter) + env(safe-area-inset-bottom)); left:calc(var(--gutter) + env(safe-area-inset-left)); align-items:flex-end}
 .corner-br{bottom:calc(var(--gutter) + env(safe-area-inset-bottom)); right:calc(var(--gutter) + env(safe-area-inset-right))}
 .chrome, .corner-tr .quote, .mini{transition:opacity .5s var(--ease)}
 .idle .chrome, .idle .corner-tr .quote{opacity:0; pointer-events:none}
@@ -322,6 +322,7 @@ input,textarea{font:inherit; color:inherit}
 .task.done .task-check{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
 .task-title{flex:1; min-width:0; font-size:15px; font-weight:600; line-height:1.3; overflow-wrap:anywhere; cursor:grab}
 .task:not(.spot) .task-title{font-weight:500; color:var(--ink-soft)}
+.task-edit{flex:1; min-width:0; border:0; outline:0; background:transparent; padding:0; font-size:15px; font-weight:600; line-height:1.3; color:var(--ink)}
 .task.done .task-title{text-decoration:line-through; color:var(--muted); font-weight:500}
 .task.current .task-title{color:var(--accent)}
 .task-act{display:flex; gap:2px; opacity:0; transition:opacity .15s}
@@ -486,6 +487,7 @@ input[type="text"].field{width:180px}
 @media (max-width:720px){
   /* the bottom row is two corners on one line; the streak steps up out of it */
   .streak{position:absolute; right:0; bottom:calc(100% + 8px); height:34px}
+  :root:has(.pop:not([hidden])) .streak{visibility:hidden}   /* it sat on "Clear done" */
   .brand-tag{display:none}
   .quote{max-width:calc(100vw - 32px - 150px)}
 }
@@ -496,7 +498,7 @@ input[type="text"].field{width:180px}
    open panel is pinned to exactly the part of the screen still visible,
    and everything else gets out of its way. */
 @media (max-width:720px){
-  #notes, .task-add input, .intent-edit input, .field{font-size:16px}   /* under 16px, Safari zooms in on focus */
+  #notes, .task-add input, .intent-edit input, .task-edit, .field{font-size:16px}   /* under 16px, Safari zooms in on focus */
   .kb .pop:not([hidden]){
     position:fixed; left:8px; right:8px; bottom:auto;
     top:calc(var(--vv-top, 0px) + 8px); height:calc(var(--vv-h, 100dvh) - 16px); max-height:none;

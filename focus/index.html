@@ -34,7 +34,7 @@
 
 <link rel="preload" href="/fonts/Baloo2-Variable.ttf" as="font" type="font/ttf" crossorigin />
 <link rel="stylesheet" href="/theme.css" />
-<link rel="stylesheet" href="/focus/focus.css?v=7" />
+<link rel="stylesheet" href="/focus/focus.css?v=8" />
 <script>
 /* Before first paint: the scene for the mode we are about to show, and the
    tone it carries. The whole page's tokens follow the scene — light glass
@@ -53,6 +53,9 @@
   var light = { apricot: 1, lilac: 1, paper: 1 };
   d.dataset.mode = mode;
   d.dataset.scene = id;
+  d.dataset.size = { s: 1, m: 1, l: 1 }[s.size] ? s.size : 'm';
+  d.dataset.tstyle = s.timerStyle === 'ring' ? 'ring' : 'digits';
+  d.dataset.bar = s.bar === true ? '1' : '0';
   d.dataset.theme = light[id] ? 'light' : 'dark';
   if (s.still) d.classList.add('still');
 })();
@@ -370,6 +373,6 @@
 
 <p class="toast" id="toast" role="status" aria-live="polite"></p>
 
-<script src="/focus/focus.js?v=3"></script>
+<script src="/focus/focus.js?v=4"></script>
 </body>
 </html>

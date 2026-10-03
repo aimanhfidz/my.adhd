@@ -381,22 +381,64 @@
     soundVol: {}, soundOn: [],
     lastSec: 'scenes',
   };
-  const NEW_TIMER = () => ({ seg: 'focus', round: 0, running: false, endAt: 0, left: null, startAt: 0, base: 0 });
+  const NEW_TIMER = () => ({ seg: 'focus', round: 0, running: false, endAt: 0, left: null, startAt: 0, base: 0, segMs: null });
+  const NUM_LIMITS = { focusMin: [1, 180], shortMin: [1, 60], longMin: [1, 90], longEvery: [2, 8], countMin: [1, 240] };
+  const CHOICES = {
+    size: ['s', 'm', 'l'], timerKind: ['pomodoro', 'countdown', 'stopwatch'], timerStyle: ['digits', 'ring'],
+    quoteCat: ['all', 'gentle', 'momentum', 'rest'], lastSec: ['scenes', 'clock', 'timer', 'stats', 'quotes', 'extras'],
+  };
 
+  /* Whatever is in storage was written by an older build, another tab, or a
+     hand in devtools. Every field is checked against the shape it should
+     have and falls back to its default if it is not — a null name or a
+     zero-minute focus used to stop the page booting, and Reset lives
+     inside the page. */
   function load() {
     let raw = {};
     try { raw = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (_) {}
-    const settings = Object.assign({}, DEFAULTS, raw.settings || {});
-    settings.scenes = Object.assign({}, DEFAULTS.scenes, settings.scenes || {});
-    Object.keys(settings.scenes).forEach((m) => { settings.scenes[m] = sceneById(settings.scenes[m]).id; });
+    if (!raw || typeof raw !== 'object') raw = {};
+    const rs = raw.settings && typeof raw.settings === 'object' ? raw.settings : {};
+    const settings = {};
+    for (const k of Object.keys(DEFAULTS)) {
+      const d = DEFAULTS[k], v = rs[k];
+      if (NUM_LIMITS[k]) settings[k] = clampInt(v, NUM_LIMITS[k][0], NUM_LIMITS[k][1], d);
+      else if (CHOICES[k]) settings[k] = CHOICES[k].includes(v) ? v : d;
+      else if (typeof d === 'boolean') settings[k] = typeof v === 'boolean' ? v : d;
+      else if (typeof d === 'string') settings[k] = typeof v === 'string' ? v.slice(0, 40) : d;
+      else settings[k] = d;
+    }
+    const scenes = rs.scenes && typeof rs.scenes === 'object' ? rs.scenes : {};
+    settings.scenes = {};
+    for (const m of Object.keys(DEFAULTS.scenes)) settings.scenes[m] = sceneById(typeof scenes[m] === 'string' ? scenes[m] : DEFAULTS.scenes[m]).id;
+    settings.soundOn = Array.isArray(rs.soundOn) ? rs.soundOn.filter((id) => SOUNDS.some((x) => x.id === id)) : [];
+    settings.soundVol = {};
+    if (rs.soundVol && typeof rs.soundVol === 'object') {
+      for (const s of SOUNDS) { const v = Number(rs.soundVol[s.id]); if (Number.isFinite(v)) settings.soundVol[s.id] = Math.min(1, Math.max(0, v)); }
+    }
+    const num = (v) => typeof v === 'number' && Number.isFinite(v);
+    const rt = raw.timer && typeof raw.timer === 'object' ? raw.timer : {};
+    const timer = NEW_TIMER();
+    if (['focus', 'short', 'long'].includes(rt.seg)) timer.seg = rt.seg;
+    timer.round = clampInt(rt.round, 0, settings.longEvery, 0);
+    if (num(rt.base) && rt.base >= 0) timer.base = rt.base;
+    if (num(rt.left) && rt.left > 0) timer.left = rt.left;
+    if (num(rt.segMs) && rt.segMs > 0) timer.segMs = rt.segMs;
+    if (rt.running === true && settings.timerKind === 'stopwatch' && num(rt.startAt)) { timer.running = true; timer.startAt = rt.startAt; }
+    if (rt.running === true && settings.timerKind !== 'stopwatch' && num(rt.endAt) && rt.endAt > 0) { timer.running = true; timer.endAt = rt.endAt; }
+    const tasks = (Array.isArray(raw.tasks) ? raw.tasks : [])
+      .filter((t) => t && typeof t.title === 'string' && t.title.trim())
+      .map((t) => ({ id: typeof t.id === 'string' ? t.id : uid(), title: t.title.slice(0, 140), done: t.done === true, doneAt: num(t.doneAt) ? t.doneAt : null }));
+    const cur = raw.current && typeof raw.current === 'object' && typeof raw.current.title === 'string'
+      ? { id: typeof raw.current.id === 'string' ? raw.current.id : null, title: raw.current.title.slice(0, 140) } : null;
     return {
       settings,
-      tasks: Array.isArray(raw.tasks) ? raw.tasks : [],
-      current: raw.current || null,
+      tasks,
+      current: cur,
       notes: typeof raw.notes === 'string' ? raw.notes : '',
-      sessions: Array.isArray(raw.sessions) ? raw.sessions : [],
-      doneLog: Array.isArray(raw.doneLog) ? raw.doneLog : [],
-      timer: Object.assign(NEW_TIMER(), raw.timer || {}),
+      sessions: (Array.isArray(raw.sessions) ? raw.sessions : []).filter((s) => s && num(s.at) && num(s.min) && s.min > 0)
+        .map((s) => ({ at: s.at, min: s.min, task: typeof s.task === 'string' ? s.task : '' })),
+      doneLog: (Array.isArray(raw.doneLog) ? raw.doneLog : []).filter(num),
+      timer,
     };
   }
 
@@ -404,13 +446,36 @@
   const S = state.settings;
   let saveTimer = 0;
   let erased = false;
+  let dirty = false;
   function save(now) {
     clearTimeout(saveTimer);
     if (erased) return;
-    const write = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (_) {} };
+    dirty = true;
+    const write = () => { dirty = false; try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (_) {} };
     if (now) write(); else saveTimer = setTimeout(write, 300);
   }
-  window.addEventListener('pagehide', () => save(true));
+  // Only a tab that changed something writes on the way out. Every tab used
+  // to write its whole copy here, so closing a tab left open since morning
+  // put the morning back over a day's work done in another one.
+  window.addEventListener('pagehide', () => { if (dirty) save(true); });
+
+  // Another tab wrote: take its copy, keeping the objects S and T point at.
+  // A reset there (key removed) reloads here, so this tab cannot undo it.
+  window.addEventListener('storage', (e) => {
+    if (e.key !== KEY || erased) return;
+    if (e.newValue == null) { erased = true; location.replace(location.pathname); return; }
+    const fresh = load();
+    clearTimeout(saveTimer);
+    dirty = false;
+    for (const k of Object.keys(S)) delete S[k];
+    Object.assign(S, fresh.settings);
+    for (const k of Object.keys(T)) delete T[k];
+    Object.assign(T, fresh.timer);
+    state.tasks = fresh.tasks; state.current = fresh.current; state.notes = fresh.notes;
+    state.sessions = fresh.sessions; state.doneLog = fresh.doneLog;
+    if (typeof onExternalChange === 'function') onExternalChange();
+  });
+  let onExternalChange = null;
 
   function toast(msg) {
     const el = $('#toast');
@@ -460,6 +525,10 @@
     html.dataset.theme = sc.tone;
     const meta = $('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', sc.tone === 'light' ? '#E9E7FB' : '#101018');
+    if (pip.win) {
+      pip.win.document.documentElement.dataset.theme = sc.tone;
+      pip.win.document.documentElement.dataset.scene = sc.id;
+    }
   }
 
   function setMode(m, fromHash) {
@@ -486,6 +555,7 @@
     if (t !== lastClock) {
       lastClock = t;
       $('[data-bind="clock"]').textContent = t;
+      $('#ampm').textContent = S.clock24 ? '' : d.getHours() < 12 ? 'am' : 'pm';
       $('#greeting').textContent = S.greeting ? greeting(d, S.name.trim(), true) : '';
     }
   }
@@ -522,10 +592,19 @@
   }
   function isFocusTime() { return S.timerKind !== 'pomodoro' || T.seg === 'focus'; }
 
-  function start() {
-    const now = Date.now();
+  // A segment that ended before this page existed finished with the tab
+  // shut. One that ended while the page was merely hidden still chimes:
+  // Chrome runs a hidden tab's timers once a minute, so "more than five
+  // seconds late" used to swallow nearly every background finish.
+  const bootAt = Date.now();
+
+  function start(from) {
+    const now = from || Date.now();
     if (S.timerKind === 'stopwatch') T.startAt = now;
-    else T.endAt = now + (T.left == null ? fullMs() : T.left);
+    else {
+      if (T.left == null) T.segMs = fullMs();     // the length this segment runs, whatever the settings do next
+      T.endAt = now + (T.left == null ? T.segMs : T.left);
+    }
     T.running = true;
     audio.unlock();
     save();
@@ -534,7 +613,7 @@
   function pause() {
     const now = Date.now();
     if (S.timerKind === 'stopwatch') T.base = elapsed(T, now);
-    else T.left = remaining(T, fullMs(), now);
+    else T.left = remaining(T, T.segMs || fullMs(), now);
     T.running = false;
     save();
     renderTimer();
@@ -554,12 +633,16 @@
     }
     T.running = false;
     T.left = null;
+    T.segMs = null;
     save();
     renderTimer();
   }
 
   function setSeg(seg) {
-    if (S.timerKind !== 'pomodoro') return;
+    if (S.timerKind !== 'pomodoro' || seg === T.seg) return;
+    // leaving a long break, or a full set, starts a new set — as skip() does
+    if (T.seg === 'long' || T.round >= S.longEvery) T.round = 0;
+    T.segMs = null;
     T.seg = seg;
     T.running = false;
     T.left = null;
@@ -574,6 +657,7 @@
     // logs nothing, it just moves you on to the break.
     if (T.seg === 'focus') T.seg = 'short';
     else { if (T.seg === 'long') T.round = 0; T.seg = 'focus'; }
+    T.segMs = null;
     T.running = false;
     T.left = null;
     save();
@@ -582,22 +666,24 @@
   }
 
   function complete(now) {
-    const late = now - T.endAt > 5000;      // finished while the tab was closed
+    const late = T.endAt < bootAt;          // finished while the tab was shut
+    const endedAt = T.endAt;
     const wasFocus = isFocusTime();
     const label = segLabel();
-    if (wasFocus) logSession(T.endAt, fullMs() / MIN);
+    if (wasFocus) logSession(endedAt, (T.segMs || fullMs()) / MIN);
     if (S.timerKind === 'pomodoro') {
       const n = nextSeg(T.seg, T.round, S.longEvery);
       T.seg = n.seg;
       T.round = n.round;
     }
     T.left = null;
+    T.segMs = null;
     T.running = false;
     if (!late) {
       if (S.chime) audio.chime();
       notify(wasFocus ? label + ' done. Nice.' : 'Break’s over.', wasFocus ? 'Up next: ' + segLabel().toLowerCase() + '.' : 'Ready when you are.');
       toast(wasFocus ? 'That counts. ' + segLabel() + ' next.' : 'Break’s over. Back to it when you’re ready.');
-      if (S.autoStart) { start(); }
+      if (S.autoStart) start(endedAt);      // from the end, so a late tick does not stretch the rhythm
     }
     save();
     pickQuote();
@@ -607,21 +693,26 @@
   function notify(title, body) {
     if (!S.notify || !('Notification' in window) || Notification.permission !== 'granted') return;
     if (document.visibilityState === 'visible' && document.hasFocus()) return;
-    try { new Notification(title, { body, icon: '/icons/icon-192.png', tag: 'myadhd-focus' }); } catch (_) {}
+    try { new Notification(title, { body, icon: '/icons/icon-192.png', tag: 'myadhd-focus' }); }
+    catch (_) {
+      // Android Chrome only shows notifications through a service worker
+      S.notify = false; save();
+      toast('This browser can’t show notifications from here.');
+    }
   }
 
   let lastTimerText = '';
   function renderTimer() {
     const now = Date.now();
     const stopwatch = S.timerKind === 'stopwatch';
-    const ms = stopwatch ? elapsed(T, now) : remaining(T, fullMs(), now);
+    const ms = stopwatch ? elapsed(T, now) : remaining(T, T.segMs || fullMs(), now);
     const text = fmt(ms, stopwatch);
     if (text !== lastTimerText) {
       lastTimerText = text;
       $$('[data-bind="time"]').forEach((e) => { e.textContent = text; });
       if (pip.win) pip.time.textContent = text;
     }
-    const pct = stopwatch ? (ms % (60 * MIN)) / (60 * MIN) : 1 - ms / fullMs();
+    const pct = stopwatch ? (ms % (60 * MIN)) / (60 * MIN) : 1 - ms / (T.segMs || fullMs());
     $('#ring-fill').style.strokeDashoffset = String(100 - Math.max(0, Math.min(1, pct)) * 100);
     $('#bar-fill').style.width = (Math.max(0, Math.min(1, pct)) * 100) + '%';
 
@@ -686,9 +777,12 @@
       for (let i = 0; i < n; i++) v.setUint8(44 + i, 128);
       return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
     }
+    // Only while a mix plays. Taken on the timer's Start it paused the
+    // person's own music (iOS media audio does not mix) and, before iOS 17,
+    // left a silent loop running until the tab died.
     function playbackSession(on) {
       try {
-        if (navigator.audioSession) { navigator.audioSession.type = 'playback'; return; }
+        if (navigator.audioSession) { navigator.audioSession.type = on ? 'playback' : 'auto'; return; }
       } catch (_) {}
       if (!/iP(hone|ad|od)|Macintosh/.test(navigator.userAgent) || !('ontouchend' in document)) return;
       if (!on) { if (keepAlive) keepAlive.pause(); return; }
@@ -712,7 +806,6 @@
       if (ctx) return ctx;
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return null;
-      playbackSession(true);
       ctx = new AC();
       master = ctx.createGain();
       master.gain.value = 1;
@@ -724,7 +817,11 @@
       if (buffers[sound.id]) return buffers[sound.id];
       const sr = ctx.sampleRate;
       const secs = sound.gen === 'ocean' ? 16 : 10;
-      const data = generate(sound.gen, sr, secs, sound.id.length * 97 + 13);
+      // seeded by the whole id: a seed from its length gave wind, pink, rain
+      // and fire the same random stream, so wind was pink noise in lockstep
+      let seed = 7;
+      for (const ch of sound.id) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
+      const data = generate(sound.gen, sr, secs, seed);
       const b = ctx.createBuffer(1, data.length, sr);
       b.getChannelData(0).set(data);
       return (buffers[sound.id] = b);
@@ -785,6 +882,9 @@
       isOn(id) { return S.soundOn.includes(id); },
       toggleSound(id) {
         const sound = SOUNDS.find((x) => x.id === id);
+        // After a reload the last mix is still lit but silent. The first tap
+        // on one of its tiles should be heard, not switch that sound off.
+        if (this.isOn(id) && !playing) { this.play(); return; }
         if (this.isOn(id)) {
           S.soundOn = S.soundOn.filter((x) => x !== id);
           stopOne(id);
@@ -836,8 +936,24 @@
     };
   })();
 
+  // Re-rendering a list throws away the button that had focus, and focus
+  // falls to <body>; the next Space then started the timer. Put it back.
+  function keepFocus(root, render) {
+    const a = document.activeElement;
+    const li = a && root.contains(a) ? a.closest('[data-id]') : null;
+    const sel = a && root.contains(a)
+      ? ['data-sound', 'data-vol', 'data-tact', 'data-cat'].map((k) => a.getAttribute(k) != null ? '[' + k + '="' + a.getAttribute(k) + '"]' : '').join('')
+      : '';
+    render();
+    if (!sel) return;
+    const scope = li ? root.querySelector('[data-id="' + li.dataset.id + '"]') : root;
+    const b = scope && scope.querySelector(sel);
+    if (b) b.focus();
+  }
+
   let soundCat = 'all';
-  function renderSounds() {
+  function renderSounds() { keepFocus($('#pop-sounds'), drawSounds); }
+  function drawSounds() {
     const cats = $('#sound-cats');
     if (!cats.childElementCount) {
       SOUND_CATS.forEach(([id, name]) => {
@@ -900,14 +1016,18 @@
     const t = { id: uid(), title: title.trim().slice(0, 140), done: false, doneAt: null };
     if (!t.title) return null;
     if (atTop) state.tasks.unshift(t); else {
-      const firstDone = state.tasks.findIndex((x) => x.done);
-      firstDone < 0 ? state.tasks.push(t) : state.tasks.splice(firstDone, 0, t);
+      // after the last open task: done ones are not moved when ticked, so
+      // "before the first done one" could land a new task at the very top
+      let i = state.tasks.length;
+      while (i > 0 && state.tasks[i - 1].done) i--;
+      state.tasks.splice(i, 0, t);
     }
     return t;
   }
 
   let dragId = null;
-  function renderTasks() {
+  function renderTasks() { keepFocus($('#tasks'), drawTasks); }
+  function drawTasks() {
     const list = $('#tasks');
     const open = openTasks();
     const done = state.tasks.filter((t) => t.done);
@@ -956,13 +1076,16 @@
     $('#intent').classList.add('editing');
     const input = $('#intent-input');
     input.value = state.current ? state.current.title : '';
-    renderPicks();
+    // Unfiltered until something is typed. The box opens holding the current
+    // title, and filtering by that left nothing to pick from — exactly when
+    // someone had clicked it to change their mind.
+    renderPicks(true);
     input.focus();
     input.select();
   }
   function closeIntentEdit() { $('#intent-edit').hidden = true; $('#intent').classList.remove('editing'); }
-  function renderPicks() {
-    const q = $('#intent-input').value.trim().toLowerCase();
+  function renderPicks(all) {
+    const q = all === true ? '' : $('#intent-input').value.trim().toLowerCase();
     const picks = openTasks().filter((t) => (!state.current || t.id !== state.current.id) && (!q || t.title.toLowerCase().includes(q))).slice(0, 6);
     const ul = $('#intent-picks');
     if (!picks.length) { ul.replaceChildren(); return; }
@@ -1083,16 +1206,20 @@
     $('#len-count').hidden = S.timerKind !== 'countdown';
   }
 
-  const NUM_LIMITS = { focusMin: [1, 180], shortMin: [1, 60], longMin: [1, 90], longEvery: [2, 8], countMin: [1, 240] };
   function applySetting(key, value) {
     const prevKind = S.timerKind;
     if (NUM_LIMITS[key]) value = clampInt(value, NUM_LIMITS[key][0], NUM_LIMITS[key][1], DEFAULTS[key]);
     S[key] = value;
     if (key === 'timerKind' && value !== prevKind) {
+      // switching away from a stopwatch keeps what it timed, as Reset does
+      if (prevKind === 'stopwatch') logSession(Date.now(), elapsed(T, Date.now()) / MIN);
       Object.assign(T, NEW_TIMER());
     }
     if (key === 'longEvery' && T.round >= value) T.round = 0;
-    if (key === 'notify' && value && 'Notification' in window && Notification.permission === 'default') {
+    if (key === 'notify' && value && (!('Notification' in window) || Notification.permission === 'denied')) {
+      S.notify = false;
+      toast('Notifications are blocked for this site.');
+    } else if (key === 'notify' && value && Notification.permission === 'default') {
       Notification.requestPermission().then((p) => {
         if (p !== 'granted') { S.notify = false; syncSettings(); save(); toast('Notifications are blocked for this site.'); }
       });
@@ -1121,7 +1248,13 @@
     async function sync() {
       const want = S.wake && document.visibilityState === 'visible';
       if (want && !lock && 'wakeLock' in navigator) {
-        try { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } catch (_) {}
+        try {
+          const l = await navigator.wakeLock.request('screen');
+          // switched off again while the request was out: let it go
+          if (!S.wake || document.visibilityState !== 'visible') { l.release(); return; }
+          lock = l;
+          lock.addEventListener('release', () => { lock = null; });
+        } catch (_) {}
       } else if (!want && lock) { lock.release(); lock = null; }
     }
     document.addEventListener('visibilitychange', sync);
@@ -1331,18 +1464,23 @@
       renderTasks(); renderIntent();
     });
     list.addEventListener('dblclick', (e) => {
-      const title = e.target.closest('.task-title');
+      const title = e.target.closest('span.task-title');   // not the editor itself
       const li = e.target.closest('.task');
       if (!title || !li) return;
       const t = state.tasks.find((x) => x.id === li.dataset.id);
+      if (!t) return;
       const input = document.createElement('input');
-      input.className = 'task-title';
+      input.className = 'task-edit';
       input.value = t.title;
       input.maxLength = 140;
-      input.style.cssText = 'border:0;outline:0;background:transparent;padding:0';
       title.replaceWith(input);
       input.focus();
+      let finished = false;
       const done = (keep) => {
+        // Enter and Escape re-render, which removes the input, which fires
+        // blur: without this guard Escape saved and Enter saved twice
+        if (finished) return;
+        finished = true;
         if (keep && input.value.trim()) {
           t.title = input.value.trim();
           if (state.current && state.current.id === t.id) state.current.title = t.title;
@@ -1374,10 +1512,15 @@
       const li = e.target.closest('.task');
       if (!dragId || !li) return;
       e.preventDefault();
+      if (li.dataset.id === dragId) return;                  // dropped where it started
       const from = state.tasks.findIndex((x) => x.id === dragId);
+      const target = state.tasks.findIndex((x) => x.id === li.dataset.id);
+      if (from < 0 || target < 0) return;
       const [moved] = state.tasks.splice(from, 1);
-      const to = state.tasks.findIndex((x) => x.id === li.dataset.id);
-      state.tasks.splice(to < 0 ? state.tasks.length : to, 0, moved);
+      // dragging down lands after the row you drop on, dragging up before it,
+      // so every position — the last one included — can be reached
+      const at = state.tasks.findIndex((x) => x.id === li.dataset.id) + (from < target ? 1 : 0);
+      state.tasks.splice(at, 0, moved);
       save();
     });
     list.addEventListener('dragend', () => { dragId = null; renderTasks(); });
@@ -1420,7 +1563,14 @@
     $('#settings').addEventListener('change', (e) => {
       const inp = e.target.closest('[data-set]');
       if (!inp) return;
+      // An emptied (or unparseable) number field reads as 0, which clamped
+      // to the minimum: clearing Focus to retype it set a 1-minute session.
+      if (inp.type === 'number' && (inp.value.trim() === '' || !Number.isFinite(Number(inp.value)))) {
+        inp.value = S[inp.dataset.set];
+        return;
+      }
       applySetting(inp.dataset.set, inp.type === 'checkbox' ? inp.checked : inp.type === 'number' ? Number(inp.value) : inp.value);
+      if (inp.type === 'number') inp.value = S[inp.dataset.set];   // 500 typed, 180 kept: show 180
     });
     $('#settings').addEventListener('input', (e) => {
       const inp = e.target.closest('input[type="text"][data-set]');
@@ -1491,6 +1641,10 @@
       if (!$('#settings').hidden) return;
       const k = e.key.toLowerCase();
       if (k === ' ' && tag === 'button') return;      // the button's own click handles it
+      if (e.repeat) return;
+      // Space, R and 1/2/3 drive a timer, so only where one is showing: on
+      // Home they stopped or threw away a segment you could not see
+      if (mode === 'home' && (k === ' ' || k === 'r' || k === '1' || k === '2' || k === '3')) return;
       if (k === ' ') { e.preventDefault(); toggle(); }
       else if (k === 'r') reset();
       else if (k === 'f') toggleFull();
@@ -1501,6 +1655,17 @@
 
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') tick(); });
   }
+
+  onExternalChange = () => {
+    applyLook();
+    Object.keys(visitScene).forEach((m) => { visitScene[m] = S.scenes[m]; });
+    paintScene();
+    lastClock = ''; lastTimerText = '';
+    const n = $('#notes'); if (document.activeElement !== n) n.value = state.notes;
+    renderAll(); renderTasks();
+    if (!$('#pop-sounds').hidden) renderSounds();
+    if (!$('#settings').hidden) syncSettings();
+  };
 
   // ================================================================
   // go

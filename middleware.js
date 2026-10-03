@@ -21,6 +21,6 @@ export default function middleware(request) {
   const url = new URL(request.url);
   if (url.hostname !== 'focus.myadhd.my') return;
   return new Response(null, {
-    headers: { 'x-middleware-rewrite': new URL('/focus', url).toString() },
+    headers: { 'x-middleware-rewrite': new URL('/focus' + url.search, url).toString() },
   });
 }

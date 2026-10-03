@@ -806,7 +806,7 @@ project. `middleware.js` serves it at the root of `focus.myadhd.my`;
 anywhere else (localhost, preview deploys) it is at `/focus/`. It cannot be
 a `vercel.json` rewrite: Vercel looks for a file before it rewrites, and `/`
 always finds the main site's `index.html` — which is exactly what the first
-deploy served. Two host-scoped redirects keep the origins apart:
+deploy served. Host-scoped redirects keep the origins apart:
 `myadhd.my/focus` goes to the subdomain, and any path on the subdomain that
 is not focus's own files, `theme.css`, `fonts/`, `icons/` or the favicon
 goes back to `myadhd.my` — otherwise `focus.myadhd.my/app` would open the
@@ -822,9 +822,19 @@ shares an origin with `/app`, and the iOS shell watches that key. Its tasks
 are not the app's tasks, by decision; there is no sign-in and no sync.
 
 **The timer is timestamps.** A running segment is an `endAt`, not a count of
-ticks, so a throttled background tab stays right and a reload carries on. A
-segment that ran out while the tab was shut is logged at the time it ended,
-with no chime and no auto-start.
+ticks, so a throttled background tab stays right and a reload carries on.
+"Late" means the segment ended before this page loaded — the tab was shut —
+and that one is logged at the time it ended, with no chime and no auto-start.
+One that ends in a merely hidden tab (Chrome runs those timers once a
+minute) still chimes, notifies and auto-starts, from its end time. A
+segment logs the length it actually ran (`segMs`), not whatever the setting
+says by the time it finishes.
+
+**Other tabs.** Each tab writes the whole store, so a tab only writes on its
+way out if it changed something, and every tab follows `storage` events —
+otherwise a tab left open since morning put the morning back over a day's
+work done elsewhere. `load()` checks every field's type and range; a bad
+value falls back to its default rather than stopping the page.
 
 **Sounds are generated.** White, pink and brown noise, rain, ocean, wind and
 a fireplace are built in the browser — a looping buffer with an
@@ -845,9 +855,11 @@ lands somewhere sensible.
 
 **iPhone.** Two things only a phone shows. Web Audio counts as "ambient"
 sound on iOS, so the silent switch muted every sound and the chime with no
-error; the page asks for `navigator.audioSession.type = 'playback'` (Safari
-17+) and, on older iOS, loops a second of silent `<audio>` while the mix
-plays, which moves the page into playback. And the keyboard slides over a
+error; while a mix plays, the page asks for `navigator.audioSession.type =
+'playback'` (Safari 17+) or, on older iOS, loops a second of silent `<audio>`,
+which moves the page into playback — and lets go when the mix stops. Never
+on the timer's Start or the chime: taking playback there paused the
+person's own music. And the keyboard slides over a
 fixed bottom sheet instead of resizing the page, so while a field has it up
 `visualViewport` pins the open panel to the visible area (`html.kb`). Inputs
 are 16px on phones, the size below which Safari zooms in on focus.
