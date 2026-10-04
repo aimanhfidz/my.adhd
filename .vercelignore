@@ -1,0 +1,28 @@
+# What myadhd.my does not serve.
+#
+# There is no build step, so Vercel deploys the checkout as it stands and
+# every file in it gets a URL — CLAUDE.md, the SQL, the competitor notes and
+# the poll log were all fetchable from the brand's own domain. None of it is
+# secret (the GitHub repo is public), but none of it is the website either,
+# and it should not be served or indexed as myadhd.my.
+#
+# Kept on purpose: package.json (api/ installs its dependencies from it),
+# archive/ (waves-lab.html loads archive/waves.js), animation/app/ (the
+# app's loading video), icons/*.png|svg, avatar-faces/.
+
+# notes, plans, briefs and house rules — BRAND.md, README.md, CLAUDE*.md, docs/**/*.md
+*.md
+docs/
+sql/
+tools/
+.claude/
+
+# sources and scripts behind assets that do ship
+animation/source/
+components/
+icons/*.py
+icons/*.swift
+serve.py
+
+# the iOS shell's old home; it has its own repo now
+ios/
