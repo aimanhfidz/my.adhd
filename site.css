@@ -411,6 +411,16 @@ body{
 .nav-clock[hidden]{display:none}
 .nav-clock:not([hidden]) ~ .theme-toggle{margin-left:0}
 @media (max-width:520px){ .nav-clock .nc-place{display:none} }
+/* Below 380px the clock costs the menu. On a sub-page the row is the back
+   arrow, the lockup, the clock and two 34px buttons, about 353px of it, and
+   on a 320px phone (or 400% zoom) the menu button sat past the edge of a
+   body that does not scroll sideways — no way to reach any page. The clock
+   is the one ambient thing in the row, so it goes, and the theme toggle
+   takes over the auto margin that held the right-hand group in place. */
+@media (max-width:379.98px){
+  .bar .nav-clock{display:none}
+  .bar .nav-clock ~ .theme-toggle{margin-left:auto}
+}
 /* Between 1024 and 1200 the clock is what pushes the link row off centre,
    and it is the one thing in the bar that is ambient rather than useful.
    Bounded at both ends: below 1024 there is no row to make room for, and
