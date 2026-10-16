@@ -37,6 +37,10 @@ ios/Local.xcconfig
 docs/carousel/out/
 docs/promo/out/
 docs/poster/out/
+docs/summit/out/
+# Speakers' photos: real people, and this repo is public. They stay on the
+# Mac that builds the page; docs/summit/README.md says where they go.
+docs/summit/photos/
 
 # The compiled SVG rasteriser — a binary, not source.
 icons/out/

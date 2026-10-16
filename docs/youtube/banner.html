@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>my.adhd YouTube banner</title>
+<style>
+/* The YouTube channel banner, dark theme. Laid out at 1280x720 CSS px and
+   snapped at 2x, so the PNG is YouTube's 2560x1440. YouTube shows the whole
+   frame only on a TV; a desktop shows a 2560x423 strip through the middle,
+   and a phone only the 1546x423 safe area at the centre. Everything that
+   matters sits inside that safe area: 773x211.5 here, from (253.5, 254),
+   with at least a fifth of its height clear above and below, so the block
+   reads as centred on a phone and never touches the crop. */
+@font-face{font-family:"Baloo 2"; src:url("../../fonts/Baloo2-Variable.ttf") format("truetype"); font-weight:400 800}
+@font-face{font-family:"DM Mono"; src:url("../../fonts/DMMono-Regular.ttf") format("truetype"); font-weight:400}
+:root{
+  /* BRAND.md §3.1, night */
+  --surface:#101018; --ink:#F3F2FB; --accent:#B4ABFF; --line:#262636;
+  --glow:71 55 255; --glow-o:.35;
+}
+html,body{margin:0; width:1280px; height:720px; overflow:hidden}
+body{
+  position:relative; background:var(--surface);
+  /* the one glow, from the top edge of the strip a desktop shows */
+  background-image:radial-gradient(46% 120px at 50% 254px, rgb(var(--glow) / var(--glow-o)) 0%, rgb(var(--glow) / 0) 100%);
+}
+.safe{
+  position:absolute; left:253.5px; top:254px; width:773px; height:211.5px;
+  display:grid; place-content:center; justify-items:center; gap:12px; text-align:center;
+}
+.lockup{height:60px; width:auto; display:block}
+.tagline{
+  margin:0; font-family:"Baloo 2"; font-weight:600; font-size:25px; line-height:1.1;
+  letter-spacing:-.01em; color:var(--ink);
+}
+.url{
+  margin:0; font-family:"DM Mono"; font-size:16px; letter-spacing:.12em; color:var(--accent);
+}
+</style>
+</head>
+<body>
+  <div class="safe">
+    <img class="lockup" src="../../icons/wordmark-dark.svg" alt="my.adhd">
+    <p class="tagline">Understand. Connect. Thrive.</p>
+    <p class="url">myadhd.my</p>
+  </div>
+</body>
+</html>

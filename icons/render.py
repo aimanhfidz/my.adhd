@@ -92,6 +92,9 @@ TARGETS = {
     'favicon-32.png': 32,
     'favicon-16.png': 16,
     'consent-logo-120.png': 120,   # the OAuth consent screen
+    'youtube-avatar-800.png': 800, # the YouTube channel picture; YouTube
+                                   # crops it to a circle, and the mark at
+                                   # 66% reaches r=0.34 of a 0.5 circle
 }
 
 if __name__ == '__main__':
