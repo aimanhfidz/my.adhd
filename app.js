@@ -5911,6 +5911,29 @@ if (window.reminders) {
   })();
 })();
 
+/* From the Chrome extension (the myadhd.my_Chrome folder). It opens
+   /app#dump=<text>, or sets that fragment on a tab already showing the app,
+   and this drops the text into the dump box — the same door "Hey Siri, dump
+   a thought" uses, so the composer opens holding it and nothing is triaged
+   until the person taps Sort it. A fragment rather than a query because a
+   fragment never leaves the browser: a thought does not land in a server
+   log. It is taken out of the address either way, so a reload does not put
+   it back. */
+(function absorbDump() {
+  function absorb() {
+    if (!location.hash.startsWith('#dump=')) return;
+    let text = '';
+    try { text = decodeURIComponent(location.hash.slice('#dump='.length)); } catch (_) {}
+    history.replaceState(null, '', location.pathname + location.search);
+    if (!text.trim()) return;
+    const before = el.input.value.trim();
+    el.input.value = before ? `${before}\n${text}` : text;
+    el.input.dispatchEvent(new Event('input'));
+  }
+  absorb();
+  window.addEventListener('hashchange', absorb);
+})();
+
 /* The account and the calendar both catch up in the background, behind the
    screen the user actually came for. Nothing here is allowed to hold up the
    dump box, and a failure is silent — the profile cards are where the state
