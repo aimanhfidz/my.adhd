@@ -1,0 +1,58 @@
+{
+  "slug": "forgot-to-eat-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "gradient",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Kenapa saya\nboleh lupa\n[[makan]]?",
+      "sub": "Bukan awak cuai dengan diri. Isyaratnya cuma perlahan."
+    },
+    {
+      "type": "point",
+      "title": "Isyarat badan\ndatang [[senyap]]",
+      "body": "Lapar, dahaga, nak ke tandas, nak bergerak. Orang lain perasan awal. Bagi ramai otak ADHD, isyarat tu samar sampailah jadi mendesak."
+    },
+    {
+      "type": "point",
+      "title": "Fokus perlahankan\nlagi [[bunyinya]]",
+      "body": "Bila tenggelam dalam benda menarik, perut berbunyi pun tak dengar. Angkat muka, dah gelap, baru minum satu kopi."
+    },
+    {
+      "type": "point",
+      "title": "Lepas tu datang\n[[sekaligus]]",
+      "body": "Menggigil, cepat marah, sakit kepala tiba-tiba. Bukan lapar sikit. Dari okey terus kebulur dalam seminit."
+    },
+    {
+      "type": "point",
+      "title": "Lapar nampak\nmacam [[mood]]",
+      "body": "Cepat naik angin, kabur, nak menangis. Senang salahkan diri atau hari tu. Selalunya benda pertama nak cuba: makan dan minum air."
+    },
+    {
+      "type": "point",
+      "title": "Makan ikut\n[[jam]], bukan\nikut rasa",
+      "body": "Kalau isyarat tak boleh harap, jangan tunggu dia. Penggera makan tengah hari pukul 1 tolong perasan untuk awak."
+    },
+    {
+      "type": "point",
+      "title": "Letak makanan\nkat tempat awak\n[[dah ada]]",
+      "body": "Snek atas meja, sebotol air sebelah laptop. Kalau nak makan kena ke dapur dulu, fokus akan menang setiap kali."
+    },
+    {
+      "type": "point",
+      "title": "Makanan [[ringkas]]\npun kira",
+      "body": "Roti bakar, buah, telur rebus, nasi semalam. Hari sibuk, makanan ringkas yang dimakan lagi baik daripada makanan sedap yang dirancang."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan, lepas tu\npergi minum\n[[air]]",
+      "body": "Badan awak senyap bukan sebab dia tak perlukan apa-apa. Luah hari ni dalam my.adhd, dapat balik satu benda, lepas awak makan. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

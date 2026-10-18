@@ -1,0 +1,58 @@
+{
+  "slug": "cant-rest-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "night-orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Kenapa saya\ntak boleh rehat\ntanpa rasa [[bersalah]]?",
+      "sub": "Rehat bukan upah yang kena dapat dulu."
+    },
+    {
+      "type": "point",
+      "title": "Sentiasa ada\nbenda yang\n[[belum siap]]",
+      "body": "Mesej belum balas, baju belum lipat, kerja yang ditangguh. Dengan senarai panjang dalam kepala, berehat rasa macam makin ketinggalan."
+    },
+    {
+      "type": "point",
+      "title": "Rehat rasa\nmacam [[curi tulang]]",
+      "body": "Bertahun-tahun dipanggil malas buat setiap jeda rasa macam bukti. Jadi awak berehat macam ponteng kelas, tegang dan asyik tengok pintu."
+    },
+    {
+      "type": "point",
+      "title": "Scroll tu\nbukan [[rehat]]",
+      "body": "Berjam-jam main telefon nampak macam rehat. Selalunya keluar lagi penat. Otak sibuk sepanjang masa, cuma bukan pada benda yang awak pilih."
+    },
+    {
+      "type": "point",
+      "title": "Fikiran masih\n[[bekerja]]",
+      "body": "Atas sofa pun, senarai kerja berjalan kat belakang. Badan berehat, tapi kepala masih kat pejabat."
+    },
+    {
+      "type": "point",
+      "title": "Jadualkan rehat\nmacam satu [[tugas]]",
+      "body": "Masukkan dalam kalendar. 4 hingga 5 petang, rehat. Bila ada slot sendiri, otak anggap ia dibenarkan, bukan dicuri."
+    },
+    {
+      "type": "point",
+      "title": "Pilih rehat\nyang [[mengisi]]",
+      "body": "Jalan kaki, tidur sekejap, muzik, masak suka-suka. Perhatikan mana yang buat awak rasa lebih baik, dan pilih yang tu dengan sengaja."
+    },
+    {
+      "type": "point",
+      "title": "Parkir senarai\ntu [[dulu]]",
+      "body": "Tulis apa yang menunggu sebelum berhenti. Esok dia masih ada. Sekarang dia tak perlukan awak."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan untuk\n[[hari cuti]]\nawak nanti",
+      "body": "Rehat sebahagian daripada kerja, bukan hadiah lepas kerja. Luah senarai tu dalam my.adhd, biar dia pegang sementara awak letak semuanya. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

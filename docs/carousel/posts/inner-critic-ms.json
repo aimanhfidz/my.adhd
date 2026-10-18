@@ -1,0 +1,58 @@
+{
+  "slug": "inner-critic-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "gradient",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Kenapa saya\nkeras sangat\ndengan [[diri sendiri]]?",
+      "sub": "Suara tu dah hafal skripnya sejak lama dulu."
+    },
+    {
+      "type": "point",
+      "title": "Awak dengar\ndia [[banyak kali]]",
+      "body": "\"Cuba lagi kuat.\" \"Kenapa awak macam ni?\" \"Pandai, kalau fokus je.\" Dengar cukup kerap masa kecil, lama-lama jadi suara awak sendiri."
+    },
+    {
+      "type": "point",
+      "title": "Satu silap\njadi [[cerita besar]]",
+      "body": "Lupa bayar satu bil, suara tu cakap awak lupa semua benda. Satu silap kecil difailkan sebagai bukti cerita yang jauh lebih besar."
+    },
+    {
+      "type": "point",
+      "title": "Dia ingat\ndia [[menolong]]",
+      "body": "Suara tu kata dia jaga awak supaya tak terbabas. Tapi rasa malu jarang buat apa-apa bermula. Selalunya kerja seterusnya jadi lagi berat."
+    },
+    {
+      "type": "point",
+      "title": "Awak takkan\ncakap macam tu\ndengan [[kawan]]",
+      "body": "Kalau kawan lupa kunci, awak takkan panggil dia tak guna. Awak tolong dia cari. Awak pun layak dapat nada yang sama."
+    },
+    {
+      "type": "point",
+      "title": "[[Namakan]]\nsuara tu",
+      "body": "\"Itu suara lama tu lagi.\" Bila dinamakan, awak ingat ia cuma tabiat, bukan kebenaran tentang diri awak."
+    },
+    {
+      "type": "point",
+      "title": "Tukar [[selalu]]\njadi kali ni",
+      "body": "Bukan \"saya selalu rosakkan semua\", tapi \"saya terlepas yang ni\". Perkataan kecil, masalah pun jadi kecil, dan masalah kecil boleh diselesaikan."
+    },
+    {
+      "type": "point",
+      "title": "Kira apa yang\n[[menjadi]]",
+      "body": "Waktu malam, tulis satu benda yang awak buat hari ni. Satu je. Otak dah simpan senarai silap. Bagi dia senarai menang juga."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan untuk\nmasa awak keras\ndengan [[diri sendiri]]",
+      "body": "Awak bukan senarai kesilapan. Luah bunyi bising tu dalam my.adhd, dapat balik satu benda yang baik dan boleh dibuat. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

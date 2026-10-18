@@ -1,0 +1,58 @@
+{
+  "slug": "transitions-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "night-orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Kenapa susah\nnak berhenti\n[[satu benda]]?",
+      "sub": "Bukan degil. Bertukar memang lebih mahal untuk awak."
+    },
+    {
+      "type": "point",
+      "title": "Bertukar tu\nsatu [[kerja]]\nsendiri",
+      "body": "Berhenti, ingat tempat, simpan, cari benda seterusnya, panaskan enjin semula. Orang lain buat tanpa fikir. Awak boleh tersangkut kat setiap langkah."
+    },
+    {
+      "type": "point",
+      "title": "Dah masuk,\nmemang [[masuk]]",
+      "body": "Nak mula tadi pun dah susah. Sekarang dah bergerak, berhenti bermakna kena bayar harga tu sekali lagi nanti. Otak memang tak nak."
+    },
+    {
+      "type": "point",
+      "title": "Ditarik keluar\nrasa macam\n[[tersentak]]",
+      "body": "Orang panggil nama awak tengah buat kerja, dan awak tersentap. Bukan sebab tak suka dia. Ditarik keluar dari fokus dalam memang mengejutkan."
+    },
+    {
+      "type": "point",
+      "title": "Celah di\nantaranya\n[[licin]]",
+      "body": "Antara habis satu benda dan mula benda lain, ada celah kecil. Telefon awak duduk kat celah tu. Sepuluh minit boleh lesap kat situ."
+    },
+    {
+      "type": "point",
+      "title": "Bagi amaran\n[[sepuluh minit]]\nawal",
+      "body": "Penggera \"mula kemas\" sebelum penggera \"berhenti\". Turun perlahan lagi senang daripada jatuh tebing."
+    },
+    {
+      "type": "point",
+      "title": "Tinggal [[nota]]\nuntuk diri\nnanti",
+      "body": "Satu baris: berhenti kat mana, lepas ni apa. Senang nak sambung bila tak payah bina semula semuanya dalam kepala."
+    },
+    {
+      "type": "point",
+      "title": "Bina satu\n[[jambatan]] kecil",
+      "body": "Bangun, minum air, baru duduk untuk benda seterusnya. Ritual pendek antara kerja buat celah tu tak telan awak."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan untuk\nmasa awak tak\nboleh [[lepaskan]]",
+      "body": "Bertukar kerja tu kerja keras, bukan kurang kemahuan. Luah apa yang seterusnya dalam my.adhd, dapat balik satu benda untuk beralih. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

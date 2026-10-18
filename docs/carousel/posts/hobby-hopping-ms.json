@@ -1,0 +1,58 @@
+{
+  "slug": "hobby-hopping-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Kenapa saya\nberhenti setiap\n[[hobi]] baru?",
+      "sub": "Bukan awak tak konsisten. Benda baru memang buat awak menyala."
+    },
+    {
+      "type": "point",
+      "title": "Benda baru\nbuat otak\n[[menyala]]",
+      "body": "Hobi baru penuh benda baharu. Setiap video, setiap alat, setiap cubaan pertama rasa seronok. Rasa tu memang bahan api sebenar untuk otak ADHD."
+    },
+    {
+      "type": "point",
+      "title": "Lepas tu\nbarunya [[pudar]]",
+      "body": "Minggu ketiga, dah jadi latihan biasa. Kord yang sama, silap yang sama. Percikan yang bawa awak tadi dah hilang, dan takde apa yang ganti."
+    },
+    {
+      "type": "point",
+      "title": "Barang tinggal,\nrasa [[bersalah]]\nbertambah",
+      "body": "Cat dalam almari, gitar kat penjuru, kad gim dalam dompet. Setiap satu rasa macam bukti awak tak pernah habiskan apa-apa."
+    },
+    {
+      "type": "point",
+      "title": "Awak tetap\n[[belajar]]\nsesuatu",
+      "body": "Tiga bulan buat apa-apa pun tetap tiga bulan. Dapat kemahiran, kenal orang, seronok. Hobi boleh berhenti tanpa jadi kegagalan."
+    },
+    {
+      "type": "point",
+      "title": "[[Pinjam]]\nsebelum\nbeli",
+      "body": "Sewa, pinjam, ambil satu kelas dulu. Biar teruja tu reda sebelum duit keluar."
+    },
+    {
+      "type": "point",
+      "title": "Pusing, bukan\n[[berhenti]]",
+      "body": "Simpan dua tiga hobi bergilir. Bila satu dah jemu, tukar, lepas tu datang balik nanti. Dia akan rasa baru semula."
+    },
+    {
+      "type": "point",
+      "title": "Buat dengan\n[[orang lain]]",
+      "body": "Kelas, kelab, kawan yang tunggu awak setiap Sabtu. Orang lain buat hobi tu terus berjalan masa percikan tu malap."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan sebelum\nbeli [[starter kit]]\nseterusnya",
+      "body": "Suka benda baru tu sebahagian cara otak awak berfungsi. Luah idea-idea tu dalam my.adhd, dapat balik satu benda untuk cuba minggu ni. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

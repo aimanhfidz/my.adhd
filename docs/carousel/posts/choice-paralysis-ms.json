@@ -1,0 +1,58 @@
+{
+  "slug": "choice-paralysis-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Banyak sangat\npilihan, akhirnya\ntak pilih [[satu]] pun",
+      "sub": "Bukan awak tak tegas. Awak pegang semua pilihan serentak."
+    },
+    {
+      "type": "point",
+      "title": "Semua pilihan\nmasih [[terbuka]]",
+      "body": "Nak makan apa, kerja mana dulu, baju mana. Semua awak pegang dalam kepala serentak, timbang satu-satu, takde satu pun yang dilepaskan."
+    },
+    {
+      "type": "point",
+      "title": "Memilih rasa\nmacam [[kalah]]",
+      "body": "Pilih satu bermakna lepaskan yang lain. Kalau yang lain tu lagi bagus? Jadi awak simpan semua, dengan tak pilih apa-apa."
+    },
+    {
+      "type": "point",
+      "title": "Pilihan kecil\n[[bertimbun]]",
+      "body": "Sampai malam, awak dah buat seratus keputusan kecil. Lepas tu makan malam minta satu lagi, dan awak lebih rela tak makan daripada memilih."
+    },
+    {
+      "type": "point",
+      "title": "Tersangkut nampak\nmacam [[kajian]]",
+      "body": "Dua puluh tab banding dua benda yang sama. Ulasan tentang ulasan. Rasa macam berhati-hati. Selalunya cara nak tangguh keputusan."
+    },
+    {
+      "type": "point",
+      "title": "Potong jadi\n[[dua]]",
+      "body": "Buang semua kecuali dua pilihan, lepas tu pilih satu. Dua tu otak boleh pegang. Dua belas tu kabus."
+    },
+    {
+      "type": "point",
+      "title": "Bagi dia\n[[had masa]]",
+      "body": "Lima minit, lepas tu ambil je apa yang ada depan mata. Keputusan yang sempat dibuat menang keputusan sempurna yang tak pernah dibuat."
+    },
+    {
+      "type": "point",
+      "title": "Putuskan [[sekali]],\nguna berulang",
+      "body": "Sarapan yang sama setiap hari kerja. Pesanan biasa kat kedai biasa. Setiap pilihan yang dibuat awal, satu pilihan yang tak perlu dibuat masa penat."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan untuk\nmenu yang buat\nawak [[beku]]",
+      "body": "Tak memilih pun ada harganya. Luah semua pilihan dalam my.adhd, dapat balik satu benda yang dah dipilih. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

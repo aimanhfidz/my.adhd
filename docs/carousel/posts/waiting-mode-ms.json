@@ -1,0 +1,58 @@
+{
+  "slug": "waiting-mode-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "night-orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Kenapa satu\ntemujanji [[4 petang]]\nmakan seharian?",
+      "sub": "Awak bukan bazir hari. Awak tengah jaga dia."
+    },
+    {
+      "type": "point",
+      "title": "Awak [[standby]]\nsampai pukul 4",
+      "body": "Ada temujanji petang nanti, dan jam-jam sebelum tu jadi kelabu. Boleh je mula buat sesuatu. Tapi tak. Takut nanti terlewat."
+    },
+    {
+      "type": "point",
+      "title": "Nak mula pun\nrasa [[bahaya]]",
+      "body": "Kalau terlalu khusyuk, takut lupa masa dan terlepas. Jadi otak main selamat, tak pilih apa-apa. Nampak macam malas. Sebenarnya melindungi diri."
+    },
+    {
+      "type": "point",
+      "title": "Menunggu pun\n[[penat]]",
+      "body": "Tengok jam setiap sepuluh minit tu makan tenaga. Bila sampai masanya, awak dah letih, padahal sehari takde apa yang jadi."
+    },
+    {
+      "type": "point",
+      "title": "Dah biasa\n[[terlepas]] masa",
+      "body": "Bertahun-tahun terlewat tanpa sengaja, awak dah tak percaya rasa masa sendiri. Mod menunggu ni cara otak elak kena lagi."
+    },
+    {
+      "type": "point",
+      "title": "Pasang [[dua]]\npenggera, lepas\ntu lepaskan",
+      "body": "Satu untuk bersiap, satu untuk keluar. Jaga jam tu kerja penggera, bukan awak. Jam-jam sebelum tu bebas balik."
+    },
+    {
+      "type": "point",
+      "title": "Pilih kerja\nyang ada\n[[hujung]]",
+      "body": "Lipat baju, satu e-mel pendek, jalan keliling taman. Benda yang habis sendiri lagi selamat daripada lubang arnab sebelum pukul 4."
+    },
+    {
+      "type": "point",
+      "title": "Ambil slot\n[[pagi]] kalau\nboleh",
+      "body": "Temujanji pukul 9 pagi biar baki hari terbuka. Kumpul urusan luar dalam hari yang sama, supaya hari lain kosong."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan untuk\nhari yang ada\n[[4 petang]]",
+      "body": "Menunggu tu memang berat, dan itu bukan malas. Luah hari awak dalam my.adhd, dapat balik satu benda yang muat sebelum keluar. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

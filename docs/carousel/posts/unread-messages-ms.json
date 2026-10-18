@@ -1,0 +1,58 @@
+{
+  "slug": "unread-messages-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "night-violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Kenapa susah\nsangat nak\n[[balas]] mesej?",
+      "sub": "Awak peduli. Cuma balasan tu makin berat hari demi hari."
+    },
+    {
+      "type": "point",
+      "title": "Dah balas\n[[dalam kepala]]",
+      "body": "Awak baca, fikir jawapan paling sesuai, lepas tu buat benda lain. Rasa macam dah siap. Rupanya tak keluar dari kepala, dan dia masih menunggu."
+    },
+    {
+      "type": "point",
+      "title": "Nanti jadi\n[[tak pernah]]",
+      "body": "\"Nanti saya balas elok-elok bila senang.\" Masa senang tu jarang datang. Mesej tu tenggelam bawah dua puluh mesej baru."
+    },
+    {
+      "type": "point",
+      "title": "Setiap mesej\nsatu [[kerja kecil]]",
+      "body": "Baca, fikir, putuskan, taip, semak. Sepuluh mesej, sepuluh kerja kecil serentak, semua ada orang menunggu. Patutlah app tu rasa bising."
+    },
+    {
+      "type": "point",
+      "title": "Makin lama,\nmakin [[berat]]",
+      "body": "Lewat sehari, cukup balas. Lewat sebulan, rasa macam kena minta maaf, bagi alasan, siap hadiah. Jadi awak tunggu lagi, dan ia makin berat."
+    },
+    {
+      "type": "point",
+      "title": "Balas [[pendek]]\nlagi baik dari\nbalas sempurna",
+      "body": "\"Dah baca, esok saya jawab betul-betul.\" Sepuluh saat, dan dia tahu awak ada. Cukup baik hari ni menang sempurna yang tak pernah sampai."
+    },
+    {
+      "type": "point",
+      "title": "Tak payah\n[[karangan]]\nminta maaf",
+      "body": "\"Maaf, saya memang lambat balas mesej.\" Satu baris, lepas tu jawab soalan dia. Kebanyakan orang cuma lega dapat balasan."
+    },
+    {
+      "type": "point",
+      "title": "Bagi balas mesej\nsatu [[waktu]]",
+      "body": "Sepuluh minit lepas makan tengah hari, telefon di tangan, yang paling lama dulu. Slot kecil setiap hari buat balas mesej jadi tabiat, bukan hutang."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan, lepas tu\nbalas [[satu]]\norang",
+      "body": "Awak bukan kawan yang teruk. Awak cuma ada tunggakan. Luah siapa yang belum dibalas dalam my.adhd, dapat balik satu nama untuk dibalas dulu. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}

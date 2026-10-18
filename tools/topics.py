@@ -50,32 +50,41 @@ TOPICS = [
     ('hyperfocus',      'time', 'Hyperfocus',            'Hiperfokus'),
     ('procrastination', 'time', 'Procrastination',       'Menangguh'),
     ('forgetful',       'time', 'Forgetting',            'Mudah lupa'),
+    ('waiting-mode',    'time', 'Waiting mode',          'Mod menunggu'),
+    ('transitions',     'time', 'Switching tasks',       'Bertukar kerja'),
+    ('choice-paralysis','time', 'Choice paralysis',      'Susah memilih'),
     ('rsd',             'feel', 'Rejection sensitivity', 'Sensitif terhadap penolakan'),
     ('big-feelings',    'feel', 'Big feelings',          'Emosi yang meluap'),
     ('masking',         'feel', 'Masking',               'Berlakon tenang'),
     ('conversations',   'feel', 'Conversations',         'Perbualan'),
     ('overstimulation', 'feel', 'Overstimulation',       'Rangsangan berlebihan'),
+    ('unread-messages', 'feel', 'Unread messages',       'Mesej tak berbalas'),
+    ('inner-critic',    'feel', 'The inner critic',      'Suara pengkritik dalam diri'),
+    ('cant-rest',       'feel', 'Guilt about resting',   'Rasa bersalah bila berehat'),
     ('adhd-morning',    'day',  'Mornings',              'Waktu pagi'),
     ('sleep',           'day',  'Sleep',                 'Tidur'),
     ('doom-piles',      'day',  'Doom piles',            'Timbunan barang'),
     ('adhd-tax',        'day',  'The ADHD tax',          'Cukai ADHD'),
     ('burnout',         'day',  'Burnout',               'Burnout'),
+    ('forgot-to-eat',   'day',  'Forgetting to eat',     'Lupa makan'),
+    ('restless',        'day',  'Restlessness',          'Resah'),
+    ('hobby-hopping',   'day',  'Hobby-hopping',         'Lompat hobi'),
 ]
 
 # id, nav label EN/MS, kicker EN/MS, heading EN/MS
 GROUPS = [
     ('time', 'Time &amp; attention', 'Masa &amp; tumpuan',
      'Time and attention.', 'Masa dan tumpuan.',
-     'Why time vanishes, focus slips, and starting is the hardest part.',
-     'Mengapa masa hilang, tumpuan terlepas, dan memulakan sesuatu paling sukar.'),
+     'Why time vanishes, focus slips, and starting, stopping and choosing are so hard.',
+     'Kenapa masa lesap, fokus terlepas, dan nak mula, berhenti atau memilih pun susah.'),
     ('feel', 'Feelings &amp; people', 'Emosi &amp; orang lain',
      'Feelings and people.', 'Emosi dan orang sekeliling.',
      'Why small things land hard, and why people cost so much.',
-     'Mengapa perkara kecil terasa berat, dan bersama orang lain begitu meletihkan.'),
+     'Kenapa benda kecil terasa berat, dan bersama orang lain begitu memenatkan.'),
     ('day', 'The everyday', 'Seharian',
      'The everyday.', 'Kehidupan seharian.',
-     'Mornings, sleep, piles and late fees &mdash; and the crash after coping.',
-     'Waktu pagi, tidur, timbunan barang dan denda lewat &mdash; serta rebah selepas lama bertahan.'),
+     'Mornings, meals, sleep, piles, late fees and half-finished hobbies &mdash; and the crash after coping.',
+     'Pagi, makan, tidur, timbunan barang, denda lewat dan hobi separuh jalan &mdash; dan rebah lepas lama bertahan.'),
 ]
 
 ICON = ('<i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" '
@@ -215,7 +224,19 @@ ICONS = {
     'doom-piles': '<rect class="w" x="5" y="15" width="14" height="5" rx="1.5"/><rect class="w" x="7" y="10" width="11" height="5" rx="1.5"/><rect class="w" x="6" y="5" width="9" height="5" rx="1.5"/>',
     'adhd-tax': '<path class="w" d="M6 3.5h12v17l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5z"/><path class="w" d="M9 8.5h6M9 12h6"/><circle class="d" cx="15" cy="15.5" r="1.3"/>',
     'burnout': '<rect class="w" x="3" y="8" width="16" height="9" rx="2.2"/><path class="w" d="M21 11v3"/><rect class="d" x="5.5" y="10.5" width="3" height="4" rx="1"/>',
+    'waiting-mode': '<rect class="w" x="3.5" y="5" width="17" height="15" rx="2.5"/><path class="w" d="M3.5 9.5h17M8 3v4M16 3v4"/><circle class="d" cx="15.5" cy="15" r="1.6"/>',
+    'transitions': '<path class="w" d="M4 8h13l-3-3M20 16H7l3 3"/><circle class="d" cx="20" cy="8" r="1.4"/>',
+    'choice-paralysis': '<path class="w" d="M12 20v-6M12 14L6 8M12 14l6-6M12 14V5"/><circle class="d" cx="12" cy="14" r="1.6"/>',
+    'unread-messages': '<path class="w" d="M4 6h12a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><circle class="d" cx="19.5" cy="5" r="2"/>',
+    'inner-critic': '<circle class="w" cx="12" cy="12" r="8.5"/><path class="w" d="M8.5 15.5c1.8-1.6 5.2-1.6 7 0M9 9.5h1.5M13.5 9.5H15"/>',
+    'cant-rest': '<path class="w" d="M3 17V9M3 14h18v3M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle class="d" cx="7" cy="11.5" r="1.6"/>',
+    'forgot-to-eat': '<circle class="w" cx="12" cy="12" r="6.5"/><path class="w" d="M3 4v6a2 2 0 0 0 2 2M5 4v16M21 4c-1.6 1.2-2 3.5-2 6h2v10"/>',
+    'restless': '<path class="w" d="M4 12h2l2-5 3 10 3-8 2 3h4"/><circle class="d" cx="20" cy="12" r="1.4"/>',
+    'hobby-hopping': '<path class="w" d="M4 18c2-6 4-6 6 0M10 18c2-8 5-8 7 0"/><circle class="w" cx="20" cy="18" r="1.6"/><circle class="d" cx="4" cy="18" r="1.4"/>',
 }
+
+# The hub says how many topics there are, in words, in both languages.
+COUNT = {25: ('Twenty-five', 'dua puluh lima')}
 ARROW_SVG = ('<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" '
              'stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg>')
 # The orange circle on a card. Outside every translated element, so the
@@ -266,14 +287,14 @@ def ask():
     return '\n'.join([
         '<section class="ask" id="together" data-reveal>',
         '  ' + el('p', 'ask-line', 'You are not alone. Other people get it.',
-                  'Anda tidak keseorangan. Ada orang lain yang faham.'),
+                  'Awak bukan seorang. Ada orang lain yang faham.'),
         '  ' + el('p', 'ask-lede',
                   'The MyADHD community is adults who know exactly what you mean &mdash; '
                   'diagnosed, waiting, or still wondering, and parents too. The link to join is in '
                   'our Instagram bio.',
-                  'Komuniti MyADHD ialah orang dewasa yang faham benar maksud anda &mdash; yang '
-                  'sudah didiagnosis, yang sedang menunggu, yang masih tertanya-tanya, dan juga ibu '
-                  'bapa. Pautan untuk menyertainya ada dalam bio Instagram kami.'),
+                  'Komuniti MyADHD ialah orang dewasa yang faham betul maksud awak &mdash; yang '
+                  'dah didiagnos, yang tengah menunggu, yang masih tertanya-tanya, dan ibu bapa '
+                  'juga. Pautan untuk masuk ada dalam bio Instagram kami.'),
         '  ' + el('a', 'arrow-cta', 'Find us on Instagram ' + ICON, 'Cari kami di Instagram {icon}',
                   ' href="%s" target="_blank" rel="noopener"' % INSTAGRAM),
         '  ' + el('a', 'arrow-link', 'Read three stories ' + ICON, 'Baca tiga kisah {icon}',
@@ -304,10 +325,10 @@ def tools_doors():
       %s
     </div>
   </section>''' % (
-        el('p', 'kicker lwa-k', 'For the day.', 'Untuk hari-hari anda.'),
+        el('p', 'kicker lwa-k', 'For the day.', 'Untuk hari-hari awak.'),
         el('h2', 'lwa-h2', 'Tools for getting through it', 'Alatan untuk melaluinya'),
         door('door--known', '/habits', 'Habits', 'Tabiat',
-             'Systems that work with your brain', 'Sistem yang serasi dengan otak anda',
+             'Systems that work with your brain', 'Sistem yang ngam dengan otak awak',
              'Five habits that still hold up on a bad day.',
              'Lima tabiat yang tetap bertahan pada hari yang sukar.',
              'See the habits', 'Lihat tabiat'),
@@ -348,7 +369,7 @@ def hub():
         'wk': el('p', 'sc-label', 'Not sure it&rsquo;s ADHD?', 'Belum pasti ia ADHD?'),
         'wl': el('p', 'lwa-warm-line',
                  'Six questions, five minutes, and a result you can take to a doctor.',
-                 'Enam soalan, lima minit, dan keputusan yang boleh anda bawa kepada doktor.'),
+                 'Enam soalan, lima minit, dan keputusan yang awak boleh bawa jumpa doktor.'),
         'wgo': el('a', 'pill-go', 'Take the self-check', 'Buat semakan kendiri', ' href="/self-check"'),
         'pk': el('p', 'sc-label', 'New here? Then these.', 'Baru di sini? Mulakan dengan ini.'),
         'rows': '\n        '.join(
@@ -410,12 +431,14 @@ def hub():
         'kicker': el('p', 'kicker', 'I already know.', 'Saya memang sudah tahu.'),
         'h1': el('h1', 'page-title', 'Living with ADHD.', 'Hidup dengan ADHD.'),
         'lead': el('p', 'body-copy',
-                   'What ADHD is actually doing to your day, and what helps. Sixteen short reads '
-                   '&mdash; start with the one that sounds like your week.',
-                   'Apa yang sebenarnya ADHD lakukan kepada hari anda, dan apa yang membantu. Enam '
-                   'belas bacaan ringkas &mdash; mulakan dengan yang paling mirip minggu anda.'),
+                   'What ADHD is actually doing to your day, and what helps. %s short reads '
+                   '&mdash; start with the one that sounds like your week.' % COUNT[len(TOPICS)][0],
+                   'Apa sebenarnya ADHD buat pada hari awak, dan apa yang membantu. %s '
+                   'bacaan pendek &mdash; mula dengan yang paling macam minggu awak.'
+                   % COUNT[len(TOPICS)][1].capitalize()),
         'trio': trio,
-        'allk': el('p', 'kicker lwa-k', 'All sixteen.', 'Kesemua enam belas.'),
+        'allk': el('p', 'kicker lwa-k', 'All %s.' % COUNT[len(TOPICS)][0].lower(),
+                   'Kesemua %s.' % COUNT[len(TOPICS)][1]),
         'chips': chip_html,
         'groups': groups,
         'tools': tools_doors(),

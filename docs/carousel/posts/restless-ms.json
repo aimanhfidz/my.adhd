@@ -1,0 +1,58 @@
+{
+  "slug": "restless-ms",
+  "lang": "ms",
+  "theme": "light",
+  "style": "night-violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Kenapa saya\ntak boleh\n[[duduk diam]]?",
+      "sub": "Bukan awak biadab. Tenaga tu perlukan jalan keluar."
+    },
+    {
+      "type": "point",
+      "title": "Dia pindah\nke [[dalam]]",
+      "body": "Masa kecil, berlari ke sana sini. Bila dewasa, selalunya lebih senyap. Kaki bergoyang, fikiran berlumba, gatal nak bangun buat benda lain."
+    },
+    {
+      "type": "point",
+      "title": "Duduk diam\nperlukan [[usaha]]",
+      "body": "Sepanjang perbincangan panjang, separuh tenaga habis untuk tak bergerak. Yang tinggal untuk mendengar pun sikit."
+    },
+    {
+      "type": "point",
+      "title": "Bergerak sikit\n[[bantu]] awak\ndengar",
+      "body": "Klik pen atau conteng-conteng nampak macam tak beri perhatian. Bagi ramai orang, gerak sikit tu lah yang buat mereka kekal fokus."
+    },
+    {
+      "type": "point",
+      "title": "Tak buat apa-apa\nrasa [[bising]]",
+      "body": "Barisan lambat, perjalanan jauh, malam yang sunyi. Bila takde benda nak dibuat, resah tu takde tempat nak tolak."
+    },
+    {
+      "type": "point",
+      "title": "Bagi tangan\nsatu [[kerja]]",
+      "body": "Fidget toy, bola getah, pen untuk dipusing. Benda senyap dalam poket, sedia untuk mesyuarat atau barisan seterusnya."
+    },
+    {
+      "type": "point",
+      "title": "Bergerak [[dulu]]\nsebelum duduk\nlama",
+      "body": "Jalan kaki sebelum mesyuarat panjang. Naik tangga, bukan lif. Habiskan sikit tenaga dulu, kurang yang berdengung masa duduk."
+    },
+    {
+      "type": "point",
+      "title": "Berdiri, ke\nhulu ke hilir,\n[[jalan]] sambil cakap",
+      "body": "Ambil panggilan sambil berdiri. Buat kerja berdiri kat kaunter sekejap. Bukan semua kerja kena buat sambil duduk."
+    },
+    {
+      "type": "outro",
+      "title": "Simpan untuk\n[[mesyuarat]] panjang\nawak nanti",
+      "body": "Resah bukan biadab. Ia tenaga yang cari pintu. Luah fikiran yang berdengung dalam my.adhd, dapat balik satu benda untuk teruskan. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
+    }
+  ]
+}
