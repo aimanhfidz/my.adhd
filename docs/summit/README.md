@@ -19,12 +19,21 @@ no exclamation marks, no "fix", no sold-out stamps.
 | File | What it is |
 |---|---|
 | `summit.html` | The source. Edit this. Previews from the repo (fonts come from `../../fonts/`). |
-| `build.py` | Subsets the three faces to woff2, inlines them, writes the upload file. |
+| `build.py` | Subsets the two faces to woff2, inlines them, writes the upload file. |
 | `cutout.swift` | Cuts the speakers out of their photos and frames them alike. |
 | `photos/` | The speakers' original photos; `photos/out/` holds the cut-outs. |
 | `out/summit-bayarcash.html` | **The file you upload.** Gitignored; rebuild it after any edit. |
 
 `docs/` is in `.vercelignore`, so myadhd.my never serves any of this.
+
+## How the page reads
+
+Opener (what ADHD is, loosely) → the event (name, three angles, before and
+after) → speakers → the calendar, countdown and timeline → register. Two
+faces only: Baloo 2 for headings and names, DM Sans for everything else.
+There is no DM Mono and no small coloured line above a heading, by the
+user's ruling of 2026-10-18 (BRAND.md allows three faces; this page doesn't
+use the third). Explanations stay at one or two sentences.
 
 ## Filling it in
 
@@ -36,6 +45,8 @@ an invented value.
   Until it is set, the register buttons point at the ticket section and a
   placeholder says the link is missing. Leave it empty on BCL (below).
 - `sessions[n]`: `topic`, `subtitle`, `blurb`, `speaker`, `role`, `photo`.
+  The `blurb` feeds no element on the page any more (the timeline shows
+  only topic and subtitle); it is kept as the speakers' own description.
   Talk 1 is Yasmin Yakub (The ADHD Ecosystem), talk 2 Kamila Solihin
   (The ADHD Mind), talk 3 Noor Safarina (Body, Mind & Environment); topics
   matched by profession on 2026-10-15. To

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the one file that gets uploaded to Bayarcash.
 
-summit.html loads its three faces from ../../fonts/ so it previews from
+summit.html loads its two faces from ../../fonts/ so it previews from
 the repo. A page uploaded on its own can't, and a page that asks a third
 party for its type flashes the wrong one. So this subsets each face to
 the Latin the page uses, compresses it to woff2, and inlines it, and
@@ -54,8 +54,8 @@ def main() -> None:
     html = SRC.read_text(encoding="utf-8")
     pattern = re.compile(r'url\("\.\./\.\./fonts/([A-Za-z0-9-]+\.ttf)"\) format\("truetype"\)')
     found = pattern.findall(html)
-    if len(found) != 3:
-        raise SystemExit(f"expected 3 font urls in summit.html, found {len(found)}")
+    if len(found) != 2:
+        raise SystemExit(f"expected 2 font urls in summit.html, found {len(found)}")
 
     sizes = {}
 

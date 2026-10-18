@@ -25,7 +25,7 @@ window.SUMMIT = {
   platform: "Zoom",
   registerUrl: "",            /* a payment link, only if the page is hosted
                                  somewhere else; pasted into a BCL form, the
-                                 form itself appears under the prices */
+                                 form itself appears at the end */
 
   /* photo: one of the --photo-* names in the PHOTOS block below */
   sessions: [
@@ -43,8 +43,8 @@ window.SUMMIT = {
       speaker: "Noor Safarina", role: "Occupational Therapist (OT)", photo: "noor" }
   ],
 
-  /* The tiers are no longer drawn as rows; their prices feed the copy
-     (the RM 20 in the lede, the add-on tags) and the search data.
+  /* The tiers are not drawn as rows; their prices feed the copy
+     (the RM 20 in the register lede) and the search data.
      status: "upcoming", "open" or "closed". A price of "0" shows as Free.
      Joining live is free, and buyers tick which talks they'll join; each
      talk's recording and slides are RM 20 on their own. The BCL form's
@@ -70,11 +70,11 @@ window.SUMMIT = {
 
 <style>
 /* ============ FACES ============
-   Self-hosted. build.py swaps these three urls for subset woff2 inlined
+   Self-hosted, and two only: Baloo 2 for headings and names, DM Sans for
+   everything else (the user's ruling, 2026-10-18). build.py swaps these urls for subset woff2 inlined
    as base64, so the uploaded file makes no outside request at all. */
 @font-face{font-family:"Baloo 2"; src:url("../../fonts/Baloo2-Variable.ttf") format("truetype"); font-weight:400 800; font-style:normal; font-display:swap}
 @font-face{font-family:"DM Sans"; src:url("../../fonts/DMSans-Variable.ttf") format("truetype"); font-weight:100 900; font-style:normal; font-display:swap}
-@font-face{font-family:"DM Mono"; src:url("../../fonts/DMMono-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap}
 
 /* ============ TOKENS ============
    Copied from theme.css and site.css (BRAND.md §3.1), because a file
@@ -98,7 +98,6 @@ window.SUMMIT = {
 
   --radius:14px; --radius-lg:22px;
   --sans:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  --mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --display:"Baloo 2",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   --ease:cubic-bezier(.22,.9,.28,1);
 
@@ -142,8 +141,8 @@ svg{display:block}
 .wrap{max-width:var(--wrap); margin-inline:auto; padding-inline:var(--gutter)}
 .band{padding-block:var(--band)}
 .band + .band{border-top:1px solid var(--line)}
-.kicker{font-family:var(--mono); font-size:13px; letter-spacing:.02em; color:var(--accent)}
-.label{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent)}
+/* a quiet label: plain, muted, never a coloured line above a heading */
+.label{font-size:14px; font-weight:500; line-height:1.3; color:var(--muted)}
 .h1{
   font-family:var(--display); font-weight:600;
   font-size:clamp(34px,5.4vw,74px); line-height:1.04; letter-spacing:-.02em;
@@ -174,8 +173,7 @@ svg{display:block}
   display:inline-block; margin-left:10px; padding:2px 7px; border-radius:4px;
   vertical-align:.15em;
   background:var(--line-strong); color:var(--surface);
-  font-family:var(--mono); font-size:10px; font-weight:400; line-height:1.4;
-  letter-spacing:.1em; text-transform:uppercase; white-space:nowrap;
+  font-size:11px; font-weight:500; line-height:1.4; white-space:nowrap;
 }
 
 /* ============ ACTIONS ============
@@ -218,7 +216,7 @@ svg{display:block}
 .chip{
   display:inline-flex; align-items:center; gap:7px; min-height:26px;
   padding:3px 11px; border-radius:999px; border:1px solid var(--line-strong);
-  font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  font-size:13px; font-weight:500; line-height:1.2;
   color:var(--muted); white-space:nowrap;
 }
 .chip[data-state="next"]{border-color:var(--accent); color:var(--accent)}
@@ -241,10 +239,8 @@ svg{display:block}
 .lg-pill{stroke:var(--violet)}
 .wordmark{font-family:var(--display); font-size:16px; font-weight:700; letter-spacing:-.03em; color:var(--ink)}
 .wordmark .accent{color:var(--wordmark-accent)}
-.h1 .wordmark{font-size:inherit}
+.h1 .wordmark, .h2 .wordmark{font-size:inherit; font-weight:inherit}
 .bar-right{display:flex; align-items:center; gap:16px}
-.bar-tag{font-family:var(--mono); font-size:12px; color:var(--faint)}
-@media (max-width:520px){ .bar-tag{display:none} }
 .theme-toggle{
   display:grid; place-items:center; width:44px; height:44px; padding:0;
   border-radius:999px; background:transparent; cursor:pointer;
@@ -265,15 +261,11 @@ svg{display:block}
   content:""; position:absolute; inset:0 0 auto; height:min(900px,120vh); z-index:-1; pointer-events:none;
   background:radial-gradient(60% 45% at 50% 0%, rgb(var(--glow) / var(--glow-o)) 0%, rgb(var(--glow) / 0) 70%);
 }
-.hero-grid{
-  display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
-  gap:clamp(36px,5vw,72px); align-items:center;
-  padding-block:clamp(28px,6vh,72px) var(--band);
-}
-@media (max-width:900px){ .hero-grid{grid-template-columns:minmax(0,1fr)} }
-.hero-copy{display:grid; gap:22px; justify-items:start}
+.hero-copy{display:grid; gap:22px; justify-items:start; padding-block:clamp(48px,12vh,140px) var(--band)}
+.hero-copy .h1{max-width:16ch}
 .hero-copy .lede{max-width:34ch}
-.hero-when{font-family:var(--mono); font-size:13px; color:var(--muted); letter-spacing:.02em}
+.hero-copy .note{margin-top:0}
+.hero-copy .ctas{margin-top:12px}
 
 /* the calendar strip: the weeks the series runs across, its Saturdays lit
    and a thread joining each one to the next */
@@ -281,7 +273,7 @@ svg{display:block}
 .cal-top{display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:16px}
 .cal-month{font-family:var(--display); font-weight:600; font-size:22px; letter-spacing:-.01em}
 .cal-grid{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px}
-.cal-wd{font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:var(--faint); text-align:center; padding-bottom:4px}
+.cal-wd{font-size:12px; font-weight:500; color:var(--faint); text-align:center; padding-bottom:4px}
 .cal-d{
   position:relative; aspect-ratio:1; display:grid; place-items:center;
   font-family:var(--display); font-weight:500; font-size:clamp(13px,1.3vw,15px); color:var(--faint);
@@ -304,42 +296,21 @@ svg{display:block}
 /* a month's short name over its 1st, and over the first day shown */
 .cal-d[data-mo]::before{
   content:attr(data-mo); position:absolute; top:-3px; left:0; right:0; text-align:center;
-  font-family:var(--mono); font-weight:400; font-size:9px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent);
+  font-size:10px; font-weight:600; line-height:1; color:var(--accent);
 }
-.cal-foot{display:flex; justify-content:space-between; gap:12px; margin-top:16px; font-family:var(--mono); font-size:12px; color:var(--muted)}
+.cal-foot{display:flex; justify-content:space-between; gap:12px; margin-top:16px; font-size:14px; color:var(--muted)}
 :root[data-anim] .cal:not([data-in]) .cal-disc{scale:0}
 :root[data-anim] .cal:not([data-in]) .cal-link{scale:1 0}
 
-/* ============ INTRO ============ */
-.quote{
-  font-family:var(--display); font-weight:600;
-  font-size:clamp(26px,3.6vw,46px); line-height:1.14; letter-spacing:-.015em;
-  max-width:24ch; text-wrap:balance;
+/* ============ WHEN ============ */
+.when-top{
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); gap:clamp(12px,1.4vw,18px);
+  align-items:start; margin-bottom:clamp(32px,4vw,52px);
 }
-.intro{display:grid; gap:24px}
-
-/* ============ DATES ============ */
-.tiles{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(12px,1.4vw,18px)}
-@media (max-width:760px){ .tiles{grid-template-columns:minmax(0,1fr)} }
-.tile{display:grid; gap:6px; align-content:start}
-.tile-top{display:flex; justify-content:space-between; align-items:center; gap:10px}
-.tile-day{
-  font-family:var(--display); font-weight:700; font-size:clamp(64px,8vw,96px);
-  line-height:.9; letter-spacing:-.04em; margin-top:10px; font-variant-numeric:tabular-nums;
-}
-.tile-month{font-family:var(--display); font-weight:600; font-size:22px; line-height:1.1}
-.tile-meta{font-size:15px; color:var(--muted); line-height:1.5}
-.tile .arrow-link{margin-top:10px; font-size:15px}
-@media (max-width:760px){
-  .tile{grid-template-columns:auto minmax(0,1fr); column-gap:20px}
-  .tile-top{grid-column:1 / -1}
-  .tile-day{grid-row:span 3; align-self:center; margin-top:0}
-  .tile .arrow-link{grid-column:1 / -1}
-}
-
+@media (max-width:860px){ .when-top{grid-template-columns:minmax(0,1fr)} }
 .count{
   display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:18px 28px;
-  margin-top:clamp(12px,1.4vw,18px); background:var(--wash); border-color:transparent;
+  background:var(--wash); border-color:transparent;
 }
 .count-label{display:grid; gap:4px}
 .count-label strong{font-family:var(--display); font-weight:600; font-size:20px; line-height:1.2}
@@ -349,50 +320,12 @@ svg{display:block}
   border-radius:var(--radius); background:var(--surface); border:1px solid var(--line);
 }
 .cu b{font-family:var(--display); font-weight:700; font-size:30px; line-height:1; font-variant-numeric:tabular-nums}
-.cu span{font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint)}
+.cu span{font-size:13px; color:var(--faint)}
 .cu b.tick{animation:tick .4s var(--ease)}
 @keyframes tick{from{opacity:.3; transform:translateY(-6px)}}
 @media (max-width:420px){ .cu{min-width:0; flex:1} .count-units{width:100%} }
 
-/* ============ RECOGNITION ============ */
-.split{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(32px,6vw,96px); align-items:start}
-@media (max-width:860px){ .split{grid-template-columns:minmax(0,1fr)} }
-.signs{display:grid; gap:4px; margin-top:28px}
-.signs li{
-  display:grid; grid-template-columns:auto minmax(0,1fr); gap:16px; align-items:baseline;
-  padding:14px 0; border-bottom:1px solid var(--line);
-}
-.signs li:last-child{border-bottom:0}
-.pip{
-  width:14px; height:14px; border-radius:999px; border:2px solid var(--accent);
-  translate:0 1px; transition:background .4s var(--ease) var(--d,0s);
-}
-:root:not([data-anim]) .pip, [data-in] > .pip, [data-in] .pip{background:var(--accent)}
-.why{display:grid; gap:20px; position:sticky; top:32px}
-.why .small{font-family:var(--mono); font-size:13px; color:var(--faint)}
-@media (max-width:860px){ .why{position:static} }
-
-/* ============ NOT JUST FOCUS ============ */
-.grid4{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:clamp(12px,1.4vw,18px)}
-@media (max-width:1000px){ .grid4{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (max-width:560px){ .grid4{grid-template-columns:minmax(0,1fr)} }
-.fcard{display:grid; gap:8px; align-content:start}
-.fcard .fig-box{height:76px; margin-bottom:10px; color:var(--accent)}
-.fcard .fig-box svg{width:100%; height:100%; overflow:visible}
-.fcard p{font-size:15px; line-height:1.55; color:var(--muted)}
-.note{margin-top:clamp(24px,3vw,36px); font-family:var(--display); font-weight:600; font-size:clamp(19px,2vw,24px); line-height:1.3; max-width:40ch}
-
-/* line figures: the site's .cfig vocabulary */
-.w{fill:none; stroke:var(--accent); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round}
-.q{fill:none; stroke:var(--line-strong); stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
-.o{fill:var(--orange)}
-.fill-a{fill:var(--accent)}
-.flow{animation:flow 7s linear infinite}
-@keyframes flow{to{transform:translateX(-90px)}}
-.needle{transform-box:view-box; transform-origin:60px 54px; animation:needle 7s var(--ease) infinite alternate}
-@keyframes needle{0%{transform:rotate(-62deg)} 35%{transform:rotate(48deg)} 60%{transform:rotate(-20deg)} 100%{transform:rotate(30deg)}}
-.shuttle{stroke-dasharray:4 6; animation:dash 3s linear infinite}
-@keyframes dash{to{stroke-dashoffset:-40}}
+.note{font-family:var(--display); font-weight:600; font-size:clamp(19px,2vw,24px); line-height:1.3; max-width:40ch}
 
 /* ============ THREE ANGLES ============ */
 .angles{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(28px,5vw,72px); align-items:center}
@@ -406,17 +339,18 @@ svg{display:block}
 }
 :root[data-anim] .venn:not([data-in]) circle{stroke-dashoffset:1}
 .venn[data-active="bio"] .c-bio, .venn[data-active="psy"] .c-psy, .venn[data-active="soc"] .c-soc{fill-opacity:.14; stroke-width:3}
-.venn text{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; fill:var(--muted); transition:fill .2s var(--ease)}
+.venn text{font-size:14px; font-weight:500; fill:var(--muted); transition:fill .2s var(--ease)}
 .venn[data-active="bio"] .t-bio, .venn[data-active="psy"] .t-psy, .venn[data-active="soc"] .t-soc{fill:var(--ink)}
-.venn .you{font-family:var(--display); font-size:15px; font-weight:700; letter-spacing:0; text-transform:none; fill:var(--ink)}
+.venn .you{font-family:var(--display); font-size:15px; font-weight:700; fill:var(--ink)}
 .angle-list{display:grid; gap:10px}
+.angle-list .h3{margin-bottom:6px}
 .angle{
   display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 16px; align-items:center;
   width:100%; padding:16px 18px; text-align:left; cursor:pointer;
   border:1px solid var(--line); border-radius:var(--radius-lg); background:var(--surface);
   transition:border-color .18s var(--ease), background .18s var(--ease), translate .18s var(--ease);
 }
-.angle .n{grid-row:span 2; font-family:var(--mono); font-size:12px; color:var(--accent); width:32px; height:32px; display:grid; place-items:center; border-radius:999px; border:1.5px solid var(--line-strong); transition:background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease)}
+.angle .n{grid-row:span 2; font-size:14px; font-weight:600; color:var(--accent); width:32px; height:32px; display:grid; place-items:center; border-radius:999px; border:1.5px solid var(--line-strong); transition:background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease)}
 .angle .t{font-family:var(--display); font-weight:600; font-size:20px; line-height:1.2}
 .angle .d{font-size:15px; color:var(--muted); line-height:1.45}
 .angle[aria-pressed="true"]{border-color:var(--accent); background:var(--wash)}
@@ -478,7 +412,7 @@ svg{display:block}
 .spk-role [data-placeholder]{background:transparent; border-color:currentColor; color:inherit}
 .spk-role [data-placeholder]::after{background:var(--on-accent); color:var(--accent)}
 .spk-when span{white-space:nowrap}
-.spk-when{padding:12px 14px 16px; text-align:center; font-family:var(--mono); font-size:12px; color:var(--muted); align-self:end}
+.spk-when{padding:12px 14px 16px; text-align:center; font-size:14px; color:var(--muted); align-self:end}
 /* a phone stacks them, one under the next, read by scrolling down; a
    squarer well keeps three full-width portraits from filling three screens */
 @media (max-width:700px){
@@ -499,7 +433,7 @@ svg{display:block}
 .tl-item{position:relative; display:grid; grid-template-columns:var(--rail) minmax(0,1fr); gap:0}
 .tl-when{padding:22px 28px 0 0; display:grid; gap:2px; align-content:start}
 .tl-when b{font-family:var(--display); font-weight:700; font-size:clamp(20px,2vw,24px); line-height:1.1}
-.tl-when span{font-family:var(--mono); font-size:12px; color:var(--muted)}
+.tl-when span{font-size:14px; color:var(--muted)}
 .tl-dot{
   position:absolute; left:calc(var(--rail) - 8px); top:28px; width:16px; height:16px; border-radius:999px;
   background:var(--surface); border:2px solid var(--line-strong);
@@ -509,19 +443,10 @@ svg{display:block}
 .tl-card{margin-left:28px; display:grid; gap:12px}
 .tl-card .topic{font-family:var(--display); font-weight:600; font-size:clamp(21px,2.2vw,27px); line-height:1.18; letter-spacing:-.01em}
 .tl-card .sub{font-family:var(--display); font-weight:500; font-size:18px; color:var(--ink-soft); line-height:1.3}
-.tl-card .blurb{font-size:16px; color:var(--muted); max-width:62ch}
-.speaker{display:flex; align-items:center; gap:14px; padding-top:14px; border-top:1px solid var(--line)}
-.avatar{
-  flex:none; width:48px; height:48px; border-radius:999px; display:grid; place-items:center;
-  border:1.5px dashed var(--line-strong); background:var(--wash);
-  font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--faint);
-}
-.avatar.has-photo{
-  border:0; overflow:hidden;
-  background:var(--photo) 50% 32% / 220% auto no-repeat, linear-gradient(180deg, var(--wash) 0%, var(--wash-2) 100%);
-}
+.speaker{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 14px; padding-top:14px; border-top:1px solid var(--line)}
 .speaker .who{display:grid; gap:2px; font-size:16px}
-.speaker .role{font-family:var(--mono); font-size:12px; color:var(--muted)}
+.speaker .role{font-size:14px; color:var(--muted)}
+.speaker .arrow-link{font-size:15px}
 .tl-card .meta-row{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 16px}
 @media (max-width:640px){
   .tl{--rail:28px}
@@ -568,61 +493,10 @@ svg{display:block}
 .ba-txt .bf{color:var(--muted)}
 .ba[data-state="after"] .ba-txt span{pointer-events:none}
 
-/* ============ WHO ============ */
-.ticks{display:grid; gap:2px; margin-top:20px}
-.ticks li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:16px; align-items:center; padding:12px 0; font-size:clamp(17px,1.9vw,20px)}
-.tick-ico{width:30px; height:30px; border-radius:999px; background:var(--wash-2); display:grid; place-items:center; color:var(--accent)}
-.tick-ico svg{width:16px; height:16px}
-.tick-ico path{stroke-dasharray:1; stroke-dashoffset:0; transition:stroke-dashoffset .5s var(--ease) var(--d,0s)}
-:root[data-anim] .ticks:not([data-in]) .tick-ico path{stroke-dashoffset:1}
-.chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
-.chips li{padding:8px 14px; border-radius:999px; border:1px solid var(--line-strong); font-size:15px; color:var(--ink-soft)}
-
-/* ============ WHAT YOU GET ============ */
-.grid3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(12px,1.4vw,18px)}
-@media (max-width:900px){ .grid3{grid-template-columns:minmax(0,1fr)} }
-.get{display:grid; gap:10px; align-content:start}
-.get .fig-box{height:96px; margin-bottom:6px; color:var(--accent)}
-.get .fig-box svg{height:100%; width:auto; overflow:visible}
-.get p{font-size:15.5px; color:var(--muted); line-height:1.55}
-.stack{
-  margin-top:clamp(12px,1.4vw,18px);
-  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(24px,4vw,56px); align-items:center;
-  background:var(--wash); border-color:transparent;
-}
-@media (max-width:860px){ .stack{grid-template-columns:minmax(0,1fr)} }
-.sum{display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 10px; font-family:var(--display); font-weight:600; font-size:clamp(18px,2vw,22px); color:var(--muted)}
-.sum .total{font-weight:700; font-size:clamp(28px,3.4vw,40px); color:var(--ink); line-height:1}
-.addon{font-family:var(--mono); font-weight:400; font-size:.62em; color:var(--accent); white-space:nowrap; vertical-align:.12em}
-.includes{display:grid; gap:10px}
-.includes li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px; align-items:start; font-size:16px}
-.includes svg{width:18px; height:18px; margin-top:4px; color:var(--accent)}
-
 /* ============ PRICING ============ */
-/* the ticket section's heading, at the hero's size: the form below it is
-   where the page has been heading */
+/* the event's name and the ticket heading, at the hero's size: the form
+   at the end is where the page has been heading */
 .h2--xl{font-size:clamp(36px,5.4vw,74px); line-height:1.04; letter-spacing:-.02em; max-width:none}
-.tiers{display:grid; gap:10px}
-.tier{
-  display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto; gap:8px 24px; align-items:center;
-  padding:18px clamp(18px,2vw,26px); border:1px solid var(--line); border-radius:var(--radius-lg); background:var(--surface);
-  transition:border-color .3s var(--ease), opacity .3s var(--ease);
-}
-.tier .name{font-family:var(--display); font-weight:600; font-size:20px; line-height:1.2}
-.tier .win{font-size:14.5px; color:var(--muted)}
-.tier .price{display:grid; justify-items:end; gap:2px}
-.tier .was{font-family:var(--mono); font-size:13px; color:var(--faint); text-decoration:line-through}
-.tier .now{font-family:var(--display); font-weight:700; font-size:clamp(24px,2.6vw,30px); line-height:1.05}
-.tier .chip{justify-self:start}
-.tier[data-status="open"]{border:2px solid var(--accent); box-shadow:0 18px 40px -26px rgb(var(--glow) / .7)}
-/* the row's own opacity belongs to the reveal, so dim what is inside it */
-.tier[data-status="closed"] > *{opacity:.62}
-.tier[data-status="closed"] .now{text-decoration:line-through; text-decoration-thickness:2px}
-@media (max-width:640px){
-  .tier{grid-template-columns:minmax(0,1fr) auto}
-  .tier .mid{grid-column:1; grid-row:2}
-  .tier .price{grid-column:2; grid-row:1 / span 2}
-}
 .pay{margin-top:clamp(24px,3vw,36px); display:grid; gap:14px; justify-items:start}
 .pay .fine{font-size:14px; color:var(--faint); max-width:60ch}
 /* BCL's booking form, when the page is hosted there (see "the booking
@@ -630,19 +504,18 @@ svg{display:block}
 .book{margin-top:clamp(24px,3vw,36px); border-radius:var(--radius-lg); overflow:hidden}
 .book[data-ready]{border:1px solid var(--line)}
 
-/* ============ CLOSE + FOOTER ============ */
-.close{display:grid; gap:28px; justify-items:start}
+/* ============ FOOTER ============ */
 .foot{padding-block:40px calc(96px + env(safe-area-inset-bottom,0px)); border-top:1px solid var(--line)}
 .foot-grid{display:grid; grid-template-columns:auto minmax(0,1fr); gap:20px 48px; align-items:start}
 @media (max-width:700px){ .foot-grid{grid-template-columns:minmax(0,1fr)} }
 .foot dl{display:grid; grid-template-columns:auto minmax(0,1fr); gap:8px 18px; margin:0; font-size:15px}
-.foot dt{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); padding-top:4px}
+.foot dt{font-size:14px; color:var(--faint)}
 .foot dd{margin:0; color:var(--ink-soft)}
 .disclaimer{grid-column:1 / -1; font-size:14px; color:var(--faint); max-width:70ch}
 
 /* ============ THE PILL ============
    Solid ink, an orange dot, always the next thing to do. It steps aside
-   while the hero or the prices are on screen. */
+   while the opener or the form is on screen. */
 .pill{
   position:fixed; right:var(--gutter); z-index:20;
   bottom:calc(clamp(16px,3vh,32px) + env(safe-area-inset-bottom,0px));
@@ -686,7 +559,6 @@ svg{display:block}
   <symbol id="i-arrow" viewBox="0 0 20 20"><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-down" viewBox="0 0 20 20"><path d="M10 4v11M5 11l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-plus" viewBox="0 0 20 20"><path d="M10 4v12M4 10h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
-  <symbol id="i-check" viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" pathLength="1"/></symbol>
 </svg>
 
 <header class="wrap bar">
@@ -695,7 +567,6 @@ svg{display:block}
     <span class="wordmark">my<span class="accent">.adhd</span></span>
   </a>
   <div class="bar-right">
-    <span class="bar-tag">Online series · Oct–Nov 2026</span>
     <button class="theme-toggle" type="button" aria-label="Switch to dark theme">
       <svg class="sun" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 1.8v2.2M10 16v2.2M1.8 10h2.2M16 10h2.2M4.2 4.2l1.6 1.6M14.2 14.2l1.6 1.6M4.2 15.8l1.6-1.6M14.2 5.8l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       <svg class="moon" viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 12.3A7 7 0 0 1 7.7 3.5a7 7 0 1 0 8.8 8.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
@@ -705,28 +576,66 @@ svg{display:block}
 
 <main id="main">
 
-  <!-- ============ HERO ============ -->
-  <section class="hero" id="top" aria-labelledby="t-title">
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
-        <p class="kicker rv">Online series · 3 Saturdays · <span data-bind="platform">Zoom</span></p>
-        <h1 class="h1 rv" style="--d:.06s" id="t-title"><span class="wordmark">my<span class="accent">.adhd</span></span> Late Talks</h1>
-        <p class="lede rv" style="--d:.12s" data-bind="subtitle">Exploring a holistic, contextual view of ADHD</p>
-        <p class="hero-when rv" style="--d:.18s" data-when>Saturdays 24 October, 7 and 21 November 2026 · 9:00–11:00 pm MYT</p>
-        <div class="ctas rv" style="--d:.24s">
-          <a class="arrow-cta" href="#register">Register for the series <i aria-hidden="true"><svg><use href="#i-arrow"/></svg></i></a>
-          <a class="arrow-link" href="#dates"><i aria-hidden="true"><svg><use href="#i-down"/></svg></i> See the dates</a>
+  <!-- ============ OPENER ============
+       What ADHD is, kept loose, then a hand-off to the event below. -->
+  <section class="hero" id="top" aria-labelledby="t-open">
+    <div class="wrap hero-copy">
+      <h1 class="h1 rv" id="t-open">ADHD is not just about “lack of focus”.</h1>
+      <p class="lede rv" style="--d:.06s">It shapes your emotions, energy, decisions and daily life.</p>
+      <p class="note rv" style="--d:.12s">Not because you're lazy. Your brain works <span class="hl">differently</span>.</p>
+      <div class="ctas rv" style="--d:.18s">
+        <a class="arrow-link" href="#event"><i aria-hidden="true"><svg><use href="#i-down"/></svg></i> So we made three evenings to talk about it</a>
+        <a class="arrow-cta" href="#register">Register free <i aria-hidden="true"><svg><use href="#i-arrow"/></svg></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE EVENT ============ -->
+  <section class="band" id="event" aria-labelledby="t-event">
+    <div class="wrap">
+      <div class="head">
+        <h2 class="h2 h2--xl rv" id="t-event"><span class="wordmark">my<span class="accent">.adhd</span></span> Late Talks</h2>
+        <p class="lede rv" style="--d:.06s"><span data-bind="subtitle">Exploring a holistic, contextual view of ADHD</span>. <span data-when>Three Saturday nights on <span data-bind="platform">Zoom</span>, 9:00–11:00 pm, with live Q&amp;A.</span></p>
+      </div>
+      <div class="angles">
+        <div class="venn rv" data-venn aria-hidden="true">
+          <svg viewBox="0 -18 300 322">
+            <circle class="c-bio" cx="150" cy="98" r="84" pathLength="1" style="--d:.1s"/>
+            <circle class="c-psy" cx="103" cy="180" r="84" pathLength="1" style="--d:.35s"/>
+            <circle class="c-soc" cx="197" cy="180" r="84" pathLength="1" style="--d:.6s"/>
+            <text class="t-bio" x="150" y="0" text-anchor="middle">Biological</text>
+            <text class="t-psy" x="92" y="292" text-anchor="middle">Psychological</text>
+            <text class="t-soc" x="208" y="292" text-anchor="middle">Social</text>
+            <text class="you" x="150" y="156" text-anchor="middle">you</text>
+          </svg>
+        </div>
+        <div class="angle-list">
+          <h3 class="h3 rv">One picture of ADHD, from three angles.</h3>
+          <button class="angle rv" type="button" aria-pressed="false" data-angle="bio"><span class="n" aria-hidden="true">1</span><span class="t">Biological</span><span class="d">How your brain is wired.</span></button>
+          <button class="angle rv" style="--d:.08s" type="button" aria-pressed="false" data-angle="psy"><span class="n" aria-hidden="true">2</span><span class="t">Psychological</span><span class="d">Thoughts, emotions and patterns.</span></button>
+          <button class="angle rv" style="--d:.16s" type="button" aria-pressed="false" data-angle="soc"><span class="n" aria-hidden="true">3</span><span class="t">Social</span><span class="d">Environment, work and relationships.</span></button>
         </div>
       </div>
+    </div>
+  </section>
 
-      <figure class="card cal rv" style="--d:.2s" aria-hidden="true">
-        <div class="cal-top">
-          <span class="cal-month" data-cal-month>Oct – Nov 2026</span>
-          <span class="label" data-cal-count>3 sessions</span>
-        </div>
-        <div class="cal-grid" data-cal-grid></div>
-        <div class="cal-foot"><span data-cal-time>9:00–11:00 pm</span><span data-bind="platform">Zoom</span></div>
-      </figure>
+  <!-- ============ BEFORE / AFTER ============ -->
+  <section class="band ba" data-state="before" data-ba aria-labelledby="t-ba">
+    <div class="wrap">
+      <div class="head">
+        <h2 class="h2 rv" id="t-ba">Before the series, and after it.</h2>
+      </div>
+      <div class="switch rv" role="group" aria-label="Show before or after">
+        <span class="knob" aria-hidden="true"></span>
+        <button type="button" aria-pressed="true" data-ba-to="before">Before</button>
+        <button type="button" aria-pressed="false" data-ba-to="after">After</button>
+      </div>
+      <ul class="ba-list">
+        <li class="rv"><span class="ba-pip" aria-hidden="true"></span><span class="ba-txt"><span class="bf">You don't fully understand why focus, attention and consistency are so hard for you.</span><span class="af">You understand how your ADHD brain works, and how it differs from other people's.</span></span></li>
+        <li class="rv" style="--d:.06s"><span class="ba-pip" style="--d:.08s" aria-hidden="true"></span><span class="ba-txt" style="--d:.08s"><span class="bf">You often feel overwhelmed, reactive or drained, and you're not sure why.</span><span class="af">You have practical ways to handle emotions and the day's challenges.</span></span></li>
+        <li class="rv" style="--d:.12s"><span class="ba-pip" style="--d:.16s" aria-hidden="true"></span><span class="ba-txt" style="--d:.16s"><span class="bf">You blame yourself for “not trying hard enough”, even when nobody has said it.</span><span class="af">You stop blaming yourself, and start working with your brain.</span></span></li>
+        <li class="rv" style="--d:.18s"><span class="ba-pip" style="--d:.24s" aria-hidden="true"></span><span class="ba-txt" style="--d:.24s"><span class="bf">You feel alone, as if nobody gets what your days are like.</span><span class="af">You know you're not alone, and that there is a better way forward.</span></span></li>
+      </ul>
     </div>
   </section>
 
@@ -734,8 +643,7 @@ svg{display:block}
   <section class="band" id="speakers" aria-labelledby="t-spk">
     <div class="wrap">
       <div class="head">
-        <p class="kicker rv">Speakers</p>
-        <h2 class="h2 rv" style="--d:.06s" id="t-spk">Meet your speakers.</h2>
+        <h2 class="h2 rv" id="t-spk">Meet your speakers.</h2>
         <p class="lede rv" style="--d:.12s">One speaker each Saturday, live, with time for your questions.</p>
       </div>
       <ol class="spk-grid">
@@ -770,185 +678,41 @@ svg{display:block}
     </div>
   </section>
 
-  <!-- ============ INTRO ============ -->
-  <section class="band" aria-label="What this is">
-    <div class="wrap intro">
-      <p class="quote rv">“What if we could learn to work with the ADHD brain, instead of fighting <span class="hl">against</span> it?”</p>
-      <p class="lede rv" style="--d:.1s">Made for adults with ADHD and the people around them: family, partners, educators, employers and healthcare practitioners who want evidence-based insight and practical ways to manage it.</p>
-    </div>
-  </section>
-
-  <!-- ============ DATES ============ -->
-  <section class="band" id="dates" aria-labelledby="t-dates">
-    <div class="wrap">
-      <div class="head">
-        <p class="kicker rv">When</p>
-        <h2 class="h2 rv" style="--d:.06s" id="t-dates">Three Saturday evenings, two weeks apart.</h2>
-      </div>
-
-      <ol class="tiles">
-        <li class="card tile rv" data-session="0">
-          <div class="tile-top"><span class="label">Talk 1</span><span class="chip" data-s="state">Upcoming</span></div>
-          <span class="tile-day" data-s="day" data-count>24</span>
-          <span class="tile-month" data-s="month">October</span>
-          <span class="tile-meta"><span data-s="weekday">Saturday</span> · <span data-s="time">9:00–11:00 pm</span> MYT<br><span data-bind="platform">Zoom</span></span>
-          <a class="arrow-link" data-s="ics" href="#dates" hidden><i aria-hidden="true"><svg><use href="#i-plus"/></svg></i> Add to calendar</a>
-        </li>
-        <li class="card tile rv" style="--d:.08s" data-session="1">
-          <div class="tile-top"><span class="label">Talk 2</span><span class="chip" data-s="state">Upcoming</span></div>
-          <span class="tile-day" data-s="day" data-count>7</span>
-          <span class="tile-month" data-s="month">November</span>
-          <span class="tile-meta"><span data-s="weekday">Saturday</span> · <span data-s="time">9:00–11:00 pm</span> MYT<br><span data-bind="platform">Zoom</span></span>
-          <a class="arrow-link" data-s="ics" href="#dates" hidden><i aria-hidden="true"><svg><use href="#i-plus"/></svg></i> Add to calendar</a>
-        </li>
-        <li class="card tile rv" style="--d:.16s" data-session="2">
-          <div class="tile-top"><span class="label">Talk 3</span><span class="chip" data-s="state">Upcoming</span></div>
-          <span class="tile-day" data-s="day" data-count>21</span>
-          <span class="tile-month" data-s="month">November</span>
-          <span class="tile-meta"><span data-s="weekday">Saturday</span> · <span data-s="time">9:00–11:00 pm</span> MYT<br><span data-bind="platform">Zoom</span></span>
-          <a class="arrow-link" data-s="ics" href="#dates" hidden><i aria-hidden="true"><svg><use href="#i-plus"/></svg></i> Add to calendar</a>
-        </li>
-      </ol>
-
-      <div class="card count rv" data-count-box hidden>
-        <div class="count-label">
-          <span class="label" data-cd-kicker>Next session</span>
-          <strong data-cd-title>Talk 1 starts in</strong>
-        </div>
-        <div class="count-units" role="timer" aria-live="off" data-cd-units>
-          <span class="cu"><b data-cd="d">00</b><span>days</span></span>
-          <span class="cu"><b data-cd="h">00</b><span>hours</span></span>
-          <span class="cu"><b data-cd="m">00</b><span>min</span></span>
-          <span class="cu"><b data-cd="s">00</b><span>sec</span></span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ RECOGNITION ============ -->
-  <section class="band" aria-labelledby="t-hard">
-    <div class="wrap split">
-      <div>
-        <p class="kicker rv">Sound familiar</p>
-        <h2 class="h2 rv" style="--d:.06s" id="t-hard">You've tried harder. It still feels hard.</h2>
-        <ul class="signs">
-          <li class="rv" style="--d:.1s"><span class="pip" style="--d:.5s" aria-hidden="true"></span><span>You struggle to focus, even on the things that matter.</span></li>
-          <li class="rv" style="--d:.2s"><span class="pip" style="--d:.6s" aria-hidden="true"></span><span>You overthink, get overwhelmed, or burn out easily.</span></li>
-          <li class="rv" style="--d:.3s"><span class="pip" style="--d:.7s" aria-hidden="true"></span><span>You start things, then can't follow through.</span></li>
-          <li class="rv" style="--d:.4s"><span class="pip" style="--d:.8s" aria-hidden="true"></span><span>You feel the potential is there, but you can't reach it.</span></li>
-        </ul>
-      </div>
-      <div class="why">
-        <p class="small rv">And somewhere underneath, you wonder</p>
-        <p class="quote rv" style="--d:.08s">“Why is everything <span class="hl">harder</span> for me?”</p>
-        <p class="lede rv" style="--d:.16s">Not because you're lazy. Not because you lack discipline. Your brain works differently.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ NOT JUST FOCUS ============ -->
-  <section class="band" aria-labelledby="t-focus">
-    <div class="wrap">
-      <div class="head">
-        <p class="kicker rv">More than attention</p>
-        <h2 class="h2 rv" style="--d:.06s" id="t-focus">ADHD is not just about “lack of focus”.</h2>
-        <p class="lede rv" style="--d:.12s">It also shapes:</p>
-      </div>
-      <div class="grid4">
-        <article class="card fcard rv">
-          <div class="fig-box" aria-hidden="true">
-            <svg viewBox="0 0 120 64">
-              <line class="q" x1="0" y1="32" x2="120" y2="32"/>
-              <clipPath id="clip-wave"><rect x="0" y="0" width="120" height="64"/></clipPath>
-              <g clip-path="url(#clip-wave)"><path class="w flow" d="M0 32 C 15 4, 30 4, 45 32 S 75 60, 90 32 S 120 4, 135 32 S 165 60, 180 32 S 210 4, 225 32"/></g>
-            </svg>
-          </div>
-          <h3 class="h3">Emotions</h3>
-          <p>How you feel, and how you bring a feeling back down.</p>
-        </article>
-        <article class="card fcard rv" style="--d:.08s">
-          <div class="fig-box" aria-hidden="true">
-            <svg viewBox="0 0 120 64">
-              <path class="q" d="M18 54 A42 42 0 0 1 102 54"/>
-              <path class="w" d="M18 54 A42 42 0 0 1 39 17.6"/>
-              <g class="needle"><line class="w" x1="60" y1="54" x2="60" y2="22"/><circle class="o" cx="60" cy="22" r="4.5"/></g>
-              <circle class="fill-a" cx="60" cy="54" r="5"/>
-            </svg>
-          </div>
-          <h3 class="h3">Energy</h3>
-          <p>Whether your energy stays steady through the day.</p>
-        </article>
-        <article class="card fcard rv" style="--d:.16s">
-          <div class="fig-box" aria-hidden="true">
-            <svg viewBox="0 0 120 64">
-              <path class="w" d="M8 32 H48 C64 32 68 12 88 12 H112"/>
-              <path class="q" d="M48 32 C64 32 68 52 88 52 H112"/>
-              <circle class="o" r="5" cx="0" cy="0"><animateMotion dur="5.5s" repeatCount="indefinite" path="M8 32 H48 C64 32 68 12 88 12 H112" keyPoints="0;0.38;0.38;1;1" keyTimes="0;0.4;0.55;0.92;1" calcMode="linear"/></circle>
-            </svg>
-          </div>
-          <h3 class="h3">Decisions</h3>
-          <p>How you make decisions, especially under pressure.</p>
-        </article>
-        <article class="card fcard rv" style="--d:.24s">
-          <div class="fig-box" aria-hidden="true">
-            <svg viewBox="0 0 120 64">
-              <rect class="w" x="6" y="24" width="30" height="24" rx="4"/>
-              <path class="w" d="M15 24 v-5 h12 v5"/>
-              <path class="w" d="M84 34 L99 20 L114 34 M88 30 V50 H110 V30"/>
-              <line class="q shuttle" x1="42" y1="38" x2="80" y2="38"/>
-            </svg>
-          </div>
-          <h3 class="h3">Daily life</h3>
-          <p>How you get through the day, at work and at home.</p>
-        </article>
-      </div>
-      <p class="note rv">Many adults with ADHD don't realise this, and end up blaming themselves.</p>
-    </div>
-  </section>
-
-  <!-- ============ THREE ANGLES ============ -->
-  <section class="band" aria-labelledby="t-why">
-    <div class="wrap">
-      <div class="head">
-        <p class="kicker rv">The approach</p>
-        <h2 class="h2 rv" style="--d:.06s" id="t-why">Understand the why, then what to do about it.</h2>
-        <p class="lede rv" style="--d:.12s">Not a pile of random tips. One structured picture of ADHD, from three angles.</p>
-      </div>
-      <div class="angles">
-        <div class="venn rv" data-venn aria-hidden="true">
-          <svg viewBox="0 -18 300 322">
-            <circle class="c-bio" cx="150" cy="98" r="84" pathLength="1" style="--d:.1s"/>
-            <circle class="c-psy" cx="103" cy="180" r="84" pathLength="1" style="--d:.35s"/>
-            <circle class="c-soc" cx="197" cy="180" r="84" pathLength="1" style="--d:.6s"/>
-            <text class="t-bio" x="150" y="0" text-anchor="middle">Biological</text>
-            <text class="t-psy" x="92" y="292" text-anchor="middle">Psychological</text>
-            <text class="t-soc" x="208" y="292" text-anchor="middle">Social</text>
-            <text class="you" x="150" y="156" text-anchor="middle">you</text>
-          </svg>
-        </div>
-        <div class="angle-list">
-          <button class="angle rv" type="button" aria-pressed="false" data-angle="bio"><span class="n" aria-hidden="true">01</span><span class="t">Biological</span><span class="d">How your brain is wired.</span></button>
-          <button class="angle rv" style="--d:.08s" type="button" aria-pressed="false" data-angle="psy"><span class="n" aria-hidden="true">02</span><span class="t">Psychological</span><span class="d">Thoughts, emotions and patterns.</span></button>
-          <button class="angle rv" style="--d:.16s" type="button" aria-pressed="false" data-angle="soc"><span class="n" aria-hidden="true">03</span><span class="t">Social</span><span class="d">Environment, work and relationships.</span></button>
-        </div>
-      </div>
-      <p class="note rv">This is the part most people miss.</p>
-    </div>
-  </section>
-
-  <!-- ============ PROGRAMME ============ -->
+  <!-- ============ WHEN ============
+       The calendar and the countdown, then each talk on the timeline. -->
   <section class="band" id="programme" aria-labelledby="t-prog">
     <div class="wrap">
       <div class="head">
-        <p class="kicker rv">Programme</p>
-        <h2 class="h2 rv" style="--d:.06s" id="t-prog">Three evenings, three speakers.</h2>
-        <p class="lede rv" style="--d:.12s">Each session runs two hours on <span data-bind="platform">Zoom</span>, with time for your questions.</p>
+        <h2 class="h2 rv" id="t-prog">Three Saturday nights, two weeks apart.</h2>
+      </div>
+
+      <div class="when-top">
+        <figure class="card cal rv" aria-hidden="true">
+          <div class="cal-top">
+            <span class="cal-month" data-cal-month>Oct – Nov 2026</span>
+            <span class="label" data-cal-count>3 sessions</span>
+          </div>
+          <div class="cal-grid" data-cal-grid></div>
+          <div class="cal-foot"><span data-cal-time>9:00–11:00 pm</span><span data-bind="platform">Zoom</span></div>
+        </figure>
+
+        <div class="card count rv" style="--d:.08s" data-count-box hidden>
+          <div class="count-label">
+            <span class="label" data-cd-label>Next session</span>
+            <strong data-cd-title>Talk 1 starts in</strong>
+          </div>
+          <div class="count-units" role="timer" aria-live="off" data-cd-units>
+            <span class="cu"><b data-cd="d">00</b><span>days</span></span>
+            <span class="cu"><b data-cd="h">00</b><span>hours</span></span>
+            <span class="cu"><b data-cd="m">00</b><span>min</span></span>
+            <span class="cu"><b data-cd="s">00</b><span>sec</span></span>
+          </div>
+        </div>
       </div>
 
       <div class="tl" data-tl>
         <span class="tl-fill" aria-hidden="true"></span>
         <ol class="tl-list">
-
         <li class="tl-item" data-session="0">
           <span class="tl-dot" aria-hidden="true"></span>
           <div class="tl-when rv"><b data-s="short">Sat 24 Oct</b><span data-s="time">9:00–11:00 pm</span></div>
@@ -956,10 +720,9 @@ svg{display:block}
             <div class="meta-row"><span class="label">Talk 1</span><span class="chip" data-s="state">Upcoming</span></div>
             <h3 class="topic"><span data-bind="sessions.0.topic">The ADHD Ecosystem</span></h3>
             <p class="sub"><span data-bind="sessions.0.subtitle">Designing a Life that Balances Strengths, Needs and Support</span></p>
-            <p class="blurb"><span data-bind="sessions.0.blurb">You may have tried to 'fix' your ADHD, but still feel like your life doesn't quite fit how your brain works. What if the issue isn't you, but the system around? In this session, you'll learn how to design a life that balances your strengths, needs, and support, so you can reduce burnout and function more sustainably.</span></p>
             <div class="speaker">
-              <span class="avatar has-photo" aria-hidden="true" data-photo-for="0" style="--photo:var(--photo-yasmin)"></span>
               <span class="who"><span data-bind="sessions.0.speaker">Yasmin Yakub</span><span class="role" data-bind="sessions.0.role">SLD Interventionist</span></span>
+              <a class="arrow-link" data-s="ics" href="#programme" hidden><i aria-hidden="true"><svg><use href="#i-plus"/></svg></i> Add to calendar</a>
             </div>
           </article>
         </li>
@@ -971,10 +734,9 @@ svg{display:block}
             <div class="meta-row"><span class="label">Talk 2</span><span class="chip" data-s="state">Upcoming</span></div>
             <h3 class="topic"><span data-bind="sessions.1.topic">The ADHD Mind</span></h3>
             <p class="sub"><span data-bind="sessions.1.subtitle">Navigating Thoughts, Emotions and Self-Regulation</span></p>
-            <p class="blurb"><span data-bind="sessions.1.blurb">You've probably noticed how your thoughts can feel fast, scattered, or hard to control, and your emotions can shift just as quickly. But what's really happening inside the ADHD mind? In this session, you'll understand how thoughts, emotions, and behaviours are connected in ADHD, and why self-regulation can feel so challenging.</span></p>
             <div class="speaker">
-              <span class="avatar has-photo" aria-hidden="true" data-photo-for="1" style="--photo:var(--photo-kamila)"></span>
               <span class="who"><span data-bind="sessions.1.speaker">Kamila Solihin</span><span class="role" data-bind="sessions.1.role">Counselor</span></span>
+              <a class="arrow-link" data-s="ics" href="#programme" hidden><i aria-hidden="true"><svg><use href="#i-plus"/></svg></i> Add to calendar</a>
             </div>
           </article>
         </li>
@@ -986,10 +748,9 @@ svg{display:block}
             <div class="meta-row"><span class="label">Talk 3</span><span class="chip" data-s="state">Upcoming</span></div>
             <h3 class="topic"><span data-bind="sessions.2.topic">Body, Mind &amp; Environment</span></h3>
             <p class="sub"><span data-bind="sessions.2.subtitle">The Nervous System and Environment Integration in Practice</span></p>
-            <p class="blurb"><span data-bind="sessions.2.blurb">You may have noticed how some environments drain you, while others help you feel calmer or more focused. But how does your nervous system interact with your surroundings? In this session, you'll learn practical ways to adjust your space to support focus and well-being.</span></p>
             <div class="speaker">
-              <span class="avatar has-photo" aria-hidden="true" data-photo-for="2" style="--photo:var(--photo-noor)"></span>
               <span class="who"><span data-bind="sessions.2.speaker">Noor Safarina</span><span class="role" data-bind="sessions.2.role">Occupational Therapist (OT)</span></span>
+              <a class="arrow-link" data-s="ics" href="#programme" hidden><i aria-hidden="true"><svg><use href="#i-plus"/></svg></i> Add to calendar</a>
             </div>
           </article>
         </li>
@@ -998,143 +759,19 @@ svg{display:block}
     </div>
   </section>
 
-  <!-- ============ BEFORE / AFTER ============ -->
-  <section class="band ba" data-state="before" data-ba aria-labelledby="t-ba">
-    <div class="wrap">
-      <div class="head">
-        <p class="kicker rv">What changes</p>
-        <h2 class="h2 rv" style="--d:.06s" id="t-ba">Before the series, and after it.</h2>
-      </div>
-      <div class="switch rv" role="group" aria-label="Show before or after">
-        <span class="knob" aria-hidden="true"></span>
-        <button type="button" aria-pressed="true" data-ba-to="before">Before</button>
-        <button type="button" aria-pressed="false" data-ba-to="after">After</button>
-      </div>
-      <ul class="ba-list">
-        <li class="rv"><span class="ba-pip" aria-hidden="true"></span><span class="ba-txt"><span class="bf">You don't fully understand why focus, attention and consistency are so hard for you.</span><span class="af">You understand how your ADHD brain works, and how it differs from other people's.</span></span></li>
-        <li class="rv" style="--d:.06s"><span class="ba-pip" style="--d:.08s" aria-hidden="true"></span><span class="ba-txt" style="--d:.08s"><span class="bf">You often feel overwhelmed, reactive or drained, and you're not sure why.</span><span class="af">You have practical ways to handle emotions and the day's challenges.</span></span></li>
-        <li class="rv" style="--d:.12s"><span class="ba-pip" style="--d:.16s" aria-hidden="true"></span><span class="ba-txt" style="--d:.16s"><span class="bf">You blame yourself for “not trying hard enough”, even when nobody has said it.</span><span class="af">You stop blaming yourself, and start working with your brain.</span></span></li>
-        <li class="rv" style="--d:.18s"><span class="ba-pip" style="--d:.24s" aria-hidden="true"></span><span class="ba-txt" style="--d:.24s"><span class="bf">You feel alone, as if nobody gets what your days are like.</span><span class="af">You know you're not alone, and that there is a better way forward.</span></span></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ============ WHO ============ -->
-  <section class="band" aria-labelledby="t-who">
-    <div class="wrap split">
-      <div class="head" style="margin:0">
-        <p class="kicker rv">Who it's for</p>
-        <h2 class="h2 rv" style="--d:.06s" id="t-who">Still unsure if this is for you?</h2>
-        <p class="lede rv" style="--d:.12s">That's fair. Maybe you're not ready yet, or you're still deciding.</p>
-      </div>
-      <div>
-        <h3 class="h3 rv">This series is for you if</h3>
-        <ul class="ticks rv" data-ticks>
-          <li><span class="tick-ico" aria-hidden="true"><svg viewBox="0 0 20 20" style="--d:.15s"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" pathLength="1"/></svg></span>You suspect you have ADHD.</li>
-          <li><span class="tick-ico" aria-hidden="true"><svg viewBox="0 0 20 20" style="--d:.35s"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" pathLength="1"/></svg></span>You've been diagnosed with ADHD.</li>
-          <li><span class="tick-ico" aria-hidden="true"><svg viewBox="0 0 20 20" style="--d:.55s"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" pathLength="1"/></svg></span>You struggle with focus and emotions.</li>
-          <li><span class="tick-ico" aria-hidden="true"><svg viewBox="0 0 20 20" style="--d:.75s"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" pathLength="1"/></svg></span>You want strategies, not just awareness.</li>
-        </ul>
-        <p class="label rv" style="margin-top:28px">Also suitable for</p>
-        <ul class="chips rv">
-          <li>Working adults</li><li>Partners</li><li>Parents</li><li>Healthcare professionals</li><li>Anyone supporting someone with ADHD</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ WHAT YOU GET ============ -->
-  <section class="band" aria-labelledby="t-get">
-    <div class="wrap">
-      <div class="head">
-        <p class="kicker rv">Your ticket</p>
-        <h2 class="h2 rv" style="--d:.06s" id="t-get">When you register, you get</h2>
-      </div>
-      <div class="grid3">
-        <article class="card get rv">
-          <div class="fig-box" aria-hidden="true">
-            <svg viewBox="0 0 140 96">
-              <rect class="w" x="6" y="6" width="128" height="70" rx="8"/>
-              <path class="w" d="M56 90 h28 M70 76 v14"/>
-              <rect class="fill-a" x="18" y="18" width="30" height="46" rx="5" opacity=".9"/>
-              <rect class="q" x="55" y="18" width="30" height="46" rx="5"/>
-              <rect class="q" x="92" y="18" width="30" height="46" rx="5"/>
-            </svg>
-          </div>
-          <h3 class="h3">1. All 3 live sessions</h3>
-          <p>A relaxed, science-based approach that's easy to follow, with practical tips from several professional angles. You leave with a fuller, deeper picture of ADHD.</p>
-        </article>
-        <article class="card get rv" style="--d:.08s">
-          <div class="fig-box" aria-hidden="true">
-            <svg viewBox="0 0 140 96">
-              <path class="w" d="M14 14 h62 a8 8 0 0 1 8 8 v30 a8 8 0 0 1 -8 8 h-40 l-14 12 v-12 h-8 a8 8 0 0 1 -8 -8 v-30 a8 8 0 0 1 8 -8z"/>
-              <path class="q" d="M66 40 h52 a8 8 0 0 1 8 8 v24 a8 8 0 0 1 -8 8 h-6 v12 l-14 -12 h-32 a8 8 0 0 1 -8 -8"/>
-              <circle class="fill-a" cx="34" cy="37" r="4"/><circle class="fill-a" cx="49" cy="37" r="4"/><circle class="o" cx="64" cy="37" r="4"/>
-            </svg>
-          </div>
-          <h3 class="h3">2. Live Q&amp;A with professionals</h3>
-          <p>Ask your questions live, in every session, on a private <span data-bind="platform">Zoom</span>. Learn directly from qualified professionals and get reliable, evidence-based answers.</p>
-        </article>
-        <article class="card get rv" style="--d:.16s">
-          <div class="fig-box" aria-hidden="true">
-            <svg viewBox="0 0 140 96">
-              <rect class="w" x="6" y="10" width="92" height="62" rx="8"/>
-              <path class="fill-a" d="M44 30 L64 41 L44 52z"/>
-              <line class="q" x1="6" y1="86" x2="134" y2="86"/>
-              <line class="w" x1="6" y1="86" x2="58" y2="86"/>
-              <circle class="o" cx="58" cy="86" r="4.5"/>
-              <path class="w" d="M106 38 c0 -9 10 -9 14 0 s14 9 14 0 s-10 -9 -14 0 s-14 9 -14 0z"/>
-              <text x="120" y="61" text-anchor="middle" style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;fill:var(--muted)">FOR</text>
-              <text x="120" y="72" text-anchor="middle" style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;fill:var(--muted)">LIFE</text>
-            </svg>
-          </div>
-          <h3 class="h3">3. Recordings and slides <span class="addon">+ <span data-bind="tiers.1.price" data-fmt="rm">RM 20</span> each</span></h3>
-          <p>Can't make it live, or want to go back over it? Add the recording for any talk and you get lifetime YouTube access to it, plus that talk's slides. Only people who add it get access.</p>
-        </article>
-      </div>
-
-      <div class="card stack rv">
-        <div class="head" style="margin:0; gap:10px">
-          <p class="label">The price</p>
-          <p class="sum"><span class="total">Free</span><span>to join live</span></p>
-          <p class="sum">Recording &amp; slides <span class="addon" style="font-size:.8em">+ <span data-bind="tiers.1.price" data-fmt="rm">RM 20</span> per talk</span></p>
-        </div>
-        <div>
-          <p class="label" style="margin-bottom:12px">Your ticket includes</p>
-          <ul class="includes">
-            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Free live access to any of the 3 talks you pick</li>
-            <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Each talk's recording and slides for <span data-bind="tiers.1.price" data-fmt="rm">RM 20</span></span></li>
-            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Live Q&amp;A with professionals across disciplines</li>
-            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Practical tools you can use straight away</li>
-            <li><svg aria-hidden="true"><use href="#i-check"/></svg>Evidence-based knowledge, explained simply</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ PRICING ============ -->
+  <!-- ============ REGISTER ============ -->
   <section class="band" id="register" aria-labelledby="t-price">
     <div class="wrap">
       <div class="head">
-        <p class="kicker rv">Tickets</p>
-        <h2 class="h2 h2--xl rv" style="--d:.06s" id="t-price">Join live for free.</h2>
-        <p class="lede rv" style="--d:.12s">Every talk is free to join live: pick the ones you want. To keep a talk, add its recording and slides for <span data-bind="tiers.1.price" data-fmt="rm">RM 20</span>.</p>
+        <h2 class="h2 h2--xl rv" id="t-price">Join live for free.</h2>
+        <p class="lede rv" style="--d:.06s">Pick the talks you want. To keep one, add its recording and slides for <span data-bind="tiers.1.price" data-fmt="rm">RM 20</span>.</p>
       </div>
       <div class="book" id="book" data-book hidden></div>
       <div class="pay rv">
         <a class="arrow-cta" data-register href="#register">Register for the series <i aria-hidden="true"><svg><use href="#i-arrow"/></svg></i></a>
         <span data-pay-note data-placeholder="link">Bayarcash payment link goes here</span>
-        <p class="fine">In the form, tick the talks you'll join and tap + beside any recording you want. The Zoom link comes to the email you register with, and so do the recordings and slides you add, sent only to you.</p>
+        <p class="fine">In the form, tick the talks you'll join and tap + beside any recording you want. Your Zoom link and any recordings come to the email you register with.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- ============ CLOSE ============ -->
-  <section class="band" aria-label="Closing">
-    <div class="wrap close">
-      <p class="quote rv">“Let's learn to love ourselves, not in spite of our ADHD, but <span class="hl">because</span> of it.”</p>
-      <a class="arrow-cta rv" style="--d:.1s" href="#register">Register for free <i aria-hidden="true"><svg><use href="#i-arrow"/></svg></i></a>
     </div>
   </section>
 </main>
@@ -1164,6 +801,7 @@ svg{display:block}
   var hasIO = 'IntersectionObserver' in window;
   var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var COUNT = ['One','Two','Three','Four','Five','Six'];
 
   function $(s, r){ return (r || document).querySelector(s); }
   function $$(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
@@ -1232,24 +870,10 @@ svg{display:block}
     var a = clock(s.start), b = clock(s.end);
     return a.ap === b.ap ? a.t + '–' + b.t + ' ' + b.ap : a.t + ' ' + a.ap + '–' + b.t + ' ' + b.ap;
   }
-  /* "24 October, 7 and 21 November 2026": the days, each month named once */
-  function listDays(){
-    var groups = [];
-    sessions.forEach(function(x){
-      var g = groups[groups.length - 1], m = x.day.getUTCMonth();
-      if (g && g.m === m) g.d.push(x.day.getUTCDate()); else groups.push({ m: m, d: [x.day.getUTCDate()] });
-    });
-    var and = function(a){ return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]; };
-    return groups.map(function(g){ return and(g.d) + ' ' + MONTHS[g.m]; }).join(', ') + ' ' + sessions[sessions.length - 1].day.getUTCFullYear();
-  }
-
   safe(function(){
     sessions.forEach(function(x){
       $$('[data-session="' + x.i + '"]').forEach(function(box){
         var set = function(k, v){ $$('[data-s="' + k + '"]', box).forEach(function(el){ el.textContent = v; }); };
-        set('day', x.day.getUTCDate());
-        set('month', MONTHS[x.day.getUTCMonth()]);
-        set('weekday', DAYS[x.day.getUTCDay()]);
         set('time', range(x.s));
         set('short', DAYS[x.day.getUTCDay()].slice(0, 3) + ' ' + x.day.getUTCDate() + ' ' + MONTHS[x.day.getUTCMonth()].slice(0, 3));
       });
@@ -1257,7 +881,8 @@ svg{display:block}
     if (sessions.length) {
       var f = sessions[0], same = sessions.every(function(x){ return x.day.getUTCDay() === f.day.getUTCDay(); });
       var when = $('[data-when]');
-      if (when && same) when.textContent = DAYS[f.day.getUTCDay()] + 's ' + listDays() + ' · ' + range(f.s) + ' MYT';
+      /* "Three Saturday nights on Zoom, 9:00–11:00 pm, with live Q&A." */
+      if (when && same && COUNT[sessions.length - 1]) when.textContent = COUNT[sessions.length - 1] + ' ' + DAYS[f.day.getUTCDay()] + ' nights on ' + (S.platform || 'Zoom') + ', ' + range(f.s) + ', with live Q&A.';
     }
   });
 
@@ -1345,15 +970,15 @@ svg{display:block}
       if (cell) cell.classList.toggle('next', state === 'next' || state === 'live');
     });
     if (!cdBox) return;
-    var units = $('[data-cd-units]', cdBox), title = $('[data-cd-title]', cdBox), kick = $('[data-cd-kicker]', cdBox);
+    var units = $('[data-cd-units]', cdBox), title = $('[data-cd-title]', cdBox), label = $('[data-cd-label]', cdBox);
     cdBox.hidden = false;
     if (live) {
-      kick.textContent = 'Happening now';
+      label.textContent = 'Happening now';
       title.textContent = 'Talk ' + (live.i + 1) + ' is live on ' + (S.platform || 'Zoom');
       units.hidden = true;
     } else if (next) {
       var ms = Math.max(0, next.start - t);
-      kick.textContent = 'Next session';
+      label.textContent = 'Next session';
       title.textContent = 'Talk ' + (next.i + 1) + ' starts in';
       units.hidden = false;
       setDigit('d', pad(Math.floor(ms / 864e5)));
@@ -1361,7 +986,7 @@ svg{display:block}
       setDigit('m', pad(Math.floor(ms / 6e4) % 60));
       setDigit('s', pad(Math.floor(ms / 1e3) % 60));
     } else if (sessions.length) {
-      kick.textContent = 'Series complete';
+      label.textContent = 'Series complete';
       title.textContent = 'All three sessions have run. Thank you for coming.';
       units.hidden = true;
     } else {
@@ -1370,32 +995,6 @@ svg{display:block}
   }
   safe(tickState);
   setInterval(function(){ safe(tickState); }, 1000);
-
-  /* ---------- value and prices ---------- */
-  safe(function(){
-    var v = S.values || {}, keys = ['live', 'qa', 'recording'], total = 0, all = true;
-    keys.forEach(function(k){
-      var n = num(v[k]);
-      var el = $('[data-v="' + k + '"]');
-      if (n == null) { all = false; return; }
-      total += n;
-      if (el) el.textContent = rm(n);
-    });
-    var tEl = $('[data-total]');
-    if (all && tEl) { tEl.textContent = rm(total); tEl.removeAttribute('data-placeholder'); }
-
-    var labels = { open: 'Open now', closed: 'Closed', upcoming: 'Not open yet' };
-    (S.tiers || []).forEach(function(tier, i){
-      var row = $('[data-tier="' + i + '"]');
-      if (!row || !tier) return;
-      var st = labels[tier.status] ? tier.status : 'upcoming';
-      row.setAttribute('data-status', st);
-      var chip = $('[data-t="status"]', row);
-      if (chip) { chip.textContent = labels[st]; chip.setAttribute('data-state', st === 'open' ? 'next' : st === 'closed' ? 'ended' : 'upcoming'); }
-      var was = $('[data-t="was"]', row);
-      if (was && all && num(tier.price) != null && num(tier.price) < total) { was.textContent = rm(total); was.hidden = false; }
-    });
-  });
 
   safe(function(){
     if (!has(S.registerUrl)) return;
@@ -1407,7 +1006,7 @@ svg{display:block}
      Pasted into a BCL booking form's custom HTML, this page is followed by
      BCL's own embed: an empty #bcl-payment-form that their script fills
      with an iframe at DOMContentLoaded, below our footer. Move it under
-     the prices first, so the form is where the register buttons point and
+     "Join live for free" first, so the form is where the register buttons point and
      the footer stays last. This listener is added before theirs, so the
      iframe is built in place; if it already exists, it reloads once.
      Anywhere else there is no such element and nothing changes. */
@@ -1572,32 +1171,15 @@ svg{display:block}
     if (reduce || !hasIO) return;
     root.setAttribute('data-anim', '');
 
-    function countUp(el){
-      var to = parseInt(el.textContent, 10);
-      if (!(to > 1)) return;
-      var t0 = null, dur = 900;
-      function step(t){
-        if (t0 == null) t0 = t;
-        var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
-        el.textContent = Math.max(1, Math.round(e * to));
-        if (p < 1) requestAnimationFrame(step); else el.textContent = to;
-      }
-      el.textContent = '1';
-      requestAnimationFrame(step);
-      /* a backgrounded tab never runs the frames; land on the number anyway */
-      setTimeout(function(){ el.textContent = to; }, dur + 400);
-    }
-
     var io = new IntersectionObserver(function(es){
       es.forEach(function(e){
         if (!e.isIntersecting) return;
         var el = e.target;
         el.setAttribute('data-in', '');
         io.unobserve(el);
-        $$('[data-count]', el).forEach(countUp);
       });
     }, { threshold: 0.18, rootMargin: '0px 0px -6% 0px' });
-    $$('.rv, [data-ticks], .cal, [data-venn]').forEach(function(el){ io.observe(el); });
+    $$('.rv, .cal, [data-venn]').forEach(function(el){ io.observe(el); });
 
     /* the programme's rail fills as you read down it */
     var tl = $('[data-tl]'), items = $$('.tl-item', tl), queued = false;
