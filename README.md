@@ -1015,6 +1015,11 @@ page whose bar has drifted fails loudly instead of being overwritten.
 Every page ends on an Ask and a pager, and the pagers form one loop
 through all eight.
 
+**`sitemap.xml` and `robots.txt` are generated** by `tools/sitemap.py`
+(since 2026-10-18). Every root and `living-with-adhd/` page is listed unless
+it says `noindex` or is held back — `/app` and `/install` are, until the full
+opening. After committing a new page, run it and commit what it wrote.
+
 ### The Malay
 
 Every page has a Malay half. `site.js` harvests the English out of the

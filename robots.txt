@@ -1,0 +1,8 @@
+# Written by tools/sitemap.py. Edit it there.
+User-agent: *
+Disallow: /api/
+Disallow: /admin
+Disallow: /docs/
+Disallow: /archive/
+
+Sitemap: https://myadhd.my/sitemap.xml
