@@ -5,53 +5,52 @@
   "style": "violet",
   "label": "myadhd.my",
   "footer": "MYADHD",
-  "caption": "Satu mesej \"dilihat\" tanpa balasan, dan seluruh hari terasa hilang.\n\nKami faham. Pedih itu benar, dan bagi ramai minda ADHD ia terasa lebih nyaring. Leret untuk memahami sebabnya, serta tiga ikhtiar untuk melaluinya.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini untuk hari mesej anda tidak berbalas.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #penolakan",
+  "caption": "Satu mesej \"seen\" tak berbalas, dan sehari terus rosak.\n\nKami faham. Pedih tu betul, dan bagi ramai otak ADHD dia lagi kuat. Leret untuk tahu kenapa, dan tiga cara nak lalui.\n\nKalau ni macam otak awak, jom duduk dengan orang yang faham. Kumpulan kami ada kat bio 👇\n\nSimpan untuk masa mesej awak senyap.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #penolakan",
   "slides": [
     {
       "type": "cover",
-      "kicker": "Saudara-saudari sekalian.",
-      "title": "Mengapa\n[[penolakan]] kecil\nterasa pedih?",
-      "sub": "Kami faham. Bukan terlalu sensitif. Bukan lemah."
+      "title": "Kenapa [[penolakan]]\nkecil pun\npedih sangat?",
+      "sub": "Bukan awak terlalu sensitif. Pedih tu betul."
     },
     {
       "type": "point",
-      "title": "Pedihnya lebih\n[[besar]] daripada\nperistiwanya",
-      "body": "Balasan pendek, jemputan yang terlepas, jawapan \"ok\" yang hambar. Orang lain lupa dalam seminit. Anda memikulnya sepanjang petang."
+      "title": "Pedihnya lagi\n[[besar]] dari\nkejadiannya",
+      "body": "Balasan pendek, jemputan terlepas, \"ok\" yang hambar. Orang lain lupa dalam seminit. Awak pikul sepanjang petang, dan rasa macam bukti sesuatu."
     },
     {
       "type": "point",
-      "title": "Senyap diisi\ndengan cerita\n[[paling buruk]]",
-      "body": "Tiada balasan mungkin bermaksud sibuk, tidur atau sedang memandu. Namun minda mengisi kekosongan itu dengan cerita paling pedih, selalunya tentang diri sendiri."
+      "title": "Otak isi\n[[kekosongan]]\ndengan yang terburuk",
+      "body": "Takde balasan maksudnya sibuk, tidur, atau tengah memandu. Tapi senyap tu tinggal ruang, dan awak isi dengan cerita paling pedih. Selalunya pasal diri sendiri."
     },
     {
       "type": "point",
-      "title": "Teguran pada kerja\nterasa teguran\npada [[diri]]",
-      "body": "\"Boleh betulkan bahagian ini?\" didengar sebagai \"saya tidak pandai\". Teguran itu tentang satu perenggan. Pedihnya tentang segala-galanya."
+      "title": "Teguran pada kerja\nrasa macam teguran\npada [[diri]]",
+      "body": "\"Boleh betulkan bahagian ni?\" didengar jadi \"saya memang tak pandai\". Teguran tu pasal satu perenggan. Pedihnya pasal semua benda."
     },
     {
       "type": "point",
-      "title": "Lalu kita\n[[mengelak]] sebelum\nditolak",
-      "body": "Bersetuju dengan semua permintaan. Berundur sebelum ditolak. Tidak pernah meminta langsung. Rupanya berbeza, tetapi semuanya perisai yang sama."
+      "title": "Jadi awak ikut,\n[[undur]], atau\ntak pernah minta",
+      "body": "Setuju semua benda. Berhenti sebelum sempat ditolak. Tak pernah minta langsung. Nampak macam tabiat lain-lain. Semuanya perisai yang sama."
     },
     {
       "type": "point",
-      "title": "Namakan rasa itu\n[[sebelum]]\nmempercayainya",
-      "body": "\"Ini rasa pedih, bukan fakta.\" Menyebutnya dengan jelas memberi sedikit ruang antara perasaan dan cerita yang dibisikkannya."
+      "title": "Namakan dia\nsebelum awak\n[[percaya]]",
+      "body": "\"Ni rasa pedih, bukan fakta.\" Sebut terus terang bagi sikit ruang antara perasaan dengan cerita yang dia bisikkan."
     },
     {
       "type": "point",
-      "title": "Tunggu [[sejam]]\nsebelum\nmembalas",
-      "body": "Desakan untuk menjelaskan, memohon maaf atau memutuskan hubungan paling kuat pada jam pertama. Tulislah jika perlu. Hantar esok, jika masih wajar."
+      "title": "Tunggu [[sejam]]\nsebelum balas",
+      "body": "Desakan nak jelaskan, minta maaf atau putus hubungan paling kuat masa jam pertama. Tulis kalau perlu. Hantar esok, kalau masih masuk akal."
     },
     {
       "type": "point",
-      "title": "[[Bertanya]],\nbukan meneka",
-      "body": "\"Adakah tadi itu baik-baik sahaja?\" ialah soalan kecil. Ia jauh lebih murah daripada semalaman membaca semula mesej mereka mencari maksud tersembunyi."
+      "title": "[[Tanya]],\njangan teka",
+      "body": "\"Eh, tadi tu okey ke?\" soalan kecil je. Jauh lagi murah daripada semalaman baca balik mesej dia cari maksud tersembunyi."
     },
     {
       "type": "outro",
-      "title": "Simpan ini untuk\nhari mesej anda\n[[tidak berbalas]]",
-      "body": "Perasaan itu nyaring, tetapi ia bukan keputusan tentang diri anda. Luahkan segalanya dalam my.adhd, dapatkan kembali satu perkara. Insya-Allah.",
+      "title": "Simpan untuk\nmasa mesej awak\n[[senyap]]",
+      "body": "Perasaan tu bising, tapi dia bukan keputusan tentang diri awak. Luah pusaran tu dalam my.adhd, dapat balik satu benda untuk buat. Insya-Allah.",
       "cta": {
         "label": "Ikuti kami di myadhd.my"
       }

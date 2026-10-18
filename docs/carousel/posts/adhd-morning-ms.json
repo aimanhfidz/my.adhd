@@ -4,43 +4,46 @@
   "theme": "light",
   "label": "myadhd.my",
   "footer": "MYADHD",
-  "caption": "Empat puluh minit sudah terjaga. Masih belum bangun.\n\nKami faham. Pagi ADHD, dalam lima babak. Leret, kemudian kongsikan di ruangan komen yang mana satu anda.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini untuk pagi esok.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #rutinpagi",
+  "caption": "Dah empat puluh minit terjaga. Masih belum bangun.\n\nKami faham. Pagi ADHD, dalam lima babak. Leret, lepas tu bagitahu kat komen yang mana satu awak.\n\nKalau ni macam otak awak, jom duduk dengan orang yang faham. Kumpulan kami ada kat bio 👇\n\nSimpan untuk pagi esok.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #rutinpagi",
   "slides": [
     {
       "type": "cover",
       "kicker": "Kalau faham, faham.",
-      "title": "Pagi orang\n[[ADHD]],\ndalam lima [[babak]].",
+      "title": "Pagi orang\n[[ADHD]], dalam\nlima [[babak]].",
       "sub": "Leret kalau ada yang macam awak."
     },
     {
       "type": "point",
-      "title": "Dah jaga,\ntapi belum [[bangun]]",
-      "body": "Empat puluh minit dah jaga. Satu hari dah siap dirancang dalam kepala. Badan tak gerak lagi."
+      "title": "Dah bangun,\nbelum [[bangkit]]",
+      "body": "Dah empat puluh minit terjaga. Dah rancang seluruh hari dalam kepala. Belum bergerak."
     },
     {
       "type": "point",
       "title": "Kopi dulu.\nLepas tu [[kopi]].",
-      "body": "Buat, letak, jumpa balik dah sejuk pukul sebelas. Buat kopi tu satu kerja. Minum kopi kerja lain."
+      "body": "Awak bancuh, letak, lepas tu jumpa dah sejuk pukul 11. Bancuh tu satu kerja. Minum tu kerja lain."
     },
     {
       "type": "point",
-      "title": "Dua belas tab,\nsifar [[mula]]",
-      "body": "Semua rasa penting, jadi tak satu pun dipilih. Buka semua, buat tak satu pun."
+      "title": "Dua belas tab,\nsatu pun tak [[mula]]",
+      "body": "Semua rasa urgent, jadi takde yang dipilih. Buka semua, buat satu pun tak."
     },
     {
       "type": "point",
-      "title": "Nak pakai baju\npun satu [[projek]]",
-      "body": "Cari baju. Terleka dengan laci. Teringat baju. Rupanya baju tu dalam basuhan."
+      "title": "Pakai baju\njadi satu [[projek]]",
+      "body": "Cari baju. Terganggu dengan laci. Teringat baju. Rupanya baju tu dalam mesin basuh."
     },
     {
       "type": "point",
-      "title": "Pukul 10:40,\ndah [[penat]]",
-      "body": "Bukan sebab buat kerja. Sebab buat keputusan. Tenaga habis kat pilihan, bukan kat hari awak."
+      "title": "Pukul 10:40 dan\nawak dah [[penat]]",
+      "body": "Bukan sebab buat banyak. Sebab buat keputusan banyak. Setiap pilihan ada harga, dan takde satu pun yang jadi hari tu."
     },
     {
       "type": "outro",
-      "title": "Yang mana\n[[awak]]?",
-      "body": "Bagitahu kat komen. Lepas tu buang semuanya dalam my.adhd, dan dapat balik satu benda untuk mula."
+      "title": "Yang mana\nsatu [[awak]]?",
+      "body": "Bagitahu kat komen. Lepas tu luah selebihnya dalam my.adhd, dapat balik satu benda untuk mula. Insya-Allah.",
+      "cta": {
+        "label": "Ikuti kami di myadhd.my"
+      }
     }
   ]
 }

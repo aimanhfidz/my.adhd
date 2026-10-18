@@ -4,48 +4,53 @@
   "theme": "light",
   "label": "myadhd.my",
   "footer": "MYADHD",
-  "caption": "Dua belas tab dibuka. Tiada satu pun yang diperlukan.\n\nKami faham. Bukan kurang fokus, tetapi kurang penapis. Leret untuk memahami sebabnya, serta tiga ikhtiar untuk memberi tumpuan satu sandaran.\n\nJika ini minda anda, sertai komuniti kami. Pautan kumpulan ada di bio 👇\n\nSimpan ini untuk hari tumpuan anda hanyut lagi.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #tumpuan",
+  "caption": "Dua belas tab terbuka. Satu pun bukan yang awak perlukan.\n\nKami faham. Bukan awak tak fokus, awak fokus pada semua benda. Leret untuk tahu kenapa, dan beberapa cara nak bagi fokus tempat bersandar.\n\nKalau ni macam otak awak, jom duduk dengan orang yang faham. Kumpulan kami ada kat bio 👇\n\nSimpan untuk masa fokus awak hanyut lagi.\n\n#adhdmalaysia #myadhd #adhd #kesihatanmental #tumpuan",
   "slides": [
     {
       "type": "cover",
-      "kicker": "Saudara-saudari sekalian.",
-      "title": "Mengapa sukar\nuntuk [[fokus]],\nmudah terganggu?",
-      "sub": "Kami faham. Bukan kurang usaha, bukan kurang peduli."
+      "kicker": "Dua belas tab. Satu pun bukan yang dicari.",
+      "title": "Kenapa susah\nsangat nak [[fokus]]\npada satu benda?",
+      "sub": "Bukan awak tak fokus. Awak fokus pada semua benda."
     },
     {
       "type": "point",
-      "title": "Tumpuan bukan\n[[suis]] yang\nboleh dipaksa",
-      "body": "Sejak sekolah rendah anda disuruh tumpukan perhatian. Jika usaha semata-mata mencukupi, ia sudah lama berhasil. Ini soal cara minda bekerja."
+      "title": "Tumpuan bukan\n[[suis]] yang\nboleh dikuatkan",
+      "body": "Sejak sekolah rendah awak dengar \"tumpu betul-betul\". Kalau usaha je cukup, dah lama jadi. Tumpuan ADHD bukan rendah. Dia tak terkawal."
     },
     {
       "type": "point",
-      "title": "Bukan kurang fokus,\ntetapi kurang\n[[penapis]]",
-      "body": "Bunyi peti sejuk, notifikasi, fikiran tentang makan tengah hari. Semuanya tiba sama kuat. Tiada yang disenyapkan, jadi semuanya bersaing."
+      "title": "Bukan kurang fokus,\ntapi kurang\n[[penapis]]",
+      "body": "Bunyi peti ais, notifikasi, fikir pasal makan tengah hari. Semua sampai sama kuat dengan kerja. Takde yang disenyapkan, jadi semua berebut."
     },
     {
       "type": "point",
-      "title": "Yang menarik\nmengatasi yang\n[[penting]]",
-      "body": "Minda ADHD bergerak dengan minat, kebaruan dan desakan, bukan keutamaan. Sebab itu tiga jam hilang pada perkara remeh, tiga minit pada laporan."
+      "title": "Yang menarik\nmenang yang\n[[penting]]",
+      "body": "Otak awak jalan dengan minat, benda baru dan desakan, bukan keutamaan. Sebab tu tiga jam boleh hilang dalam lubang arnab, tiga minit je untuk laporan."
     },
     {
       "type": "point",
-      "title": "Jadikan tugas\n[[lebih nyaring]]\ndaripada bilik",
-      "body": "Satu tetingkap. Satu tab. Telefon di bilik lain, bukan ditelangkupkan. Gangguan tidak dapat dilawan dengan kemahuan, tetapi boleh dijauhkan."
+      "title": "Gangguan tu\nselalunya [[lega]]",
+      "body": "Kerja yang bosan atau kabur tak selesa nak dipegang. Tumpuan lepaskan dia macam tangan lepaskan kuali panas. Itu melarikan diri, bukan gagal."
     },
     {
       "type": "point",
-      "title": "Beri tumpuan\nsatu [[sandaran]]\ndari luar",
-      "body": "Pemasa yang berjalan. Rakan bekerja di sebelah. Tarikh akhir yang benar-benar hari ini. Tekanan dari luar ialah apa yang minda anda tunggu."
+      "title": "Buat kerja tu\n[[lagi kuat]]\ndari bilik",
+      "body": "Satu tetingkap. Satu tab. Telefon kat bilik lain, bukan telangkup. Awak tak boleh lawan gangguan dengan kemahuan, tapi boleh buat dia jalan jauh nak sampai."
     },
     {
       "type": "point",
-      "title": "Sedari hanyut\n[[lebih awal]],\nbukan kemudian",
-      "body": "Anda pasti hanyut. Kemahirannya ialah sedar lebih cepat. Satu nota di meja tentang apa yang sedang dibuat menukar sejam hilang kepada seminit."
+      "title": "Bagi fokus\nsatu [[sandaran]]",
+      "body": "Pemasa yang berjalan. Orang buat kerja sebelah awak. Tarikh akhir yang betul-betul hari ni, bukan bulan depan. Tekanan dari luar tu yang otak awak tunggu."
+    },
+    {
+      "type": "point",
+      "title": "Perasan hanyut\n[[awal]], bukan\nsejam lepas",
+      "body": "Awak memang akan hanyut. Kemahirannya, perasan lagi cepat. Nota atas meja pasal apa yang tengah buat tukar sejam hilang jadi seminit."
     },
     {
       "type": "outro",
-      "title": "Simpan ini untuk\nhari tumpuan anda\n[[hanyut]] lagi",
-      "body": "Tumpuan anda tidak rosak, ia cuma perlukan ruang lebih kecil. Luahkan segalanya dalam my.adhd, dapatkan kembali satu perkara. Insya-Allah.",
+      "title": "Simpan untuk\nmasa fokus awak\n[[hanyut]] lagi",
+      "body": "Fokus awak tak rosak, dia cuma perlukan ruang lagi kecil. Luah semua dalam my.adhd, dapat balik satu benda untuk dihalakan. Insya-Allah.",
       "cta": {
         "label": "Ikuti kami di myadhd.my"
       }

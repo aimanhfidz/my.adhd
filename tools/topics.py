@@ -379,7 +379,7 @@ def hub():
 
     def n(g):
         return sum(1 for t in TOPICS if t[1] == g)
-    chips = [('all', 'All', 'Semua', 16)] + [(g[0], g[1], g[2], n(g[0])) for g in GROUPS]
+    chips = [('all', 'All', 'Semua', len(TOPICS))] + [(g[0], g[1], g[2], n(g[0])) for g in GROUPS]
     chip_html = '\n      '.join(
         '<button class="chip" type="button" data-show="%s" aria-pressed="%s">%s <span class="chip-n">%d</span></button>'
         % (gid, 'true' if gid == 'all' else 'false', el('span', '', en, ms), cnt)
