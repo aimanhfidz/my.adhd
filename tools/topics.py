@@ -93,7 +93,6 @@ ICON = ('<i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill=
 BACK_SVG = ('<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" '
             'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
             '<path d="M19 12H6M12 19l-7-7 7-7"/></svg>')
-INSTAGRAM = 'https://www.instagram.com/myadhd.my/'
 
 MS = {}       # key -> Malay, for topics.ms.js
 MS_ARIA = {}
@@ -290,13 +289,13 @@ def ask():
                   'Awak bukan seorang. Ada orang lain yang faham.'),
         '  ' + el('p', 'ask-lede',
                   'The MyADHD community is adults who know exactly what you mean &mdash; '
-                  'diagnosed, waiting, or still wondering, and parents too. The link to join is in '
-                  'our Instagram bio.',
+                  'diagnosed, waiting, or still wondering, and parents too. We meet in a '
+                  'WhatsApp group.',
                   'Komuniti MyADHD ialah orang dewasa yang faham betul maksud awak &mdash; yang '
                   'dah didiagnos, yang tengah menunggu, yang masih tertanya-tanya, dan ibu bapa '
-                  'juga. Pautan untuk masuk ada dalam bio Instagram kami.'),
-        '  ' + el('a', 'arrow-cta', 'Find us on Instagram ' + ICON, 'Cari kami di Instagram {icon}',
-                  ' href="%s" target="_blank" rel="noopener"' % INSTAGRAM),
+                  'juga. Kami berkumpul dalam satu kumpulan WhatsApp.'),
+        '  ' + el('a', 'arrow-cta', 'Meet the group ' + ICON, 'Kenali kumpulan kami {icon}',
+                  ' href="/community"'),
         '  ' + el('a', 'arrow-link', 'Read three stories ' + ICON, 'Baca tiga kisah {icon}',
                   ' href="/testimonials"'),
         '</section>'])

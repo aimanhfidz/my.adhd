@@ -246,7 +246,30 @@ window.MYADHD_MS = {
   "i6c98a52": "Ramai orang dewasa di Malaysia hidup dengan <span class=\"adhd-word\">ADHD</span> tanpa pernah didiagnosis. Komuniti MyADHD terbuka untuk anda.",
 
   /* the nav groups */
-  "i6b21fb7": "Tentang"
+  "i6b21fb7": "Tentang",
+
+  /* /community */
+  "i965030b": "Duduk dengan orang yang faham",
+  "i802b5de": "Kumpulan WhatsApp untuk orang dewasa dengan ADHD, dan untuk ibu bapa yang anaknya ada ADHD. Kat sini, takde siapa minta awak terangkan.",
+  "i09324c2": "Siapa boleh masuk",
+  "i845698d": "Orang dewasa dengan ADHD, ada diagnosis atau tak",
+  "i89cebbe": "Yang masih tertanya-tanya, atau tengah tunggu temujanji",
+  "ic1f3c31": "Ibu bapa yang membesarkan anak dengan ADHD",
+  "i82c3a0c": "Untuk apa",
+  "i6c8adb9": "Tanya &ldquo;saya sorang je ke?&rdquo; dan dengar &ldquo;tak&rdquo;",
+  "i4f49efa": "Kongsi benda yang betul-betul jalan, kecil dan spesifik",
+  "i4c7b1ae": "Ada kawan masa hari tengah berat",
+  "ided2f21": "Tiga perkara kami minta",
+  "i087f654": "Berlembut. Semua orang kat sini tengah pikul lebih daripada yang nampak.",
+  "i3ef5e79": "Apa yang dikongsi dalam kumpulan, kekal dalam kumpulan.",
+  "ieb05231": "Tak menjual, dan tak bagi nasihat perubatan. Kongsi apa yang jalan untuk awak, bukan apa yang orang lain patut ambil.",
+  "iee42c30": "Bukan klinik",
+  "i916b91b": "Takde siapa dalam kumpulan ni boleh diagnos awak atau suruh awak ambil ubat apa.",
+  "i1a76915": "Kalau hari ni rasa tak selamat, <strong>Talian Kasih 15999</strong> jawab 24 jam, dalam BM dan English.",
+  "i1d1f101": "Datang macam mana pun awak. Baca senyap-senyap pun dikira.",
+  "i5e98a8c": "Butang ni buka WhatsApp, dan awak boleh tengok kumpulan tu dulu sebelum masuk.",
+  "i3655a92": "Masuk kumpulan {icon}",
+  "i6ee5886": "Baca tiga kisah {icon}"
 },
   aria: {
   "197101e": "Buka menu",
