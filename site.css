@@ -1917,11 +1917,11 @@ em.hl{font-style:normal; color:var(--violet-ink)}
    as one, the same way the standard card's action line does: blue, a
    small arrow after it that moves on hover, an underline on hover. No
    orange circle — that is the Ask's (see .sc-go). */
-.grid > :has(> .cell-link){
+.grid > :has(> .cell-link), .fact:has(> .cell-link){
   position:relative;
   transition:translate .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease);
 }
-.grid > :has(> .cell-link):hover{translate:0 -2px; border-color:var(--accent); box-shadow:0 16px 36px -20px rgb(71 55 255 / .55)}
+.grid > :has(> .cell-link):hover, .fact:has(> .cell-link):hover{translate:0 -2px; border-color:var(--accent); box-shadow:0 16px 36px -20px rgb(71 55 255 / .55)}
 .cell-link{
   display:inline-block; margin-top:clamp(16px,2vh,22px);
   border-bottom:0; color:var(--accent);
@@ -1929,7 +1929,7 @@ em.hl{font-style:normal; color:var(--violet-ink)}
   text-decoration-color:transparent;
   transition:text-decoration-color .18s var(--ease);
 }
-.grid > :has(> .cell-link):hover .cell-link{text-decoration-color:currentColor}
+.grid > :has(> .cell-link):hover .cell-link, .fact:has(> .cell-link):hover .cell-link{text-decoration-color:currentColor}
 .cell-link::before{content:""; position:absolute; inset:0; border-radius:var(--radius-lg)}
 .cell-link::after{
   content:""; display:inline-block; vertical-align:-.1em;
@@ -1939,9 +1939,12 @@ em.hl{font-style:normal; color:var(--violet-ink)}
           mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h13M12 5l7 7-7 7'/%3E%3C/svg%3E") center / contain no-repeat;
   transition:transform .18s var(--ease);
 }
-.grid > :has(> .cell-link):hover .cell-link::after{transform:translateX(3px)}
+.grid > :has(> .cell-link):hover .cell-link::after, .fact:has(> .cell-link):hover .cell-link::after{transform:translateX(3px)}
 .cell-link:focus-visible{outline:none}
 .cell-link:focus-visible::before{box-shadow:0 0 0 4px var(--focus)}
+/* In a fact card the link is the card's last line, at the body's size,
+   pushed to the foot so it sits level whatever the copy above runs to. */
+.fact .cell-link{font-size:15px; margin-top:auto; padding-top:14px; align-self:flex-start; grid-column:1 / -1; justify-self:start}
 /* the contact marks on the same blue disc as the standard card's */
 .cw-ico{
   width:44px; height:44px; border-radius:999px; justify-content:center;
