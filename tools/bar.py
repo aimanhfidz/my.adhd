@@ -160,6 +160,52 @@ def build(route, has_back, back_html):
   </nav>''')
 
 
+# ---------------------------------------------------------------- the footer
+#
+# The footer's columns are the bar's groups again, so a page added to the
+# bar reaches the footer on the same run and the two cannot drift the way
+# the hand-kept copies on 34 pages did ("What we offer" outlived the menu
+# it named by a month). Differences from the bar, on purpose:
+#   - only pages that exist: a footer is a sitemap, so no "Soon" rows;
+#   - the digital library is a row under Learn, not an entry of its own;
+#   - Support carries the app's own two links, Community the two places
+#     the community lives, About the address and the legal pages.
+# The app's links say /soon until the full opening (app.html's <head> has
+# the list); change them here, not in the pages.
+APP = [('/soon', 'ice21cc3', 'Open my.adhd'),
+       ('/soon', 'i85773bc', 'Add to home screen')]
+SOCIAL = [('https://www.instagram.com/myadhd.my/', None, 'Instagram'),
+          ('https://www.threads.com/@myadhd.my', None, 'Threads')]
+CONTACT = [('mailto:hello@myadhd.my', None, 'hello@myadhd.my'),
+           ('/privacy', 'icf01481', 'Privacy'),
+           ('/terms', 'ia55a275', 'Terms')]
+FOOT = [('learn', LEARN + [('/reading-list', 'if958f19', 'Digital library')]),
+        ('support', SUPPORT + APP),
+        ('community', COMMUNITY + SOCIAL),
+        ('about', ABOUT + CONTACT)]
+
+
+def foot_cols():
+    def li(h, k, t):
+        attrs = ' rel="me noopener" target="_blank"' if h.startswith('https://') else ''
+        key = ' data-i18n="%s"' % k if k else ''
+        return '        <li><a href="%s"%s%s>%s</a></li>' % (h, attrs, key, t)
+    cols = []
+    for slug, items in FOOT:
+        _, hk, hl, _ = [g for g in GROUPS if g[0] == slug][0]
+        rows = '\n'.join(li(h, k, t) for h, k, t in items if h)
+        cols.append('    <div class="foot-col">\n      <h2 data-i18n="%s">%s</h2>\n      <ul>\n%s\n      </ul>\n    </div>'
+                    % (hk, hl, rows))
+    return '<div class="foot-cols">\n' + '\n'.join(cols) + '\n  </div>'
+
+
+def find_foot(s):
+    start = s.index('<div class="foot-cols">')
+    end = s.index('\n  </div>', start) + len('\n  </div>')
+    assert s[start:end].count('<div class="foot-col">') == 4, 'foot-cols has drifted'
+    return start, end
+
+
 def find_bar(s):
     start = s.index('<nav class="bar">')
     depth = 0
@@ -183,5 +229,11 @@ if __name__ == '__main__':
         back = re.search(r'<a class="back".*?</a>', old, re.S)
         route = '/' if name == 'index' else '/' + name
         new = build(route, back is not None, back.group(0) if back else '')
-        open(p, 'w').write(s[:a] + new + s[b:])
-        print('  %-20s back=%-5s current=%s' % (p, bool(back), route))
+        s = s[:a] + new + s[b:]
+        foot = '<div class="foot-cols">' in s   # the home page has no full footer
+        if foot:
+            fa, fb = find_foot(s)
+            s = s[:fa] + foot_cols() + s[fb:]
+        open(p, 'w').write(s)
+        print('  %-20s back=%-5s current=%-18s footer=%s' % (p, bool(back), route, foot))
+    print('  then run tools/topics.py: the topic pages take their footer from habits.html')

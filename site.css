@@ -1032,12 +1032,15 @@ body{
    they appear only where two columns actually meet — a background-gap
    grid would draw them on the outside edges too. */
 .foot-col{padding:clamp(26px,3.4vh,38px) clamp(18px,2.2vw,32px)}
+/* A column that starts a row sits flush with the page edge: every one on
+   a phone, the first and third in two columns, the first in four. */
 .foot-col:first-child{padding-left:0}
+@media (max-width:759.98px){ .foot-col{padding-left:0} }
 @media (min-width:760px){
   .foot-col:nth-child(n+2){border-left:1px solid var(--line)}
 }
 @media (min-width:760px) and (max-width:1079.98px){
-  .foot-col:nth-child(3){border-left:0}
+  .foot-col:nth-child(3){border-left:0; padding-left:0}
   .foot-col:nth-child(n+3){border-top:1px solid var(--line)}
 }
 .foot-col h2{
