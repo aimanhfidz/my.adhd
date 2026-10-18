@@ -197,7 +197,7 @@
       rB1: 'Awak juga jawab Bahagian B, di mana',
       rB2: 'daripada 12 jatuh dalam julat berlorek. Bahagian B tidak diberi skor dan tidak mengubah keputusan di atas — ia memberi pakar klinikal petunjuk tambahan untuk ditanya.',
       n1Dx: 'Bawa laporan ini ke temu janji anda yang seterusnya &mdash; ia menunjukkan keadaan anda sepanjang enam bulan yang lepas.',
-      n1: 'Bawa keputusan ini kepada pakar psikiatri atau ahli psikologi klinikal — ia bagi mereka sesuatu yang kukuh untuk dimulakan.',
+      n1: 'Bawa keputusan ini kepada pakar psikiatri atau ahli psikologi klinikal — ia bagi mereka sesuatu yang kukuh untuk dimulakan. <a href="/find-help">Cara cari mereka di Malaysia</a>.',
       n2: 'Tulis apa yang betul-betul tak kena dalam masa seminggu, dan bawa sekali.',
       n3: 'Apa pun angkanya, hari ini tetap kena dihabiskan. <a href="/tools">Tengok apa yang kami bina untuk tu</a>.',
       again: 'Cuba lagi',

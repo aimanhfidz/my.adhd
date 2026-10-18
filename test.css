@@ -602,6 +602,9 @@ body[data-view="breath"] .q-bar{display:block}
   display:grid; place-items:center;
   border:1px solid var(--line-strong); border-radius:999px;
 }
+/* The two links in here (where to find someone, and what we build) took
+   the browser's own blue, which is no token and goes muddy at night. */
+.r-next a{color:var(--accent); text-decoration-thickness:1px; text-underline-offset:3px}
 
 /* ---------- the credit ----------
    Small, last, and not a wall. The full attribution and the full storage
