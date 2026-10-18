@@ -34,6 +34,7 @@ LEARN = [('/self-check','i050c897','Self-check'),
          ('/habits','i45ab397','Habits'),
          ('/blog','i0b9d2b2','Blog')]
 SUPPORT = [('/tools','i4fa8cc8','Tools'),
+           ('https://focus.myadhd.my/','if93b8ea','Focus timer'),
            ('/find-help','ifd3ef12','Find professional help'),
            (None,'ic8eddc1','For family and partners')]
 COMMUNITY = [('/testimonials','i2c2cd2a','Testimonials'),
@@ -188,7 +189,8 @@ FOOT = [('learn', LEARN + [('/reading-list', 'if958f19', 'Digital library')]),
 
 def foot_cols():
     def li(h, k, t):
-        attrs = ' rel="me noopener" target="_blank"' if h.startswith('https://') else ''
+        # someone else's site opens beside ours; focus.myadhd.my is ours
+        attrs = ' rel="me noopener" target="_blank"' if h.startswith('https://') and 'myadhd.my/' not in h[8:26] else ''
         key = ' data-i18n="%s"' % k if k else ''
         return '        <li><a href="%s"%s%s>%s</a></li>' % (h, attrs, key, t)
     cols = []

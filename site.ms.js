@@ -322,7 +322,15 @@ window.MYADHD_MS = {
   "i679c6fe": "Apa-apa dari zaman kecil: buku laporan sekolah lama, atau orang yang kenal awak masa tu.",
   "i1e91727": "Kalau hari ni tak boleh tunggu: <strong>Talian Kasih 15999</strong> atau <strong>Befrienders 03-7627 2929</strong>, dua-dua 24 jam. Kalau dalam bahaya sekarang, telefon <strong>999</strong>.",
   "ibf5d61b": "Mula dengan sesuatu untuk dibawa.",
-  "i6dafb2e": "Sepuluh minit, dan cetakan yang pakar psikiatri atau ahli psikologi boleh baca."
+  "i6dafb2e": "Sepuluh minit, dan cetakan yang pakar psikiatri atau ahli psikologi boleh baca.",
+
+  /* focus.myadhd.my: the Support row and /tools */
+  "if93b8ea": "Pemasa fokus",
+  "i027b1b0": "Lepas tu, satu benda pada satu masa.",
+  "ie237942": "Bila senarai dah bagitahu apa nak mula, biar satu benda tu kekal atas skrin sampai siap.",
+  "i7553851": "Satu benda, satu pemasa, dan skrin yang tenang",
+  "i7fdc4b9": "Jam, pemasa fokus, bunyi dan buku nota. Percuma, dan tak perlu daftar apa-apa.",
+  "i23fe4cd": "Buka focus"
 },
   aria: {
   "197101e": "Buka menu",
