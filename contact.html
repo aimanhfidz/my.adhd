@@ -64,7 +64,9 @@
     </a>
     <p class="bar-org">MyADHD</p>
 
-    <!-- Two groups, each one button that opens the rest. It used to be a
+    <!-- Five entries: four groups, each one button that opens the rest,
+         and the digital library, which is one page and so one link.
+         A group used to be a
          link plus a separate chevron, because the label was a real
          destination and swallowing it into a button would have stranded
          the page it named. /activities is gone, so there is nothing left
@@ -77,19 +79,44 @@
          bare <i aria-hidden="true">, not this classed one. -->
     <ul class="bar-links">
     <li class="bar-group-item">
-      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-offer">
-        <span data-i18n="ib953849">What we offer</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-learn">
+        <span data-i18n="ib048378">Learn</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
       </button>
-      <div class="bar-menu" id="menu-offer" hidden>
+      <div class="bar-menu" id="menu-learn" hidden>
         <ul>
             <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
             <li><a href="/living-with-adhd" data-i18n="ic729436">Living with ADHD</a></li>
             <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
-            <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
             <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
-            <li><a href="/reading-list" data-i18n="id80f6ec">Reading list</a></li>
         </ul>
       </div>
+    </li>
+    <li class="bar-group-item">
+      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-support">
+        <span data-i18n="if32d5a3">Support</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+      </button>
+      <div class="bar-menu" id="menu-support" hidden>
+        <ul>
+            <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+            <li><span class="bar-soon"><span data-i18n="ifd3ef12">Find professional help</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+            <li><span class="bar-soon"><span data-i18n="ic8eddc1">For family and partners</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+        </ul>
+      </div>
+    </li>
+    <li class="bar-group-item">
+      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-community">
+        <span data-i18n="ibfd58ee">Community</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+      </button>
+      <div class="bar-menu" id="menu-community" hidden>
+        <ul>
+            <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+            <li><span class="bar-soon"><span data-i18n="ibae7c4c">WhatsApp group</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+            <li><span class="bar-soon"><span data-i18n="ic5497bc">Events</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+        </ul>
+      </div>
+    </li>
+    <li class="bar-link-item">
+      <a href="/reading-list" data-i18n="if958f19">Digital library</a>
     </li>
     <li class="bar-group-item">
       <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-about">
@@ -98,7 +125,6 @@
       <div class="bar-menu" id="menu-about" hidden>
         <ul>
             <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
-            <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
             <li><a href="/contact" aria-current="page" data-i18n="i4832e45">Contact us</a></li>
         </ul>
       </div>
@@ -121,25 +147,50 @@
       <span class="nt-bars" aria-hidden="true"><i></i><i></i></span>
     </button>
 
-    <!-- The same two groups again, stacked. They are generated from one
+    <!-- The same five entries again, stacked. They are generated from one
          source in tools/bar.py, so the row and the sheet cannot drift the
          way the two hand-kept lists used to. -->
     <div class="bar-sheet" id="bar-sheet" hidden>
       <ul>
         <li class="bar-row">
-          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-offer">
-            <span data-i18n="ib953849">What we offer</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-learn">
+            <span data-i18n="ib048378">Learn</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
           </button>
-          <div class="bar-menu" id="sheet-offer" hidden>
+          <div class="bar-menu" id="sheet-learn" hidden>
             <ul>
                 <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
                 <li><a href="/living-with-adhd" data-i18n="ic729436">Living with ADHD</a></li>
                 <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
-                <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
                 <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
-                <li><a href="/reading-list" data-i18n="id80f6ec">Reading list</a></li>
             </ul>
           </div>
+        </li>
+        <li class="bar-row">
+          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-support">
+            <span data-i18n="if32d5a3">Support</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+          </button>
+          <div class="bar-menu" id="sheet-support" hidden>
+            <ul>
+                <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+                <li><span class="bar-soon"><span data-i18n="ifd3ef12">Find professional help</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+                <li><span class="bar-soon"><span data-i18n="ic8eddc1">For family and partners</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+            </ul>
+          </div>
+        </li>
+        <li class="bar-row">
+          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-community">
+            <span data-i18n="ibfd58ee">Community</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+          </button>
+          <div class="bar-menu" id="sheet-community" hidden>
+            <ul>
+                <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+                <li><span class="bar-soon"><span data-i18n="ibae7c4c">WhatsApp group</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+                <li><span class="bar-soon"><span data-i18n="ic5497bc">Events</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+            </ul>
+          </div>
+        </li>
+        <li class="bar-row">
+          <a href="/reading-list" data-i18n="if958f19">Digital library</a>
         </li>
         <li class="bar-row">
           <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-about">
@@ -148,7 +199,6 @@
           <div class="bar-menu" id="sheet-about" hidden>
             <ul>
                 <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
-                <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
                 <li><a href="/contact" aria-current="page" data-i18n="i4832e45">Contact us</a></li>
             </ul>
           </div>

@@ -1000,10 +1000,14 @@ design is written down in `docs/loud-redesign-plan.md`.
 | `/testimonials` | Three real quotes, in the words the people used |
 | `/contact` | Email, Threads, Instagram. No form |
 
-The bar carries all of them, under two dropdowns — What we offer, and
-About. Each is one button that opens its menu; neither label is a link,
-which is why there is no longer an Activities page for the offers to be
-children of. The page you are on is named by the `aria-current` on its
+The bar carries all of them in five entries (since 2026-10-18): four
+dropdowns — Learn, Support, Community, About — and Digital library, a
+plain link to `/reading-list`. Each dropdown is one button that opens its
+menu; no group label is a link, which is why there is no longer an
+Activities page for the offers to be children of. A page that is planned
+but not written (Find professional help, For family and partners, WhatsApp
+group, Events) is listed greyed out with a "Soon" tag and no link; give it
+an href in `tools/bar.py` when it exists. The page you are on is named by the `aria-current` on its
 link inside the menu, and the group it sits in lights up.
 
 **The bar is generated.** Every page's `<nav class="bar">` is written by

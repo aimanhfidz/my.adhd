@@ -52,6 +52,17 @@ window.MYADHD_MS = {
   "i45ab397": "Tabiat",
   "id80f6ec": "Senarai bacaan",
   "i4fa8cc8": "Alatan",
+  /* the bar's five entries (the user's own words), and the pages listed
+     under them that are not written yet */
+  "ib048378": "Belajar",
+  "if32d5a3": "Sokongan",
+  "ibfd58ee": "Komuniti",
+  "if958f19": "Pustaka Digital",
+  "ifd3ef12": "Cari bantuan profesional",
+  "ic8eddc1": "Untuk keluarga dan pasangan",
+  "ibae7c4c": "Kumpulan WhatsApp",
+  "ic5497bc": "Acara",
+  "i32d3b26": "Akan datang",
   "ice21cc3": "Buka my.adhd",
   "i85773bc": "Tambah ke skrin utama",
   "i979e25d": "Sapa kami",

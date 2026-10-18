@@ -23,19 +23,34 @@ CHEV = ('<i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="n
         'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
         '<path d="M6 9l6 6 6-6"/></svg></i>')
 
-OFFER = [('/self-check','i050c897','Self-check'),
+# (href, key, label). An href of None is a placeholder: a page that is
+# planned and not written. It is listed, tagged "Soon", and is not a link —
+# a menu item that 404s, or that lands on a page saying nothing, costs the
+# reader more than one that says out loud it is not there yet. Give it an
+# href when the page exists and the tag goes with it.
+LEARN = [('/self-check','i050c897','Self-check'),
          ('/living-with-adhd','ic729436','Living with ADHD'),
          ('/habits','i45ab397','Habits'),
-         ('/tools','i4fa8cc8','Tools'),
-         ('/blog','i0b9d2b2','Blog'),
-         ('/reading-list','id80f6ec','Reading list')]
+         ('/blog','i0b9d2b2','Blog')]
+SUPPORT = [('/tools','i4fa8cc8','Tools'),
+           (None,'ifd3ef12','Find professional help'),
+           (None,'ic8eddc1','For family and partners')]
+COMMUNITY = [('/testimonials','i2c2cd2a','Testimonials'),
+             (None,'ibae7c4c','WhatsApp group'),
+             (None,'ic5497bc','Events')]
 ABOUT = [('/about','i3ffb811','About us'),
-         ('/testimonials','i2c2cd2a','Testimonials'),
          ('/contact','i4832e45','Contact us')]
 
-# No hub href and no aria-label: the whole control is the toggle now, and a
-# button's visible text is its own accessible name.
-GROUPS = [('offer', 'ib953849', 'What we offer', OFFER),
+SOON = ('i32d3b26', 'Soon')
+
+# (slug, key, label, items). A group with items is a dropdown; one whose
+# items is a string is a plain link to that href, with no chevron.
+# No hub href and no aria-label on a dropdown: the whole control is the
+# toggle, and a button's visible text is its own accessible name.
+GROUPS = [('learn', 'ib048378', 'Learn', LEARN),
+          ('support', 'if32d5a3', 'Support', SUPPORT),
+          ('community', 'ibfd58ee', 'Community', COMMUNITY),
+          ('library', 'if958f19', 'Digital library', '/reading-list'),
           ('about', 'i6b21fb7', 'About', ABOUT)]
 
 
@@ -43,13 +58,22 @@ def cur(href, route):
     return ' aria-current="page"' if href == route else ''
 
 
+def item(h, k, t, route, i):
+    # A placeholder's label and its tag are two strings, so the tag is
+    # translated once and the label keeps its own key for when it is a link.
+    if h is None:
+        return ('%s      <li><span class="bar-soon"><span data-i18n="%s">%s</span>'
+                ' <em data-i18n="%s">%s</em></span></li>' % (i, k, t, SOON[0], SOON[1]))
+    return '%s      <li><a href="%s"%s data-i18n="%s">%s</a></li>' % (i, h, cur(h, route), k, t)
+
+
 def group(slug, prefix, route, indent):
     _, hubkey, hublabel, items = [g for g in GROUPS if g[0] == slug][0]
-    pid = '%s-%s' % (prefix, slug)
     i = ' ' * indent
-    lis = '\n'.join(
-        '%s      <li><a href="%s"%s data-i18n="%s">%s</a></li>' % (i, h, cur(h, route), k, t)
-        for h, k, t in items)
+    if isinstance(items, str):
+        return '%s<a href="%s"%s data-i18n="%s">%s</a>' % (i, items, cur(items, route), hubkey, hublabel)
+    pid = '%s-%s' % (prefix, slug)
+    lis = '\n'.join(item(h, k, t, route, i) for h, k, t in items)
     # The label keeps a <span> of its own with the chevron beside it, never
     # inside: the language switch rewrites a data-i18n element's innerHTML
     # whole, and a chevron caught in there would not come back.
@@ -66,9 +90,14 @@ def group(slug, prefix, route, indent):
            i, pid, i, lis, i, i))
 
 
+def li_class(slug):
+    items = [g for g in GROUPS if g[0] == slug][0][3]
+    return 'bar-link-item' if isinstance(items, str) else 'bar-group-item'
+
+
 def build(route, has_back, back_html):
     row = '\n'.join(
-        '    <li class="bar-group-item">\n%s\n    </li>' % group(slug, 'menu', route, 6)
+        '    <li class="%s">\n%s\n    </li>' % (li_class(slug), group(slug, 'menu', route, 6))
         for slug, *_ in GROUPS)
     sheet = '\n'.join(
         '        <li class="bar-row">\n%s\n        </li>' % group(slug, 'sheet', route, 10)
@@ -86,7 +115,9 @@ def build(route, has_back, back_html):
     </a>
     <p class="bar-org">MyADHD</p>
 
-    <!-- Two groups, each one button that opens the rest. It used to be a
+    <!-- Five entries: four groups, each one button that opens the rest,
+         and the digital library, which is one page and so one link.
+         A group used to be a
          link plus a separate chevron, because the label was a real
          destination and swallowing it into a button would have stranded
          the page it named. /activities is gone, so there is nothing left
@@ -114,7 +145,7 @@ def build(route, has_back, back_html):
       <span class="nt-bars" aria-hidden="true"><i></i><i></i></span>
     </button>
 
-    <!-- The same two groups again, stacked. They are generated from one
+    <!-- The same five entries again, stacked. They are generated from one
          source in tools/bar.py, so the row and the sheet cannot drift the
          way the two hand-kept lists used to. -->
     <div class="bar-sheet" id="bar-sheet" hidden>
