@@ -13,7 +13,7 @@ import re, sys, os
 
 PAGES = ['index','about','testimonials','contact',
          'blog','habits','reading-list','tools','soon','living-with-adhd',
-         'community']
+         'community','find-help']
 # The topic pages under living-with-adhd/ carry this bar too, but they are
 # written whole by tools/topics.py, which imports build() from here.
 
@@ -34,7 +34,7 @@ LEARN = [('/self-check','i050c897','Self-check'),
          ('/habits','i45ab397','Habits'),
          ('/blog','i0b9d2b2','Blog')]
 SUPPORT = [('/tools','i4fa8cc8','Tools'),
-           (None,'ifd3ef12','Find professional help'),
+           ('/find-help','ifd3ef12','Find professional help'),
            (None,'ic8eddc1','For family and partners')]
 COMMUNITY = [('/testimonials','i2c2cd2a','Testimonials'),
              ('/community','ibae7c4c','WhatsApp group'),

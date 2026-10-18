@@ -1582,6 +1582,7 @@ body{
 }
 .cell-link:hover{border-bottom-color:var(--accent)}
 .cell-list{list-style:none; display:grid; gap:12px}
+.cell-list a{color:var(--accent); text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px}
 .cell-list li{
   font-size:clamp(15px,1.7vw,18px); line-height:1.5; color:var(--muted);
 }

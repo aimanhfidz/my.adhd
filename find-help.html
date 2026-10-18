@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Find professional help — MyADHD</title>
+<meta name="description" content="Only a psychiatrist or a clinical psychologist can diagnose ADHD. Two ways to reach one in Malaysia, what each costs, and what to bring." />
+<meta name="theme-color" content="#FFFFFF" />
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+<link rel="icon" href="/icons/favicon-32.png?v=3" sizes="32x32" type="image/png" />
+<link rel="icon" href="/icons/favicon-16.png?v=3" sizes="16x16" type="image/png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=3" />
+<link rel="manifest" href="/site.webmanifest?v=3" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="MyADHD" />
+<meta property="og:title" content="Find professional help — MyADHD" />
+<meta property="og:description" content="Only a psychiatrist or a clinical psychologist can diagnose ADHD. Two ways to reach one in Malaysia, what each costs, and what to bring." />
+<meta property="og:image" content="https://myadhd.my/icons/og.png?v=3" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="my.adhd" />
+<link rel="preload" href="fonts/DMSans-Variable.ttf" as="font" type="font/ttf" crossorigin />
+<link rel="preload" href="fonts/DMMono-Regular.ttf" as="font" type="font/ttf" crossorigin />
+<!-- synchronous: the data-theme stamp has to land before first paint, or
+     a saved dark choice arrives as a white flash -->
+<script src="theme.js"></script>
+<script src="clock.js" defer></script>
+<script src="site.ms.js" defer></script>
+<script src="site.js" defer></script>
+<link rel="stylesheet" href="theme.css" />
+<link rel="stylesheet" href="site.css" />
+</head>
+<body>
+
+<svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Seven orange arms: the eighth (lower-right) is detached and carried
+         by the violet capsule sitting just off the centre. -->
+    <g id="logo-mark">
+      <g class="lg-star">
+        <rect x="46.5" y="18" width="7" height="64"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(90 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="64" transform="rotate(45 50 50)"/>
+        <rect x="46.5" y="18" width="7" height="32" transform="rotate(-45 50 50)"/>
+      </g>
+      <path class="lg-pill" d="M64.5 64.5l7 7" stroke-width="7" stroke-linecap="round" fill="none"/>
+    </g>
+  </defs>
+</svg>
+<!-- ============ the page's weather ============
+     The wave field used to sit in a bordered box partway down the page,
+     which made it a picture of itself: a framed illustration on a page
+     whose whole argument is that it has no furniture. It is the ground
+     now — fixed behind everything, one field per page, and the veil over
+     it is what keeps it weather rather than wallpaper. -->
+<div class="page-wave" aria-hidden="true"><div class="panel-wave" data-wave="flow" data-wave-speed="0.4"></div></div>
+
+<nav class="bar">
+    <a class="back" href="/" aria-label="Back to the front" data-i18n-aria="949ec14"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 19l-7-7 7-7"/></svg></a>
+    <a class="brand-lockup" href="/" aria-label="MyADHD home" data-i18n-aria="12f3e1f">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="wordmark">my<span class="accent">.adhd</span></span>
+    </a>
+    <p class="bar-org">MyADHD</p>
+
+    <!-- Five entries: four groups, each one button that opens the rest,
+         and the digital library, which is one page and so one link.
+         A group used to be a
+         link plus a separate chevron, because the label was a real
+         destination and swallowing it into a button would have stranded
+         the page it named. /activities is gone, so there is nothing left
+         to strand and the whole control is the toggle — which is where
+         everyone was pressing anyway.
+
+         The label sits in a <span> of its own with the chevron beside it,
+         never inside it: site.js rewrites a data-i18n element's innerHTML
+         whole when the language changes, and its ICON_RE only rescues a
+         bare <i aria-hidden="true">, not this classed one. -->
+    <ul class="bar-links">
+    <li class="bar-group-item">
+      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-learn">
+        <span data-i18n="ib048378">Learn</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+      </button>
+      <div class="bar-menu" id="menu-learn" hidden>
+        <ul>
+            <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+            <li><a href="/living-with-adhd" data-i18n="ic729436">Living with ADHD</a></li>
+            <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
+            <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
+        </ul>
+      </div>
+    </li>
+    <li class="bar-group-item">
+      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-support">
+        <span data-i18n="if32d5a3">Support</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+      </button>
+      <div class="bar-menu" id="menu-support" hidden>
+        <ul>
+            <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+            <li><a href="/find-help" aria-current="page" data-i18n="ifd3ef12">Find professional help</a></li>
+            <li><span class="bar-soon"><span data-i18n="ic8eddc1">For family and partners</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+        </ul>
+      </div>
+    </li>
+    <li class="bar-group-item">
+      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-community">
+        <span data-i18n="ibfd58ee">Community</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+      </button>
+      <div class="bar-menu" id="menu-community" hidden>
+        <ul>
+            <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+            <li><a href="/community" data-i18n="ibae7c4c">WhatsApp group</a></li>
+            <li><span class="bar-soon"><span data-i18n="ic5497bc">Events</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+        </ul>
+      </div>
+    </li>
+    <li class="bar-link-item">
+      <a href="/reading-list" data-i18n="if958f19">Digital library</a>
+    </li>
+    <li class="bar-group-item">
+      <button class="bar-group" type="button" aria-expanded="false" aria-controls="menu-about">
+        <span data-i18n="i6b21fb7">About</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+      </button>
+      <div class="bar-menu" id="menu-about" hidden>
+        <ul>
+            <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+            <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+        </ul>
+      </div>
+    </li>
+    </ul>
+
+    <!-- filled in by clock.js, and hidden until it is -->
+    <p class="nav-clock" hidden><span class="nc-place"></span><span class="nc-time"></span></p>
+
+    <nav class="bar-lang" aria-label="Language" data-i18n-aria="89b86ab">
+      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-lang="ms" aria-pressed="false" lang="ms">BM</button>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode">
+      <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.9 8.9 0 1 0 11.1 11.1z"/></svg>
+      <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+    </button>
+
+    <button class="bar-toggle" type="button" aria-expanded="false" aria-controls="bar-sheet" aria-label="Open menu" data-i18n-aria="197101e">
+      <span class="nt-bars" aria-hidden="true"><i></i><i></i></span>
+    </button>
+
+    <!-- The same five entries again, stacked. They are generated from one
+         source in tools/bar.py, so the row and the sheet cannot drift the
+         way the two hand-kept lists used to. -->
+    <div class="bar-sheet" id="bar-sheet" hidden>
+      <ul>
+        <li class="bar-row">
+          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-learn">
+            <span data-i18n="ib048378">Learn</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+          </button>
+          <div class="bar-menu" id="sheet-learn" hidden>
+            <ul>
+                <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+                <li><a href="/living-with-adhd" data-i18n="ic729436">Living with ADHD</a></li>
+                <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
+                <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="bar-row">
+          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-support">
+            <span data-i18n="if32d5a3">Support</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+          </button>
+          <div class="bar-menu" id="sheet-support" hidden>
+            <ul>
+                <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+                <li><a href="/find-help" aria-current="page" data-i18n="ifd3ef12">Find professional help</a></li>
+                <li><span class="bar-soon"><span data-i18n="ic8eddc1">For family and partners</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+            </ul>
+          </div>
+        </li>
+        <li class="bar-row">
+          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-community">
+            <span data-i18n="ibfd58ee">Community</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+          </button>
+          <div class="bar-menu" id="sheet-community" hidden>
+            <ul>
+                <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+                <li><a href="/community" data-i18n="ibae7c4c">WhatsApp group</a></li>
+                <li><span class="bar-soon"><span data-i18n="ic5497bc">Events</span> <em data-i18n="i32d3b26">Soon</em></span></li>
+            </ul>
+          </div>
+        </li>
+        <li class="bar-row">
+          <a href="/reading-list" data-i18n="if958f19">Digital library</a>
+        </li>
+        <li class="bar-row">
+          <button class="bar-group" type="button" aria-expanded="false" aria-controls="sheet-about">
+            <span data-i18n="i6b21fb7">About</span><i class="bar-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></i>
+          </button>
+          <div class="bar-menu" id="sheet-about" hidden>
+            <ul>
+                <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+                <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+      <nav class="bar-lang sheet-lang" aria-label="Language" data-i18n-aria="89b86ab">
+        <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+        <button type="button" data-lang="ms" aria-pressed="false" lang="ms">BM</button>
+      </nav>
+    </div>
+  </nav>
+
+<a class="pill" href="/self-check" data-i18n="i1d4d87b">Take the self-check</a>
+
+<main class="spine">
+
+  <!-- ============ getting assessed ============
+       Laid out like /contact: the head, four cells and the line under
+       them fit one laptop screen. Every fee and number here was checked
+       on 2026-10-19 against the source named beside it in the commit
+       that added this page; the private range is from clinics' own price
+       pages, so it says which month it was true in. Re-check them when
+       you touch this page. The ask is the self-check, because a result
+       is the most useful thing to walk into an appointment with. -->
+  <section class="sec-full contact-one" data-reveal>
+    <div class="contact-head">
+      <h1 class="page-title" data-i18n="i5e9d095">Get assessed in Malaysia</h1>
+      <p class="lede" data-i18n="iebf7dce">Only a psychiatrist or a clinical psychologist can diagnose <span class="adhd-word">ADHD</span>. There are two ways to reach one here, and both start with a single appointment.</p>
+    </div>
+    <div class="grid grid-2">
+      <div>
+        <p class="cell-label" data-i18n="ia55bbce">Through a klinik kesihatan</p>
+        <ul class="cell-list">
+          <li data-i18n="i73390b9">See a doctor at your klinik kesihatan and ask for a referral letter to a hospital psychiatry clinic.</li>
+          <li data-i18n="i6d7bb2f">For citizens it is RM1 to register. With a government doctor&rsquo;s referral, the first specialist visit is free and each follow-up is RM5.</li>
+          <li data-i18n="i74fdc63">The wait can be long, and adult clinics are mostly in the bigger hospitals.</li>
+        </ul>
+      </div>
+      <div>
+        <p class="cell-label" data-i18n="ie65d496">Going private</p>
+        <ul class="cell-list">
+          <li data-i18n="ie39042e">Book a psychiatrist or a clinical psychologist directly. You don&rsquo;t need a referral.</li>
+          <li data-i18n="i77b6c41">A full adult assessment at the clinics we looked at runs from about RM1,300 to RM3,800 (October 2026).</li>
+          <li data-i18n="ibee6d87">Ask what the fee covers: the report, the follow-up, any tests.</li>
+        </ul>
+      </div>
+      <div>
+        <p class="cell-label" data-i18n="i8f58ad7">Psychiatrist or psychologist?</p>
+        <ul class="cell-list">
+          <li data-i18n="i718269f">Both can diagnose. Only a psychiatrist can prescribe medication.</li>
+          <li data-i18n="i49d4b12">Check a psychiatrist on the <a href="https://merits.mmc.gov.my/search/registeredDoctor" target="_blank" rel="noopener">Malaysian Medical Council&rsquo;s register</a>.</li>
+          <li data-i18n="ib2bd76b">A clinical psychologist should be able to give you their MAHPC registration number.</li>
+        </ul>
+      </div>
+      <div>
+        <p class="cell-label" data-i18n="i8f38df6">What to bring</p>
+        <ul class="cell-list">
+          <li data-i18n="i7d77ccf">Your <a href="/self-check">self-check</a> result, printed or on your phone.</li>
+          <li data-i18n="i9e8c874">Notes on what actually goes wrong in a normal week.</li>
+          <li data-i18n="i679c6fe">Anything from childhood: old school reports, or someone who knew you then.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sign-off">
+      <p data-i18n="i1e91727">If today can&rsquo;t wait: <strong>Talian Kasih 15999</strong> or <strong>Befrienders 03-7627 2929</strong>, both 24 hours. In danger right now, call <strong>999</strong>.</p>
+    </div>
+  </section>
+
+  <section class="ask" data-reveal>
+  <p class="ask-line" data-i18n="ibf5d61b">Start with something to bring.</p>
+  <p class="ask-lede" data-i18n="i6dafb2e">Ten minutes, and a printout a psychiatrist or psychologist can read.</p>
+  <a class="arrow-cta" href="/self-check" data-i18n="ia8ac426">Take the self-check <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+</section>
+
+  <nav class="pager" aria-label="Next page" data-i18n-aria="4bfc194">
+  <span class="p-label" data-i18n="ibc98198">Next</span>
+  <a href="/tools" data-i18n="i0f74a27"><i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i> Tools</a>
+</nav>
+</main>
+
+<footer class="foot">
+
+  <!-- The sign-off and the ask, side by side. The first version stacked
+       these and left the whole right half of the band empty. -->
+  <div class="foot-top">
+    <p class="foot-line" data-i18n="i53ac30e">A brain dump that answers back. No account, nothing to set up, and your lists stay on your device.</p>
+    <a class="arrow-cta" href="/soon" data-i18n="i731361d">Clear my head <i aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg></i></a>
+  </div>
+
+  <div class="foot-cols">
+    <div class="foot-col">
+      <h2 data-i18n="ib048378">Learn</h2>
+      <ul>
+        <li><a href="/self-check" data-i18n="i050c897">Self-check</a></li>
+        <li><a href="/living-with-adhd" data-i18n="ic729436">Living with ADHD</a></li>
+        <li><a href="/habits" data-i18n="i45ab397">Habits</a></li>
+        <li><a href="/blog" data-i18n="i0b9d2b2">Blog</a></li>
+        <li><a href="/reading-list" data-i18n="if958f19">Digital library</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2 data-i18n="if32d5a3">Support</h2>
+      <ul>
+        <li><a href="/tools" data-i18n="i4fa8cc8">Tools</a></li>
+        <li><a href="/find-help" data-i18n="ifd3ef12">Find professional help</a></li>
+        <li><a href="/soon" data-i18n="ice21cc3">Open my.adhd</a></li>
+        <li><a href="/soon" data-i18n="i85773bc">Add to home screen</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2 data-i18n="ibfd58ee">Community</h2>
+      <ul>
+        <li><a href="/testimonials" data-i18n="i2c2cd2a">Testimonials</a></li>
+        <li><a href="/community" data-i18n="ibae7c4c">WhatsApp group</a></li>
+        <li><a href="https://www.instagram.com/myadhd.my/" rel="me noopener" target="_blank">Instagram</a></li>
+        <li><a href="https://www.threads.com/@myadhd.my" rel="me noopener" target="_blank">Threads</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h2 data-i18n="i6b21fb7">About</h2>
+      <ul>
+        <li><a href="/about" data-i18n="i3ffb811">About us</a></li>
+        <li><a href="/contact" data-i18n="i4832e45">Contact us</a></li>
+        <li><a href="mailto:hello@myadhd.my">hello@myadhd.my</a></li>
+        <li><a href="/privacy" data-i18n="icf01481">Privacy</a></li>
+        <li><a href="/terms" data-i18n="ia55a275">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot-base">
+    <p class="foot-note" data-i18n="ide9430f">A tool for getting started &mdash; not treatment, therapy, or medical advice.</p>
+    <p>&copy; <span data-year>2026</span> MyADHD</p>
+  </div>
+
+</footer>
+
+</body>
+</html>

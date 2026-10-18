@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://myadhd.my/</loc><lastmod>2026-10-18</lastmod></url>
+  <url><loc>https://myadhd.my/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://myadhd.my/about</loc><lastmod>2026-10-18</lastmod></url>
   <url><loc>https://myadhd.my/blog</loc><lastmod>2026-10-18</lastmod></url>
-  <url><loc>https://myadhd.my/community</loc></url>
+  <url><loc>https://myadhd.my/community</loc><lastmod>2026-10-18</lastmod></url>
   <url><loc>https://myadhd.my/contact</loc><lastmod>2026-10-18</lastmod></url>
+  <url><loc>https://myadhd.my/find-help</loc></url>
   <url><loc>https://myadhd.my/habits</loc><lastmod>2026-10-18</lastmod></url>
   <url><loc>https://myadhd.my/living-with-adhd</loc><lastmod>2026-10-18</lastmod></url>
   <url><loc>https://myadhd.my/privacy</loc><lastmod>2026-10-04</lastmod></url>

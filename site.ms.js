@@ -270,7 +270,30 @@ window.MYADHD_MS = {
   "i1d1f101": "Datang macam mana pun awak. Baca senyap-senyap pun dikira.",
   "i5e98a8c": "Butang ni buka WhatsApp, dan awak boleh tengok kumpulan tu dulu sebelum masuk.",
   "i3655a92": "Masuk kumpulan {icon}",
-  "i6ee5886": "Baca tiga kisah {icon}"
+  "i6ee5886": "Baca tiga kisah {icon}",
+
+  /* /find-help */
+  "i5e9d095": "Dapatkan penilaian di Malaysia",
+  "iebf7dce": "Hanya pakar psikiatri atau ahli psikologi klinikal boleh diagnos <span class=\"adhd-word\">ADHD</span>. Ada dua jalan untuk jumpa mereka kat sini, dan dua-dua bermula dengan satu temujanji.",
+  "ia55bbce": "Melalui klinik kesihatan",
+  "i73390b9": "Jumpa doktor kat klinik kesihatan dan minta surat rujukan ke klinik psikiatri hospital.",
+  "i6d7bb2f": "Untuk warganegara, daftar RM1. Dengan surat rujukan doktor kerajaan, lawatan pakar pertama percuma dan setiap lawatan susulan RM5.",
+  "i74fdc63": "Tempoh menunggu boleh lama, dan klinik untuk orang dewasa kebanyakannya ada kat hospital besar.",
+  "ie65d496": "Secara swasta",
+  "ie39042e": "Tempah terus dengan pakar psikiatri atau ahli psikologi klinikal. Tak perlu surat rujukan.",
+  "i77b6c41": "Penilaian penuh untuk orang dewasa di klinik yang kami semak, lebih kurang RM1,300 hingga RM3,800 (Oktober 2026).",
+  "ibee6d87": "Tanya yuran tu termasuk apa: laporan, temujanji susulan, ujian.",
+  "i8f58ad7": "Pakar psikiatri atau ahli psikologi?",
+  "i718269f": "Dua-dua boleh diagnos. Cuma pakar psikiatri boleh beri ubat.",
+  "i49d4b12": "Semak pakar psikiatri dalam <a href=\"https://merits.mmc.gov.my/search/registeredDoctor\" target=\"_blank\" rel=\"noopener\">daftar Majlis Perubatan Malaysia</a>.",
+  "ib2bd76b": "Ahli psikologi klinikal patut boleh beri nombor pendaftaran MAHPC mereka.",
+  "i8f38df6": "Apa nak bawa",
+  "i7d77ccf": "Keputusan <a href=\"/self-check\">semakan kendiri</a> awak, bercetak atau dalam telefon.",
+  "i9e8c874": "Nota pasal apa yang betul-betul jadi tak kena dalam seminggu biasa.",
+  "i679c6fe": "Apa-apa dari zaman kecil: buku laporan sekolah lama, atau orang yang kenal awak masa tu.",
+  "i1e91727": "Kalau hari ni tak boleh tunggu: <strong>Talian Kasih 15999</strong> atau <strong>Befrienders 03-7627 2929</strong>, dua-dua 24 jam. Kalau dalam bahaya sekarang, telefon <strong>999</strong>.",
+  "ibf5d61b": "Mula dengan sesuatu untuk dibawa.",
+  "i6dafb2e": "Sepuluh minit, dan cetakan yang pakar psikiatri atau ahli psikologi boleh baca."
 },
   aria: {
   "197101e": "Buka menu",
