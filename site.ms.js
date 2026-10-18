@@ -330,7 +330,23 @@ window.MYADHD_MS = {
   "ie237942": "Bila senarai dah bagitahu apa nak mula, biar satu benda tu kekal atas skrin sampai siap.",
   "i7553851": "Satu benda, satu pemasa, dan skrin yang tenang",
   "i7fdc4b9": "Jam, pemasa fokus, bunyi dan buku nota. Percuma, dan tak perlu daftar apa-apa.",
-  "i23fe4cd": "Buka focus"
+  "i23fe4cd": "Buka focus",
+
+  /* /events */
+  "ib3d0f60": "Ceramah yang awak boleh sertai dari rumah, secara langsung di Zoom. Sertai secara langsung, percuma.",
+  "i03932bd": "Tiga malam Sabtu di Zoom, 9:00&ndash;11:00 malam, dengan soal jawab secara langsung. Satu gambaran <span class=\"adhd-word\">ADHD</span>, dari tiga sudut.",
+  "ic332510": "Ceramah 1 &middot; Sabtu 24 Okt &middot; 9 malam",
+  "ie976ba6": "Yasmin Yakub &middot; Pakar Intervensi SLD",
+  "i185dce9": "Ceramah 2 &middot; Sabtu 7 Nov &middot; 9 malam",
+  "ic23f25c": "Kamila Solihin &middot; Kaunselor",
+  "i7765159": "Ceramah 3 &middot; Sabtu 21 Nov &middot; 9 malam",
+  "i3d7d20f": "Noor Safarina &middot; Jurupulih Carakerja (OT)",
+  "i126c63d": "Sertai secara langsung, percuma. Pilih ceramah yang awak nak. Nak simpan satu? Tambah rakaman dan slaidnya, RM 20.",
+  "i1f0a16c": "Ceramah pendidikan. Ia bukan diagnosis atau rawatan.",
+  "i1e01316": "Tiga malam Sabtu, selang dua minggu.",
+  "i8e7509e": "Dalam borang, tanda ceramah yang awak nak sertai dan tekan + kat rakaman yang awak nak. Pautan Zoom dan rakaman akan sampai ke emel yang awak guna untuk daftar.",
+  "id6fbfab": "Daftar untuk siri ni {icon}",
+  "ieed94f6": "{icon} Kumpulan WhatsApp"
 },
   aria: {
   "197101e": "Buka menu",
