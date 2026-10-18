@@ -1583,6 +1583,15 @@ body{
 .cell-link:hover{border-bottom-color:var(--accent)}
 .cell-list{list-style:none; display:grid; gap:12px}
 .cell-list a{color:var(--accent); text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px}
+/* ---------- the shelf (/reading-list, written by tools/shelf.py) ----------
+   A book's two facts sit under its note on one line each, the mark in
+   the accent so the eye finds "can I listen to it" and "how long" first. */
+.shelf-chips{margin-top:clamp(22px,3.4vh,36px)}
+.shelf-grid{margin-top:4px}
+.book-by{margin-top:6px; font-size:14px; color:var(--muted)}
+.book-facts{list-style:none; margin-top:16px; display:flex; flex-wrap:wrap; gap:8px 20px; font-size:14px; color:var(--ink-soft)}
+.book-facts li{display:inline-flex; align-items:center; gap:8px}
+.book-facts svg{width:16px; height:16px; flex:none; color:var(--accent)}
 .cell-list li{
   font-size:clamp(15px,1.7vw,18px); line-height:1.5; color:var(--muted);
 }

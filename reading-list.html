@@ -219,30 +219,131 @@
        verbatim: the list said this, and the page it points at delivers
        it. Saying something different here would make the list a lie. -->
   <section data-reveal>
-    <p class="kicker" data-i18n="ifc1a6c1">What we offer &middot; 04.</p>
     <h1 class="page-title" data-i18n="id2640b3">Books Worth Your Time</h1>
     <p class="offer-sub" style="margin-top:18px" data-i18n="ia7fd532">Curated, honest, and realistic about attention spans</p>
-    <p class="body-copy" data-i18n="i2ea04e4">The <span class="adhd-word">ADHD</span> shelf is crowded and a lot of it is noise. We recommend only what we&rsquo;ve actually read, with a note on who each book is for &mdash; newly diagnosed adults, parents, partners, or people who just want the science.</p>
+    <p class="body-copy" style="margin-top:18px" data-i18n="i2ea04e4">The <span class="adhd-word">ADHD</span> shelf is crowded and a lot of it is noise. We recommend only what we&rsquo;ve actually read, with a note on who each book is for &mdash; newly diagnosed adults, parents, partners, or people who just want the science.</p>
     <p class="body-copy" data-i18n="i6084309">Where an audiobook version exists, we&rsquo;ll say so. Where a book is long and repetitive, we&rsquo;ll say that too.</p>
   </section>
 
   <!-- ============ the shelf ============
-       No books yet. Recommending a book nobody read is exactly the noise
-       this page says it is filtering out, so the one card says the shelf
-       is still being read and sends the reader to /habits meanwhile. -->
+       Written by tools/shelf.py from its BOOKS table: edit the
+       table and run it, not this markup. Each book says who it is
+       for, how long it is and whether it can be listened to,
+       because the opener above promises all three. -->
   <section data-reveal>
-    <p class="kicker" data-i18n="i43060e9">The shelf.</p>
     <h2 class="section-h2" data-i18n="id09bac2">Only what we&rsquo;ve actually read.</h2>
-
-    <div class="grid grid-2" style="margin-top:clamp(30px,5vh,56px)">
-      <div>
-        <p class="cell-title" data-i18n="ib9a01d7">The first books are still being read</p>
-        <p class="cell-text" style="margin-top:12px" data-i18n="i286f4cb">We only recommend what we have finished. Until the shelf fills, the Habits page has what has helped so far.</p>
-        <a class="cell-link" href="/habits" data-i18n="ia196594">See the habits</a>
+    <div class="chips lwa-chips shelf-chips" data-filter role="group" aria-label="Show books" data-i18n-aria="shelffilter">
+      <button class="chip" type="button" data-show="all" aria-pressed="true"><span data-i18n="i6a72085">All</span> <span class="chip-n">10</span></button>
+      <button class="chip" type="button" data-show="start" aria-pressed="false"><span data-i18n="ie863c71">Starting out</span> <span class="chip-n">4</span></button>
+      <button class="chip" type="button" data-show="inner" aria-pressed="false"><span data-i18n="idecb462">Feelings &amp; identity</span> <span class="chip-n">3</span></button>
+      <button class="chip" type="button" data-show="home" aria-pressed="false"><span data-i18n="i453679e">Home &amp; family</span> <span class="chip-n">3</span></button>
+    </div>
+    <div class="lwa-group" data-group="start">
+      <p class="lwa-group-h"><span data-i18n="ie863c71">Starting out</span> <span>4</span></p>
+      <div class="grid grid-2 shelf-grid">
+        <div class="book">
+          <h3 class="cell-title">How to ADHD</h3>
+          <p class="book-by">Jessica McCabe &middot; 2024</p>
+          <p class="cell-text" data-i18n="ic669725">The best first book if you were just diagnosed or are still wondering. Warm and well researched. It is long, but the chapters stand alone, so dip in.</p>
+          <ul class="book-facts">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span data-i18n="idc21d0b">Audiobook, 9 hours, read by the author</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="ia7307fa">About 440 pages</span></li>
+          </ul>
+        </div>
+        <div class="book">
+          <h3 class="cell-title">ADHD 2.0</h3>
+          <p class="book-by">Edward Hallowell &amp; John Ratey &middot; 2021</p>
+          <p class="cell-text" data-i18n="ic916d0a">Short and upbeat, the quickest read here, and a lift after a diagnosis. Light on depth, and the evidence behind its balance-board exercises is thin.</p>
+          <ul class="book-facts">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span data-i18n="ie47912f">Audiobook, 5&frac12; hours</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="ied4de76">About 208 pages</span></li>
+          </ul>
+        </div>
+        <div class="book">
+          <h3 class="cell-title">Driven to Distraction</h3>
+          <p class="book-by">Edward Hallowell &amp; John Ratey &middot; 2011</p>
+          <p class="cell-text" data-i18n="i4e5befd">The 1994 classic that got people talking about adult ADHD, revised. The stories still land. It is long, says ADD throughout, and the science has moved on.</p>
+          <ul class="book-facts">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span data-i18n="i18dcfd4">Audiobook, 13&frac12; hours</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="i3e0d68a">About 380 pages</span></li>
+          </ul>
+        </div>
+        <div class="book">
+          <h3 class="cell-title">Taking Charge of Adult ADHD</h3>
+          <p class="book-by">Russell Barkley &middot; 2021</p>
+          <p class="cell-text" data-i18n="i0dcfe12">For the science, from one of the field&rsquo;s leading researchers: executive function, medication, time. Laid out like a workbook, and blunt. No &ldquo;superpower&rdquo; talk.</p>
+          <ul class="book-facts">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span data-i18n="i6b50549">Audiobook, 11 hours</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="i646e5b6">About 300 pages</span></li>
+          </ul>
+        </div>
       </div>
-      <!-- The shelf's one card would leave the other half of the row showing
-           the grid's ruled ground. Same filler as /habits. -->
-      <div class="filler" aria-hidden="true"></div>
+    </div>
+    <div class="lwa-group" data-group="inner">
+      <p class="lwa-group-h"><span data-i18n="idecb462">Feelings &amp; identity</span> <span>3</span></p>
+      <div class="grid grid-2 shelf-grid">
+        <div class="book">
+          <h3 class="cell-title">Your Brain&rsquo;s Not Broken</h3>
+          <p class="book-by">Tamara Rosier &middot; 2021</p>
+          <p class="cell-text" data-i18n="icb2f21f">The one on feelings: emotional intensity, shame, and why interest runs the engine. Practical and kind. Its publisher is Christian, and a few lines about prayer show it.</p>
+          <ul class="book-facts">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span data-i18n="i23c4b94">Audiobook, 6 hours</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="ied4de76">About 208 pages</span></li>
+          </ul>
+        </div>
+        <div class="book">
+          <h3 class="cell-title">Scattered Minds</h3>
+          <p class="book-by">Gabor Mat&eacute; &middot; 1999</p>
+          <p class="cell-text" data-i18n="i2bb1e15">Beautifully written on shame and childhood. Read it for that, not for causes: it puts ADHD down to early stress and plays down genes, which later research does not back. Parents may feel blamed.</p>
+          <ul class="book-facts">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span data-i18n="i6b50549">Audiobook, 11 hours</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="i8146a4c">About 360 pages</span></li>
+          </ul>
+        </div>
+        <div class="book">
+          <h3 class="cell-title">A Radical Guide for Women with ADHD</h3>
+          <p class="book-by">Sari Solden &amp; Michelle Frank &middot; 2019</p>
+          <p class="cell-text" data-i18n="ifdbae83">For women who have spent years masking. It is about shame and identity, not organising tips. A workbook, so read it on paper: the exercises do not work on audio.</p>
+          <ul class="book-facts">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span data-i18n="iff8f0cf">Audiobook, 6&frac12; hours</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="i12da754">About 216 pages</span></li>
+          </ul>
+        </div>
+        <div class="filler" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="lwa-group" data-group="home">
+      <p class="lwa-group-h"><span data-i18n="i453679e">Home &amp; family</span> <span>3</span></p>
+      <div class="grid grid-2 shelf-grid">
+        <div class="book">
+          <h3 class="cell-title">Order from Chaos</h3>
+          <p class="book-by">Jaclyn Paul &middot; 2019</p>
+          <p class="cell-text" data-i18n="iff5b9c1">Home, laundry, paperwork and routines, from someone who lives with ADHD and writes for brains like hers. Small press, an American household, very practical.</p>
+          <ul class="book-facts">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span data-i18n="iff8f0cf">Audiobook, 6&frac12; hours</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="if00f83d">About 218 pages</span></li>
+          </ul>
+        </div>
+        <div class="book">
+          <h3 class="cell-title">The ADHD Effect on Marriage</h3>
+          <p class="book-by">Melissa Orlov &middot; 2010</p>
+          <p class="cell-text" data-i18n="id24cb9a">For couples, and often read first by the partner without ADHD. Best at naming the parent-and-child pattern couples slide into. It mostly assumes the husband has ADHD, and it can feel heavy.</p>
+          <ul class="book-facts">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span data-i18n="i56e8cdd">Audiobook, 8 hours</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="ic5d1393">About 235 pages</span></li>
+          </ul>
+        </div>
+        <div class="book">
+          <h3 class="cell-title">Smart but Scattered</h3>
+          <p class="book-by">Peg Dawson, Richard Guare &amp; Colin Guare &middot; 2024</p>
+          <p class="cell-text" data-i18n="i664ef3f">For parents: executive skills in children, with quizzes to find where your kid gets stuck. Not ADHD-specific. For yourself, the adult version is The Smart but Scattered Guide to Success (2016).</p>
+          <ul class="book-facts">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span data-i18n="i8835680">Audiobook, 13 hours</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg><span data-i18n="i34d7bb7">About 328 pages</span></li>
+          </ul>
+        </div>
+        <div class="filler" aria-hidden="true"></div>
+      </div>
     </div>
   </section>
 

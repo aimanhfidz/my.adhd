@@ -104,9 +104,6 @@ window.MYADHD_MS = {
   "ibb74ace": "Artikel pertama sedang ditulis",
   "id05c2c6": "Kami tulis bersama pelajar dan penyelidik Malaysia. Sementara tu, Hidup dengan <span class=\"adhd-word\">ADHD</span> ada bacaan pendek tentang apa yang ia buat pada masa, fokus dan perasaan.",
   "ie5579b6": "Baca Hidup dengan <span class=\"adhd-word\">ADHD</span>",
-  "ib9a01d7": "Buku pertama masih tengah dibaca",
-  "i286f4cb": "Kami cadangkan buku yang dah habis dibaca je. Sementara rak ni belum penuh, halaman Tabiat ada apa yang dah membantu setakat ni.",
-  "ia196594": "Tengok tabiat",
   "idfa4de0": "{icon} Tabiat",
   "i0d4a4ff": "Apa yang kami tawarkan &middot; 03.",
   "ibe98bb8": "Tabiat.",
@@ -134,9 +131,6 @@ window.MYADHD_MS = {
   "iaaab651": "Habiskan hari tanpa bateri kosong menjelang 3 petang",
   "ia6bfd85": "Perubahan kecil yang boleh diuji. Mula dengan satu.",
   "ic911107": "{icon} Senarai bacaan",
-  "ifc1a6c1": "Apa yang kami tawarkan &middot; 04.",
-  "i43060e9": "Rak buku.",
-  "id09bac2": "Yang kami betul-betul dah baca je.",
   "i0f74a27": "{icon} Alatan",
   "i7068fcf": "Kosongkan kepala saya",
   "i7b0ab73": "Apa yang kami tawarkan &middot; 05.",
@@ -249,6 +243,41 @@ window.MYADHD_MS = {
   /* the nav groups */
   "i6b21fb7": "Tentang",
 
+  /* shelf: written by tools/shelf.py */
+  "i6a72085": "Semua",
+  "ie863c71": "Mula-mula",
+  "ic669725": "Buku pertama yang paling sesuai kalau awak baru didiagnos atau masih tertanya-tanya. Mesra dan dikaji dengan teliti. Ia panjang, tapi setiap bab boleh dibaca sendiri, jadi baca ikut suka.",
+  "idc21d0b": "Buku audio, 9 jam, dibaca oleh penulis",
+  "ia7307fa": "Lebih kurang 440 muka surat",
+  "ic916d0a": "Pendek dan positif, paling cepat habis dalam senarai ni, dan elok untuk naikkan semangat lepas diagnosis. Tapi tak mendalam, dan bukti untuk latihan papan imbangan dia nipis.",
+  "ie47912f": "Buku audio, 5&frac12; jam",
+  "ied4de76": "Lebih kurang 208 muka surat",
+  "i4e5befd": "Buku klasik 1994 yang buat orang mula bercakap pasal ADHD dewasa, dah disemak semula. Kisah-kisahnya masih kena. Ia panjang, guna istilah ADD dari awal sampai akhir, dan sains dah bergerak ke depan.",
+  "i18dcfd4": "Buku audio, 13&frac12; jam",
+  "i3e0d68a": "Lebih kurang 380 muka surat",
+  "i0dcfe12": "Untuk sains, daripada salah seorang penyelidik utama bidang ni: fungsi eksekutif, ubat, masa. Disusun macam buku kerja, dan terus terang. Takde cakap pasal &ldquo;kuasa luar biasa&rdquo;.",
+  "i6b50549": "Buku audio, 11 jam",
+  "i646e5b6": "Lebih kurang 300 muka surat",
+  "idecb462": "Perasaan &amp; diri",
+  "icb2f21f": "Buku pasal perasaan: emosi yang kuat, rasa malu, dan kenapa minat yang gerakkan enjin. Praktikal dan lembut. Penerbitnya Kristian, dan ada beberapa baris pasal doa.",
+  "i23c4b94": "Buku audio, 6 jam",
+  "i2bb1e15": "Ditulis dengan indah pasal rasa malu dan zaman kanak-kanak. Baca untuk tu, bukan untuk punca: ia kaitkan ADHD dengan tekanan awal hidup dan kurangkan peranan genetik, yang kajian kemudian tak sokong. Ibu bapa mungkin rasa dipersalahkan.",
+  "i8146a4c": "Lebih kurang 360 muka surat",
+  "ifdbae83": "Untuk perempuan yang dah bertahun-tahun menyamar. Ia pasal rasa malu dan identiti, bukan tip mengemas. Ia buku kerja, jadi baca versi kertas: latihannya tak jalan dalam audio.",
+  "iff8f0cf": "Buku audio, 6&frac12; jam",
+  "i12da754": "Lebih kurang 216 muka surat",
+  "i453679e": "Rumah &amp; keluarga",
+  "iff5b9c1": "Rumah, baju kotor, kertas kerja dan rutin, daripada orang yang hidup dengan ADHD dan menulis untuk otak macam dia. Penerbit kecil, rumah tangga Amerika, sangat praktikal.",
+  "if00f83d": "Lebih kurang 218 muka surat",
+  "id24cb9a": "Untuk pasangan, dan selalunya dibaca dulu oleh pasangan yang takde ADHD. Paling bagus bila namakan corak &ldquo;ibu bapa dan anak&rdquo; yang pasangan mudah tergelincir masuk. Kebanyakannya anggap suami yang ada ADHD, dan ia boleh rasa berat.",
+  "i56e8cdd": "Buku audio, 8 jam",
+  "ic5d1393": "Lebih kurang 235 muka surat",
+  "i664ef3f": "Untuk ibu bapa: kemahiran eksekutif kanak-kanak, dengan kuiz untuk cari kat mana anak awak tersekat. Bukan khusus untuk ADHD. Untuk diri sendiri, versi dewasanya The Smart but Scattered Guide to Success (2016).",
+  "i8835680": "Buku audio, 13 jam",
+  "i34d7bb7": "Lebih kurang 328 muka surat",
+  "id09bac2": "Yang kami betul-betul dah baca je.",
+  /* end shelf */
+
   /* /community */
   "i965030b": "Duduk dengan orang yang faham",
   "i802b5de": "Kumpulan WhatsApp untuk orang dewasa dengan ADHD, dan untuk ibu bapa yang anaknya ada ADHD. Kat sini, takde siapa minta awak terangkan.",
@@ -301,6 +330,7 @@ window.MYADHD_MS = {
   "949ec14": "Kembali ke muka depan",
   "12f3e1f": "Laman utama MyADHD",
   "b953849": "Apa yang kami tawarkan",
-  "89b86ab": "Bahasa"
+  "89b86ab": "Bahasa",
+  "shelffilter": "Tunjuk buku"
 }
 };
