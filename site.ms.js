@@ -200,20 +200,20 @@ window.MYADHD_MS = {
   "i24b5de4": "Senarai awak kekal dalam peranti awak",
   "i8e07898": "{icon} Tentang kami",
 
-  /* ---- /soon, the page every app link goes to while the app is
-     shut. Delete this block and the page with it when it opens. ---- */
-  "i37d6026": "Sedang dibaiki.",
-  "i1535579": "Apl ni tutup sementara kami bina semula",
-  "i60e5da7": "my.adhd &mdash; tempat awak buang semua dalam kepala tu &mdash; tutup buat sementara. Kami tengah kerjakan dia, dia belum cukup elok untuk sesiapa bergantung padanya, dan biar dia terbuka dalam keadaan macam tu lagi teruk.",
-  "ic628885": "Takde apa-apa yang dipadam",
-  "i5e94b61": "Senarai awak ada kat tempat awak tinggalkan dia. Apa yang ada dalam telefon awak, masih ada. Apa yang dah masuk akaun, masih dalam akaun. Tutup pintu bukan bermakna bilik tu dikosongkan.",
+  /* ---- /soon, the page every app link goes to until the app is open
+     to everyone. Delete this block and the page with it when it is. ---- */
+  "i37d6026": "Sedang disiapkan.",
+  "if0aec00": "Apl ni belum dibuka untuk semua orang",
+  "i8ab985a": "my.adhd &mdash; tempat awak buang semua dalam kepala tu &mdash; tengah dalam ujian awal yang senyap. Dia dah jalan, tapi masih dibentuk. Kami lebih rela buka dia betul-betul daripada biar semua orang masuk sebelum dia cukup elok untuk diharap.",
+  "i0fb1b2f": "Dah pun guna?",
+  "i053e7cd": "Takde apa yang berubah untuk awak. Senarai awak ada kat tempat awak tinggalkan dia, dalam telefon awak, dan apa yang dah masuk akaun masih dalam akaun.",
   "i84bb5f7": "Semakan kendiri masih buka",
   "i20cb131": "Saringan ASRS-v1.1 tu bukan sebahagian daripada apl, jadi takde apa yang berubah. Sepuluh minit, percuma, dan keputusannya kekal milik awak.",
   "i2d660c9": "Belum ada tarikh",
-  "ia0b2c05": "Lagi baik kami cakap macam tu daripada pilih satu hari Jumaat lepas tu tak jadi. Bila dia buka, dia buka kat sini juga, alamat yang sama, dan setiap butang yang bawa awak ke halaman ni akan jalan balik.",
-  "i1dc3f38": "Nak kami bagitahu bila dia buka?",
+  "ief2fa07": "Lagi baik kami cakap macam tu daripada pilih satu hari Jumaat lepas tu tak jadi. Bila dia buka, dia buka kat sini juga, alamat yang sama, dan setiap butang yang bawa awak ke halaman ni akan terus bawa awak masuk.",
+  "idbf288e": "Nak kami bagitahu bila dia buka?",
   "i916ff37": "Hantar satu baris ke alamat kat bawah tu, nanti kami balas bila dia dah buka. Takde senarai, takde borang, takde newsletter &mdash; cuma orang, dan satu jawapan.",
-  "i3bc2e39": "Tempat buang isi kepala tu tutup buat masa ni. Semakan kendiri tak tutup, dan itu bahagian yang bagi awak jawapan.",
+  "i798911c": "Tempat buang isi kepala tu belum dibuka untuk semua orang. Semakan kendiri dah, dan itu bahagian yang bagi awak jawapan.",
   "i5b065b3": "Kalau fokus, mula benda, atau habiskan benda tu sebabnya awak datang sini, saringan tu memang bahagian yang lagi berguna pun.",
 
   /* the two doors, index.html. The page says `awak`; the two card

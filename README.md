@@ -8,8 +8,9 @@
 **Brain dump → auto-triage → one task.**
 
 Live at **[myadhd.my](https://myadhd.my)**. The app itself, at
-[/app](https://myadhd.my/app), is **held behind `/soon` while it is rebuilt** —
-see [While the app is shut](#while-the-app-is-shut). The site around it is open.
+[/app](https://myadhd.my/app), is in a **soft launch**: it answers when its
+address is typed, but every link on the site still goes to `/soon` — see
+[While the app is shut](#while-the-app-is-shut). The site around it is open.
 
 > **This repo is the web app**, and since September 2026 it is only the web
 > app. The iOS shell — a `WKWebView` case around the deployed page — moved to
@@ -1077,21 +1078,20 @@ The organisation asks you to find out; the app asks you to start. So
 
 ### While the app is shut
 
-Every link into the app points at `/soon`. That is
+Every link into the app points at `/soon`, which since 2026-10-18 says the
+app is in a quiet early test rather than closed for a rebuild. That is
 the whole of the change on the site's side: `data-app-link` is off the
 CTAs, the rewrite in `site.js` is commented out with a note saying how to
-put it back, and `/app` and `/install` carry an inline hold at the top of
-their `<head>` that sends everyone but a developer to `/soon` before the
-first paint. The hold is a curtain, not a lock — the test is in public
+put it back, and `/install` carries an inline hold at the top of its
+`<head>` that sends everyone but a developer to `/soon` before the first
+paint. `/app` carried the same hold until 2026-09-18, when it came out for
+the soft launch. The hold is a curtain, not a lock — the test is in public
 JavaScript. Past it: `localhost` is never held, and `?dev=1` once on
 myadhd.my remembers that browser (`?dev=0` gives the key back). The block
 comment in `app.html` lists everything to undo when the app opens again.
 
-**The hold catches the iOS shell as well, and that is not yet fixed.**
-`AppConfig.home` in `ios/` is `https://myadhd.my/app`; a `WKWebView` is neither
-`localhost` nor carrying the dev key, so the shell currently lands on `/soon`
-too. The fix belongs on the iOS side — inject the key before the page runs —
-and is a decision about the shell, not about this page.
+The iOS shell is no longer caught by it: `/app` has no hold, and the shell
+is native SwiftUI since 2026-09-20.
 
 ### Type and colour
 
