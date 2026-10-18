@@ -992,9 +992,9 @@ design is written down in `docs/loud-redesign-plan.md`.
 |---|---|
 | `/` | The two doors, four facts under the fold, then the funnel. No full footer |
 | `/self-check` | **The test.** A standalone page, outside the site. Google sign-in + a PDPA intake since 2026-09-13 — see below |
-| `/blog` | Offer 02. Empty index, placeholder |
-| `/habits` | Offer 03. Five named habits, explanations placeholder |
-| `/reading-list` | Offer 04. Empty shelf, placeholder |
+| `/blog` | Offer 02. No posts yet; one card says so and links to `/living-with-adhd` |
+| `/habits` | Offer 03. Five habits, each explained |
+| `/reading-list` | Offer 04. No books yet; one card says so and links to `/habits` |
 | `/tools` | Offer 05 — **the app's product page**, carrying what the old landing page said about it |
 | `/about` | About Us. Opens on the first sentence, immediately |
 | `/testimonials` | Three real quotes, in the words the people used |
@@ -1211,8 +1211,9 @@ others are sections about the product.
 ### Copy that is not finished yet
 
 `/testimonials` carries three real quotes (since 2026-09-11); the people asked
-not to be named, so each by-line is what they gave — sex and age. The
-`[data-placeholder]` treatment stays for the blog, the habits and the shelf.
+not to be named, so each by-line is what they gave — sex and age. The blog
+and the shelf dropped their `[data-placeholder]` holes on 2026-10-18: each has
+one plain card saying it is not written yet, with a link somewhere that is.
 
 ### The bar
 
