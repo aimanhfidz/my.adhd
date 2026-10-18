@@ -1,0 +1,59 @@
+{
+  "slug": "forgot-to-eat-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "gradient",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Lunch? It is 4pm.\n\nForgetting to eat, drink or even stretch is common with ADHD. Swipe for why your body's signals get lost, and three ways to catch them sooner.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this, then go drink some water.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #adhdtips",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Why do I\nforget to\n[[eat]]?",
+      "sub": "You are not careless with yourself. The signal is just quiet."
+    },
+    {
+      "type": "point",
+      "title": "Your body's\nsignals arrive\n[[quietly]]",
+      "body": "Hungry, thirsty, needing the toilet, needing to move. Most people notice early. For many ADHD brains, those signals stay faint until they are urgent."
+    },
+    {
+      "type": "point",
+      "title": "Focus turns\nthe volume\n[[down]] more",
+      "body": "Deep in something interesting, you will not hear your stomach at all. You look up, it is dark, and you have had one coffee."
+    },
+    {
+      "type": "point",
+      "title": "Then it hits\n[[all at once]]",
+      "body": "Shaky, snappy, a headache out of nowhere. You do not feel a little hungry. You go from fine to starving in a minute."
+    },
+    {
+      "type": "point",
+      "title": "Hungry looks\nlike a [[mood]]",
+      "body": "Irritable, foggy, close to tears. It is easy to blame yourself or the day. Often the first thing to try is food and water."
+    },
+    {
+      "type": "point",
+      "title": "Eat by the\n[[clock]], not\nthe feeling",
+      "body": "If the signal is unreliable, do not wait for it. A lunch alarm at 1pm does the noticing for you."
+    },
+    {
+      "type": "point",
+      "title": "Keep food\nwhere you\n[[already are]]",
+      "body": "A snack on the desk, a bottle of water by the laptop. If eating needs a trip to the kitchen, focus will win every time."
+    },
+    {
+      "type": "point",
+      "title": "Make [[easy]]\nfood count",
+      "body": "Toast, fruit, a boiled egg, yesterday's rice. On a busy day, a simple meal eaten beats a good meal planned."
+    },
+    {
+      "type": "outro",
+      "title": "Save this, then\ngo drink some\n[[water]]",
+      "body": "Your body is not quiet because it needs nothing. Dump today into my.adhd and get one thing back, after you eat.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

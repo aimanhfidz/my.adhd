@@ -1,0 +1,59 @@
+{
+  "slug": "restless-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "night-violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Leg bouncing. Pen clicking. Sitting still for an hour feels like a workout.\n\nRestlessness in adults often looks different from the kid who could not sit down. Swipe for what it can feel like, and three ways to give it somewhere to go.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for your next long meeting.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #adhdrestlessness",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Why can't I\njust [[sit still]]?",
+      "sub": "You are not rude. The energy needs somewhere to go."
+    },
+    {
+      "type": "point",
+      "title": "It moved\n[[inside]]",
+      "body": "As a kid it was running around. As an adult it is often quieter. A bouncing leg, a racing mind, an itch to get up and do something else."
+    },
+    {
+      "type": "point",
+      "title": "Stillness takes\n[[effort]]",
+      "body": "Through a long talk, you spend half your energy on not moving. There is less left over for actually listening."
+    },
+    {
+      "type": "point",
+      "title": "Fidgeting can\n[[help]] you\nlisten",
+      "body": "Clicking a pen or doodling can look like you are not paying attention. For many people, a little movement is what keeps them tuned in."
+    },
+    {
+      "type": "point",
+      "title": "Doing nothing\nfeels [[loud]]",
+      "body": "A slow queue, a long drive, a quiet evening. When there is nothing to do, the restlessness has nothing to push against."
+    },
+    {
+      "type": "point",
+      "title": "Give your\nhands a [[job]]",
+      "body": "A fidget toy, a stress ball, a pen to roll. Something quiet in your pocket, ready for the next meeting or queue."
+    },
+    {
+      "type": "point",
+      "title": "Move [[before]]\nthe long sit",
+      "body": "A walk before a long meeting. Stairs instead of the lift. Spending some energy first leaves less of it buzzing while you sit."
+    },
+    {
+      "type": "point",
+      "title": "Stand, pace,\n[[walk]] and talk",
+      "body": "Take calls on your feet. Stand at the counter to work for a while. Not every task has to happen sitting down."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for\nyour next long\n[[meeting]]",
+      "body": "Restless is not rude. It is energy looking for a door. Dump the buzzing thoughts into my.adhd and get one thing back to move on.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

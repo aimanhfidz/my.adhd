@@ -1,0 +1,59 @@
+{
+  "slug": "cant-rest-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "night-orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Day off. Spent it feeling guilty for not doing enough.\n\nA lot of ADHD brains find rest harder than work. Swipe for why sitting still can feel wrong, and three ways to rest without earning it first.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for your next day off.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #restisproductive",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Why can't I\nrest without\n[[feeling guilty]]?",
+      "sub": "You do not have to earn a break."
+    },
+    {
+      "type": "point",
+      "title": "There is always\n[[something]]\nundone",
+      "body": "The unanswered message, the laundry, the task you put off. With a long list in your head, a break feels like falling further behind."
+    },
+    {
+      "type": "point",
+      "title": "Rest feels\nlike [[slacking]]",
+      "body": "Years of being called lazy make every pause feel like proof. So you rest the way you would skip class, tense and watching the door."
+    },
+    {
+      "type": "point",
+      "title": "Scrolling is\nnot [[rest]]",
+      "body": "Hours on the phone can look like a break. Often you come out more tired. Your brain was busy the whole time, just not on anything you chose."
+    },
+    {
+      "type": "point",
+      "title": "Your mind\nkeeps [[working]]",
+      "body": "Even on the sofa, the to-do list runs in the background. Your body is resting, but your head is still at work."
+    },
+    {
+      "type": "point",
+      "title": "Book rest\nlike a [[task]]",
+      "body": "Put it in the calendar. 4pm to 5pm, rest. With a slot of its own, your brain treats it as allowed, not stolen."
+    },
+    {
+      "type": "point",
+      "title": "Pick rest that\n[[fills]] you",
+      "body": "A walk, a nap, music, cooking for fun. Notice which ones leave you better than before, and choose those on purpose."
+    },
+    {
+      "type": "point",
+      "title": "Park the\nlist [[first]]",
+      "body": "Write down what is waiting before you stop. Tomorrow it will still be there. Right now it does not need you."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for\nyour next\n[[day off]]",
+      "body": "Rest is part of the work, not a reward for it. Dump the list into my.adhd and let it hold things while you put them down.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

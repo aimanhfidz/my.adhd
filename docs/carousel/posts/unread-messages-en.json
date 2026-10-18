@@ -1,0 +1,59 @@
+{
+  "slug": "unread-messages-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "night-violet",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Read it. Meant to reply. That was three weeks ago.\n\nUnanswered messages pile up fast in an ADHD brain, and so does the guilt. Swipe for why replying feels this heavy, and three ways to clear the backlog.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this, then reply to one person.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #adhdlife",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Why can't I\njust [[reply]]\nto messages?",
+      "sub": "You do care. The reply just got heavier every day."
+    },
+    {
+      "type": "point",
+      "title": "You replied\n[[in your head]]",
+      "body": "You read it, thought of the perfect answer, and moved on. It felt done. It never left your head, and they are still waiting."
+    },
+    {
+      "type": "point",
+      "title": "Later becomes\n[[never]]",
+      "body": "\"I will reply properly when I have time.\" That time rarely comes. The message sinks under twenty newer ones, out of sight and out of mind."
+    },
+    {
+      "type": "point",
+      "title": "Every message\nis a [[small task]]",
+      "body": "Read, think, decide, type, check. Ten messages are ten small tasks, all at once, each with someone waiting. No wonder the app feels loud."
+    },
+    {
+      "type": "point",
+      "title": "The longer it\nwaits, the\n[[heavier]] it gets",
+      "body": "A day late needs a reply. A month late seems to need an apology, an explanation and a gift. So you wait longer, and it grows again."
+    },
+    {
+      "type": "point",
+      "title": "A [[short]] reply\nbeats a perfect\none",
+      "body": "\"Saw this, will answer properly tomorrow.\" Ten seconds, and they know you are there. Good enough today beats perfect never."
+    },
+    {
+      "type": "point",
+      "title": "Skip the\n[[apology]]\nessay",
+      "body": "\"Sorry, I am slow with messages.\" One line, then answer the actual question. Most people are just glad to hear back."
+    },
+    {
+      "type": "point",
+      "title": "Give replies a\n[[time]] of day",
+      "body": "Ten minutes after lunch, phone in hand, oldest first. A small daily slot turns replying into a habit instead of a debt."
+    },
+    {
+      "type": "outro",
+      "title": "Save this, then\nreply to [[one]]\nperson",
+      "body": "You are not a bad friend. You have a backlog. Dump who you owe into my.adhd and get one name back to answer first.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

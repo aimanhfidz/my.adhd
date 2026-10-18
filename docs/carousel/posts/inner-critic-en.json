@@ -1,0 +1,59 @@
+{
+  "slug": "inner-critic-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "gradient",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Forgot one thing. Spent all evening calling yourself useless.\n\nYears of being told to try harder can leave a loud voice in your head. Swipe for where it comes from, and three ways to talk back to it.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for the next time you are hard on yourself.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #selfcompassion",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Why am I so\nhard on\n[[myself]]?",
+      "sub": "That voice learned its lines a long time ago."
+    },
+    {
+      "type": "point",
+      "title": "You heard it\n[[a lot]]",
+      "body": "\"Try harder.\" \"Why are you like this?\" \"So smart, if only you focused.\" Hear it enough as a kid, and it becomes your own voice."
+    },
+    {
+      "type": "point",
+      "title": "One slip\nbecomes [[the story]]",
+      "body": "You forget a bill, and the voice says you forget everything. One small miss gets filed as proof of a much bigger story."
+    },
+    {
+      "type": "point",
+      "title": "It thinks it\nis [[helping]]",
+      "body": "The voice says it is keeping you in line. But shame rarely gets anything started. Mostly it makes the next task feel heavier."
+    },
+    {
+      "type": "point",
+      "title": "You would never\ntalk to a [[friend]]\nthis way",
+      "body": "If a friend forgot their keys, you would not call them useless. You would help them look. You deserve the same tone."
+    },
+    {
+      "type": "point",
+      "title": "[[Name]] the\nvoice",
+      "body": "\"That is the old voice again.\" Naming it reminds you it is a habit, not the truth about you."
+    },
+    {
+      "type": "point",
+      "title": "Swap [[always]]\nfor this time",
+      "body": "Not \"I always mess up\" but \"I missed this one.\" Smaller words make a smaller problem, and small problems can be solved."
+    },
+    {
+      "type": "point",
+      "title": "Count what\n[[went right]]",
+      "body": "At night, write down one thing you did today. Just one. Your brain keeps a list of misses. Give it a list of wins too."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext time you are\n[[hard on yourself]]",
+      "body": "You are not a list of mistakes. Dump the noise into my.adhd and get one kind, doable thing back.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

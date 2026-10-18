@@ -1,0 +1,59 @@
+{
+  "slug": "waiting-mode-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "night-orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Dentist at 4pm. So nothing else happens today.\n\nThat is waiting mode, and a lot of ADHD brains live in it. Swipe for why one appointment can hold a whole day hostage, and three ways to get the hours back.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for the next day with a 4pm in it.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #waitingmode",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Why does one\n[[4pm]] eat my\nwhole day?",
+      "sub": "You are not wasting the day. You are guarding it."
+    },
+    {
+      "type": "point",
+      "title": "You are on\n[[standby]]\nuntil 4",
+      "body": "An appointment later today, and the hours before it go grey. You could start something. You do not. Anything you start might make you late."
+    },
+    {
+      "type": "point",
+      "title": "Starting feels\n[[risky]]",
+      "body": "If you get absorbed, you might lose track and miss it. So your brain plays safe and picks nothing. It looks like idleness. It is self-protection."
+    },
+    {
+      "type": "point",
+      "title": "Waiting is\nstill [[work]]",
+      "body": "Checking the clock every ten minutes takes effort. By the time the appointment comes, you are tired from a day where nothing happened."
+    },
+    {
+      "type": "point",
+      "title": "It comes from\n[[losing time]]\nbefore",
+      "body": "After years of running late without meaning to, you stop trusting your sense of time. Waiting mode is your brain refusing to get caught out again."
+    },
+    {
+      "type": "point",
+      "title": "Set [[two]]\nalarms, then\nlet go",
+      "body": "One for getting ready, one for leaving. Now watching the clock is the alarm's job, not yours, and the hours before are free again."
+    },
+    {
+      "type": "point",
+      "title": "Pick a task\nwith a [[clean]]\nstop",
+      "body": "Laundry, a short email, a walk round the block. Things that end on their own are safer than a rabbit hole before 4pm."
+    },
+    {
+      "type": "point",
+      "title": "Book things\n[[early]] when\nyou can",
+      "body": "A 9am appointment leaves the rest of the day open. Put errands on the same day, so the other days stay clear."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext day with a\n[[4pm]] in it",
+      "body": "The waiting is real, and it is not laziness. Dump the day into my.adhd and get one thing back that fits before you go.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

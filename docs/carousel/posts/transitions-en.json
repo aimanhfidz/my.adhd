@@ -1,0 +1,59 @@
+{
+  "slug": "transitions-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "night-orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Five more minutes, you said. An hour ago.\n\nStopping one thing to start another is harder than it looks. Swipe for why switching costs an ADHD brain so much, and three ways to make it smoother.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for the next time you cannot put it down.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #executivefunction",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Why is stopping\n[[one thing]]\nso hard?",
+      "sub": "You are not stubborn. Switching just costs you more."
+    },
+    {
+      "type": "point",
+      "title": "Switching is a\n[[job]] of its own",
+      "body": "Stop, save your place, put it away, find the next thing, warm up again. Most people do it without thinking. For you, each step can stall."
+    },
+    {
+      "type": "point",
+      "title": "Once you are in,\nyou are [[in]]",
+      "body": "Getting started took real effort. Now you are moving, and stopping means paying that cost again later. Your brain would rather not."
+    },
+    {
+      "type": "point",
+      "title": "Being pulled out\nfeels like a\n[[jolt]]",
+      "body": "Someone calls your name mid-task and you snap. It is not that you mind them. Being pulled out of deep focus genuinely jars."
+    },
+    {
+      "type": "point",
+      "title": "The gap in\nbetween is\n[[slippery]]",
+      "body": "Between finishing one thing and starting the next, there is a small gap. Your phone lives in that gap. Ten minutes can vanish there."
+    },
+    {
+      "type": "point",
+      "title": "Warn yourself\n[[ten minutes]]\nahead",
+      "body": "An alarm that says \"wrap up\" before the one that says \"stop\". A soft landing is easier than a cliff edge."
+    },
+    {
+      "type": "point",
+      "title": "Leave a [[note]]\nfor future you",
+      "body": "One line on where you stopped and what comes next. Coming back is easier when you do not have to rebuild it all in your head."
+    },
+    {
+      "type": "point",
+      "title": "Build a small\n[[bridge]]",
+      "body": "Stand up, drink some water, then sit down to the next thing. A short ritual between tasks keeps the gap from swallowing you."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext time you can't\n[[put it down]]",
+      "body": "Switching is hard work, not a lack of willpower. Dump what is next into my.adhd and get one thing back to move to.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}

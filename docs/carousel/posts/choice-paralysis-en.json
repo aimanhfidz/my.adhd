@@ -1,0 +1,59 @@
+{
+  "slug": "choice-paralysis-en",
+  "lang": "en",
+  "theme": "light",
+  "style": "orange",
+  "label": "myadhd.my",
+  "footer": "MYADHD",
+  "caption": "Forty minutes choosing what to watch. Then you watched nothing.\n\nToo many options can freeze an ADHD brain. Swipe for why choosing feels this heavy, and three ways to decide faster.\n\nIf this sounded like your brain, come sit with people who get it. Our group is in my bio 👇\n\nSave this for the next menu you cannot pick from.\n\n#adhd #adhdmalaysia #myadhd #adhdadult #decisionfatigue",
+  "slides": [
+    {
+      "type": "cover",
+      "title": "Too many\noptions, so\nI pick [[none]]",
+      "sub": "You are not indecisive. You are holding every option at once."
+    },
+    {
+      "type": "point",
+      "title": "Every option\nstays [[open]]",
+      "body": "Lunch, which task first, which shirt. You hold all of them in your head at once, weighing each one, and none of them gets dropped."
+    },
+    {
+      "type": "point",
+      "title": "Choosing feels\nlike [[losing]]",
+      "body": "Picking one means giving up the rest. What if the other one was better? So you keep all of them, by picking nothing."
+    },
+    {
+      "type": "point",
+      "title": "Small choices\n[[add up]]",
+      "body": "By evening you have made a hundred tiny decisions. Then dinner asks for one more, and you would rather skip it than choose."
+    },
+    {
+      "type": "point",
+      "title": "Stuck looks\nlike [[research]]",
+      "body": "Twenty tabs comparing the same two things. Reviews of reviews. It feels like being careful. Often it is a way to put off deciding."
+    },
+    {
+      "type": "point",
+      "title": "Cut it to\n[[two]]",
+      "body": "Drop everything but two options, then pick one. Two is a choice your brain can hold. Twelve is a fog."
+    },
+    {
+      "type": "point",
+      "title": "Give it a\n[[deadline]]",
+      "body": "Five minutes, then go with whatever is in front of you. A choice made in time beats the perfect one never made."
+    },
+    {
+      "type": "point",
+      "title": "Decide [[once]],\nthen reuse it",
+      "body": "The same breakfast on weekdays. A usual order at your usual place. Every choice made in advance is one you do not make tired."
+    },
+    {
+      "type": "outro",
+      "title": "Save this for the\nnext menu you can't\n[[pick from]]",
+      "body": "Not choosing still costs you. Dump the options into my.adhd and get one thing back, already picked.",
+      "cta": {
+        "label": "Follow for more at myadhd.my"
+      }
+    }
+  ]
+}
