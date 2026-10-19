@@ -816,6 +816,11 @@ by absolute path, so there is still one copy of each. No function: `api/`
 is at the twelve-function cap and focus needs none. The domain itself is
 added in the Vercel dashboard, not in any file.
 
+**How people reach it.** The site links it in three places since `b9f4a8c`:
+the `#focus` section on `/tools`, "Focus timer" in the Support menu, and the
+footer's Support column — all in the same tab, because it is ours. Nothing
+else links it yet.
+
 **Its storage is its own.** Everything lives in `localStorage` under
 `myadhd.focus.v1` — settings, its task list, the notepad, the session log,
 and the running timer. It never reads or writes `myadhd.v1`: on localhost it
@@ -995,9 +1000,13 @@ design is written down in `docs/loud-redesign-plan.md`.
 | `/self-check` | **The test.** A standalone page, outside the site. Google sign-in + a PDPA intake since 2026-09-13 — see below |
 | `/blog` | Offer 02. No posts yet; one card says so and links to `/living-with-adhd` |
 | `/habits` | Offer 03. Five habits, each explained |
-| `/reading-list` | Offer 04. No books yet; one card says so and links to `/habits` |
-| `/tools` | Offer 05 — **the app's product page**, carrying what the old landing page said about it |
-| `/about` | About Us. Opens on the first sentence, immediately |
+| `/reading-list` | Offer 04, "Digital library" in the bar. Ten books in three groups, each with who it is for, the audiobook length and the page count. **Written by `tools/shelf.py`** — see below |
+| `/tools` | Offer 05 — **the app's product page**, carrying what the old landing page said about it. Its `#focus` section links to focus.myadhd.my |
+| `/living-with-adhd` | The hub and 25 topic pages under it, **written by `tools/topics.py`**; never hand-edit them |
+| `/find-help` | Getting assessed in Malaysia: the klinik kesihatan road and the private one, with prices dated Oct 2026, psychiatrist vs psychologist, what to bring, and the crisis lines |
+| `/community` | The WhatsApp group: who it is for, the three house rules, and the invite link (in this file only; change it here if the link is reset) |
+| `/events` | Late Talks, three Saturday nights on Zoom; the ask is the BCL registration form. **Its dates are fixed text** — after Sat 21 Nov it needs the next event, or Events goes back to Soon in `tools/bar.py` |
+| `/about` | About Us, `docs/content/about.md` verbatim. Opens on its first line, "You lose your keys. Again.", as the h1 |
 | `/testimonials` | Three real quotes, in the words the people used |
 | `/contact` | Email, Threads, Instagram. No form |
 
@@ -1005,11 +1014,17 @@ The bar carries all of them in five entries (since 2026-10-18): four
 dropdowns — Learn, Support, Community, About — and Digital library, a
 plain link to `/reading-list`. Each dropdown is one button that opens its
 menu; no group label is a link, which is why there is no longer an
-Activities page for the offers to be children of. A page that is planned
-but not written (Find professional help, For family and partners, WhatsApp
-group, Events) is listed greyed out with a "Soon" tag and no link; give it
-an href in `tools/bar.py` when it exists. The page you are on is named by the `aria-current` on its
+Activities page for the offers to be children of. Support also carries the
+Focus timer, which leaves the site for focus.myadhd.my in the same tab.
+A page that is planned but not written can be listed greyed out with a
+"Soon" tag and no link (an href of `None` in `tools/bar.py`); since
+2026-10-19 there are none, because For family and partners came out of the
+menu until it is written. The page you are on is named by the `aria-current` on its
 link inside the menu, and the group it sits in lights up.
+
+**Tab titles are the page's name alone** — "Tools", "Burnout", not
+"Tools — MyADHD" (since 2026-10-19). `og:title` matches. The home page is
+"MyADHD". `tools/topics.py` writes the topic pages' titles the same way.
 
 **The bar is generated.** Every page's `<nav class="bar">` is written by
 `tools/bar.py` from one table — the desktop row and the phone sheet both,
@@ -1017,13 +1032,26 @@ so they cannot drift. Edit the markup there and run `python3 tools/bar.py`
 from the repo root; it asserts the old block matched before writing, so a
 page whose bar has drifted fails loudly instead of being overwritten.
 
-Every page ends on an Ask and a pager, and the pagers form one loop
-through all eight.
+Every page ends on an Ask and a pager. The pagers form one loop of seven —
+about → testimonials → contact → blog → habits → reading-list → tools →
+about — and the newer pages join it rather than extend it: `/events` points
+to `/community`, `/community` to `/testimonials`, `/find-help` to `/tools`,
+the hub to `/habits`.
 
 **`sitemap.xml` and `robots.txt` are generated** by `tools/sitemap.py`
 (since 2026-10-18). Every root and `living-with-adhd/` page is listed unless
 it says `noindex` or is held back — `/app` and `/install` are, until the full
 opening. After committing a new page, run it and commit what it wrote.
+
+**Three generators, one order.** `tools/bar.py` writes the bar and the
+footer on the root pages; `tools/topics.py` writes the hub and the topic
+pages and takes their footer from `habits.html`, so it runs second;
+`tools/sitemap.py` runs last. `tools/shelf.py` is separate: it rewrites
+the section of `reading-list.html` between the "the shelf" comment and its
+`</section>`, and the Malay between the two `shelf` marker comments in
+`site.ms.js`, from its `BOOKS` table. A book goes in only when somebody here
+has finished it; re-check its facts (edition, pages, audiobook length)
+when you touch its line.
 
 ### The Malay
 
@@ -1042,13 +1070,14 @@ the old string's key before you touch the English.
 
 **The Malay is not a translation and must not read like one**, which is the
 one rule about it that is easy to lose. It is the same promises said again
-by someone who speaks Malay, in this brand's voice — the register,
-templates and checklist are in `docs/bahasa-melayu-reference.md` (the PMX /
-MADANI baku register, main reference since 2026-09-18). The file was last
-rewritten wholesale on 2026-09-13, against the earlier `awak` register, and
-has not yet been brought over. The screener is
-the exception in both directions: the eighteen ASRS questions in `test.js`
-are an instrument, not copy, and they get no voice pass at all.
+by someone who speaks Malay, in this brand's voice. **The reader is `awak`,
+everywhere** — `BRAND.md` §8.2, which on 2026-10-04 retired the `anda`
+register of `docs/bahasa-melayu-reference.md`; the long voice guide is
+`docs/bahasa-melayu-voice.md`. Body copy says `tak`; legal, disclaimer and
+consent lines keep `tidak`. The self-check came over on 2026-10-19 with two
+exceptions that stay formal on purpose: the eighteen ASRS questions in
+`test.js` are an instrument, not copy, and get no voice pass at all; and
+the PDPA notice in the markup is a legal text.
 
 ### The scene, removed
 
@@ -1095,14 +1124,29 @@ is native SwiftUI since 2026-09-20.
 
 ### Type and colour
 
-DM Sans and DM Mono, self-hosted beside Baloo 2 in `fonts/`, declared in
-`theme.css` as `--sans` and `--mono`. **Baloo (`--display`) is now the
-wordmark's and the app's only** — a heading that comes out rounded and
-bold is one still inheriting it. Sans at 400 does every sentence, mono
-does every label; nothing on the site is bold except the lockup, which is
-Baloo and rides on **every** page — it was dropped from the sub-pages when
-the lockup became a back arrow, which left the brand's own face rendering
-on one page out of eleven.
+Baloo 2, DM Sans and DM Mono, self-hosted in `fonts/` and declared in
+`theme.css` as `--display`, `--sans` and `--mono`. **Since 2026-10-19 every
+page sits on one six-step scale** — lead in, h1, h2, h3, body, small — with
+tracking at 0 on every step. The table is `BRAND.md` §4.2; this is where it
+lives in code:
+
+- `/about` uses the named classes, `.t-lead` to `.t-small`, in `site.css`
+  under "the six-step scale".
+- Every other page gets the same values from **"THE SIX-STEP SCALE,
+  SITE-WIDE"**, near the end of `site.css`, which maps the classes the
+  pages already use (`.kicker`, `.page-title`, `.section-h2`, `.lede`, the
+  card labels and titles …). No page was rebuilt for it, so a generated
+  page follows the scale without re-running its generator. Add a new text
+  class to that block, or it will keep the old tracking.
+- The self-check carries its own copy at the end of `test.css`, with its
+  h1 capped at 60px so the start button stays on the first screen.
+
+Lead-ins (what used to be the mono kicker) are Baloo 700 capitals in
+`--ink`, with no full stop after them; a card's label keeps its blue.
+Headings, lead-ins and card titles are Baloo; every sentence is DM Sans;
+DM Mono is left to interface — counters, numerals, the self-check's
+progress line. Body keeps a 1.5 line height, the brand's floor for running
+text.
 
 **Orange is the action colour and appears nowhere that is not something to
 press:** the fill of every primary button, the dot on the pill, the dot
@@ -1114,11 +1158,12 @@ and on links.
 
 ### Copy that is not finished
 
-`/self-check`, `/blog`, `/habits`, `/reading-list` and `/testimonials`
-each ship with a hole marked `data-placeholder`: a dashed edge and a
-corner marker. Inventing screening items, book titles or praise would be
-worse than an empty frame that says so. Delete the attribute when the real
-thing goes in; when the last one goes, the whole treatment goes with it.
+The pages used to ship with holes marked `data-placeholder`: a dashed edge
+and a corner marker, because inventing screening items, book titles or
+praise would be worse than an empty frame that says so. **None is left on a
+page** (the last went with the shelf on 2026-10-19); the rule in `site.css`
+stays, and a comment in `testimonials.html` says to put the attribute back
+rather than write a stand-in if a quote is ever withdrawn.
 
 ### The self-check
 
@@ -1221,8 +1266,9 @@ others are sections about the product.
 
 `/testimonials` carries three real quotes (since 2026-09-11); the people asked
 not to be named, so each by-line is what they gave — sex and age. The blog
-and the shelf dropped their `[data-placeholder]` holes on 2026-10-18: each has
-one plain card saying it is not written yet, with a link somewhere that is.
+dropped its `[data-placeholder]` hole on 2026-10-18 for one plain card
+saying it is not written yet, with a link somewhere that is. The shelf has
+ten real books since 2026-10-19.
 
 ### The bar
 
