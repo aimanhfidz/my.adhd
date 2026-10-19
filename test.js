@@ -139,17 +139,20 @@
       h1: 'Sepuluh minit, percuma, dan salinan yang kekal milik awak.',
       lede: 'Ini ialah Skala Laporan Kendiri <span class="adhd-word">ADHD</span> Dewasa (ASRS-v1.1) — soal selidik saringan yang digunakan perkhidmatan kesihatan, diterjemahkan di sini untuk bacaan.',
       lede2: 'Jawab dengan jujur tentang <b>enam bulan lepas</b>. Awak akan dapat gambaran jelas sama ada ciri-ciri awak berada dalam julat yang wajar mendapat penilaian penuh.',
-      /* The intro's points, button and meta line, and everything new
-         since the redesign of 2026-10-04, are in the baku register of
-         docs/bahasa-melayu-reference.md: `anda`, `tidak`. The older
-         strings around them still say `awak` and are due the same pass. */
+      /* The reader is `awak` on every screen here, as on the rest of the
+         site (BRAND.md §8.2, which retired the 2026-09-24 `anda` rule on
+         2026-10-04). Storage, consent and disclaimer lines keep `tidak`;
+         the rest is `tak` and `je`. Two things are not this table's to
+         change: the PDPA notice in the markup, which stays formal, and
+         the ASRS items in MS above, which are a reading translation of
+         an instrument and are not reworded. */
       p1t: 'Fikirkan enam bulan yang lepas',
-      p1d: 'Bukan minggu ini sahaja, tetapi keadaan anda yang biasa.',
+      p1d: 'Bukan minggu ni je, tapi keadaan awak yang biasa.',
       p2t: 'Jawab mengikut keadaan sebenar',
-      p2d: 'Bukan seperti yang anda harapkan, atau seperti yang dilihat orang lain.',
+      p2d: 'Bukan macam yang awak harapkan, atau macam yang orang lain nampak.',
       start: 'Mulakan semakan kendiri',
-      meta: 'Kira-kira 5 minit &middot; 6 soalan, kemudian 12 lagi jika anda mahu &middot; Percuma',
-      metaSub: 'Tidak perlu log masuk untuk bermula. Di akhir, log masuk dengan Google untuk mendapatkan laporan penuh anda. Ini bukan diagnosis.',
+      meta: 'Kira-kira 5 minit &middot; 6 soalan, kemudian 12 lagi kalau awak nak &middot; Percuma',
+      metaSub: 'Tak perlu log masuk untuk mula. Di akhir, log masuk dengan Google untuk dapatkan laporan penuh awak. Ini bukan diagnosis.',
       whoH: 'Siapa yang menulis soalan ini',
       who1: 'Lapan belas soalan dalam semakan kendiri ini ialah <b>Senarai Semak Simptom Skala Laporan Kendiri <span class="adhd-word">ADHD</span> Dewasa (ASRS-v1.1)</b>. Versi Bahasa Melayu di halaman ini ialah terjemahan untuk bacaan; instrumen yang menjadi rujukan, dan yang menentukan skor, ialah teks asal dalam bahasa Inggeris, yang MyADHD tidak menulis dan tidak mengubahnya.',
       who2: 'Senarai semak ini dibangunkan bersama <b>Pertubuhan Kesihatan Sedunia (WHO)</b> dan Kumpulan Kerja <span class="adhd-word">ADHD</span> Dewasa, yang terdiri daripada:',
@@ -163,32 +166,29 @@
          title of the instrument, and who1 above already says the English
          text is the one that scores.
 
-         `anda`, not `awak`, and that is not a slip. This table runs both:
-         the result's own copy speaks in `awak` like the rest of the site,
-         and the attribution and storage lines — who1, not2, the PDPA
-         notice — keep `anda`. This line is the second kind. */
-      rCredit: 'Diskor menggunakan Adult <span class="adhd-word">ADHD</span> Self-Report Scale (ASRS-v1.1), yang dibangunkan bersama <b>Pertubuhan Kesihatan Sedunia (WHO)</b>. Jawapan anda telah disimpan &mdash; <a href="/privacy" target="_blank" rel="noopener">notis privasi</a> menyatakan apa yang disimpan, dan untuk berapa lama.',
+         Like the storage lines, it keeps `tidak`; the reader is `awak`. */
+      rCredit: 'Diskor menggunakan Adult <span class="adhd-word">ADHD</span> Self-Report Scale (ASRS-v1.1), yang dibangunkan bersama <b>Pertubuhan Kesihatan Sedunia (WHO)</b>. Jawapan awak telah disimpan &mdash; <a href="/privacy" target="_blank" rel="noopener">notis privasi</a> menyatakan apa yang disimpan, dan untuk berapa lama.',
 
       notH: 'Apa yang ini bukan',
       not1: '<b>Ini alat saringan, bukan diagnosis.</b> Hanya pakar psikiatri atau ahli psikologi klinikal boleh mendiagnosis <span class="adhd-word">ADHD</span>. Skor yang tinggi ialah sebab untuk membuat temu janji itu, bukan jawapan; skor yang rendah tidak menolak apa-apa.',
-      not2: 'Jawapan anda disimpan, dan inilah maksudnya.',
-      nk1: '<b>Apa yang disimpan</b> &mdash; hanya jika anda log masuk di akhir dan bersetuju: jawapan anda, skor Bahagian A anda, dan butiran yang anda berikan &mdash; nama, umur, jantina, maklumat diagnosis, dan nombor telefon jika anda memberikannya. Sebelum itu, tiada apa-apa keluar dari pelayar ini.',
-      nk2: '<b>Di mana</b> &mdash; di bawah akaun Google anda, dalam pangkalan data kami di Supabase.',
+      not2: 'Jawapan awak disimpan, dan inilah maksudnya.',
+      nk1: '<b>Apa yang disimpan</b> &mdash; hanya jika awak log masuk di akhir dan bersetuju: jawapan awak, skor Bahagian A awak, dan butiran yang awak berikan &mdash; nama, umur, jantina, maklumat diagnosis, dan nombor telefon jika awak memberikannya. Sebelum itu, tiada apa-apa keluar dari pelayar ini.',
+      nk2: '<b>Di mana</b> &mdash; di bawah akaun Google awak, dalam pangkalan data kami di Supabase.',
       nk3: '<b>Untuk apa</b> &mdash; tiga perkara sahaja:',
-      nk3a: 'untuk menghubungi anda tentang sokongan ADHD jika anda memintanya;',
-      nk3b: 'supaya anda boleh mencari dan memadam rekod anda sendiri;',
+      nk3a: 'untuk menghubungi awak tentang sokongan ADHD jika awak memintanya;',
+      nk3b: 'supaya awak boleh mencari dan memadam rekod awak sendiri;',
       nk3c: 'dan, setelah nama dan setiap butiran pengenalan lain dibuang, untuk mengira bagaimana rakyat Malaysia mendapat skor.',
-      nk4: '<b>Berapa lama</b> &mdash; 24 bulan selepas semakan kendiri terakhir anda, kemudian ia dipadam secara automatik.',
+      nk4: '<b>Berapa lama</b> &mdash; 24 bulan selepas semakan kendiri terakhir awak, kemudian ia dipadam secara automatik.',
       not3: '<a href="/privacy" target="_blank" rel="noopener">Notis privasi</a> menerangkannya sepenuhnya, dalam Bahasa Inggeris dan Bahasa Melayu.',
       stepsNav: 'Soalan',
       enShow: 'Tunjukkan teks asal dalam bahasa Inggeris',
       bKicker: 'Bahagian A, selesai',
       bH: 'Itulah saringannya. Tarik nafas dahulu.',
-      bP: 'Skor anda datang daripada enam soalan tadi. Dua belas soalan lagi memberi pakar klinikal konteks tambahan &mdash; ia tidak mengubah skor, dan mengambil masa kira-kira tiga minit.',
+      bP: 'Skor awak datang daripada enam soalan tadi. Dua belas soalan lagi memberi pakar klinikal konteks tambahan &mdash; ia tidak mengubah skor, dan mengambil masa kira-kira tiga minit.',
       bSee: 'Lihat keputusan saya',
       bMore: 'Jawab 12 lagi',
       rPrint: 'Cetak atau simpan sebagai PDF',
-      rAnswers: 'Jawapan anda',
+      rAnswers: 'Jawapan awak',
       rAnswersNote: 'Jawapan yang ditanda berada dalam julat berlorek soalan itu &mdash; yang akan ditanya dahulu oleh pakar klinikal.',
       back: '← Soalan sebelumnya',
       hint: 'Tekan 1–5 untuk menjawab',
@@ -196,7 +196,7 @@
       rOf: 'daripada 6 jawapan Bahagian A dalam julat signifikan',
       rB1: 'Awak juga jawab Bahagian B, di mana',
       rB2: 'daripada 12 jatuh dalam julat berlorek. Bahagian B tidak diberi skor dan tidak mengubah keputusan di atas — ia memberi pakar klinikal petunjuk tambahan untuk ditanya.',
-      n1Dx: 'Bawa laporan ini ke temu janji anda yang seterusnya &mdash; ia menunjukkan keadaan anda sepanjang enam bulan yang lepas.',
+      n1Dx: 'Bawa laporan ini ke temu janji awak yang seterusnya &mdash; ia tunjukkan keadaan awak sepanjang enam bulan lepas.',
       n1: 'Bawa keputusan ini kepada pakar psikiatri atau ahli psikologi klinikal — ia bagi mereka sesuatu yang kukuh untuk dimulakan. <a href="/find-help">Cara cari mereka di Malaysia</a>.',
       n2: 'Tulis apa yang betul-betul tak kena dalam masa seminggu, dan bawa sekali.',
       n3: 'Apa pun angkanya, hari ini tetap kena dihabiskan. <a href="/tools">Tengok apa yang kami bina untuk tu</a>.',
@@ -207,8 +207,8 @@
       /* Three quick things, before the questions */
       aKicker: 'Sebelum soalan',
       aH: 'Tiga perkara ringkas.',
-      aLede: 'Maklumat ini kekal dalam pelayar ini bersama jawapan anda. Tiada apa-apa dihantar melainkan anda log masuk di akhir dan bersetuju.',
-      aDx: 'Adakah anda pernah didiagnosis dengan <span class="adhd-word">ADHD</span>?',
+      aLede: 'Maklumat ini kekal dalam pelayar ini bersama jawapan awak. Tiada apa-apa dihantar melainkan awak log masuk di akhir dan bersetuju.',
+      aDx: 'Pernahkah awak didiagnosis dengan <span class="adhd-word">ADHD</span>?',
       dxNever: 'Tidak, saya belum pernah berjumpa sesiapa tentangnya',
       dxConsidering: 'Belum &mdash; saya sedang mempertimbangkan penilaian',
       dxDiagnosed: 'Ya, saya telah didiagnosis',
@@ -218,28 +218,28 @@
 
       /* The unlock, after the questions */
       uKicker: 'Keputusan awak sudah sedia',
-      uH: 'Log masuk untuk mendapatkan laporan penuh anda.',
+      uH: 'Log masuk untuk dapatkan laporan penuh awak.',
       u1t: 'Laporan penuh',
-      u1d: 'Maksud skor anda, setiap jawapan ditanda seperti yang dibaca oleh pakar klinikal, dan Bahagian B jika anda menjawabnya.',
+      u1d: 'Maksud skor awak, setiap jawapan ditanda seperti yang dibaca oleh pakar klinikal, dan Bahagian B kalau awak menjawabnya.',
       u2t: 'Salinan untuk dibawa',
-      u2d: 'Cetak, atau simpan sebagai PDF, untuk temu janji anda.',
-      u3t: 'Disimpan dalam akaun anda, bukan dalam pelayar ini',
-      u3d: 'Disimpan di bawah akaun Google anda. Minta kami memadamnya pada bila-bila masa.',
-      u4t: 'Sokongan, hanya jika anda minta',
-      u4d: 'Satu tanda pilihan dan kami akan menghubungi anda tentang sokongan ADHD. Tanpanya, kami tidak akan menghubungi anda.',
+      u2d: 'Cetak, atau simpan sebagai PDF, untuk temu janji awak.',
+      u3t: 'Disimpan dalam akaun awak, bukan dalam pelayar ini',
+      u3d: 'Disimpan di bawah akaun Google awak. Minta kami padamkannya bila-bila masa.',
+      u4t: 'Sokongan, hanya kalau awak minta',
+      u4d: 'Satu tanda pilihan dan kami akan hubungi awak tentang sokongan ADHD. Tanpanya, kami tidak akan hubungi awak.',
       gGo: 'Teruskan dengan Google',
-      uFine: 'Google memberi kami nama dan e-mel anda &mdash; bukan kalendar, kenalan atau apa-apa yang lain. Kami tidak menjualnya, dan tiada surat berita. Skrin seterusnya ialah skrin Google sendiri; anda akan kembali terus ke laporan anda.',
+      uFine: 'Google beri kami nama dan e-mel awak &mdash; bukan kalendar, kenalan atau apa-apa yang lain. Kami tidak menjualnya, dan tiada surat berita. Skrin seterusnya ialah skrin Google sendiri; awak akan kembali terus ke laporan awak.',
       uLeave: 'Keluar tanpa menyimpan',
 
       dKicker: 'Langkah terakhir',
-      dH: 'Apa yang kami simpan, dan hak anda terhadapnya.',
-      dLede: 'Laporan anda hanya satu tekanan lagi. Inilah yang disimpan bersamanya. Baca notis sebelum anda menanda apa-apa &mdash; ia pendek, dan itulah bahagian yang paling penting.',
+      dH: 'Apa yang kami simpan, dan hak awak terhadapnya.',
+      dLede: 'Laporan awak tinggal satu tekan je lagi. Inilah yang disimpan bersamanya. Baca notis sebelum awak tanda apa-apa &mdash; ia pendek, dan itulah bahagian paling penting.',
       dName: 'Nama awak',
       dNamePh: 'Nak kami panggil awak apa?',
       dPhone: 'Nombor telefon <span class="f-opt" data-i18n="dPhoneOpt">pilihan</span>',
       dPhoneOpt: 'pilihan',
       dPhonePh: '012-345 6789',
-      dAge: 'Umur anda',
+      dAge: 'Umur awak',
       dAgePh: 'cth. 28',
       dGender: 'Jantina',
       gMale: 'Lelaki',
@@ -257,7 +257,7 @@
 
       cTerms: 'Saya telah membaca dan bersetuju dengan <a href="/terms" target="_blank" rel="noopener">Terma Penggunaan</a> dan <a href="/privacy" target="_blank" rel="noopener">Notis Privasi</a>.',
       cHealth: 'Saya memberi kebenaran nyata kepada MyADHD untuk memproses jawapan saya kepada soalan kesihatan ini dan maklumat diagnosis yang saya berikan &mdash; data peribadi sensitif di bawah PDPA &mdash; bagi tiga tujuan di atas.',
-      cContact: 'Anda boleh menghubungi saya tentang sokongan, sumber dan acara ADHD. <span class="f-opt" data-i18n="cContactOpt">pilihan</span>',
+      cContact: 'MyADHD boleh menghubungi saya tentang sokongan, sumber dan acara ADHD. <span class="f-opt" data-i18n="cContactOpt">pilihan</span>',
       cContactOpt: 'pilihan',
 
       yKicker: 'Bukan yang ini',
@@ -273,7 +273,7 @@
       eAgeHigh: 'Umur itu nampak tidak betul. Semak semula angkanya?',
       eName: 'Kami perlukan sesuatu untuk panggil awak — dua huruf atau lebih.',
       eGender: 'Pilih salah satu daripada tiga.',
-      eDx: 'Pilih yang paling hampir dengan keadaan anda — atau pilih tidak mahu nyatakan.',
+      eDx: 'Pilih yang paling hampir dengan keadaan awak — atau pilih tidak mahu nyatakan.',
       eConsent: 'Dua kotak pertama itulah yang kami tidak boleh teruskan tanpanya.',
       ePhone: 'Itu tak nampak macam nombor telefon yang boleh kami hubungi. Biar kosong kalau awak tak nak bagi.',
       savedOk: 'Disimpan dalam akaun awak.',
