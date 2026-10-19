@@ -678,6 +678,49 @@ body{
 }
 :root[data-theme="dark"] .num{color:var(--accent)}
 
+/* ---------- the six-step scale ----------
+   Lead in, three headings, body and small, each with its own line height
+   and no tracking at all, so the levels are told apart by size and weight
+   alone. /about wears it first. Body keeps 1.5 rather than the reference's
+   1.25: BRAND.md §4.2 sets that as the floor for running text. */
+.t-lead{
+  font-family:var(--display); font-weight:700;
+  font-size:15px; line-height:1.5; letter-spacing:0;
+  text-transform:uppercase; color:var(--ink);
+}
+.t-h1{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(40px,6.4vw,88px); line-height:1.15; letter-spacing:0;
+  color:var(--ink); max-width:18ch; text-wrap:balance;
+}
+.t-h2{
+  font-family:var(--display); font-weight:600;
+  font-size:clamp(28px,4vw,52px); line-height:1.1; letter-spacing:0;
+  color:var(--ink); max-width:24ch; text-wrap:balance;
+}
+.t-h3{
+  font-family:var(--display); font-weight:800;
+  font-size:clamp(19px,2.2vw,26px); line-height:1.1; letter-spacing:0;
+  text-transform:uppercase; color:var(--ink); max-width:34ch;
+}
+.t-body{
+  font-size:clamp(16px,1.9vw,19px); line-height:1.5; letter-spacing:0;
+  color:var(--ink-soft); max-width:62ch;
+}
+.t-small{font-size:14px; line-height:1.25; letter-spacing:0; color:var(--faint)}
+.t-small b{display:block; font-weight:600; color:var(--ink)}
+
+.t-lead + .t-h1{margin-top:clamp(10px,1.4vw,16px)}
+.t-h1 + .t-body{margin-top:clamp(24px,3.2vw,40px)}
+.t-body + .t-body{margin-top:1em}
+.t-body + .t-h3{margin-top:clamp(14px,1.8vw,20px)}
+.t-h3 + .t-h2{margin-top:clamp(32px,5vh,56px)}
+.t-body + .t-small{
+  margin-top:clamp(40px,6vh,72px);
+  padding-top:clamp(18px,2.6vh,26px);
+  border-top:1px solid var(--line);
+}
+
 
 /* ============ THE ASK ============
    Every page ends on one sentence and one button, the way LOUD's do.
@@ -1960,3 +2003,58 @@ em.hl{font-style:normal; color:var(--violet-ink)}
   width:44px; height:44px; border-radius:999px; justify-content:center;
   background:rgb(var(--door-b) / var(--door-b-hi));
 }
+
+
+/* ============ THE SIX-STEP SCALE, SITE-WIDE ============
+   /about went onto .t-lead … .t-small first; this block puts every other
+   page on the same six steps by mapping the classes they already use,
+   so no generated page has to be rebuilt to follow it. Tracking is 0
+   on every step and the line heights are the scale's own.
+
+     lead in   kickers and card labels: Baloo 700, capitals, 1.5
+     h1        the page's one title: up to 88px, 1.15
+     h2        section heads, statements and the asks: up to 52px, 1.1
+     h3        group heads in capitals; card titles keep sentence case,
+               since a sentence in capitals is slower to read, and take
+               the h3's 1.1
+     body      every paragraph: 1.5 (BRAND.md §4.2's floor, not 1.25)
+     small     by-lines, fine print and sign-offs: DM Sans, 1.25
+
+   Nav, footer, chips, numerals and buttons are interface, not text, and
+   keep their own rules. The self-check has its own stylesheet. */
+.kicker, .door-kicker, .cell-label, .sc-label{
+  font-family:var(--display); font-weight:700;
+  line-height:1.5; letter-spacing:0; text-transform:uppercase;
+}
+.kicker{font-size:15px; color:var(--ink)}
+.door-kicker, .cell-label, .sc-label{font-size:13px}
+.spine > section:not(:first-child) > .kicker,
+.spine > section:not(:first-child) > div > .kicker{color:var(--ink)}
+
+.page-title, .doors-line{
+  font-size:clamp(40px,6.4vw,88px); line-height:1.15; letter-spacing:0;
+}
+.section-h2, .statement, .facts-line, .funnel-line, .ask-line, .ask-line.is-app, .lwa-h2{
+  font-size:clamp(28px,4vw,52px); line-height:1.1; letter-spacing:0;
+}
+.lwa-group-h{
+  font-family:var(--display); font-weight:800;
+  font-size:clamp(19px,2.2vw,26px); line-height:1.1; letter-spacing:0;
+  color:var(--ink);
+}
+.cell-title, .sc-title, .door-title, .fact-title, .q-head, .sr-title,
+.topic-close, .lwa-warm-line{line-height:1.1; letter-spacing:0}
+
+.lede, .body-copy, .cell-text, .sc-text, .door-body, .fact-body,
+.facts-lede, .doors-lede, .funnel-lede, .ask-lede, .quote blockquote p,
+.cell-list li, .symptoms li, .turn, .sr-body{line-height:1.5; letter-spacing:0}
+/* the line under the title on blog, habits, reading-list and tools, which
+   never had a rule of its own (see the note where .offer used to be) */
+.offer-sub{font-size:clamp(17px,2vw,22px); line-height:1.5; color:var(--ink)}
+.offer-sub + .body-copy{margin-top:clamp(20px,2.6vw,32px)}
+
+.q-by, .book-by, .book-facts, .cell-cite, .t-fine, .sign, .ask-assure{
+  font-family:var(--sans); line-height:1.25; letter-spacing:0; text-transform:none;
+}
+.sign, .ask-assure{font-size:14px}
+.sign b{font-weight:600}

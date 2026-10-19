@@ -324,7 +324,7 @@ def tools_doors():
       %s
     </div>
   </section>''' % (
-        el('p', 'kicker lwa-k', 'For the day.', 'Untuk hari-hari awak.'),
+        el('p', 'kicker lwa-k', 'For the day', 'Untuk hari-hari awak'),
         el('h2', 'lwa-h2', 'Tools for getting through it', 'Alatan untuk melaluinya'),
         door('door--known', '/habits', 'Habits', 'Tabiat',
              'Systems that work with your brain', 'Sistem yang ngam dengan otak awak',
@@ -427,7 +427,7 @@ def hub():
 
 ''' % {
         'pill': PILL,
-        'kicker': el('p', 'kicker', 'I already know.', 'Saya memang sudah tahu.'),
+        'kicker': el('p', 'kicker', 'I already know', 'Saya memang sudah tahu'),
         'h1': el('h1', 'page-title', 'Living with ADHD.', 'Hidup dengan ADHD.'),
         'lead': el('p', 'body-copy',
                    'What ADHD is actually doing to your day, and what helps. %s short reads '
@@ -436,15 +436,15 @@ def hub():
                    'bacaan pendek &mdash; mula dengan yang paling macam minggu awak.'
                    % COUNT[len(TOPICS)][1].capitalize()),
         'trio': trio,
-        'allk': el('p', 'kicker lwa-k', 'All %s.' % COUNT[len(TOPICS)][0].lower(),
-                   'Kesemua %s.' % COUNT[len(TOPICS)][1]),
+        'allk': el('p', 'kicker lwa-k', 'All %s' % COUNT[len(TOPICS)][0].lower(),
+                   'Kesemua %s' % COUNT[len(TOPICS)][1]),
         'chips': chip_html,
         'groups': groups,
         'tools': tools_doors(),
         'ask': ask(),
         'pager': pager('/habits', 'Habits', 'Tabiat'),
     }
-    return (head('Living with ADHD — MyADHD', desc, 'https://myadhd.my/living-with-adhd', 'website')
+    return (head('Living with ADHD', desc, 'https://myadhd.my/living-with-adhd', 'website')
             + SPRITE_WAVE + build_bar('/living-with-adhd', True, HOME_BACK) + '\n\n' + body + FOOTER)
 
 
@@ -507,7 +507,7 @@ def page(i, slug):
         'name': el('span', '', esc(d['en_name']), esc(d['ms_name'])),
         'h1': el('h1', 'page-title', marked(en['cover']['title']), marked(ms['cover']['title'])),
         'lead': el('p', 'body-copy topic-lead', flat(en['cover'].get('sub', '')), flat(ms['cover'].get('sub', ''))),
-        'pk': el('p', 'kicker lwa-k', 'The short version.', 'Ringkasnya.'),
+        'pk': el('p', 'kicker lwa-k', 'The short version', 'Ringkasnya'),
         'points': el('div', 'sc-grid sc-grid--2 topic-points', points(en), points(ms)),
         'close': el('p', 'topic-close', closing(en['outro'].get('body', '')), closing(ms['outro'].get('body', ''))),
         'app': el('a', 'arrow-link topic-app', 'How my.adhd helps ' + ICON, 'Bagaimana my.adhd membantu {icon}',
@@ -518,12 +518,12 @@ def page(i, slug):
                    'Diadaptasi daripada siri karusel kami. Sebagai permulaan, bukan nasihat '
                    'perubatan &mdash; untuk itu, berbincanglah dengan pakar psikiatri atau ahli '
                    'psikologi klinikal.'),
-        'mk': el('p', 'kicker lwa-k', 'More like this.', 'Topik berkaitan.'),
+        'mk': el('p', 'kicker lwa-k', 'More like this', 'Topik berkaitan'),
         'more': '\n      '.join(card(s) for s in more),
         'ask': ask(),
         'pager': pager('/living-with-adhd/' + nxt[0], esc(nxt[2]), esc(nxt[3])),
     }
-    title = '%s — Living with ADHD — MyADHD' % d['en_name']
+    title = d['en_name']
     url = 'https://myadhd.my/living-with-adhd/%s' % slug
     return (head(title, desc, url, 'article') + SPRITE_WAVE
             + build_bar('/living-with-adhd/' + slug, True, HUB_BACK) + '\n\n' + body + FOOTER)

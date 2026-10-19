@@ -35,8 +35,7 @@ LEARN = [('/self-check','i050c897','Self-check'),
          ('/blog','i0b9d2b2','Blog')]
 SUPPORT = [('/tools','i4fa8cc8','Tools'),
            ('https://focus.myadhd.my/','if93b8ea','Focus timer'),
-           ('/find-help','ifd3ef12','Find professional help'),
-           (None,'ic8eddc1','For family and partners')]
+           ('/find-help','ifd3ef12','Find professional help')]
 COMMUNITY = [('/testimonials','i2c2cd2a','Testimonials'),
              ('/community','ibae7c4c','WhatsApp group'),
              ('/events','ic5497bc','Events')]
