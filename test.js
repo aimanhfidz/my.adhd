@@ -135,7 +135,7 @@
       detailNo:  'Kurang daripada empat jawapan Bahagian A awak jatuh dalam julat yang dianggap signifikan oleh ASRS. Itu bukan bermakna awak bebas daripadanya, dan ia tidak menolak kemungkinan ADHD — saringan ini hanya enam soalan, dan ramai yang mempunyai <span class="adhd-word">ADHD</span> mendapat skor di bawah garisan. Jika cara hidup awak masih tidak sepadan dengan keputusan ini, ia tetap wajar dibawa kepada pakar.',
       /* the static page, by data-i18n key */
       exit: 'Tinggalkan semakan kendiri',
-      kicker: 'Semakan kendiri.',
+      kicker: 'Semakan kendiri',
       h1: 'Sepuluh minit, percuma, dan salinan yang kekal milik awak.',
       lede: 'Ini ialah Skala Laporan Kendiri <span class="adhd-word">ADHD</span> Dewasa (ASRS-v1.1) — soal selidik saringan yang digunakan perkhidmatan kesihatan, diterjemahkan di sini untuk bacaan.',
       lede2: 'Jawab dengan jujur tentang <b>enam bulan lepas</b>. Awak akan dapat gambaran jelas sama ada ciri-ciri awak berada dalam julat yang wajar mendapat penilaian penuh.',
@@ -182,7 +182,7 @@
       not3: '<a href="/privacy" target="_blank" rel="noopener">Notis privasi</a> menerangkannya sepenuhnya, dalam Bahasa Inggeris dan Bahasa Melayu.',
       stepsNav: 'Soalan',
       enShow: 'Tunjukkan teks asal dalam bahasa Inggeris',
-      bKicker: 'Bahagian A, selesai.',
+      bKicker: 'Bahagian A, selesai',
       bH: 'Itulah saringannya. Tarik nafas dahulu.',
       bP: 'Skor anda datang daripada enam soalan tadi. Dua belas soalan lagi memberi pakar klinikal konteks tambahan &mdash; ia tidak mengubah skor, dan mengambil masa kira-kira tiga minit.',
       bSee: 'Lihat keputusan saya',
@@ -192,7 +192,7 @@
       rAnswersNote: 'Jawapan yang ditanda berada dalam julat berlorek soalan itu &mdash; yang akan ditanya dahulu oleh pakar klinikal.',
       back: '← Soalan sebelumnya',
       hint: 'Tekan 1–5 untuk menjawab',
-      rKicker: 'Keputusan awak.',
+      rKicker: 'Keputusan awak',
       rOf: 'daripada 6 jawapan Bahagian A dalam julat signifikan',
       rB1: 'Awak juga jawab Bahagian B, di mana',
       rB2: 'daripada 12 jatuh dalam julat berlorek. Bahagian B tidak diberi skor dan tidak mengubah keputusan di atas — ia memberi pakar klinikal petunjuk tambahan untuk ditanya.',
@@ -205,7 +205,7 @@
 
       /* ---------- the gate, the form, the door that stays shut ---------- */
       /* Three quick things, before the questions */
-      aKicker: 'Sebelum soalan.',
+      aKicker: 'Sebelum soalan',
       aH: 'Tiga perkara ringkas.',
       aLede: 'Maklumat ini kekal dalam pelayar ini bersama jawapan anda. Tiada apa-apa dihantar melainkan anda log masuk di akhir dan bersetuju.',
       aDx: 'Adakah anda pernah didiagnosis dengan <span class="adhd-word">ADHD</span>?',
@@ -217,7 +217,7 @@
       aGo: 'Mulakan soalan',
 
       /* The unlock, after the questions */
-      uKicker: 'Keputusan anda sudah sedia.',
+      uKicker: 'Keputusan awak sudah sedia',
       uH: 'Log masuk untuk mendapatkan laporan penuh anda.',
       u1t: 'Laporan penuh',
       u1d: 'Maksud skor anda, setiap jawapan ditanda seperti yang dibaca oleh pakar klinikal, dan Bahagian B jika anda menjawabnya.',
@@ -231,7 +231,7 @@
       uFine: 'Google memberi kami nama dan e-mel anda &mdash; bukan kalendar, kenalan atau apa-apa yang lain. Kami tidak menjualnya, dan tiada surat berita. Skrin seterusnya ialah skrin Google sendiri; anda akan kembali terus ke laporan anda.',
       uLeave: 'Keluar tanpa menyimpan',
 
-      dKicker: 'Langkah terakhir.',
+      dKicker: 'Langkah terakhir',
       dH: 'Apa yang kami simpan, dan hak anda terhadapnya.',
       dLede: 'Laporan anda hanya satu tekanan lagi. Inilah yang disimpan bersamanya. Baca notis sebelum anda menanda apa-apa &mdash; ia pendek, dan itulah bahagian yang paling penting.',
       dName: 'Nama awak',
@@ -260,7 +260,7 @@
       cContact: 'Anda boleh menghubungi saya tentang sokongan, sumber dan acara ADHD. <span class="f-opt" data-i18n="cContactOpt">pilihan</span>',
       cContactOpt: 'pilihan',
 
-      yKicker: 'Bukan yang ini.',
+      yKicker: 'Bukan yang ini',
       yH: 'Yang ini untuk orang dewasa.',
       yLede: 'ASRS ialah skala laporan kendiri <strong>Dewasa</strong>. Ia ditulis untuk mereka yang berumur 18 tahun ke atas, dan pemarkahannya hanya pernah diuji pada mereka.',
       yLede2: 'Jadi angka daripadanya takkan bermakna untuk awak. Ini bukan penolakan &mdash; ini instrumen itu berlaku jujur tentang apa dirinya.',

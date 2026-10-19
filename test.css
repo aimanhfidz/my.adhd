@@ -818,6 +818,30 @@ body[data-view="breath"] .q-bar{display:block}
 /* Paper only. */
 .r-print-head{display:none}
 
+/* ---------- the six-step scale ----------
+   The site's scale (site.css, "THE SIX-STEP SCALE"), carried into this
+   page's own sheet: lead in, h1, h2, h3, body, small, with tracking at 0
+   on every step. Two differences, both because this is a tool and not a
+   page to read down: the h1 stops at 60px so the button under it stays
+   on the first screen, and the fine print keeps 1.5 rather than 1.25,
+   because here it runs to whole paragraphs (the notice, the credit).
+   Counters, answer buttons and the progress line are interface and keep
+   their mono. */
+.kicker, .r-sub, .t-more > summary{
+  font-family:var(--display); font-weight:700;
+  line-height:1.5; letter-spacing:0; text-transform:uppercase; color:var(--ink);
+}
+.kicker{font-size:15px}
+.r-sub, .t-more > summary{font-size:13px}
+h1{font-size:clamp(32px,5.6vw,60px); line-height:1.15; letter-spacing:0}
+.q-text, .b-h, [data-screen="young"] > h2, .u-h{line-height:1.1; letter-spacing:0}
+.r-verdict, .u-verdict{line-height:1.1; letter-spacing:0}
+.r-score{letter-spacing:0}
+.lede, .r-detail, .r-partb, .r-caution, .r-next li, .t-keeps li,
+.t-more-body p, .t-more-body > ul:not(.t-keeps) li, .q-en-text, .r-q,
+[data-screen="young"] .lede + p, .t-point-body span{line-height:1.5; letter-spacing:0}
+.t-fine, .r-credit, .c-notice, .t-meta-sub, .r-sub-note{line-height:1.5; letter-spacing:0}
+
 /* ---------- on paper ----------
    "A copy that stays yours" is the headline's promise, and this is it:
    the result, the caution, and every answer, in black on white whatever
