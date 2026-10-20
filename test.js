@@ -105,8 +105,8 @@
       partA: 'Part A', partB: 'Part B',
       goTo: function (n) { return 'Go to question ' + n; },
       inBand: 'in the shaded band',
-      verdictYes: 'Your answers fall within the range that warrants a proper assessment.',
-      verdictNo:  'Your answers fall below the range this screener flags.',
+      verdictYes: 'Your answers are highly consistent with <span class="adhd-word">ADHD</span>.',
+      verdictNo:  'Your answers don’t point to <span class="adhd-word">ADHD</span>.',
       detailYes: 'Four or more of your Part A answers landed in the bands the ASRS treats as significant. On this instrument that means symptoms highly consistent with <span class="adhd-word">ADHD</span> in adults, and that further investigation is warranted — by a psychiatrist or clinical psychologist, who are the only people who can actually diagnose it.',
       detailNo:  'Fewer than four of your Part A answers landed in the bands the ASRS treats as significant. That is not a clean bill of health and it does not rule ADHD out — this screener is six questions, and plenty of people who have <span class="adhd-word">ADHD</span> score below the line. If the way you live still doesn’t match the result, that is worth taking to a professional anyway.',
 
@@ -129,8 +129,8 @@
       partA: 'Bahagian A', partB: 'Bahagian B',
       goTo: function (n) { return 'Pergi ke soalan ' + n; },
       inBand: 'dalam julat berlorek',
-      verdictYes: 'Jawapan awak berada dalam julat yang wajar mendapat penilaian penuh.',
-      verdictNo:  'Jawapan awak berada di bawah julat yang ditandakan oleh saringan ini.',
+      verdictYes: 'Jawapan awak sangat konsisten dengan <span class="adhd-word">ADHD</span>.',
+      verdictNo:  'Jawapan awak tidak menunjukkan <span class="adhd-word">ADHD</span>.',
       detailYes: 'Empat atau lebih jawapan Bahagian A awak jatuh dalam julat yang dianggap signifikan oleh ASRS. Pada instrumen ini, itu bermakna simptom yang sangat konsisten dengan <span class="adhd-word">ADHD</span> pada orang dewasa, dan siasatan lanjut adalah wajar — oleh pakar psikiatri atau ahli psikologi klinikal, satu-satunya pihak yang boleh mendiagnosisnya.',
       detailNo:  'Kurang daripada empat jawapan Bahagian A awak jatuh dalam julat yang dianggap signifikan oleh ASRS. Itu bukan bermakna awak bebas daripadanya, dan ia tidak menolak kemungkinan ADHD — saringan ini hanya enam soalan, dan ramai yang mempunyai <span class="adhd-word">ADHD</span> mendapat skor di bawah garisan. Jika cara hidup awak masih tidak sepadan dengan keputusan ini, ia tetap wajar dibawa kepada pakar.',
       /* the static page, by data-i18n key */
@@ -603,12 +603,12 @@
     var consistent = a >= 4;
 
     $('.r-score').textContent = a;
-    $('.r-verdict').textContent = consistent ? T().verdictYes : T().verdictNo;
     /* innerHTML, not textContent, for one reason: the word ADHD wears the
        mark's violet everywhere else on the site and would arrive plain
        here. Nothing in these strings comes from the reader — they are
        written above, in full, in both languages, and there is no
        interpolation. */
+    $('.r-verdict').innerHTML = consistent ? T().verdictYes : T().verdictNo;
     $('.r-detail').innerHTML = consistent ? T().detailYes : T().detailNo;
 
     /* The pips say the same thing as the number beside them. Drawn rather
@@ -891,7 +891,7 @@
     var a = scoreA();
     $('.u-score').textContent = a;
     paintMeter($('.u-meter'), a);
-    $('.u-verdict').textContent = a >= 4 ? T().verdictYes : T().verdictNo;
+    $('.u-verdict').innerHTML = a >= 4 ? T().verdictYes : T().verdictNo;
   }
 
   $('.g-go').addEventListener('click', function () {
